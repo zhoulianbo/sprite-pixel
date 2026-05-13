@@ -4,7 +4,7 @@ import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
 import { redirect } from '@/core/i18n/navigation';
 import { SignIn } from '@/shared/blocks/sign/sign-in';
-import { getConfigs } from '@/shared/models/config';
+import { getPublicConfigs } from '@/shared/models/config';
 import { getSignUser } from '@/shared/models/user';
 
 function safeInternalPath(raw?: string) {
@@ -62,7 +62,10 @@ export default async function SignInPage({
     redirect({ href: target || '/', locale });
   }
 
-  const configs = await getConfigs();
+  // SECURITY: must use getPublicConfigs() here — `configs` is passed to a
+  // client component and would otherwise serialize all DB-stored secrets
+  // (provider API keys, client secrets, etc.) into the page HTML/RSC payload.
+  const configs = await getPublicConfigs();
 
   return (
     <SignIn

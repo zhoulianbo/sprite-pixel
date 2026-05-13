@@ -935,8 +935,13 @@ export async function getSettings() {
   return settings;
 }
 
+// SECURITY: this whitelist gates which DB-stored config keys are allowed to
+// reach the browser via `getPublicConfigs()`. Only add keys that are safe to
+// expose publicly (feature flags, public client IDs). NEVER add API keys,
+// client secrets, signing secrets, or any credential here.
 export const publicSettingNames = [
   'email_auth_enabled',
+  'email_verification_enabled',
   'google_auth_enabled',
   'google_one_tap_enabled',
   'google_client_id',
