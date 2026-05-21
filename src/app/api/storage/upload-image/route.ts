@@ -1,6 +1,7 @@
 import { md5 } from '@/shared/lib/hash';
 import { respData, respErr } from '@/shared/lib/resp';
 import { getStorageService } from '@/shared/services/storage';
+import { getUserInfo } from '@/shared/models/user';
 
 const extFromMime = (mimeType: string) => {
   const map: Record<string, string> = {
@@ -19,6 +20,11 @@ const extFromMime = (mimeType: string) => {
 
 export async function POST(req: Request) {
   try {
+    const user = await getUserInfo();
+    if (!user) {
+      return respErr('no auth, please sign in');
+    }
+
     const formData = await req.formData();
     const files = formData.getAll('files') as File[];
 

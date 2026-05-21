@@ -26,11 +26,13 @@ export async function POST(req: Request) {
     }
 
     const messages = await getChatMessages({
+      userId: user.id,
       chatId,
       page,
       limit,
     });
     const total = await getChatMessagesCount({
+      userId: user.id,
       chatId,
     });
 
