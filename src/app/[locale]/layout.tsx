@@ -44,10 +44,6 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const generateMetadata = getMetadata();
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
-
 export default async function LocaleLayout({
   children,
   params,

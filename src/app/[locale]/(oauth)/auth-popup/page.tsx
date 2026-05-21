@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
 import { signIn } from '@/core/auth/client';
 
-export default function AuthPopupPage() {
+function AuthPopupContent() {
   const searchParams = useSearchParams();
   const provider = searchParams.get('provider') || '';
   const triggered = useRef(false);
@@ -28,5 +28,19 @@ export default function AuthPopupPage() {
         Redirecting to {provider}...
       </p>
     </div>
+  );
+}
+
+export default function AuthPopupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
+        </div>
+      }
+    >
+      <AuthPopupContent />
+    </Suspense>
   );
 }
