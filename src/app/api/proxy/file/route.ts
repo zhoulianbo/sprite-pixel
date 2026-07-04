@@ -2,6 +2,54 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { getUserInfo } from '@/shared/models/user';
 
+function isPrivateIp(address: string) {
+  if (address.includes(':')) {
+    const normalized = address.toLowerCase();
+    return (
+      normalized === '::1' ||
+      normalized === '::' ||
+      normalized.startsWith('fc') ||
+      normalized.startsWith('fd') ||
+      normalized.startsWith('fe80:')
+    );
+  }
+
+  const parts = address.split('.').map((part) => Number(part));
+  if (parts.length !== 4 || parts.some((part) => !Number.isInteger(part))) {
+    return true;
+  }
+
+  const [a, b] = parts;
+  return (
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127) ||
+    a >= 224
+  );
+}
+
+async function assertPublicHostname(hostname: string) {
+  let lookup: typeof import('node:dns/promises').lookup;
+
+  try {
+    lookup = (await import('node:dns/promises')).lookup;
+  } catch {
+    throw new Error('DNS validation unavailable');
+  }
+
+  const addresses = await lookup(hostname, { all: true, verbatim: true });
+  if (
+    addresses.length === 0 ||
+    addresses.some(({ address }) => isPrivateIp(address))
+  ) {
+    throw new Error('Host resolves to a blocked address');
+  }
+}
+
 export async function GET(req: NextRequest) {
   const user = await getUserInfo();
   if (!user) {
@@ -38,6 +86,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    await assertPublicHostname(hostname);
+
     const response = await fetch(parsed.toString());
 
     if (!response.ok) {

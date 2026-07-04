@@ -85,10 +85,14 @@ export default async function UserGrantCreditsPage({
       handler: async (data, passby) => {
         'use server';
 
-        const { user } = passby;
+        await requirePermission({
+          code: PERMISSIONS.USERS_WRITE,
+          locale,
+        });
 
+        const user = await findUserById(id);
         if (!user) {
-          throw new Error('no auth');
+          throw new Error('user not found');
         }
 
         const credits = parseInt(data.get('credits') as string) || 0;

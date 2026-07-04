@@ -51,11 +51,17 @@ export default async function SettingsPage({
       throw new Error('no auth');
     }
 
-    data.forEach((value, name) => {
-      configs[name] = value as string;
+    await requireAllPermissions({
+      codes: [PERMISSIONS.SETTINGS_READ, PERMISSIONS.SETTINGS_WRITE],
+      locale,
     });
 
-    await saveConfigs(configs);
+    const latestConfigs = await getConfigs();
+    data.forEach((value, name) => {
+      latestConfigs[name] = value as string;
+    });
+
+    await saveConfigs(latestConfigs);
 
     return {
       status: 'success',

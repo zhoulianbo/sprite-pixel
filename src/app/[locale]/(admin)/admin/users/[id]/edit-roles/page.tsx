@@ -86,10 +86,14 @@ export default async function UserEditRolesPage({
       handler: async (data, passby) => {
         'use server';
 
-        const { user } = passby;
+        await requireAllPermissions({
+          codes: [PERMISSIONS.USERS_WRITE, PERMISSIONS.ROLES_WRITE],
+          locale,
+        });
 
+        const user = await findUserById(id);
         if (!user) {
-          throw new Error('no auth');
+          throw new Error('user not found');
         }
 
         let roles = data.get('roles') as unknown as string[];
@@ -99,6 +103,17 @@ export default async function UserEditRolesPage({
           } catch (error) {
             throw new Error('invalid roles');
           }
+        }
+
+        if (!Array.isArray(roles)) {
+          throw new Error('invalid roles');
+        }
+
+        const allowedRoleIds = new Set(
+          (await getRoles()).map((role) => role.id)
+        );
+        if (roles.some((roleId) => !allowedRoleIds.has(roleId))) {
+          throw new Error('invalid roles');
         }
 
         await assignRolesToUser(user.id as string, roles);
