@@ -1,16 +1,57 @@
+import { getLocale } from 'next-intl/server';
+
+import { isDatabaseConfigured } from '@/core/db';
 import { Link } from '@/core/i18n/navigation';
 import {
   BrandLogo,
-  BuiltWith,
   Copyright,
   LocaleSelector,
   ThemeToggler,
 } from '@/shared/blocks/common';
 import { SmartIcon } from '@/shared/blocks/common/smart-icon';
+import { renderFooterLinkHtml } from '@/shared/lib/footer_link_html';
+import { FooterLinkStatus, getFooterLinks } from '@/shared/models/footer_link';
 import { NavItem } from '@/shared/types/blocks/common';
 import { Footer as FooterType } from '@/shared/types/blocks/landing';
 
-export function Footer({ footer }: { footer: FooterType }) {
+async function getFooterLinkHtml() {
+  if (!isDatabaseConfigured()) {
+    return null;
+  }
+
+  try {
+    const [locale, rows] = await Promise.all([
+      getLocale(),
+      getFooterLinks({
+        status: FooterLinkStatus.PUBLISHED,
+        limit: 100,
+      }),
+    ]);
+
+    return renderFooterLinkHtml(
+      rows.map((row) => ({
+        id: row.id,
+        group: row.group,
+        title: row.title,
+        url: row.url,
+        image_url: row.imageUrl,
+        alt_text: row.altText,
+        locale: row.locale,
+        rel: row.rel,
+        status: row.status,
+        sort: row.sort,
+      })),
+      locale
+    );
+  } catch (error) {
+    console.warn('load footer links failed:', error);
+    return null;
+  }
+}
+
+export async function Footer({ footer }: { footer: FooterType }) {
+  const footerLinks = await getFooterLinkHtml();
+
   return (
     <footer
       id={footer.id}
@@ -55,7 +96,27 @@ export function Footer({ footer }: { footer: FooterType }) {
         </div>
 
         <div className="flex min-w-0 flex-wrap items-center gap-4 sm:gap-8">
-          {footer.show_built_with !== false ? <BuiltWith /> : null}
+          <div
+            id="footer-exchange-links"
+            className="flex min-w-0 flex-wrap items-center gap-4 sm:gap-8"
+          >
+            <div
+              id="footer-friend-links"
+              aria-label="Friend links"
+              className="text-muted-foreground [&>a:hover]:text-primary flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 text-sm [&>a]:duration-150"
+              dangerouslySetInnerHTML={
+                footerLinks ? { __html: footerLinks.friendHtml } : undefined
+              }
+            />
+            <div
+              id="footer-badge-links"
+              aria-label="Directory badges"
+              className="flex min-w-0 flex-wrap items-center gap-4 [&_img]:h-8 [&_img]:w-auto"
+              dangerouslySetInnerHTML={
+                footerLinks ? { __html: footerLinks.badgeHtml } : undefined
+              }
+            />
+          </div>
           <div className="min-w-0 flex-1" />
           {footer.show_theme !== false ? <ThemeToggler type="toggle" /> : null}
           {footer.show_locale !== false ? (

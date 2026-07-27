@@ -20,5 +20,9 @@ export function respJson(code: number, message: string, data?: any) {
     json['data'] = data;
   }
 
-  return Response.json(json);
+  return Response.json(json, {
+    headers: {
+      'Cache-Control': 'no-store',
+    },
+  });
 }

@@ -1,8 +1,13 @@
 import { envConfigs } from '..';
 
-export const localeNames: any = {
+export const localeNames: Record<string, string> = {
   en: 'English',
   zh: '中文',
+};
+
+export const localeFlags: Record<string, string> = {
+  en: '🇺🇸',
+  zh: '🇨🇳',
 };
 
 export const locales = ['en', 'zh'];
@@ -22,6 +27,7 @@ export const localeMessagesPaths = [
   'blog',
   'updates',
   'pricing',
+  'dashboard',
   'settings/sidebar',
   'settings/profile',
   'settings/security',
@@ -35,6 +41,7 @@ export const localeMessagesPaths = [
   'admin/permissions',
   'admin/categories',
   'admin/posts',
+  'admin/footer-links',
   'admin/payments',
   'admin/subscriptions',
   'admin/credits',
@@ -42,12 +49,8 @@ export const localeMessagesPaths = [
   'admin/apikeys',
   'admin/ai-tasks',
   'admin/chats',
-  'ai/music',
   'ai/chat',
-  'ai/image',
-  'ai/video',
   'activity/sidebar',
-  'activity/ai-tasks',
   'activity/chats',
   'pages/index',
   'pages/pricing',

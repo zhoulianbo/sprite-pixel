@@ -1,6 +1,7 @@
 import { PERMISSIONS } from '@/core/rbac';
 import { respData, respErr } from '@/shared/lib/resp';
 import { getRemainingCredits } from '@/shared/models/credit';
+import { getCurrentSubscription } from '@/shared/models/subscription';
 import { getUserInfo } from '@/shared/models/user';
 import { hasPermission } from '@/shared/services/rbac';
 
@@ -12,13 +13,18 @@ export async function POST(req: Request) {
       return respErr('no auth, please sign in');
     }
 
-    // check if user is admin
-    const isAdmin = await hasPermission(user.id, PERMISSIONS.ADMIN_ACCESS);
+    const [isAdmin, remainingCredits, currentSubscription] = await Promise.all([
+      hasPermission(user.id, PERMISSIONS.ADMIN_ACCESS),
+      getRemainingCredits(user.id),
+      getCurrentSubscription(user.id),
+    ]);
 
-    // get remaining credits
-    const remainingCredits = await getRemainingCredits(user.id);
-
-    return respData({ ...user, isAdmin, credits: { remainingCredits } });
+    return respData({
+      ...user,
+      isAdmin,
+      credits: { remainingCredits },
+      currentSubscriptionProductId: currentSubscription?.productId,
+    });
   } catch (e) {
     console.log('get user info failed:', e);
     return respErr('get user info failed');

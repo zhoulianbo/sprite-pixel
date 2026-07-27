@@ -7,5 +7,5 @@ export default async function ActivityPage({
 }) {
   const { locale } = await params;
 
-  redirect({ href: '/activity/ai-tasks', locale });
+  redirect({ href: '/activity/chats', locale });
 }

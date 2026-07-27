@@ -8,13 +8,20 @@ import { DynamicPage } from '@/shared/types/blocks/landing';
 
 export const revalidate = 3600;
 
+export function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const t = await getTranslations('pages.blog.metadata');
+  const t = await getTranslations({
+    locale,
+    namespace: 'pages.blog.metadata',
+  });
 
   const canonicalUrl =
     locale !== envConfigs.locale

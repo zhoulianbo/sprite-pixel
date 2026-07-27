@@ -50,10 +50,7 @@ export function Nav({ nav, className }: { nav: NavType; className?: string }) {
                     <SidebarMenuButton
                       tooltip={item?.title}
                       className={`${
-                        item?.is_active ||
-                        (mounted &&
-                          item?.url &&
-                          pathname.startsWith(item?.url as string))
+                        item?.is_active
                           ? 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/90 hover:text-sidebar-accent-foreground active:bg-sidebar-accent/90 active:text-sidebar-accent-foreground min-w-8 duration-200 ease-linear'
                           : ''
                       }`}
@@ -71,7 +68,9 @@ export function Nav({ nav, className }: { nav: NavType; className?: string }) {
                       item?.is_active ||
                       (mounted &&
                         item?.url &&
-                        pathname.startsWith(item?.url as string))
+                        (item.url === '/'
+                          ? pathname === item.url
+                          : pathname.startsWith(item.url as string)))
                         ? 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/90 hover:text-sidebar-accent-foreground active:bg-sidebar-accent/90 active:text-sidebar-accent-foreground min-w-8 duration-200 ease-linear'
                         : ''
                     }`}

@@ -132,6 +132,26 @@ export function SignInForm({
   return (
     <div className={`w-full md:max-w-md ${className}`}>
       <div className="grid gap-4">
+        <SocialProviders
+          configs={configs}
+          callbackUrl={callbackUrl || '/'}
+          loading={loading}
+          setLoading={setLoading}
+        />
+
+        {(isGoogleAuthEnabled || isGithubAuthEnabled) && isEmailAuthEnabled && (
+          <div className="relative py-1">
+            <div className="absolute inset-0 flex items-center">
+              <span className="border-border/70 w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background text-muted-foreground px-3">
+                {t('or')}
+              </span>
+            </div>
+          </div>
+        )}
+
         {isEmailAuthEnabled && (
           <form
             className="grid gap-4"
@@ -183,7 +203,12 @@ export function SignInForm({
             <Label htmlFor="remember">{t("remember_me_title")}</Label>
           </div> */}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              variant="outline"
+              className="h-11 w-full rounded-xl"
+              disabled={loading}
+            >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
@@ -192,13 +217,6 @@ export function SignInForm({
             </Button>
           </form>
         )}
-
-        <SocialProviders
-          configs={configs}
-          callbackUrl={callbackUrl || '/'}
-          loading={loading}
-          setLoading={setLoading}
-        />
       </div>
       {isEmailAuthEnabled && (
         <div className="flex w-full justify-center border-t py-4">

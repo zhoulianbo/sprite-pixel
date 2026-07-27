@@ -166,6 +166,27 @@ export function SignUp({
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
+          <SocialProviders
+            configs={configs}
+            callbackUrl={callbackUrl || '/'}
+            loading={loading}
+            setLoading={setLoading}
+          />
+
+          {(isGoogleAuthEnabled || isGithubAuthEnabled) &&
+            isEmailAuthEnabled && (
+              <div className="relative py-1">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="border-border/70 w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card text-muted-foreground px-3">
+                    {t('or')}
+                  </span>
+                </div>
+              </div>
+            )}
+
           {isEmailAuthEnabled && (
             <form
               className="grid gap-4"
@@ -219,7 +240,12 @@ export function SignUp({
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                variant="outline"
+                className="h-11 w-full rounded-xl"
+                disabled={loading}
+              >
                 {loading ? (
                   <Loader2 size={16} className="animate-spin" />
                 ) : (
@@ -228,13 +254,6 @@ export function SignUp({
               </Button>
             </form>
           )}
-
-          <SocialProviders
-            configs={configs}
-            callbackUrl={callbackUrl || '/'}
-            loading={loading}
-            setLoading={setLoading}
-          />
         </div>
       </CardContent>
       {isEmailAuthEnabled && (

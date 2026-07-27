@@ -4,6 +4,7 @@ import { count, desc, eq, inArray } from 'drizzle-orm';
 import { getAuth } from '@/core/auth';
 import { db } from '@/core/db';
 import { user } from '@/config/db/schema';
+import { websiteConfig } from '@/config/website';
 
 import { Permission, Role } from '../services/rbac';
 import { getRemainingCredits } from './credit';
@@ -16,6 +17,7 @@ export interface UserCredits {
 export type User = typeof user.$inferSelect & {
   isAdmin?: boolean;
   credits?: UserCredits;
+  currentSubscriptionProductId?: string;
   roles?: Role[];
   permissions?: Permission[];
 };
@@ -88,6 +90,10 @@ export async function getUserCredits(userId: string) {
 }
 
 export async function getSignUser() {
+  if (!websiteConfig.auth.enabled) {
+    return null;
+  }
+
   const auth = await getAuth();
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -97,7 +103,9 @@ export async function getSignUser() {
 }
 
 export async function isEmailVerified(email: string): Promise<boolean> {
-  const normalized = String(email || '').trim().toLowerCase();
+  const normalized = String(email || '')
+    .trim()
+    .toLowerCase();
   if (!normalized) return false;
 
   const [row] = await db()

@@ -2,14 +2,34 @@ import { oneTapClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
 import { envConfigs } from '@/config';
+import { websiteConfig } from '@/config/website';
+
+type ThrottleState = {
+  inFlight: Map<string, Promise<Response>>;
+  lastStartedAt: number;
+};
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __authGetSessionThrottle: ThrottleState | undefined;
+}
+
+function getThrottleState(): ThrottleState {
+  if (!globalThis.__authGetSessionThrottle) {
+    globalThis.__authGetSessionThrottle = {
+      inFlight: new Map(),
+      lastStartedAt: 0,
+    };
+  }
+  return globalThis.__authGetSessionThrottle;
+}
 
 function createGetSessionThrottledFetch({
   minIntervalMs,
 }: {
   minIntervalMs: number;
 }): typeof fetch {
-  const inFlight = new Map<string, Promise<Response>>();
-  let lastStartedAt = 0;
+  const state = getThrottleState();
 
   function isGetSessionRequest(input: RequestInfo | URL, init?: RequestInit) {
     const method =
@@ -48,28 +68,52 @@ function createGetSessionThrottledFetch({
   }
 
   return async (input, init) => {
-    if (!minIntervalMs || !isGetSessionRequest(input, init)) {
+    const isSessionRequest = isGetSessionRequest(input, init);
+
+    if (!websiteConfig.auth.enabled && isSessionRequest) {
+      return Response.json(null);
+    }
+
+    if (!minIntervalMs || !isSessionRequest) {
       return fetch(input, init);
     }
 
     const key = getDedupeKey(input);
-    const existing = inFlight.get(key);
+    const existing = state.inFlight.get(key);
     if (existing) return existing;
 
-    const now = Date.now();
-    const waitMs = Math.max(0, lastStartedAt + minIntervalMs - now);
-
     const promise = (async () => {
-      if (waitMs > 0) {
+      // Recheck after sleep so concurrent waiters don't stampede together.
+      for (;;) {
+        const waitMs = Math.max(
+          0,
+          state.lastStartedAt + minIntervalMs - Date.now()
+        );
+        if (waitMs <= 0) break;
         await new Promise((r) => setTimeout(r, waitMs));
       }
-      lastStartedAt = Date.now();
-      return fetch(input, init);
+
+      state.lastStartedAt = Date.now();
+      const response = await fetch(input, init);
+
+      // Soft-retry once on 429 so a brief burst doesn't break session UI.
+      if (response.status === 429) {
+        const retryAfterHeader = response.headers.get('retry-after');
+        const retryAfterSeconds = Number(retryAfterHeader);
+        const retryMs = Number.isFinite(retryAfterSeconds)
+          ? Math.max(250, retryAfterSeconds * 1000)
+          : minIntervalMs;
+        await new Promise((r) => setTimeout(r, retryMs));
+        state.lastStartedAt = Date.now();
+        return fetch(input, init);
+      }
+
+      return response;
     })().finally(() => {
-      inFlight.delete(key);
+      state.inFlight.delete(key);
     });
 
-    inFlight.set(key, promise);
+    state.inFlight.set(key, promise);
     return promise;
   };
 }
@@ -77,7 +121,11 @@ function createGetSessionThrottledFetch({
 // Client-side throttle to avoid get-session request storms in browser.
 // Note: must be NEXT_PUBLIC_* to be inlined into client bundles.
 const AUTH_GET_SESSION_MIN_INTERVAL_MS =
-  Number(process.env.NEXT_PUBLIC_AUTH_GET_SESSION_MIN_INTERVAL_MS) || 2000;
+  Number(process.env.NEXT_PUBLIC_AUTH_GET_SESSION_MIN_INTERVAL_MS) || 1000;
+
+const sharedGetSessionFetch = createGetSessionThrottledFetch({
+  minIntervalMs: AUTH_GET_SESSION_MIN_INTERVAL_MS,
+});
 
 // create default auth client, without plugins
 export const authClient = createAuthClient({
@@ -87,9 +135,7 @@ export const authClient = createAuthClient({
     // IMPORTANT: auth mutations (sign-in/sign-up) must be non-retriable,
     // otherwise we may send verification emails multiple times.
     retry: 0,
-    customFetchImpl: createGetSessionThrottledFetch({
-      minIntervalMs: AUTH_GET_SESSION_MIN_INTERVAL_MS,
-    }),
+    customFetchImpl: sharedGetSessionFetch,
   },
 });
 
@@ -106,9 +152,7 @@ export function getAuthClient(configs: Record<string, string>) {
       // IMPORTANT: auth mutations (sign-in/sign-up) must be non-retriable,
       // otherwise we may send verification emails multiple times.
       retry: 0,
-      customFetchImpl: createGetSessionThrottledFetch({
-        minIntervalMs: AUTH_GET_SESSION_MIN_INTERVAL_MS,
-      }),
+      customFetchImpl: sharedGetSessionFetch,
     },
   });
 

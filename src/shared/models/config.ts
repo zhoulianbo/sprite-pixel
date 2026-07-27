@@ -1,9 +1,8 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 
-import { db } from '@/core/db';
+import { db, isDatabaseConfigured } from '@/core/db';
 import { envConfigs } from '@/config';
 import { config } from '@/config/db/schema';
-import { isCloudflareWorker } from '@/shared/lib/env';
 import {
   getAllSettingNames,
   publicSettingNames,
@@ -34,7 +33,8 @@ export async function saveConfigs(configs: Record<string, string>) {
         .returning()
     );
 
-    const batchResults = queries.length > 0 ? await database.batch(queries) : [];
+    const batchResults =
+      queries.length > 0 ? await database.batch(queries) : [];
     revalidateTag(CACHE_TAG_CONFIGS);
     return batchResults.flat();
   }
@@ -75,11 +75,7 @@ export const getConfigs = unstable_cache(
   async (): Promise<Configs> => {
     const configs: Record<string, string> = {};
 
-    // D1 is only available inside Cloudflare Workers runtime (not during build)
-    if (envConfigs.database_provider === 'd1' && !isCloudflareWorker) {
-      return configs;
-    }
-    if (!envConfigs.database_url && envConfigs.database_provider !== 'd1') {
+    if (!isDatabaseConfigured()) {
       return configs;
     }
 
@@ -105,8 +101,7 @@ export async function getAllConfigs(): Promise<Configs> {
   let dbConfigs: Configs = {};
 
   // only get configs from db in server side
-  const hasDb = envConfigs.database_url || (envConfigs.database_provider === 'd1' && isCloudflareWorker);
-  if (typeof window === 'undefined' && hasDb) {
+  if (typeof window === 'undefined' && isDatabaseConfigured()) {
     try {
       dbConfigs = await getConfigs();
     } catch (e) {

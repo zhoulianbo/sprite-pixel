@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
 
 import { usePathname, useRouter } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
@@ -24,7 +23,6 @@ export function LocaleDetector() {
   const currentLocale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [showBanner, setShowBanner] = useState(false);
   const [browserLocale, setBrowserLocale] = useState<string | null>(null);
   const [bannerHeight, setBannerHeight] = useState(0);
@@ -59,13 +57,13 @@ export function LocaleDetector() {
 
   const switchToLocale = useCallback(
     (locale: string) => {
-      const query = searchParams?.toString?.() ?? '';
-      const href = query ? `${pathname}?${query}` : pathname;
+      const query = typeof window !== 'undefined' ? window.location.search : '';
+      const href = query ? `${pathname}${query}` : pathname;
       router.replace(href, { locale });
       cacheSet(PREFERRED_LOCALE_KEY, locale);
       setShowBanner(false);
     },
-    [router, pathname, searchParams]
+    [router, pathname]
   );
 
   useEffect(() => {

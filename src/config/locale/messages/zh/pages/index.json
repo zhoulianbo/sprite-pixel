@@ -44,13 +44,13 @@
         "avatars_tip": "999+ 用户在使用 ShipAny 上站",
         "show_award": false,
         "image": {
-          "src": "/imgs/features/admin.png",
+          "src": "/imgs/placeholder.svg",
           "alt": "hero",
           "width": 1200,
           "height": 800
         },
         "image_invert": {
-          "src": "/imgs/features/admin-dark.png",
+          "src": "/imgs/placeholder.svg",
           "alt": "hero",
           "width": 1200,
           "height": 800
@@ -66,35 +66,35 @@
           {
             "title": "Next.js",
             "image": {
-              "src": "/imgs/logos/nextjs.svg",
+              "src": "/imgs/placeholder.svg",
               "alt": "Next.js"
             }
           },
           {
             "title": "React",
             "image": {
-              "src": "/imgs/logos/react.svg",
+              "src": "/imgs/placeholder.svg",
               "alt": "React"
             }
           },
           {
             "title": "TailwindCSS",
             "image": {
-              "src": "/imgs/logos/tailwindcss.svg",
+              "src": "/imgs/placeholder.svg",
               "alt": "TailwindCSS"
             }
           },
           {
             "title": "Shadcn/UI",
             "image": {
-              "src": "/imgs/logos/shadcn.svg",
+              "src": "/imgs/placeholder.svg",
               "alt": "Shadcn/UI"
             }
           },
           {
             "title": "Vercel",
             "image": {
-              "src": "/imgs/logos/vercel.svg",
+              "src": "/imgs/placeholder.svg",
               "alt": "Vercel"
             }
           }
@@ -107,7 +107,7 @@
         "label": "产品简介",
         "description": "ShipAny 是专为 AI SaaS 创业项目打造的 NextJS 脚手架，包括丰富模板、组件及文档。",
         "image": {
-          "src": "/imgs/features/landing-page.png",
+          "src": "/imgs/placeholder.svg",
           "alt": "introduce"
         },
         "items": [
@@ -116,7 +116,7 @@
             "description": "从数十款生产级 AI SaaS 模板中选择，快速开启你的项目。",
             "icon": "RiNextjsFill",
             "image": {
-              "src": "/imgs/features/1.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "introduce"
             }
           },
@@ -125,7 +125,7 @@
             "description": "内置最佳实践，即刻拥有可扩展的基础设施。",
             "icon": "RiDatabase2Line",
             "image": {
-              "src": "/imgs/features/2.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "introduce"
             }
           },
@@ -134,7 +134,7 @@
             "description": "AI SaaS 产品快速上线，助力小时级交付。",
             "icon": "RiCloudyFill",
             "image": {
-              "src": "/imgs/features/3.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "introduce"
             }
           },
@@ -143,7 +143,7 @@
             "description": "通过内置的 AI SDK，轻松为你的项目集成 AI 能力。",
             "icon": "RiRobot2Line",
             "image": {
-              "src": "/imgs/features/4.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "introduce"
             }
           }
@@ -162,7 +162,7 @@
             "description": "基于 Next.js，集成认证、支付、AI，一站式开箱即用。",
             "icon": "RiNextjsFill",
             "image": {
-              "src": "/imgs/features/user-billing.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "benefits"
             }
           },
@@ -171,7 +171,7 @@
             "description": "多样的 AI SaaS 模板，点击即用，涵盖聊天、图像生成等多场景。",
             "icon": "RiClapperboardAiLine",
             "image": {
-              "src": "/imgs/features/admin-settings.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "benefits"
             }
           },
@@ -180,7 +180,7 @@
             "description": "享受专属技术支持与开发者社区，为你的成功保驾护航。",
             "icon": "RiCodeFill",
             "image": {
-              "src": "/imgs/features/landing-page.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "benefits"
             }
           }
@@ -192,7 +192,7 @@
         "title": "三步使用 ShipAny 极速上线",
         "description": "只需三步，快速开启你的 AI SaaS 创业之路：",
         "image": {
-          "src": "/imgs/features/1.png",
+          "src": "/imgs/placeholder.svg",
           "alt": "usage"
         },
         "image_position": "left",
@@ -202,7 +202,7 @@
             "title": "获取 ShipAny",
             "description": "一次性购买 ShipAny，查收邮件获取代码与文档。",
             "image": {
-              "src": "/imgs/features/5.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "usage"
             }
           },
@@ -210,7 +210,7 @@
             "title": "启动你的项目",
             "description": "阅读说明文档，克隆 ShipAny 代码，开始开发你的 AI SaaS 项目。",
             "image": {
-              "src": "/imgs/features/6.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "usage"
             }
           },
@@ -218,7 +218,7 @@
             "title": "个性化定制",
             "description": "根据需求修改模板内容和数据，配置专属 AI 能力。",
             "image": {
-              "src": "/imgs/features/7.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "usage"
             }
           },
@@ -226,7 +226,7 @@
             "title": "部署上线",
             "description": "简单几步将你的项目推向生产环境，立刻为客户提供服务。",
             "image": {
-              "src": "/imgs/features/8.png",
+              "src": "/imgs/placeholder.svg",
               "alt": "usage"
             }
           }

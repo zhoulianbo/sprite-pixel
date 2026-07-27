@@ -24,11 +24,13 @@ import { Label } from '@/shared/components/ui/label';
 import { Textarea } from '@/shared/components/ui/textarea';
 import {
   FormField as FormFieldType,
+  FormLinkHtmlImporter,
   FormSubmit,
 } from '@/shared/types/blocks/form';
 
 import { Checkbox } from './checkbox';
 import { Input } from './input';
+import { LinkHtmlImporter } from './link-html-importer';
 import { Markdown } from './markdown';
 import { Select } from './select';
 import { Switch } from './switch';
@@ -189,6 +191,7 @@ export function Form({
   data,
   passby,
   submit,
+  linkHtmlImporter,
 }: {
   title?: string;
   description?: string;
@@ -196,6 +199,7 @@ export function Form({
   data?: any;
   passby?: any;
   submit?: FormSubmit;
+  linkHtmlImporter?: FormLinkHtmlImporter;
 }) {
   if (!fields) {
     fields = [];
@@ -330,6 +334,9 @@ export function Form({
         {/* {title && <h2 className="text-lg font-bold">{title}</h2>}
         {description && <p className="text-muted-foreground">{description}</p>} */}
         <div className="mb-6 space-y-6">
+          {linkHtmlImporter ? (
+            <LinkHtmlImporter config={linkHtmlImporter} form={form} />
+          ) : null}
           {fields.map((item, index) => {
             return (
               <FormField

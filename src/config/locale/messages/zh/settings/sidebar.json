@@ -1,46 +1,89 @@
 {
-  "title": "设置",
-  "nav": {
-    "items": [
+  "sidebar": {
+    "main_navs": [
       {
-        "title": "个人资料",
-        "url": "/settings/profile",
-        "icon": "User"
+        "title": "工作区",
+        "items": [
+          {
+            "title": "仪表盘",
+            "url": "/dashboard",
+            "icon": "LayoutDashboard"
+          }
+        ]
       },
       {
-        "title": "账单",
-        "url": "/settings/billing",
-        "icon": "CreditCard"
-      },
-      {
-        "title": "支付",
-        "url": "/settings/payments",
-        "icon": "DollarSign"
-      },
-      {
-        "title": "积分",
-        "url": "/settings/credits",
-        "icon": "Coins"
-      },
-      {
-        "title": "API 密钥",
-        "url": "/settings/apikeys",
-        "icon": "RiKeyLine"
+        "title": "账户",
+        "items": [
+          {
+            "title": "设置",
+            "url": "/settings",
+            "icon": "Settings",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "个人资料",
+                "url": "/settings/profile"
+              },
+              {
+                "title": "账单",
+                "url": "/settings/billing"
+              },
+              {
+                "title": "支付",
+                "url": "/settings/payments"
+              },
+              {
+                "title": "积分",
+                "url": "/settings/credits"
+              },
+              {
+                "title": "安全",
+                "url": "/settings/security"
+              },
+              {
+                "title": "API 密钥",
+                "url": "/settings/apikeys"
+              }
+            ]
+          }
+        ]
       }
-    ]
-  },
-  "top_nav": {
-    "items": [
-      {
-        "title": "活动",
-        "url": "/activity",
-        "icon": "Activity"
-      },
-      {
-        "title": "设置",
-        "url": "/settings",
-        "icon": "Settings"
+    ],
+    "bottom_nav": {
+      "items": [
+        {
+          "title": "价格方案",
+          "url": "/pricing",
+          "icon": "CreditCard"
+        },
+        {
+          "title": "首页",
+          "url": "/",
+          "icon": "House"
+        }
+      ]
+    },
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "个人资料",
+            "url": "/settings/profile",
+            "icon": "User"
+          }
+        ]
       }
-    ]
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "首页",
+            "url": "/",
+            "icon": "Home"
+          }
+        ]
+      }
+    }
   }
 }

@@ -7,6 +7,10 @@ import { getLocalPage } from '@/shared/models/post';
 
 export const revalidate = 3600;
 
+export function generateStaticParams() {
+  return [];
+}
+
 // dynamic page metadata
 export async function generateMetadata({
   params,
@@ -80,7 +84,10 @@ export async function generateMetadata({
   }
 
   // 3. return common metadata
-  const tc = await getTranslations('common.metadata');
+  const tc = await getTranslations({
+    locale,
+    namespace: 'common.metadata',
+  });
 
   title = tc('title');
   description = tc('description');

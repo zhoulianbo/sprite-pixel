@@ -1,46 +1,89 @@
 {
-  "title": "Settings",
-  "nav": {
-    "items": [
+  "sidebar": {
+    "main_navs": [
       {
-        "title": "Profile",
-        "url": "/settings/profile",
-        "icon": "User"
+        "title": "Workspace",
+        "items": [
+          {
+            "title": "Dashboard",
+            "url": "/dashboard",
+            "icon": "LayoutDashboard"
+          }
+        ]
       },
       {
-        "title": "Billing",
-        "url": "/settings/billing",
-        "icon": "CreditCard"
-      },
-      {
-        "title": "Payments",
-        "url": "/settings/payments",
-        "icon": "DollarSign"
-      },
-      {
-        "title": "Credits",
-        "url": "/settings/credits",
-        "icon": "Coins"
-      },
-      {
-        "title": "API Keys",
-        "url": "/settings/apikeys",
-        "icon": "RiKeyLine"
+        "title": "Account",
+        "items": [
+          {
+            "title": "Settings",
+            "url": "/settings",
+            "icon": "Settings",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "Profile",
+                "url": "/settings/profile"
+              },
+              {
+                "title": "Billing",
+                "url": "/settings/billing"
+              },
+              {
+                "title": "Payments",
+                "url": "/settings/payments"
+              },
+              {
+                "title": "Credits",
+                "url": "/settings/credits"
+              },
+              {
+                "title": "Security",
+                "url": "/settings/security"
+              },
+              {
+                "title": "API Keys",
+                "url": "/settings/apikeys"
+              }
+            ]
+          }
+        ]
       }
-    ]
-  },
-  "top_nav": {
-    "items": [
-      {
-        "title": "Activity",
-        "url": "/activity",
-        "icon": "Activity"
-      },
-      {
-        "title": "Settings",
-        "url": "/settings",
-        "icon": "Settings"
+    ],
+    "bottom_nav": {
+      "items": [
+        {
+          "title": "Pricing",
+          "url": "/pricing",
+          "icon": "CreditCard"
+        },
+        {
+          "title": "Home",
+          "url": "/",
+          "icon": "House"
+        }
+      ]
+    },
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "Profile",
+            "url": "/settings/profile",
+            "icon": "User"
+          }
+        ]
       }
-    ]
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "Home",
+            "url": "/",
+            "icon": "Home"
+          }
+        ]
+      }
+    }
   }
 }

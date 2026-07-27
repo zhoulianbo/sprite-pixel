@@ -5,11 +5,23 @@
  *
  * Usage:
  *   npx tsx scripts/init-rbac.ts
+ *   npx tsx scripts/init-rbac.ts --local
+ *   npx tsx scripts/init-rbac.ts --remote
  *
  * Optional: Assign super_admin role to a user
  *   npx tsx scripts/init-rbac.ts --admin-email=your@email.com
  */
 
+import { execFileSync } from 'node:child_process';
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { and, eq } from 'drizzle-orm';
 
 import { db } from '@/core/db';
@@ -21,7 +33,7 @@ async function loadSchemaTables(): Promise<any> {
     return (await import('@/config/db/schema.mysql')) as any;
   }
 
-  if (['sqlite', 'turso'].includes(envConfigs.database_provider)) {
+  if (['sqlite', 'turso', 'd1'].includes(envConfigs.database_provider)) {
     return (await import('@/config/db/schema.sqlite')) as any;
   }
 
@@ -322,10 +334,195 @@ const defaultRoles = [
   },
 ];
 
+type D1Target = 'local' | 'remote';
+
+function getCliArgument(name: string): string | undefined {
+  const prefix = `--${name}=`;
+  return process.argv
+    .slice(2)
+    .find((arg) => arg.startsWith(prefix))
+    ?.slice(prefix.length);
+}
+
+function hasD1BindingConfig(): boolean {
+  const configFiles = ['wrangler.toml', 'wrangler.jsonc', 'wrangler.json'];
+
+  return configFiles.some((configFile) => {
+    if (!existsSync(configFile)) return false;
+
+    const config = readFileSync(configFile, 'utf8');
+    return (
+      config.includes('[[d1_databases]]') || config.includes('"d1_databases"')
+    );
+  });
+}
+
+function getD1Target(): D1Target | undefined {
+  const args = process.argv.slice(2);
+  const useLocal = args.includes('--local');
+  const useRemote = args.includes('--remote');
+
+  if (useLocal && useRemote) {
+    throw new Error('Use only one of --local or --remote');
+  }
+
+  if (useRemote) return 'remote';
+  if (useLocal) return 'local';
+
+  if (envConfigs.database_provider === 'd1') return 'local';
+
+  // Standalone scripts do not load Next.js .env fallback files. If no database
+  // provider/URL was loaded but this project declares a D1 binding, use the
+  // local D1 database instead of incorrectly falling back to PostgreSQL.
+  if (
+    !process.env.DATABASE_PROVIDER &&
+    !process.env.DATABASE_URL &&
+    hasD1BindingConfig()
+  ) {
+    return 'local';
+  }
+
+  return undefined;
+}
+
+function escapeSqlString(value: string): string {
+  return `'${value.replaceAll("'", "''")}'`;
+}
+
+function buildD1RbacSql(adminEmail?: string): string {
+  const statements: string[] = [];
+
+  for (const permission of defaultPermissions) {
+    statements.push(`
+INSERT OR IGNORE INTO permission (
+  id, code, resource, action, title, description
+) VALUES (
+  ${escapeSqlString(getUuid())},
+  ${escapeSqlString(permission.code)},
+  ${escapeSqlString(permission.resource)},
+  ${escapeSqlString(permission.action)},
+  ${escapeSqlString(permission.title)},
+  ${escapeSqlString(permission.description)}
+);`);
+  }
+
+  for (const roleData of defaultRoles) {
+    statements.push(`
+INSERT OR IGNORE INTO role (
+  id, name, title, description, status, sort
+) VALUES (
+  ${escapeSqlString(getUuid())},
+  ${escapeSqlString(roleData.name)},
+  ${escapeSqlString(roleData.title)},
+  ${escapeSqlString(roleData.description)},
+  ${escapeSqlString(roleData.status)},
+  ${roleData.sort}
+);`);
+
+    statements.push(`
+DELETE FROM role_permission
+WHERE role_id = (SELECT id FROM role WHERE name = ${escapeSqlString(roleData.name)});`);
+
+    const permissionCodes = roleData.permissions.flatMap((permissionCode) => {
+      if (!permissionCode.endsWith('.*')) return [permissionCode];
+
+      const prefix = permissionCode.slice(0, -2);
+      return defaultPermissions
+        .map((permission) => permission.code)
+        .filter((code) => code.startsWith(`${prefix}.`));
+    });
+
+    for (const permissionCode of permissionCodes) {
+      statements.push(`
+INSERT INTO role_permission (id, role_id, permission_id)
+SELECT
+  ${escapeSqlString(getUuid())},
+  role.id,
+  permission.id
+FROM role
+JOIN permission ON permission.code = ${escapeSqlString(permissionCode)}
+WHERE role.name = ${escapeSqlString(roleData.name)};`);
+    }
+  }
+
+  if (adminEmail) {
+    statements.push(`
+INSERT INTO user_role (id, user_id, role_id)
+SELECT
+  ${escapeSqlString(getUuid())},
+  "user".id,
+  role.id
+FROM "user"
+JOIN role ON role.name = 'super_admin'
+WHERE "user".email = ${escapeSqlString(adminEmail)}
+  AND NOT EXISTS (
+    SELECT 1
+    FROM user_role
+    WHERE user_role.user_id = "user".id
+      AND user_role.role_id = role.id
+  );`);
+  }
+
+  return statements.join('\n');
+}
+
+function initializeD1RBAC(target: D1Target) {
+  const database = getCliArgument('database') || 'DB';
+  const adminEmail = getCliArgument('admin-email');
+  const targetFlag = target === 'remote' ? '--remote' : '--local';
+  const tempDirectory = mkdtempSync(join(tmpdir(), 'saas-template-rbac-'));
+  const sqlFile = join(tempDirectory, 'init-rbac.sql');
+
+  console.log(
+    `🗄️  Using ${target} D1 database via Wrangler binding: ${database}\n`
+  );
+
+  try {
+    writeFileSync(sqlFile, buildD1RbacSql(adminEmail), 'utf8');
+    execFileSync(
+      'pnpm',
+      [
+        'exec',
+        'wrangler',
+        'd1',
+        'execute',
+        database,
+        targetFlag,
+        '--file',
+        sqlFile,
+      ],
+      {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+      }
+    );
+  } finally {
+    rmSync(tempDirectory, { recursive: true, force: true });
+  }
+
+  console.log('\n✅ RBAC initialization completed successfully!');
+  console.log('\n📊 Summary:');
+  console.log(`   - Permissions: ${defaultPermissions.length}`);
+  console.log(`   - Roles: ${defaultRoles.length}`);
+
+  if (adminEmail) {
+    console.log(`   - Requested super_admin assignment: ${adminEmail}`);
+  } else {
+    console.log('\nℹ️  To assign super_admin to a user, add:');
+    console.log('   --admin-email=your@email.com');
+  }
+}
+
 async function initializeRBAC() {
   console.log('🚀 Starting RBAC initialization...\n');
 
   try {
+    const d1Target = getD1Target();
+    if (d1Target) {
+      initializeD1RBAC(d1Target);
+      return;
+    }
+
     const { permission, role, rolePermission, user, userRole } =
       (await loadSchemaTables()) as any;
 

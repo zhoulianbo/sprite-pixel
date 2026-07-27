@@ -108,6 +108,32 @@ export const config = table('config', {
   value: text('value'),
 });
 
+export const footerLink = table(
+  'footer_link',
+  {
+    id: varchar191('id').primaryKey(),
+    group: varchar('group', { length: 50 }).notNull(),
+    title: varchar('title', { length: 255 }).notNull(),
+    url: text('url').notNull(),
+    imageUrl: text('image_url'),
+    altText: varchar('alt_text', { length: 300 }),
+    locale: varchar('locale', { length: 20 }).notNull().default('all'),
+    rel: varchar('rel', { length: 100 }).notNull().default(''),
+    status: varchar('status', { length: 50 }).notNull().default('published'),
+    sort: int('sort').notNull().default(0),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [
+    index('idx_footer_link_status_group_sort').on(
+      table.status,
+      table.group,
+      table.sort
+    ),
+    index('idx_footer_link_locale_status').on(table.locale, table.status),
+  ]
+);
+
 export const taxonomy = table(
   'taxonomy',
   {

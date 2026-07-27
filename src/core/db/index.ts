@@ -1,4 +1,5 @@
 import { envConfigs } from '@/config';
+import { isCloudflareWorker } from '@/shared/lib/env';
 
 import { getD1Db } from './d1';
 import { closeMysqlDb, getMysqlDb } from './mysql';
@@ -119,7 +120,10 @@ function withMysqlCompat<T extends object>(dbInstance: T): T {
  * - SQLite doesn't support row-level locking; Drizzle's select builder may not implement `.for()`.
  *   We polyfill `.for(...)` as a no-op to keep call sites portable.
  */
-function withSqliteCompat<T extends object>(dbInstance: T, provider?: string): T {
+function withSqliteCompat<T extends object>(
+  dbInstance: T,
+  provider?: string
+): T {
   if (dbInstance && typeof dbInstance === 'object') {
     const cached = sqliteCompatProxyCache.get(dbInstance);
     if (cached) return cached as T;
@@ -160,7 +164,11 @@ function withSqliteCompat<T extends object>(dbInstance: T, provider?: string): T
         const original = Reflect.get(target, prop, receiver);
         if (typeof original !== 'function') return original;
         return (fn: any, ...rest: any[]) =>
-          original.call(target, (tx: any) => fn(withSqliteCompat(tx, provider)), ...rest);
+          original.call(
+            target,
+            (tx: any) => fn(withSqliteCompat(tx, provider)),
+            ...rest
+          );
       }
 
       const value = Reflect.get(target, prop, receiver);
@@ -191,9 +199,29 @@ function withSqliteCompat<T extends object>(dbInstance: T, provider?: string): T
  *
  * So we intentionally return `any` to keep call sites stable.
  */
-export function db(): any {
+export function isDatabaseConfigured(): boolean {
   if (envConfigs.database_provider === 'd1') {
-    return withSqliteCompat(getD1Db() as any, 'd1');
+    // Workers: D1 binding via getCloudflareContext().
+    // Local `next dev`: fall back to DATABASE_URL (usually the Miniflare D1 sqlite file).
+    return isCloudflareWorker || Boolean(envConfigs.database_url);
+  }
+
+  return Boolean(envConfigs.database_url);
+}
+
+export function db(): any {
+  if (!isDatabaseConfigured()) {
+    throw new Error(
+      'Database is not configured. Set DATABASE_URL, or configure a D1 binding when DATABASE_PROVIDER=d1.'
+    );
+  }
+
+  if (envConfigs.database_provider === 'd1') {
+    if (isCloudflareWorker) {
+      return withSqliteCompat(getD1Db() as any, 'd1');
+    }
+    // Local Next.js: open the same schema via libsql + DATABASE_URL.
+    return withSqliteCompat(getSqliteDb() as any, 'd1');
   }
 
   if (['sqlite', 'turso'].includes(envConfigs.database_provider)) {

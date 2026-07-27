@@ -1,0 +1,78 @@
+{
+  "fields": {
+    "group": "Display type",
+    "title": "Title",
+    "url": "Target URL",
+    "image_url": "Badge image URL",
+    "alt_text": "Badge alt text",
+    "locale": "Locale",
+    "rel": "Link rel",
+    "status": "Status",
+    "sort": "Sort order"
+  },
+  "groups": {
+    "friend": "Text link",
+    "badge": "Badge"
+  },
+  "statuses": {
+    "published": "Published",
+    "draft": "Draft",
+    "archived": "Archived"
+  },
+  "locales": {
+    "all": "All locales",
+    "en": "English",
+    "zh": "Simplified Chinese"
+  },
+  "list": {
+    "title": "Footer links",
+    "description": "Text links and directory badges rendered in the server-side footer HTML.",
+    "empty": "No footer links",
+    "copied": "Copied",
+    "crumbs": {
+      "admin": "Admin",
+      "links": "Footer links"
+    },
+    "buttons": {
+      "add": "Add footer link",
+      "edit": "Edit"
+    }
+  },
+  "add": {
+    "title": "Add footer link",
+    "success": "Footer link added",
+    "importer": {
+      "title": "Paste footer-link HTML to autofill",
+      "placeholder": "Paste <a> or <a><img></a> markup",
+      "tip": "Automatically reads the title, target URL, badge image, alt text, and rel attributes without executing the pasted code.",
+      "success": "Footer-link details recognized and filled.",
+      "error": "No valid HTTP(S) footer-link markup was found. Check the link and image URLs."
+    },
+    "crumbs": {
+      "admin": "Admin",
+      "links": "Footer links",
+      "add": "Add"
+    },
+    "buttons": {
+      "submit": "Add footer link"
+    }
+  },
+  "edit": {
+    "title": "Edit footer link",
+    "success": "Footer link updated",
+    "not_found": "Footer link not found",
+    "crumbs": {
+      "admin": "Admin",
+      "links": "Footer links",
+      "edit": "Edit"
+    },
+    "buttons": {
+      "submit": "Save changes"
+    }
+  },
+  "tips": {
+    "image_url": "Required for badge links. Use a public HTTPS image URL.",
+    "rel": "Leave empty for a follow link. Allowed values: nofollow, sponsored, ugc, noreferrer.",
+    "sort": "Lower values appear first."
+  }
+}

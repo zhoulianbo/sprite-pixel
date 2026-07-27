@@ -1,4 +1,4 @@
-import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 
 import { PERMISSIONS, requireAllPermissions } from '@/core/rbac';
 import { Header, Main, MainHeader } from '@/shared/blocks/dashboard';
@@ -33,11 +33,9 @@ export default async function SettingsPage({
   const settingGroups = await getSettingGroups();
   const settings = await getSettings();
 
-  const t = await getTranslations('admin.settings');
-
   const crumbs: Crumb[] = [
-    { title: t('edit.crumbs.admin'), url: '/admin' },
-    { title: t('edit.crumbs.settings'), is_active: true },
+    { title: '管理后台', url: '/admin' },
+    { title: '设置', is_active: true },
   ];
 
   const tabs = await getSettingTabs(tab ?? 'auth');
@@ -65,7 +63,7 @@ export default async function SettingsPage({
 
     return {
       status: 'success',
-      message: 'Settings updated',
+      message: '设置已更新',
     };
   };
 
@@ -99,7 +97,7 @@ export default async function SettingsPage({
       data: configs,
       submit: {
         button: {
-          title: t('edit.buttons.submit'),
+          title: '保存',
         },
         handler: handleSubmit as any,
       },
@@ -110,7 +108,7 @@ export default async function SettingsPage({
     <>
       <Header crumbs={crumbs} />
       <Main>
-        <MainHeader title={t('edit.title')} tabs={tabs} />
+        <MainHeader title="设置" tabs={tabs} />
         {forms.map((form) => (
           <FormCard
             key={form.title}

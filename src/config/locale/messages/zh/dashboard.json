@@ -1,0 +1,36 @@
+{
+  "title": "仪表盘",
+  "description": "快速查看你的账户活动与使用情况。",
+  "summaries": {
+    "label": "账户概览",
+    "credits": {
+      "title": "可用积分",
+      "description": "当前可使用的积分"
+    },
+    "api_keys": {
+      "title": "有效 API 密钥",
+      "description": "当前已启用的密钥"
+    },
+    "payments": {
+      "title": "成功支付",
+      "description": "所有已完成的购买"
+    },
+    "subscriptions": {
+      "title": "订阅记录",
+      "description": "账户下的全部订阅"
+    }
+  },
+  "recent": {
+    "title": "最近支付",
+    "description": "查看最近完成的交易记录。",
+    "empty": "暂无成功支付记录。",
+    "columns": {
+      "order_no": "订单号",
+      "product": "产品",
+      "status": "状态",
+      "type": "类型",
+      "amount": "金额",
+      "created_at": "创建时间"
+    }
+  }
+}

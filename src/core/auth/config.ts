@@ -2,10 +2,9 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { oneTap } from 'better-auth/plugins';
 import { getLocale } from 'next-intl/server';
 
-import { db } from '@/core/db';
+import { db, isDatabaseConfigured } from '@/core/db';
 import { envConfigs } from '@/config';
 import * as schema from '@/config/db/schema';
-import { isCloudflareWorker } from '@/shared/lib/env';
 import { VerifyEmail } from '@/shared/blocks/email/verify-email';
 import {
   getCookieFromCtx,
@@ -76,16 +75,30 @@ export async function getAuthOptions(configs: Record<string, string>) {
   const emailVerificationEnabled =
     configs.email_verification_enabled === 'true' && !!configs.resend_api_key;
 
+  const database = isDatabaseConfigured()
+    ? drizzleAdapter(db(), {
+        provider: getDatabaseProvider(envConfigs.database_provider),
+        schema: schema,
+      })
+    : null;
+
   return {
     ...authOptions,
     // Add database connection only when actually needed (runtime)
     // D1 is only available inside Cloudflare Workers runtime (not during build)
-    database: (envConfigs.database_url || (envConfigs.database_provider === 'd1' && isCloudflareWorker))
-      ? drizzleAdapter(db(), {
-          provider: getDatabaseProvider(envConfigs.database_provider),
-          schema: schema,
-        })
-      : null,
+    database,
+    // With a durable DB, keep sessions server-side. Leaving cookieCache on
+    // (better-auth's DB-less default) can leave stale session_data cookies that
+    // later fail to decode and return FAILED_TO_GET_SESSION 500.
+    ...(database
+      ? {
+          session: {
+            cookieCache: {
+              enabled: false,
+            },
+          },
+        }
+      : {}),
     databaseHooks: {
       user: {
         create: {

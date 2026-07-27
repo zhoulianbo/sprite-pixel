@@ -1,8 +1,9 @@
 import { getTranslations } from 'next-intl/server';
 
+import { redirect } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
-import { redirect } from '@/core/i18n/navigation';
+import { websiteConfig } from '@/config/website';
 import { SignUp } from '@/shared/blocks/sign/sign-up';
 import { getPublicConfigs } from '@/shared/models/config';
 import { getSignUser } from '@/shared/models/user';
@@ -17,7 +18,8 @@ function stripLocalePrefix(path: string, locale: string) {
   if (!path?.startsWith('/')) return '/';
   if (locale === defaultLocale) return path;
   if (path === `/${locale}`) return '/';
-  if (path.startsWith(`/${locale}/`)) return path.slice(locale.length + 1) || '/';
+  if (path.startsWith(`/${locale}/`))
+    return path.slice(locale.length + 1) || '/';
   return path;
 }
 
@@ -50,6 +52,10 @@ export default async function SignUpPage({
 }) {
   const { callbackUrl } = await searchParams;
   const { locale } = await params;
+
+  if (!websiteConfig.auth.enabled) {
+    redirect({ href: '/', locale });
+  }
 
   // If user is already signed in, don't show sign-up form again.
   const sessionUser = await getSignUser();

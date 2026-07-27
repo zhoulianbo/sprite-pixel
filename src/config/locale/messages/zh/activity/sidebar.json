@@ -3,11 +3,6 @@
   "nav": {
     "items": [
       {
-        "title": "AI 任务",
-        "url": "/activity/ai-tasks",
-        "icon": "RiTaskLine"
-      },
-      {
         "title": "AI 对话",
         "url": "/activity/chats",
         "icon": "RiChat2Line"

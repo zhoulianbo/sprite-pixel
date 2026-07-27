@@ -95,11 +95,13 @@ export function Pricing({
     setIsShowPaymentModal,
     configs,
   } = useAppContext();
+  const currentSubscriptionProductId =
+    currentSubscription?.productId || user?.currentSubscriptionProductId;
 
   const [group, setGroup] = useState(() => {
     // find current pricing item
     const currentItem = section.items?.find(
-      (i) => i.product_id === currentSubscription?.productId
+      (i) => i.product_id === currentSubscriptionProductId
     );
 
     // First look for a group with is_featured set to true
@@ -109,6 +111,19 @@ export function Pricing({
       currentItem?.group || featuredGroup?.name || section.groups?.[0]?.name
     );
   });
+
+  useEffect(() => {
+    if (!currentSubscriptionProductId) {
+      return;
+    }
+
+    const currentItem = section.items?.find(
+      (item) => item.product_id === currentSubscriptionProductId
+    );
+    if (currentItem?.group) {
+      setGroup(currentItem.group);
+    }
+  }, [currentSubscriptionProductId, section.items]);
 
   // current pricing item
   const [pricingItem, setPricingItem] = useState<PricingItem | null>(null);
@@ -373,10 +388,7 @@ export function Pricing({
             }
 
             let isCurrentPlan = false;
-            if (
-              currentSubscription &&
-              currentSubscription.productId === item.product_id
-            ) {
+            if (currentSubscriptionProductId === item.product_id) {
               isCurrentPlan = true;
             }
 

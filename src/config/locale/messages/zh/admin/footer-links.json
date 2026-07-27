@@ -1,0 +1,78 @@
+{
+  "fields": {
+    "group": "展示类型",
+    "title": "名称",
+    "url": "目标网址",
+    "image_url": "Badge 图片网址",
+    "alt_text": "Badge 替代文本",
+    "locale": "适用语言",
+    "rel": "链接 rel",
+    "status": "状态",
+    "sort": "排序"
+  },
+  "groups": {
+    "friend": "文字友链",
+    "badge": "Badge"
+  },
+  "statuses": {
+    "published": "已发布",
+    "draft": "草稿",
+    "archived": "已归档"
+  },
+  "locales": {
+    "all": "全部语言",
+    "en": "英语",
+    "zh": "简体中文"
+  },
+  "list": {
+    "title": "页脚友链",
+    "description": "以服务端 HTML 形式展示在页脚中的文字友链和目录 Badge。",
+    "empty": "暂无页脚友链",
+    "copied": "已复制",
+    "crumbs": {
+      "admin": "后台",
+      "links": "页脚友链"
+    },
+    "buttons": {
+      "add": "添加友链",
+      "edit": "编辑"
+    }
+  },
+  "add": {
+    "title": "添加页脚友链",
+    "success": "页脚友链已添加",
+    "importer": {
+      "title": "粘贴友链 HTML 自动填充",
+      "placeholder": "粘贴 <a> 或 <a><img></a> 代码",
+      "tip": "自动识别名称、目标网址、Badge 图片、替代文本和 rel，不会执行粘贴的代码。",
+      "success": "已识别并填充友链信息。",
+      "error": "未识别到有效的 HTTP(S) 友链代码，请检查链接和图片网址。"
+    },
+    "crumbs": {
+      "admin": "后台",
+      "links": "页脚友链",
+      "add": "添加"
+    },
+    "buttons": {
+      "submit": "添加友链"
+    }
+  },
+  "edit": {
+    "title": "编辑页脚友链",
+    "success": "页脚友链已更新",
+    "not_found": "未找到该页脚友链",
+    "crumbs": {
+      "admin": "后台",
+      "links": "页脚友链",
+      "edit": "编辑"
+    },
+    "buttons": {
+      "submit": "保存修改"
+    }
+  },
+  "tips": {
+    "image_url": "Badge 类型必填，请使用可公开访问的 HTTPS 图片网址。",
+    "rel": "留空表示 follow 链接；可填写 nofollow、sponsored、ugc、noreferrer。",
+    "sort": "数值越小越靠前。"
+  }
+}

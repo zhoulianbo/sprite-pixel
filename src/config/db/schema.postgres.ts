@@ -122,6 +122,35 @@ export const config = table('config', {
   value: text('value'),
 });
 
+export const footerLink = table(
+  'footer_link',
+  {
+    id: text('id').primaryKey(),
+    group: text('group').notNull(),
+    title: text('title').notNull(),
+    url: text('url').notNull(),
+    imageUrl: text('image_url'),
+    altText: text('alt_text'),
+    locale: text('locale').notNull().default('all'),
+    rel: text('rel').notNull().default(''),
+    status: text('status').notNull().default('published'),
+    sort: integer('sort').notNull().default(0),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index('idx_footer_link_status_group_sort').on(
+      table.status,
+      table.group,
+      table.sort
+    ),
+    index('idx_footer_link_locale_status').on(table.locale, table.status),
+  ]
+);
+
 export const taxonomy = table(
   'taxonomy',
   {

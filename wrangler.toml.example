@@ -1,11 +1,37 @@
 name = "your-app-name"
 main = ".open-next/worker.js"
-compatibility_date = "2025-03-01"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2026-07-23"
+compatibility_flags = [
+  "nodejs_compat",
+  "global_fetch_strictly_public"
+]
 
 [assets]
 binding = "ASSETS"
 directory = ".open-next/assets"
+
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "your-app-inc-cache"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "your-app-name"
+
+[[durable_objects.bindings]]
+name = "NEXT_CACHE_DO_QUEUE"
+class_name = "DOQueueHandler"
+
+[[durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DOQueueHandler", "DOShardedTagCache"]
+
+[cache]
+enabled = true
 
 [[d1_databases]]
 binding = "DB"

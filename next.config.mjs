@@ -18,6 +18,7 @@ const nextConfig = {
   output: process.env.VERCEL ? undefined : 'standalone',
   reactStrictMode: false,
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  transpilePackages: ['shiki'],
   // OpenNext Cloudflare will copy full packages listed here into the workerd bundle
   // when they expose a "workerd" export condition. `@libsql/client` does, and without
   // this the OpenNext bundler can fail to resolve it.
@@ -38,6 +39,15 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
       {
         source: '/imgs/:path*',
         headers: [
@@ -61,10 +71,21 @@ const nextConfig = {
   },
   turbopack: {
     resolveAlias: {
+      shiki: 'shiki/bundle/web',
+      'shiki/bundle/full': 'shiki/bundle/web',
       // fs: {
       //   browser: './empty.ts', // We recommend to fix code imports before using this method
       // },
     },
+  },
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      shiki$: 'shiki/bundle/web',
+      'shiki/bundle/full$': 'shiki/bundle/web',
+    };
+
+    return config;
   },
   experimental: {
     turbopackFileSystemCacheForDev: true,

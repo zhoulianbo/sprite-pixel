@@ -1,0 +1,36 @@
+{
+  "title": "Dashboard",
+  "description": "A quick view of your account activity and usage.",
+  "summaries": {
+    "label": "Account summary",
+    "credits": {
+      "title": "Available credits",
+      "description": "Credits ready to use"
+    },
+    "api_keys": {
+      "title": "Active API keys",
+      "description": "Keys currently enabled"
+    },
+    "payments": {
+      "title": "Successful payments",
+      "description": "All completed purchases"
+    },
+    "subscriptions": {
+      "title": "Subscriptions",
+      "description": "All subscription records"
+    }
+  },
+  "recent": {
+    "title": "Recent payments",
+    "description": "Your latest successful transactions.",
+    "empty": "No successful payments yet.",
+    "columns": {
+      "order_no": "Order",
+      "product": "Product",
+      "status": "Status",
+      "type": "Type",
+      "amount": "Amount",
+      "created_at": "Created"
+    }
+  }
+}

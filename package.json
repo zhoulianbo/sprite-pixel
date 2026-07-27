@@ -1,22 +1,13 @@
 {
-  "name": "shipany-template-two",
-  "version": "1.8.3",
+  "name": "saas-template",
+  "version": "1.0.0",
   "private": true,
-  "author": "ShipAny.ai",
-  "homepage": "https://shipany.ai",
+  "author": "DoubleZ",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shipanyai/shipany-template-two"
+    "url": "https://github.com/zhoulianbo/saas-template"
   },
-  "keywords": [
-    "shipany",
-    "shipany-two",
-    "shipany-template-two",
-    "ai-saas-boilerplate",
-    "ai-saas-template",
-    "ai-saas-framework",
-    "ai-saas-development"
-  ],
+  "keywords": [],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -31,6 +22,7 @@
     "db:studio": "tsx scripts/with-env.ts npx drizzle-kit studio --config=src/core/db/config.ts",
     "auth:generate": "tsx scripts/with-env.ts npx @better-auth/cli generate --config=src/core/auth/index.ts",
     "rbac:init": "tsx scripts/with-env.ts npx tsx scripts/init-rbac.ts",
+    "rbac:init:remote": "tsx scripts/with-env.ts npx tsx scripts/init-rbac.ts --remote",
     "rbac:assign": "tsx scripts/with-env.ts npx tsx scripts/assign-role.ts",
     "postinstall": "fumadocs-mdx",
     "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
@@ -164,12 +156,6 @@
     "tsx": "^4.20.3",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5",
-    "wrangler": "^4.34.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.1"
-    }
+    "wrangler": "^4.107.1"
   }
 }

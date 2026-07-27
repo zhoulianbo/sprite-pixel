@@ -1,16 +1,5 @@
 {
   "sidebar": {
-    "header": {
-      "brand": {
-        "title": "ShipAny Chat",
-        "logo": {
-          "src": "/logo.png",
-          "alt": "ShipAny Chat"
-        },
-        "url": "/chat"
-      },
-      "show_trigger": false
-    },
     "buttons": [
       {
         "title": "New Chat",
@@ -43,11 +32,7 @@
             "target": "_blank"
           }
         ]
-      },
-      "show_email": false,
-      "show_signout": true,
-      "signout_callback": "/chat",
-      "signin_callback": "/chat"
+      }
     },
     "footer": {
       "nav": {
@@ -57,37 +42,10 @@
             "url": "/",
             "icon": "Home",
             "target": "_blank"
-          },
-          {
-            "title": "GitHub",
-            "url": "https://github.com/your-app-name",
-            "icon": "Github",
-            "target": "_blank"
-          },
-          {
-            "title": "Twitter",
-            "url": "https://twitter.com/your-app-name",
-            "icon": "RiTwitterXFill",
-            "target": "_blank"
-          },
-          {
-            "title": "Discord",
-            "url": "https://discord.gg/your-app-name",
-            "icon": "RiDiscordFill",
-            "target": "_blank"
-          },
-          {
-            "title": "Email",
-            "url": "mailto:support@your-domain.com",
-            "icon": "Mail",
-            "target": "_blank"
           }
         ]
-      },
-      "show_theme": true,
-      "show_locale": false
-    },
-    "variant": "sidebar"
+      }
+    }
   },
   "library": {
     "title": "Library",

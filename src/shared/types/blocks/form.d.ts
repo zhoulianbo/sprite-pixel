@@ -57,6 +57,26 @@ export interface FormSubmit {
   >;
 }
 
+export interface FormLinkHtmlImporter {
+  title: string;
+  placeholder?: string;
+  tip?: string;
+  successMessage?: string;
+  errorMessage?: string;
+  fieldNames?: {
+    group?: string;
+    title?: string;
+    url?: string;
+    imageUrl?: string;
+    altText?: string;
+    rel?: string;
+  };
+  groupValues?: {
+    badge?: string;
+    text?: string;
+  };
+}
+
 export interface Form {
   title?: string;
   description?: string;
@@ -64,4 +84,5 @@ export interface Form {
   data?: any;
   passby?: any;
   submit?: FormSubmit;
+  linkHtmlImporter?: FormLinkHtmlImporter;
 }

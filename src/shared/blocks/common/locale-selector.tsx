@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, Globe, Languages } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
 
 import { usePathname, useRouter } from '@/core/i18n/navigation';
-import { localeNames } from '@/config/locale';
+import { localeFlags, localeNames } from '@/config/locale';
 import { Button } from '@/shared/components/ui/button';
 import {
   DropdownMenu,
@@ -16,6 +15,17 @@ import {
 } from '@/shared/components/ui/dropdown-menu';
 import { cacheSet } from '@/shared/lib/cache';
 
+function LocaleLabel({ locale }: { locale: string }) {
+  return (
+    <span className="flex min-w-0 items-center gap-2">
+      <span aria-hidden className="shrink-0 text-base leading-none">
+        {localeFlags[locale] || '🌐'}
+      </span>
+      <span className="truncate">{localeNames[locale] || locale}</span>
+    </span>
+  );
+}
+
 export function LocaleSelector({
   type = 'icon',
 }: {
@@ -24,7 +34,6 @@ export function LocaleSelector({
   const currentLocale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -35,8 +44,8 @@ export function LocaleSelector({
     if (value !== currentLocale) {
       // Update localStorage to sync with locale detector
       cacheSet('locale', value);
-      const query = searchParams?.toString?.() ?? '';
-      const href = query ? `${pathname}?${query}` : pathname;
+      const query = typeof window !== 'undefined' ? window.location.search : '';
+      const href = query ? `${pathname}${query}` : pathname;
       router.push(href, {
         locale: value,
       });
@@ -48,20 +57,15 @@ export function LocaleSelector({
     return (
       <Button
         variant={type === 'icon' ? 'ghost' : 'outline'}
-        size={type === 'icon' ? 'icon' : 'sm'}
+        size="sm"
         className={
-          type === 'icon' ? 'h-auto w-auto p-0' : 'hover:bg-primary/10'
+          type === 'icon'
+            ? 'h-8 gap-2 px-2.5'
+            : 'hover:bg-primary/10 h-8 gap-2 px-2.5'
         }
         disabled
       >
-        {type === 'icon' ? (
-          <Languages size={18} />
-        ) : (
-          <>
-            <Globe size={16} />
-            {localeNames[currentLocale]}
-          </>
-        )}
+        <LocaleLabel locale={currentLocale} />
       </Button>
     );
   }
@@ -69,26 +73,29 @@ export function LocaleSelector({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {type === 'icon' ? (
-          <Button variant="ghost" size="icon" className="h-auto w-auto p-0">
-            <Languages size={18} />
-          </Button>
-        ) : (
-          <Button variant="outline" size="sm" className="hover:bg-primary/10">
-            <Globe size={16} />
-            {localeNames[currentLocale]}
-          </Button>
-        )}
+        <Button
+          variant={type === 'icon' ? 'ghost' : 'outline'}
+          size="sm"
+          className={
+            type === 'icon'
+              ? 'h-8 gap-2 px-2.5'
+              : 'hover:bg-primary/10 h-8 gap-2 px-2.5'
+          }
+          aria-label={`Change language. Current language: ${localeNames[currentLocale] || currentLocale}`}
+        >
+          <LocaleLabel locale={currentLocale} />
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="min-w-40">
         {Object.keys(localeNames).map((locale) => (
           <DropdownMenuItem
             key={locale}
+            className="justify-between gap-4"
             onClick={() => handleSwitchLanguage(locale)}
           >
-            <span>{localeNames[locale]}</span>
+            <LocaleLabel locale={locale} />
             {locale === currentLocale && (
-              <Check size={16} className="text-primary" />
+              <Check size={16} className="text-primary shrink-0" />
             )}
           </DropdownMenuItem>
         ))}

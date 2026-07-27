@@ -22,6 +22,7 @@ import {
 import { DynamicPage } from '@/shared/types/blocks/landing';
 
 export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -29,7 +30,10 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const t = await getTranslations('pages.blog.metadata');
+  const t = await getTranslations({
+    locale,
+    namespace: 'pages.blog.metadata',
+  });
 
   return {
     title: `${slug} | ${t('title')}`,

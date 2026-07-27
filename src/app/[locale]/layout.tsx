@@ -3,13 +3,14 @@ import '@/config/style/global.css';
 import { JetBrains_Mono, Merriweather, Noto_Sans_Mono } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import NextTopLoader from 'nextjs-toploader';
 
-import { envConfigs } from '@/config';
-import { locales } from '@/config/locale';
+import { pickClientMessages } from '@/core/i18n/client-messages';
 import { routing } from '@/core/i18n/config';
 import { ThemeProvider } from '@/core/theme/provider';
+import { envConfigs } from '@/config';
+import { locales } from '@/config/locale';
 import { UtmCapture } from '@/shared/blocks/common/utm-capture';
 import { Toaster } from '@/shared/components/ui/sonner';
 import { AppContextProvider } from '@/shared/contexts/app';
@@ -57,6 +58,9 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
+  const clientMessages = pickClientMessages(
+    (await getMessages()) as Record<string, unknown>
+  );
 
   const isProduction = process.env.NODE_ENV === 'production';
   const isDebug = process.env.NEXT_PUBLIC_DEBUG === 'true';
@@ -155,7 +159,7 @@ export default async function LocaleLayout({
 
         <UtmCapture />
 
-        <NextIntlClientProvider>
+        <NextIntlClientProvider messages={clientMessages}>
           <ThemeProvider>
             <AppContextProvider>
               {children}

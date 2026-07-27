@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { RiGithubFill, RiGoogleFill } from 'react-icons/ri';
+import { FcGoogle } from 'react-icons/fc';
+import { RiGithubFill } from 'react-icons/ri';
 import { toast } from 'sonner';
 
 import { signIn } from '@/core/auth/client';
 import { defaultLocale } from '@/config/locale';
 import { Button } from '@/shared/components/ui/button';
 import { useAppContext } from '@/shared/contexts/app';
-import { cn } from '@/shared/lib/utils';
 import { Button as ButtonType } from '@/shared/types/blocks/common';
 
 export function SocialProviders({
@@ -128,7 +128,11 @@ export function SocialProviders({
     providers.push({
       name: 'google',
       title: t('google_sign_in_title'),
-      icon: <RiGoogleFill />,
+      icon: (
+        <span className="flex size-5 items-center justify-center rounded-full bg-white shadow-sm">
+          <FcGoogle className="size-3.5" />
+        </span>
+      ),
       onClick: () => handleSignIn({ provider: 'google' }),
     });
   }
@@ -137,31 +141,34 @@ export function SocialProviders({
     providers.push({
       name: 'github',
       title: t('github_sign_in_title'),
-      icon: <RiGithubFill />,
+      icon: <RiGithubFill className="size-4" />,
       onClick: () => handleSignIn({ provider: 'github' }),
     });
   }
 
+  if (providers.length === 0) {
+    return null;
+  }
+
   return (
-    <div
-      className={cn(
-        'flex w-full items-center gap-2',
-        'flex-col justify-between'
-      )}
-    >
-      {providers.map((provider) => (
-        <Button
-          key={provider.name}
-          type="button"
-          variant="outline"
-          className={cn('w-full gap-2')}
-          disabled={loading}
-          onClick={provider.onClick}
-        >
-          {provider.icon}
-          <h3>{provider.title}</h3>
-        </Button>
-      ))}
+    <div className="flex w-full flex-col gap-2.5">
+      {providers.map((provider) => {
+        const isGoogle = provider.name === 'google';
+
+        return (
+          <Button
+            key={provider.name}
+            type="button"
+            variant={isGoogle ? 'default' : 'outline'}
+            className="h-11 w-full gap-2.5 rounded-xl text-sm font-medium"
+            disabled={loading}
+            onClick={provider.onClick}
+          >
+            {provider.icon}
+            <span>{provider.title}</span>
+          </Button>
+        );
+      })}
     </div>
   );
 }
