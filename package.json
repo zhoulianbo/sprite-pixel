@@ -10,8 +10,8 @@
   "keywords": [],
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "build:fast": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "NODE_ENV=production next build",
+    "build:fast": "NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",

@@ -8,7 +8,7 @@ import { signIn } from '@/core/auth/client';
 
 function AuthPopupContent() {
   const searchParams = useSearchParams();
-  const provider = searchParams.get('provider') || '';
+  const provider = searchParams?.get('provider') || '';
   const triggered = useRef(false);
 
   useEffect(() => {

@@ -108,6 +108,8 @@ const nextConfig = {
 
 export default withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
 
-if (process.env.NODE_ENV !== 'production') {
+// Only bind local Cloudflare APIs during `next dev`. `next build` must not start wrangler,
+// including when the parent shell still has NODE_ENV=development.
+if (process.argv.includes('dev')) {
   initOpenNextCloudflareForDev();
 }

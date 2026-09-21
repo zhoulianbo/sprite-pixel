@@ -66,8 +66,8 @@ export function ProjectConsoleShell({
     () => ({ projectName, setDetailTitle: setTitle }),
     [projectName, setTitle]
   );
-  const section = sectionKeys.find((key) => key === segments[0]);
-  const hasDetail = Boolean(segments[1]);
+  const section = sectionKeys.find((key) => key === segments?.[0]);
+  const hasDetail = Boolean(segments?.[1]);
   const hideProjectNav = section === 'characters' && hasDetail;
 
   const crumbs = useMemo(() => {
