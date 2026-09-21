@@ -1,0 +1,76 @@
+name = "sprite-pixel"
+main = ".open-next/worker.js"
+compatibility_date = "2026-07-23"
+compatibility_flags = [
+  "nodejs_compat",
+  "global_fetch_strictly_public"
+]
+
+[assets]
+binding = "ASSETS"
+directory = ".open-next/assets"
+
+[cache]
+enabled = true
+
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "sprite-pixel"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "sprite-pixel"
+
+[[durable_objects.bindings]]
+name = "NEXT_CACHE_DO_QUEUE"
+class_name = "DOQueueHandler"
+
+[[durable_objects.bindings]]
+name = "NEXT_TAG_CACHE_DO_SHARDED"
+class_name = "DOShardedTagCache"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DOQueueHandler", "DOShardedTagCache"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sprite-pixel"
+database_id = "e6ff4f9d-8a06-47a2-a910-9b7fb1c3d800"
+migrations_dir = "src/config/db/migrations_d1"
+
+[[kv_namespaces]]
+binding = "CONFIG_CACHE"
+id = "753e3e8820ec40cfa9b9347e368eaca0"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+persist = true
+invocation_logs = true
+
+[observability.traces]
+enabled = false
+persist = true
+head_sampling_rate = 1
+
+[vars]
+# app
+NEXT_PUBLIC_APP_URL = "https://spritepixel.com"
+NEXT_PUBLIC_APP_NAME = "SpritePixel"
+NEXT_PUBLIC_APP_LOGO = "/logo.png"
+NEXT_PUBLIC_APP_FAVICON = "/favicon.ico"
+NEXT_PUBLIC_APP_PREVIEW_IMAGE = "/preview.png"
+NEXT_PUBLIC_THEME = "default"
+NEXT_PUBLIC_APPEARANCE = "dark"
+NEXT_PUBLIC_DEFAULT_LOCALE = "en"
+NEXT_PUBLIC_LOCALE_DETECT_ENABLED = "true"
+NEXT_PUBLIC_R2_DOMAIN = "https://assets.spritepixel.com"
+
+# database
+DATABASE_PROVIDER = "d1"
+DB_SINGLETON_ENABLED = "true"

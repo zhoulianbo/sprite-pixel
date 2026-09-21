@@ -26,6 +26,8 @@
 
 # SEO skill cache
 .seo-cache/
+.pnpm-store/
+.vscode/
 
 # debug
 npm-debug.log*
@@ -53,7 +55,6 @@ data*
 *.db
 
 .open-next
-wrangler.toml
 .wrangler
 src/shared/types/cloudflare.d.ts
 
