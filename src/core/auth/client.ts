@@ -1,7 +1,6 @@
 import { oneTapClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
-import { envConfigs } from '@/config';
 import { websiteConfig } from '@/config/website';
 
 type ThrottleState = {
@@ -128,8 +127,10 @@ const sharedGetSessionFetch = createGetSessionThrottledFetch({
 });
 
 // create default auth client, without plugins
+// Auth routes are served by this Next.js app. Let Better Auth use the current
+// origin so local fallback ports and deployed preview URLs cannot drift from
+// NEXT_PUBLIC_APP_URL.
 export const authClient = createAuthClient({
-  baseURL: envConfigs.auth_url,
   fetchOptions: {
     // Avoid amplifying request storms (e.g. during env/db switching in dev).
     // IMPORTANT: auth mutations (sign-in/sign-up) must be non-retriable,
@@ -145,7 +146,6 @@ export const { useSession, signIn, signUp, signOut } = authClient;
 // get auth client with plugins
 export function getAuthClient(configs: Record<string, string>) {
   const authClient = createAuthClient({
-    baseURL: envConfigs.auth_url,
     plugins: getAuthPlugins(configs),
     fetchOptions: {
       // Avoid amplifying request storms (e.g. during env/db switching in dev).

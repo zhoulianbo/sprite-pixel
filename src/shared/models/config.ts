@@ -4,6 +4,11 @@ import { db, isDatabaseConfigured } from '@/core/db';
 import { envConfigs } from '@/config';
 import { config } from '@/config/db/schema';
 import {
+  isConfigKvEnabled,
+  readDbConfigsFromKv,
+  writeDbConfigsToKv,
+} from '@/shared/lib/config-kv';
+import {
   getAllSettingNames,
   publicSettingNames,
 } from '@/shared/services/settings';
@@ -15,6 +20,49 @@ export type UpdateConfig = Partial<Omit<NewConfig, 'name'>>;
 export type Configs = Record<string, string>;
 
 export const CACHE_TAG_CONFIGS = 'configs';
+
+async function loadDbConfigsFromDatabase(): Promise<Configs> {
+  const configs: Configs = {};
+
+  if (!isDatabaseConfigured()) {
+    return configs;
+  }
+
+  const result = await db().select().from(config);
+  if (!result) {
+    return configs;
+  }
+
+  for (const row of result) {
+    configs[row.name] = row.value ?? '';
+  }
+
+  return configs;
+}
+
+async function syncConfigKvAfterWrite(): Promise<void> {
+  if (!isConfigKvEnabled()) {
+    return;
+  }
+
+  const latest = await loadDbConfigsFromDatabase();
+  await writeDbConfigsToKv(latest);
+}
+
+async function loadDbConfigsForCache(): Promise<Configs> {
+  if (isConfigKvEnabled()) {
+    const cached = await readDbConfigsFromKv();
+    if (cached) {
+      return cached;
+    }
+
+    const configs = await loadDbConfigsFromDatabase();
+    await writeDbConfigsToKv(configs);
+    return configs;
+  }
+
+  return loadDbConfigsFromDatabase();
+}
 
 export async function saveConfigs(configs: Record<string, string>) {
   const database = db();
@@ -36,6 +84,7 @@ export async function saveConfigs(configs: Record<string, string>) {
     const batchResults =
       queries.length > 0 ? await database.batch(queries) : [];
     revalidateTag(CACHE_TAG_CONFIGS);
+    await syncConfigKvAfterWrite();
     return batchResults.flat();
   }
 
@@ -60,6 +109,7 @@ export async function saveConfigs(configs: Record<string, string>) {
   });
 
   revalidateTag(CACHE_TAG_CONFIGS);
+  await syncConfigKvAfterWrite();
 
   return result;
 }
@@ -67,29 +117,13 @@ export async function saveConfigs(configs: Record<string, string>) {
 export async function addConfig(newConfig: NewConfig) {
   const [result] = await db().insert(config).values(newConfig).returning();
   revalidateTag(CACHE_TAG_CONFIGS);
+  await syncConfigKvAfterWrite();
 
   return result;
 }
 
 export const getConfigs = unstable_cache(
-  async (): Promise<Configs> => {
-    const configs: Record<string, string> = {};
-
-    if (!isDatabaseConfigured()) {
-      return configs;
-    }
-
-    const result = await db().select().from(config);
-    if (!result) {
-      return configs;
-    }
-
-    for (const config of result) {
-      configs[config.name] = config.value ?? '';
-    }
-
-    return configs;
-  },
+  loadDbConfigsForCache,
   ['configs'],
   {
     revalidate: 3600,

@@ -1,0 +1,36 @@
+{
+  "title": "내 프로젝트",
+  "description": "계정 활동과 사용 현황을 빠르게 확인하세요.",
+  "summaries": {
+    "label": "계정 요약",
+    "credits": {
+      "title": "사용 가능한 크레딧",
+      "description": "바로 사용할 수 있는 크레딧"
+    },
+    "api_keys": {
+      "title": "활성 API 키",
+      "description": "현재 사용 중인 키"
+    },
+    "payments": {
+      "title": "완료된 결제",
+      "description": "모든 구매 내역"
+    },
+    "subscriptions": {
+      "title": "구독",
+      "description": "모든 구독 기록"
+    }
+  },
+  "recent": {
+    "title": "최근 결제",
+    "description": "최근 완료된 거래입니다.",
+    "empty": "완료된 결제가 아직 없습니다.",
+    "columns": {
+      "order_no": "주문 번호",
+      "product": "상품",
+      "status": "상태",
+      "type": "유형",
+      "amount": "금액",
+      "created_at": "생성일"
+    }
+  }
+}

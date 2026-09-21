@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny Template Two",
-    "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components.",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "AI Sprite Generator for 2D Game Assets | SpritePixel",
+    "description": "Create game-ready character sprites, sprite sheets and matching 2D assets with our AI Sprite Generator. Keep every asset consistent across one game project.",
+    "keywords": "AI Sprite Generator, game sprite generator, character sprite generator, sprite sheet generator, AI game assets, game icon generator, SpritePixel"
   },
   "sign": {
     "sign_in_title": "Sign In",
@@ -51,6 +51,30 @@
   },
   "locale_detector": {
     "title": "We detected your browser language is {locale}. Switch to it?",
-    "switch_to": "Switch to {locale}"
+    "switch_to": "Switch to {locale}",
+    "selector_label": "Change language. Current language: {locale}",
+    "close": "Close"
+  },
+  "moreTools": {
+    "title": "More tools",
+    "description": "Keep working in the browser with matching SpritePixel tools. No extra account is required for the free sprite tools.",
+    "items": {
+      "sprites": {
+        "title": "AI Sprite Generator",
+        "text": "Create game-ready sprites and matching actions from a project prompt."
+      },
+      "icons": {
+        "title": "AI Game Icon Generator",
+        "text": "Generate matching game icons, items, weapons, and props in one batch."
+      },
+      "maker": {
+        "title": "Sprite Sheet Maker",
+        "text": "Pack PNG frames or a GIF into a sprite sheet, then export PNG with optional JSON."
+      },
+      "cutter": {
+        "title": "Sprite Sheet Cutter",
+        "text": "Cut a sprite sheet into individual PNG frames with a visible, editable grid."
+      }
+    }
   }
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { usePathname, useRouter } from '@/core/i18n/navigation';
 import { localeFlags, localeNames } from '@/config/locale';
@@ -32,6 +32,7 @@ export function LocaleSelector({
   type?: 'icon' | 'button';
 }) {
   const currentLocale = useLocale();
+  const t = useTranslations('common.locale_detector');
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -60,8 +61,8 @@ export function LocaleSelector({
         size="sm"
         className={
           type === 'icon'
-            ? 'h-8 gap-2 px-2.5'
-            : 'hover:bg-primary/10 h-8 gap-2 px-2.5'
+            ? 'text-foreground hover:bg-primary/10 hover:text-primary h-8 gap-2 px-2.5'
+            : 'border-border text-foreground hover:bg-primary/10 hover:text-primary h-8 gap-2 bg-transparent px-2.5'
         }
         disabled
       >
@@ -78,10 +79,12 @@ export function LocaleSelector({
           size="sm"
           className={
             type === 'icon'
-              ? 'h-8 gap-2 px-2.5'
-              : 'hover:bg-primary/10 h-8 gap-2 px-2.5'
+              ? 'text-foreground hover:bg-primary/10 hover:text-primary h-8 gap-2 px-2.5'
+              : 'border-border text-foreground hover:bg-primary/10 hover:text-primary h-8 gap-2 bg-transparent px-2.5'
           }
-          aria-label={`Change language. Current language: ${localeNames[currentLocale] || currentLocale}`}
+          aria-label={t('selector_label', {
+            locale: localeNames[currentLocale] || currentLocale,
+          })}
         >
           <LocaleLabel locale={currentLocale} />
         </Button>

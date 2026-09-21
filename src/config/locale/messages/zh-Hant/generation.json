@@ -1,0 +1,65 @@
+{
+  "fields": {
+    "style": "風格",
+    "perspective": "視角",
+    "quality": "品質",
+    "characterType": "角色類型",
+    "editType": "類型",
+    "actionType": "動作",
+    "direction": "方向",
+    "frames": "影格數",
+    "frameSize": "單格尺寸"
+  },
+  "upload": {
+    "reference": "參考圖",
+    "character": "角色圖",
+    "remove": "移除圖片",
+    "file": "上傳",
+    "existing": "現有角色"
+  },
+  "options": {
+    "style": {
+      "pixel-art": "像素畫",
+      "cartoon": "卡通",
+      "illustration": "插畫",
+      "hand-painted": "手繪",
+      "anime-2d": "2D 動漫",
+      "dark-fantasy": "黑暗奇幻",
+      "cyberpunk": "賽博龐克"
+    },
+    "perspective": {
+      "side": "側視圖",
+      "top-down": "俯視圖",
+      "front": "正視圖",
+      "isometric": "等角視圖"
+    },
+    "quality": { "1k": "1K", "2k": "2K", "4k": "4K" },
+    "characterType": {
+      "humanoid": "人形",
+      "monster": "怪物",
+      "animal": "動物",
+      "robot": "機器人",
+      "custom": "自訂"
+    },
+    "editType": { "pose": "姿勢", "costume": "服裝" },
+    "actionType": {
+      "idle": "待機",
+      "walk": "行走",
+      "run": "奔跑",
+      "attack": "攻擊",
+      "jump": "跳躍",
+      "hurt": "受傷",
+      "death": "死亡",
+      "custom": "自訂"
+    },
+    "direction": {
+      "right": "向右",
+      "left": "向左",
+      "up": "向上",
+      "down": "向下",
+      "four-way": "四方向",
+      "eight-way": "八方向"
+    },
+    "frames": { "auto": "自動" }
+  }
+}

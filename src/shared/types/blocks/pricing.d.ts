@@ -46,6 +46,30 @@ export interface PricingItem {
   group?: string;
 }
 
+export interface PricingCompareColumn {
+  title: string;
+  label?: string;
+  featured?: boolean;
+}
+
+export interface PricingCompareRow {
+  key?: string;
+  label: string;
+  highlight?: boolean;
+  kind?: 'text' | 'boolean';
+  values: string[];
+}
+
+export interface PricingCreditsRow {
+  action: string;
+  cost: string;
+}
+
+export interface PricingRule {
+  title: string;
+  description: string;
+}
+
 export interface Pricing {
   id?: string;
   disabled?: boolean;
@@ -56,4 +80,26 @@ export interface Pricing {
   groups?: PricingGroup[];
   className?: string;
   sr_only_title?: string;
+  packs_title?: string;
+  packs_description?: string;
+  compare?: {
+    badge?: string;
+    title?: string;
+    description?: string;
+    feature_label?: string;
+    columns?: Array<string | PricingCompareColumn>;
+    rows?: PricingCompareRow[];
+  };
+  credits_guide?: {
+    badge?: string;
+    title?: string;
+    description?: string;
+    rows?: PricingCreditsRow[];
+  };
+  rules?: {
+    badge?: string;
+    title?: string;
+    description?: string;
+    items?: PricingRule[];
+  };
 }

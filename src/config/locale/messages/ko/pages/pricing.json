@@ -1,0 +1,183 @@
+{
+  "metadata": {
+    "title": "AI 스프라이트 생성기 요금제와 크레딧 | SpritePixel",
+    "description": "SpritePixel AI 스프라이트 생성기의 무료 요금제, 구독과 크레딧 팩을 비교하세요."
+  },
+  "page": {
+    "title": "AI 스프라이트 생성기 요금제",
+    "sections": {
+      "pricing": {
+        "title": "AI 스프라이트 생성기 요금제",
+        "description": "캐릭터 스프라이트, 애니메이션 시트와 게임 아이콘 제작에 맞는 요금제를 선택하세요. 무료로 시작하고 비공개 에셋, 프로젝트 수 또는 생성 속도에 따라 업그레이드할 수 있습니다.",
+        "packs_title": "크레딧이 더 필요한가요?",
+        "packs_description": "구독 없이 필요할 때 구매할 수 있습니다. 크레딧 팩은 크레딧만 추가하며 구독 혜택은 제공하지 않습니다.",
+        "groups": [
+          { "title": "월간" },
+          { "title": "연간", "label": "최대 35% 절약" },
+          { "title": "필요할 때 구매" }
+        ],
+        "items": [
+          {
+            "title": "무료",
+            "description": "월 10 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "매월 10 크레딧",
+              "프로젝트 1개",
+              "에셋 기본 공개",
+              "다운로드 및 내보내기",
+              "표준 생성 대기열"
+            ],
+            "tip": "매월 제공되는 무료 한도로 시작하세요.",
+            "button": { "title": "무료로 시작" },
+            "product_name": "SpritePixel 무료",
+            "plan_name": "무료"
+          },
+          {
+            "title": "인디",
+            "description": "월 120 크레딧",
+            "label": "가장 인기",
+            "features_title": "포함 사항",
+            "features": [
+              "매월 120 크레딧",
+              "프로젝트 10개",
+              "에셋 기본 비공개",
+              "상업적 사용",
+              "매일 무료 크레딧",
+              "이메일 지원",
+              "다운로드 및 내보내기",
+              "표준 생성 대기열"
+            ],
+            "unit": "/ 월",
+            "tip": "지속적인 인디 게임 제작에 적합합니다.",
+            "button": { "title": "구독" },
+            "product_name": "SpritePixel 인디 월간",
+            "plan_name": "인디"
+          },
+          {
+            "title": "프로",
+            "description": "월 260 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "매월 260 크레딧",
+              "프로젝트 무제한",
+              "에셋 기본 비공개",
+              "상업적 사용",
+              "매일 무료 크레딧",
+              "이메일 지원",
+              "다운로드 및 내보내기",
+              "우선 생성 대기열"
+            ],
+            "unit": "/ 월",
+            "tip": "더 많은 크레딧과 더 빠른 대기열.",
+            "button": { "title": "구독" },
+            "product_name": "SpritePixel 프로 월간",
+            "plan_name": "프로"
+          },
+          {
+            "title": "무료",
+            "description": "월 10 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "매월 10 크레딧",
+              "프로젝트 1개",
+              "에셋 기본 공개",
+              "다운로드 및 내보내기",
+              "표준 생성 대기열"
+            ],
+            "tip": "매월 제공되는 무료 한도로 시작하세요.",
+            "button": { "title": "무료로 시작" },
+            "product_name": "SpritePixel 무료",
+            "plan_name": "무료"
+          },
+          {
+            "title": "인디",
+            "description": "1,440 크레딧 즉시 지급",
+            "label": "가장 인기",
+            "features_title": "포함 사항",
+            "features": [
+              "1,440 크레딧 즉시 지급",
+              "구독 연도 전체 유효",
+              "프로젝트 10개",
+              "에셋 기본 비공개",
+              "상업적 사용",
+              "매일 무료 크레딧",
+              "이메일 지원",
+              "다운로드 및 내보내기",
+              "표준 생성 대기열"
+            ],
+            "unit": "/ 년",
+            "tip": "월간 결제보다 약 30% 절약.",
+            "button": { "title": "구독" },
+            "product_name": "SpritePixel 인디 연간",
+            "plan_name": "인디"
+          },
+          {
+            "title": "프로",
+            "description": "3,120 크레딧 즉시 지급",
+            "features_title": "포함 사항",
+            "features": [
+              "3,120 크레딧 즉시 지급",
+              "구독 연도 전체 유효",
+              "프로젝트 무제한",
+              "에셋 기본 비공개",
+              "상업적 사용",
+              "매일 무료 크레딧",
+              "이메일 지원",
+              "다운로드 및 내보내기",
+              "우선 생성 대기열"
+            ],
+            "unit": "/ 년",
+            "tip": "월간 결제보다 약 35% 절약.",
+            "button": { "title": "구독" },
+            "product_name": "SpritePixel 프로 연간",
+            "plan_name": "프로"
+          },
+          {
+            "title": "퀵 팩",
+            "description": "40 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "40 크레딧",
+              "7일 후 만료",
+              "크레딧 전용·구독 혜택 없음",
+              "무료 계정의 에셋은 공개"
+            ],
+            "tip": "첫 시도나 짧은 프로젝트에 적합.",
+            "button": { "title": "크레딧 구매" },
+            "product_name": "SpritePixel 퀵 팩"
+          },
+          {
+            "title": "플렉스 팩",
+            "description": "150 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "150 크레딧",
+              "1년 후 만료",
+              "크레딧 전용·구독 혜택 없음",
+              "무료 계정의 에셋은 공개"
+            ],
+            "tip": "중간 규모의 일회성 프로젝트에 적합.",
+            "button": { "title": "크레딧 구매" },
+            "product_name": "SpritePixel 플렉스 팩"
+          },
+          {
+            "title": "파워 팩",
+            "description": "320 크레딧",
+            "features_title": "포함 사항",
+            "features": [
+              "320 크레딧",
+              "1년 후 만료",
+              "크레딧 전용·구독 혜택 없음",
+              "무료 계정의 에셋은 공개"
+            ],
+            "tip": "큰 일회성 프로젝트에 적합.",
+            "button": { "title": "크레딧 구매" },
+            "product_name": "SpritePixel 파워 팩"
+          }
+        ]
+      }
+    }
+  },
+  "messages": { "current_plan": "현재 요금제", "processing": "처리 중" }
+}

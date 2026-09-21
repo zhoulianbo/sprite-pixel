@@ -1,0 +1,183 @@
+{
+  "metadata": {
+    "title": "AI 精靈圖產生器價格、方案與點數 | SpritePixel",
+    "description": "比較 SpritePixel AI 精靈圖產生器的免費方案、訂閱與點數包。"
+  },
+  "page": {
+    "title": "AI 精靈圖產生器價格與方案",
+    "sections": {
+      "pricing": {
+        "title": "AI 精靈圖產生器價格與方案",
+        "description": "選擇適合角色精靈、動畫圖表與遊戲圖示的方案或點數包。先免費開始，再依私有素材、專案數或產生速度升級。",
+        "packs_title": "需要額外點數？",
+        "packs_description": "不需訂閱，可在需要更多產生次數時購買。點數包只會增加點數，不包含訂閱權益。",
+        "groups": [
+          { "title": "月繳" },
+          { "title": "年繳", "label": "最高省 35%" },
+          { "title": "單次購買" }
+        ],
+        "items": [
+          {
+            "title": "免費版",
+            "description": "每月 10 點",
+            "features_title": "包含",
+            "features": [
+              "每月 10 點",
+              "1 個專案",
+              "素材預設公開",
+              "下載與匯出",
+              "標準產生佇列"
+            ],
+            "tip": "每月有免費額度，可立即開始。",
+            "button": { "title": "免費開始" },
+            "product_name": "SpritePixel 免費版",
+            "plan_name": "免費版"
+          },
+          {
+            "title": "獨立版",
+            "description": "每月 120 點",
+            "label": "最受歡迎",
+            "features_title": "包含",
+            "features": [
+              "每月 120 點",
+              "10 個專案",
+              "素材預設私密",
+              "商業使用",
+              "每日免費點數",
+              "電子郵件支援",
+              "下載與匯出",
+              "標準產生佇列"
+            ],
+            "unit": "/ 月",
+            "tip": "適合持續進行的獨立遊戲製作。",
+            "button": { "title": "訂閱" },
+            "product_name": "SpritePixel 獨立版月繳",
+            "plan_name": "獨立版"
+          },
+          {
+            "title": "專業版",
+            "description": "每月 260 點",
+            "features_title": "包含",
+            "features": [
+              "每月 260 點",
+              "不限專案數",
+              "素材預設私密",
+              "商業使用",
+              "每日免費點數",
+              "電子郵件支援",
+              "下載與匯出",
+              "優先產生佇列"
+            ],
+            "unit": "/ 月",
+            "tip": "更多點數與更快的處理佇列。",
+            "button": { "title": "訂閱" },
+            "product_name": "SpritePixel 專業版月繳",
+            "plan_name": "專業版"
+          },
+          {
+            "title": "免費版",
+            "description": "每月 10 點",
+            "features_title": "包含",
+            "features": [
+              "每月 10 點",
+              "1 個專案",
+              "素材預設公開",
+              "下載與匯出",
+              "標準產生佇列"
+            ],
+            "tip": "每月有免費額度，可立即開始。",
+            "button": { "title": "免費開始" },
+            "product_name": "SpritePixel 免費版",
+            "plan_name": "免費版"
+          },
+          {
+            "title": "獨立版",
+            "description": "立即取得 1,440 點",
+            "label": "最受歡迎",
+            "features_title": "包含",
+            "features": [
+              "立即加入 1,440 點",
+              "整個訂閱年度有效",
+              "10 個專案",
+              "素材預設私密",
+              "商業使用",
+              "每日免費點數",
+              "電子郵件支援",
+              "下載與匯出",
+              "標準產生佇列"
+            ],
+            "unit": "/ 年",
+            "tip": "相較月繳約省 30%。",
+            "button": { "title": "訂閱" },
+            "product_name": "SpritePixel 獨立版年繳",
+            "plan_name": "獨立版"
+          },
+          {
+            "title": "專業版",
+            "description": "立即取得 3,120 點",
+            "features_title": "包含",
+            "features": [
+              "立即加入 3,120 點",
+              "整個訂閱年度有效",
+              "不限專案數",
+              "素材預設私密",
+              "商業使用",
+              "每日免費點數",
+              "電子郵件支援",
+              "下載與匯出",
+              "優先產生佇列"
+            ],
+            "unit": "/ 年",
+            "tip": "相較月繳約省 35%。",
+            "button": { "title": "訂閱" },
+            "product_name": "SpritePixel 專業版年繳",
+            "plan_name": "專業版"
+          },
+          {
+            "title": "快速點數包",
+            "description": "40 點",
+            "features_title": "包含",
+            "features": [
+              "40 點",
+              "7 天後到期",
+              "只有點數，不含訂閱權益",
+              "免費帳號的素材維持公開"
+            ],
+            "tip": "適合首次嘗試或短期專案。",
+            "button": { "title": "購買點數" },
+            "product_name": "SpritePixel 快速點數包"
+          },
+          {
+            "title": "彈性點數包",
+            "description": "150 點",
+            "features_title": "包含",
+            "features": [
+              "150 點",
+              "1 年後到期",
+              "只有點數，不含訂閱權益",
+              "免費帳號的素材維持公開"
+            ],
+            "tip": "適合中型單次專案。",
+            "button": { "title": "購買點數" },
+            "product_name": "SpritePixel 彈性點數包"
+          },
+          {
+            "title": "進階點數包",
+            "description": "320 點",
+            "features_title": "包含",
+            "features": [
+              "320 點",
+              "1 年後到期",
+              "只有點數，不含訂閱權益",
+              "免費帳號的素材維持公開"
+            ],
+            "tip": "適合較大型的單次專案。",
+            "button": { "title": "購買點數" },
+            "product_name": "SpritePixel 進階點數包"
+          }
+        ]
+      }
+    }
+  },
+  "messages": { "current_plan": "目前方案", "processing": "處理中" }
+}

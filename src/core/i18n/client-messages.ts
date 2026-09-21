@@ -1,8 +1,13 @@
 export const CLIENT_MESSAGE_PATHS = [
   'common',
   'ai',
+  'tools.sprites.ui',
   'pages.blog.messages',
-  'pages.pricing.messages',
+  'pages.pricing',
+  'pages.index.messages',
+  'generation',
+  'workspace',
+  'settings.sidebar',
 ] as const;
 
 type Messages = Record<string, unknown>;

@@ -1,11 +1,20 @@
 import { sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {
+  AnySQLiteColumn,
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 
 // SQLite has no schema concept like Postgres. Keep a `table` alias to minimize diff with pg schema.
 const table = sqliteTable;
 
 // SQLite "now" in epoch milliseconds (same expression drizzle used in `defaultNow()`).
 const sqliteNowMs = sql`(cast((julianday('now') - 2440587.5)*86400000 as integer))`;
+const sqliteNowIso = sql`(strftime('%Y-%m-%dT%H:%M:%fZ','now'))`;
 
 export const user = table(
   'user',
@@ -118,6 +127,432 @@ export const verification = table(
   (table) => [
     // Find verification code by identifier (e.g., find code by email)
     index('idx_verification_identifier').on(table.identifier),
+  ]
+);
+
+export const project = table(
+  'project',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    description: text('description'),
+    gameGenre: text('game_genre').notNull().default(''),
+    artStyle: text('art_style').notNull().default(''),
+    paletteJson: text('palette_json'),
+    negativePrompt: text('negative_prompt'),
+    settingsJson: text('settings_json').notNull().default('{}'),
+    status: text('status').notNull().default('active'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('idx_project_user_status_updated').on(
+      t.userId,
+      t.status,
+      t.updatedAt
+    ),
+  ]
+);
+
+export const assetItem = table(
+  'asset_item',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    parentItemId: text('parent_item_id').references(
+      (): AnySQLiteColumn => assetItem.id,
+      { onDelete: 'set null' }
+    ),
+    type: text('type').notNull(),
+    name: text('name').notNull(),
+    description: text('description'),
+    favorite: integer('favorite', { mode: 'boolean' }).notNull().default(false),
+    sortOrder: integer('sort_order').notNull().default(0),
+    settingsJson: text('settings_json').notNull().default('{}'),
+    status: text('status').notNull().default('active'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('idx_asset_item_project_type_status').on(
+      t.projectId,
+      t.type,
+      t.status
+    ),
+    index('idx_asset_item_parent_sort').on(t.parentItemId, t.sortOrder),
+    index('idx_asset_item_project_updated').on(t.projectId, t.updatedAt),
+  ]
+);
+
+export const assetVariant = table(
+  'asset_variant',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    itemId: text('item_id')
+      .notNull()
+      .references(() => assetItem.id, { onDelete: 'cascade' }),
+    name: text('name').notNull(),
+    variantType: text('variant_type').notNull().default('base'),
+    prompt: text('prompt'),
+    sortOrder: integer('sort_order').notNull().default(0),
+    status: text('status').notNull().default('active'),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('idx_asset_variant_item_status_sort').on(
+      t.itemId,
+      t.status,
+      t.sortOrder
+    ),
+    index('idx_asset_variant_project_type').on(t.projectId, t.variantType),
+  ]
+);
+
+export const generation = table(
+  'generation',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    itemId: text('item_id').references(() => assetItem.id, {
+      onDelete: 'set null',
+    }),
+    variantId: text('variant_id').references(() => assetVariant.id, {
+      onDelete: 'set null',
+    }),
+    taskType: text('task_type').notNull(),
+    prompt: text('prompt'),
+    negativePrompt: text('negative_prompt'),
+    paramsJson: text('params_json').notNull().default('{}'),
+    status: text('status').notNull().default('pending'),
+    creditsCost: integer('credits_cost').notNull().default(0),
+    providerCostMicros: integer('provider_cost_micros').notNull().default(0),
+    failureCode: text('failure_code'),
+    failureReason: text('failure_reason'),
+    startedAt: text('started_at'),
+    completedAt: text('completed_at'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    index('idx_generation_project_task_status').on(
+      t.projectId,
+      t.taskType,
+      t.status
+    ),
+    index('idx_generation_user_created').on(t.userId, t.createdAt),
+    index('idx_generation_item_created').on(t.itemId, t.createdAt),
+  ]
+);
+
+export const generationTask = table(
+  'generation_task',
+  {
+    id: text('id').primaryKey(),
+    generationId: text('generation_id')
+      .notNull()
+      .references(() => generation.id, { onDelete: 'cascade' }),
+    aiTaskId: text('ai_task_id')
+      .notNull()
+      .references((): AnySQLiteColumn => aiTask.id, { onDelete: 'cascade' }),
+    role: text('role').notNull().default('primary'),
+    sortOrder: integer('sort_order').notNull().default(0),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_generation_task_ai_task').on(t.aiTaskId),
+    index('idx_generation_task_generation_sort').on(
+      t.generationId,
+      t.sortOrder
+    ),
+  ]
+);
+
+export const assetFile = table(
+  'asset_file',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    itemId: text('item_id').references(() => assetItem.id, {
+      onDelete: 'set null',
+    }),
+    variantId: text('variant_id').references(() => assetVariant.id, {
+      onDelete: 'set null',
+    }),
+    generationId: text('generation_id').references(() => generation.id, {
+      onDelete: 'set null',
+    }),
+    generationTaskId: text('generation_task_id').references(
+      () => generationTask.id,
+      { onDelete: 'set null' }
+    ),
+    parentFileId: text('parent_file_id').references(
+      (): AnySQLiteColumn => assetFile.id,
+      { onDelete: 'set null' }
+    ),
+    mediaType: text('media_type').notNull(),
+    role: text('role').notNull(),
+    storageKey: text('storage_key').notNull(),
+    thumbnailKey: text('thumbnail_key'),
+    originalFilename: text('original_filename'),
+    mimeType: text('mime_type'),
+    width: integer('width'),
+    height: integer('height'),
+    durationMs: integer('duration_ms'),
+    sizeBytes: integer('size_bytes'),
+    isActiveReference: integer('is_active_reference', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    status: text('status').notNull().default('ready'),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('idx_asset_file_project_media_role').on(
+      t.projectId,
+      t.mediaType,
+      t.role
+    ),
+    index('idx_asset_file_item_role_created').on(t.itemId, t.role, t.createdAt),
+    index('idx_asset_file_variant_role_created').on(
+      t.variantId,
+      t.role,
+      t.createdAt
+    ),
+    index('idx_asset_file_generation').on(t.generationId),
+    index('idx_asset_file_generation_task').on(t.generationTaskId),
+    index('idx_asset_file_parent').on(t.parentFileId),
+    uniqueIndex('idx_asset_file_variant_active_reference')
+      .on(t.variantId)
+      .where(
+        sql`${t.variantId} IS NOT NULL AND ${t.isActiveReference} = true AND ${t.deletedAt} IS NULL`
+      ),
+  ]
+);
+
+export const projectReference = table(
+  'project_reference',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    fileId: text('file_id')
+      .notNull()
+      .references(() => assetFile.id, { onDelete: 'cascade' }),
+    referenceType: text('reference_type').notNull(),
+    label: text('label'),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    index('idx_project_reference_project_sort').on(t.projectId, t.sortOrder),
+    index('idx_project_reference_file').on(t.fileId),
+  ]
+);
+
+export const generationInput = table(
+  'generation_input',
+  {
+    id: text('id').primaryKey(),
+    generationId: text('generation_id')
+      .notNull()
+      .references(() => generation.id, { onDelete: 'cascade' }),
+    generationTaskId: text('generation_task_id').references(
+      () => generationTask.id,
+      { onDelete: 'cascade' }
+    ),
+    fileId: text('file_id')
+      .notNull()
+      .references(() => assetFile.id, { onDelete: 'cascade' }),
+    role: text('role').notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+    paramsJson: text('params_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    index('idx_generation_input_generation_role_sort').on(
+      t.generationId,
+      t.role,
+      t.sortOrder
+    ),
+    index('idx_generation_input_task').on(t.generationTaskId),
+    index('idx_generation_input_file').on(t.fileId),
+  ]
+);
+
+export const assetRegion = table(
+  'asset_region',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    fileId: text('file_id')
+      .notNull()
+      .references(() => assetFile.id, { onDelete: 'cascade' }),
+    itemId: text('item_id').references(() => assetItem.id, {
+      onDelete: 'set null',
+    }),
+    name: text('name'),
+    type: text('type'),
+    x: integer('x').notNull(),
+    y: integer('y').notNull(),
+    width: integer('width').notNull(),
+    height: integer('height').notNull(),
+    sortOrder: integer('sort_order').notNull().default(0),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    index('idx_asset_region_file_sort').on(t.fileId, t.sortOrder),
+    index('idx_asset_region_item').on(t.itemId),
+  ]
+);
+
+export const animationSet = table(
+  'animation_set',
+  {
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    itemId: text('item_id')
+      .notNull()
+      .references(() => assetItem.id, { onDelete: 'cascade' }),
+    variantId: text('variant_id').references(() => assetVariant.id, {
+      onDelete: 'set null',
+    }),
+    name: text('name').notNull(),
+    action: text('action').notNull(),
+    perspective: text('perspective').notNull().default(''),
+    directionMode: text('direction_mode').notNull().default('single'),
+    loop: integer('loop', { mode: 'boolean' }).notNull().default(true),
+    status: text('status').notNull().default('draft'),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+    deletedAt: text('deleted_at'),
+  },
+  (t) => [
+    index('idx_animation_set_item_action_status').on(
+      t.itemId,
+      t.action,
+      t.status
+    ),
+    index('idx_animation_set_project_updated').on(t.projectId, t.updatedAt),
+  ]
+);
+
+export const animationClip = table(
+  'animation_clip',
+  {
+    id: text('id').primaryKey(),
+    animationSetId: text('animation_set_id')
+      .notNull()
+      .references(() => animationSet.id, { onDelete: 'cascade' }),
+    direction: text('direction').notNull().default('none'),
+    isMirrored: integer('is_mirrored', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    mirrorSourceClipId: text('mirror_source_clip_id').references(
+      (): AnySQLiteColumn => animationClip.id,
+      { onDelete: 'set null' }
+    ),
+    sortOrder: integer('sort_order').notNull().default(0),
+    status: text('status').notNull().default('draft'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_animation_clip_set_direction').on(
+      t.animationSetId,
+      t.direction
+    ),
+    index('idx_animation_clip_mirror_source').on(t.mirrorSourceClipId),
+  ]
+);
+
+export const animationVersion = table(
+  'animation_version',
+  {
+    id: text('id').primaryKey(),
+    clipId: text('clip_id')
+      .notNull()
+      .references(() => animationClip.id, { onDelete: 'cascade' }),
+    versionNo: integer('version_no').notNull(),
+    parentVersionId: text('parent_version_id').references(
+      (): AnySQLiteColumn => animationVersion.id,
+      { onDelete: 'set null' }
+    ),
+    generationId: text('generation_id').references(() => generation.id, {
+      onDelete: 'set null',
+    }),
+    isCurrent: integer('is_current', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    fps: real('fps').notNull().default(12),
+    frameWidth: integer('frame_width').notNull(),
+    frameHeight: integer('frame_height').notNull(),
+    frameCount: integer('frame_count').notNull().default(0),
+    editorJson: text('editor_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_animation_version_clip_no').on(t.clipId, t.versionNo),
+    uniqueIndex('idx_animation_version_current')
+      .on(t.clipId)
+      .where(sql`${t.isCurrent} = true`),
+    index('idx_animation_version_generation').on(t.generationId),
+  ]
+);
+
+export const animationFrame = table(
+  'animation_frame',
+  {
+    id: text('id').primaryKey(),
+    versionId: text('version_id')
+      .notNull()
+      .references(() => animationVersion.id, { onDelete: 'cascade' }),
+    fileId: text('file_id')
+      .notNull()
+      .references(() => assetFile.id, { onDelete: 'restrict' }),
+    frameIndex: integer('frame_index').notNull(),
+    durationMs: integer('duration_ms'),
+    offsetX: integer('offset_x').notNull().default(0),
+    offsetY: integer('offset_y').notNull().default(0),
+    metadataJson: text('metadata_json').notNull().default('{}'),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_animation_frame_version_index').on(
+      t.versionId,
+      t.frameIndex
+    ),
+    index('idx_animation_frame_file').on(t.fileId),
   ]
 );
 
@@ -343,6 +778,7 @@ export const credit = table(
     transactionScene: text('transaction_scene'), // transaction scene, payment / subscription / gift / award
     credits: integer('credits').notNull(), // credits amount, n or -n
     remainingCredits: integer('remaining_credits').notNull().default(0), // remaining credits amount
+    balanceAfter: integer('balance_after'), // user balance after applying this ledger entry
     description: text('description'), // transaction description
     expiresAt: integer('expires_at', { mode: 'timestamp_ms' }), // transaction expires at
     status: text('status').notNull(), // transaction status

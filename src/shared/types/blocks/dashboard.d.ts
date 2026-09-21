@@ -22,6 +22,7 @@ export interface SidebarUser {
   nav?: Nav;
   show_email?: boolean;
   show_signout?: boolean;
+  show_upgrade?: boolean;
   signout_callback?: string;
   signin_callback?: string;
 }

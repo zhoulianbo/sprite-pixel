@@ -8,27 +8,55 @@ import {
 
 import { routing } from './config';
 
+type MessageValue = Record<string, unknown>;
+
+function mergeMessages(fallback: unknown, localized: unknown): unknown {
+  if (Array.isArray(fallback) && Array.isArray(localized)) {
+    const length = Math.max(fallback.length, localized.length);
+    return Array.from({ length }, (_, index) =>
+      mergeMessages(fallback[index], localized[index])
+    );
+  }
+
+  if (
+    !fallback ||
+    !localized ||
+    typeof fallback !== 'object' ||
+    typeof localized !== 'object' ||
+    Array.isArray(fallback) ||
+    Array.isArray(localized)
+  ) {
+    return localized ?? fallback;
+  }
+
+  const result: MessageValue = { ...(fallback as MessageValue) };
+  Object.entries(localized as MessageValue).forEach(([key, value]) => {
+    result[key] = mergeMessages(result[key], value);
+  });
+  return result;
+}
+
 export async function loadMessages(
   path: string,
   locale: string = defaultLocale
 ) {
+  const fallbackMessages = await import(
+    `@/config/locale/messages/${defaultLocale}/${path}.json`
+  )
+    .then((messages) => messages.default)
+    .catch(() => ({}));
+
+  if (locale === defaultLocale) {
+    return fallbackMessages;
+  }
+
   try {
-    // try to load locale messages
     const messages = await import(
       `@/config/locale/messages/${locale}/${path}.json`
     );
-    return messages.default;
-  } catch (e) {
-    try {
-      // try to load default locale messages
-      const messages = await import(
-        `@/config/locale/messages/${defaultLocale}/${path}.json`
-      );
-      return messages.default;
-    } catch (err) {
-      // if default locale is not found, return empty object
-      return {};
-    }
+    return mergeMessages(fallbackMessages, messages.default);
+  } catch {
+    return fallbackMessages;
   }
 }
 

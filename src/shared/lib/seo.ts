@@ -1,7 +1,18 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
+
+export const noIndexRobots: Metadata['robots'] = {
+  index: false,
+  follow: false,
+  googleBot: {
+    index: false,
+    follow: false,
+    noimageindex: true,
+  },
+};
 
 // get metadata for page component
 export function getMetadata(
@@ -108,10 +119,12 @@ export function getMetadata(
         site: envConfigs.app_url,
       },
 
-      robots: {
-        index: options.noIndex ? false : true,
-        follow: options.noIndex ? false : true,
-      },
+      robots: options.noIndex
+        ? noIndexRobots
+        : {
+            index: true,
+            follow: true,
+          },
     };
   };
 }

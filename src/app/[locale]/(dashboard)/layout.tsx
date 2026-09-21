@@ -1,11 +1,17 @@
 import { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { applySidebarWebsiteConfig } from '@/config/website';
 import { LocaleDetector } from '@/shared/blocks/common';
-import { DashboardLayout, Header, Main } from '@/shared/blocks/dashboard';
+import { DashboardLayout } from '@/shared/blocks/dashboard';
+import { noIndexRobots } from '@/shared/lib/seo';
 import { getAllConfigs } from '@/shared/models/config';
 import { Sidebar as SidebarType } from '@/shared/types/blocks/dashboard';
+
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
 
 export default async function UserDashboardLayout({
   children,
@@ -34,15 +40,11 @@ export default async function UserDashboardLayout({
   if (configs.app_logo) {
     sidebar.header!.brand!.logo!.src = configs.app_logo;
   }
-  if (configs.version) {
-    sidebar.header!.version = configs.version;
-  }
 
   return (
-    <DashboardLayout sidebar={sidebar}>
+    <DashboardLayout sidebar={sidebar} sidebarWidth="230px">
       <LocaleDetector />
-      <Header />
-      <Main>{children}</Main>
+      {children}
     </DashboardLayout>
   );
 }

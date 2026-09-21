@@ -46,6 +46,7 @@ export function SignUser({
   const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
+  const [sessionCheckExpired, setSessionCheckExpired] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -55,7 +56,6 @@ export function SignUser({
     configs,
     fetchConfigs,
     setIsShowSignModal,
-    isCheckSign,
     setIsCheckSign,
     user,
     setUser,
@@ -67,6 +67,7 @@ export function SignUser({
   const { data: session, isPending } = useSession();
   const sessionUser = extractSessionUser(session);
   const displayUser = (user as UserType | null) ?? sessionUser;
+  const isSessionChecking = isPending && !sessionCheckExpired;
 
   // In dev (React StrictMode) effects can run twice; ensure we don't spam getSession().
   const didFallbackSyncRef = useRef(false);
@@ -78,10 +79,26 @@ export function SignUser({
     fetchConfigs();
   }, []);
 
-  // set is check sign
+  // Do not leave the header in an endless loading state if the session
+  // endpoint is unavailable. A late successful response still replaces the
+  // sign-in button with the user menu.
   useEffect(() => {
-    setIsCheckSign(isPending);
+    if (!isPending) {
+      setSessionCheckExpired(false);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setSessionCheckExpired(true);
+    }, 5_000);
+
+    return () => window.clearTimeout(timeout);
   }, [isPending]);
+
+  // Share the bounded session-check state with other auth-aware components.
+  useEffect(() => {
+    setIsCheckSign(isSessionChecking);
+  }, [isSessionChecking, setIsCheckSign]);
 
   // show one tap if not initialized
   useEffect(() => {
@@ -141,7 +158,7 @@ export function SignUser({
 
   return (
     <>
-      {isCheckSign || !mounted ? (
+      {isSessionChecking || !mounted ? (
         <div>
           <Loader2 className="size-4 animate-spin" />
         </div>
@@ -150,7 +167,7 @@ export function SignUser({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="relative h-10 w-10 rounded-full p-0"
+              className="hover:bg-primary/10 hover:text-primary relative size-8 rounded-md p-0"
             >
               <Avatar>
                 <AvatarImage
@@ -247,12 +264,12 @@ export function SignUser({
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+        <div className="flex w-fit flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0">
           <Button
             asChild
             size={signButtonSize}
             className={cn(
-              'border-foreground/10 ml-4 cursor-pointer ring-0',
+              'border-foreground/10 cursor-pointer ring-0',
               isScrolled && 'lg:hidden'
             )}
             onClick={() => setIsShowSignModal(true)}

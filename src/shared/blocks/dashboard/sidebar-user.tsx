@@ -1,7 +1,7 @@
 'use client';
 
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { ChevronsUpDown, Loader2, LogOut, User } from 'lucide-react';
+import { ChevronsUpDown, Loader2, LogOut, Sparkles, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { signOut, useSession } from '@/core/auth/client';
@@ -23,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
+import { Progress } from '@/shared/components/ui/progress';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -37,6 +38,7 @@ import { SidebarUser as SidebarUserType } from '@/shared/types/blocks/dashboard'
 // SSR/CSR hydration bug fix: Avoid rendering session-dependent UI until mounted on client
 export function SidebarUser({ user }: { user: SidebarUserType }) {
   const t = useTranslations('common.sign');
+  const tu = useTranslations('settings.sidebar');
   const { isMobile, open } = useSidebar();
   const router = useRouter();
 
@@ -67,6 +69,7 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
     user: authUser,
     setUser,
     fetchUserInfo,
+    fetchUserCredits,
     showOneTap,
   } = useAppContext();
 
@@ -120,6 +123,11 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
     }
   }, [hasMounted, session?.user?.id, authUser?.id, setUser, fetchUserInfo]);
 
+  useEffect(() => {
+    if (!hasMounted || !authUser || user.show_upgrade === false) return;
+    fetchUserCredits();
+  }, [hasMounted, authUser?.id, fetchUserCredits, user.show_upgrade]);
+
   // If not mounted, render placeholder to avoid hydration mismatch
   if (!hasMounted) {
     return (
@@ -130,14 +138,46 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
   }
 
   if (authUser) {
+    const remainingCredits = authUser.credits?.remainingCredits ?? 0;
+    const creditProgress = Math.min(
+      100,
+      (remainingCredits / Math.max(remainingCredits, 30)) * 100
+    );
+
     return (
       <SidebarMenu className="gap-4 px-3">
+        {open && user.show_upgrade !== false ? (
+          <SidebarMenuItem>
+            <div className="bg-secondary/70 rounded-xl border p-3">
+              <div className="flex items-start gap-2">
+                <Sparkles className="text-primary mt-0.5 size-4 shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-sm font-medium">
+                    {tu('upgrade.title')}
+                  </div>
+                  <p className="text-muted-foreground mt-1 text-xs leading-5">
+                    {tu('upgrade.description')}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <Progress value={creditProgress} className="h-1.5" />
+                <span className="text-muted-foreground font-mono text-xs tabular-nums">
+                  {remainingCredits}
+                </span>
+              </div>
+              <Button className="mt-3 h-9 w-full" asChild>
+                <Link href={tu('upgrade.url')}>{tu('upgrade.action')}</Link>
+              </Button>
+            </div>
+          </SidebarMenuItem>
+        ) : null}
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-primary/10 data-[state=open]:text-primary"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={authUser.image || ''} alt={authUser.name} />

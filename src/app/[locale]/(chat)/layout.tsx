@@ -1,31 +1,14 @@
-'use client';
+import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 
-import { ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
+import { noIndexRobots } from '@/shared/lib/seo';
 
-import { applySidebarWebsiteConfig } from '@/config/website';
-import { ChatLibrary } from '@/shared/blocks/chat/library';
-import { LocaleDetector } from '@/shared/blocks/common';
-import { DashboardLayout } from '@/shared/blocks/dashboard';
-import { ChatContextProvider } from '@/shared/contexts/chat';
-import { Sidebar as SidebarType } from '@/shared/types/blocks/dashboard';
+import { ChatLayout } from './chat-layout';
 
-export default function ChatLayout({ children }: { children: ReactNode }) {
-  const t = useTranslations('ai.chat');
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
 
-  const sidebar: SidebarType = applySidebarWebsiteConfig(
-    t.raw('sidebar') as SidebarType,
-    'chat'
-  );
-
-  sidebar.library = <ChatLibrary />;
-
-  return (
-    <ChatContextProvider>
-      <DashboardLayout sidebar={sidebar}>
-        <LocaleDetector />
-        {children}
-      </DashboardLayout>
-    </ChatContextProvider>
-  );
+export default function ChatRouteLayout({ children }: { children: ReactNode }) {
+  return <ChatLayout>{children}</ChatLayout>;
 }

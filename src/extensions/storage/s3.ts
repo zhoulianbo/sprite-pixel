@@ -1,7 +1,10 @@
 import type {
   StorageConfigs,
+  StorageDownloadResult,
   StorageDownloadUploadOptions,
   StorageProvider,
+  StorageSignedUploadOptions,
+  StorageSignedUploadResult,
   StorageUploadOptions,
   StorageUploadResult,
 } from '.';
@@ -61,6 +64,37 @@ export class S3Provider implements StorageProvider {
       return response.ok;
     } catch {
       return false;
+    }
+  };
+
+  downloadFile = async (options: {
+    key: string;
+    bucket?: string;
+  }): Promise<StorageDownloadResult> => {
+    try {
+      const uploadBucket = options.bucket || this.configs.bucket;
+      const url = `${this.configs.endpoint}/${uploadBucket}/${options.key}`;
+      const { AwsClient } = await import('aws4fetch');
+      const client = new AwsClient({
+        accessKeyId: this.configs.accessKeyId,
+        secretAccessKey: this.configs.secretAccessKey,
+        region: this.configs.region,
+      });
+      const response = await client.fetch(new Request(url));
+      if (!response.ok) {
+        return { success: false, error: `Download failed: ${response.status}` };
+      }
+      return {
+        success: true,
+        body: response.body,
+        contentType: response.headers.get('content-type') || undefined,
+        contentLength: response.headers.get('content-length') || undefined,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   };
 
@@ -173,6 +207,65 @@ export class S3Provider implements StorageProvider {
         provider: this.name,
       };
     }
+  }
+
+  async createSignedUploadUrl(
+    options: StorageSignedUploadOptions
+  ): Promise<StorageSignedUploadResult> {
+    const uploadBucket = options.bucket || this.configs.bucket;
+    if (!uploadBucket) {
+      throw new Error('Bucket is required');
+    }
+    const expiresIn = Math.max(60, Math.min(options.expiresIn ?? 900, 3600));
+    const url = new URL(
+      `${this.configs.endpoint}/${uploadBucket}/${options.key}`
+    );
+    url.searchParams.set('X-Amz-Expires', String(expiresIn));
+    const { AwsClient } = await import('aws4fetch');
+    const client = new AwsClient({
+      accessKeyId: this.configs.accessKeyId,
+      secretAccessKey: this.configs.secretAccessKey,
+      region: this.configs.region,
+    });
+    const signed = await client.sign(
+      new Request(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': options.contentType,
+        },
+      }),
+      { aws: { signQuery: true } }
+    );
+    return {
+      uploadUrl: signed.url,
+      headers: { 'Content-Type': options.contentType },
+    };
+  }
+
+  async createSignedDownloadUrl(options: {
+    key: string;
+    expiresIn?: number;
+    bucket?: string;
+  }) {
+    const downloadBucket = options.bucket || this.configs.bucket;
+    if (!downloadBucket) {
+      throw new Error('Bucket is required');
+    }
+    const expiresIn = Math.max(60, Math.min(options.expiresIn ?? 900, 3600));
+    const url = new URL(
+      `${this.configs.endpoint}/${downloadBucket}/${options.key}`
+    );
+    url.searchParams.set('X-Amz-Expires', String(expiresIn));
+    const { AwsClient } = await import('aws4fetch');
+    const client = new AwsClient({
+      accessKeyId: this.configs.accessKeyId,
+      secretAccessKey: this.configs.secretAccessKey,
+      region: this.configs.region,
+    });
+    const signed = await client.sign(new Request(url, { method: 'GET' }), {
+      aws: { signQuery: true },
+    });
+    return signed.url;
   }
 }
 

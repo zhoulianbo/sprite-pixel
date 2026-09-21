@@ -5,6 +5,7 @@ import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
 import { websiteConfig } from '@/config/website';
 import { SignIn } from '@/shared/blocks/sign/sign-in';
+import { noIndexRobots } from '@/shared/lib/seo';
 import { getPublicConfigs } from '@/shared/models/config';
 import { getSignUser } from '@/shared/models/user';
 
@@ -34,6 +35,7 @@ export async function generateMetadata({
 
   return {
     title: `${t('sign.sign_in_title')} - ${t('metadata.title')}`,
+    robots: noIndexRobots,
     alternates: {
       canonical:
         locale !== defaultLocale

@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "ShipAny 模板二",
-    "description": "ShipAny 是用于构建 AI SaaS 创业项目的 NextJS 脚手架。提供丰富模板和组件，助您快速上线产品。",
-    "keywords": "shipany, shipany-boilerplate, shipany-template-two-demo"
+    "title": "AI 精灵图生成器 - 创建 2D 游戏资产 | SpritePixel",
+    "description": "使用 SpritePixel AI 精灵图生成器创建可用于游戏的角色精灵图、动画精灵图表和配套 2D 资产，并在同一项目中保持风格一致。",
+    "keywords": "AI 精灵图生成器, 游戏精灵图生成器, 角色精灵图生成器, 精灵图表生成器, AI 游戏资产, 游戏图标生成器, SpritePixel"
   },
   "sign": {
     "sign_in_title": "登录",
@@ -50,7 +50,31 @@
     "cancel_title": "取消"
   },
   "locale_detector": {
-    "title": "检测到浏览器语言是: {locale}，是否切换？",
-    "switch_to": "切换到{locale}"
+    "title": "检测到浏览器语言为{locale}，是否切换？",
+    "switch_to": "切换到{locale}",
+    "selector_label": "切换语言。当前语言：{locale}",
+    "close": "关闭"
+  },
+  "moreTools": {
+    "title": "更多工具",
+    "description": "继续使用 SpritePixel 的配套浏览器工具。免费精灵图工具无需额外注册。",
+    "items": {
+      "sprites": {
+        "title": "AI 精灵图生成器",
+        "text": "围绕项目描述生成可用的游戏精灵图和配套动作。"
+      },
+      "icons": {
+        "title": "AI 游戏图标生成器",
+        "text": "一次生成风格一致的游戏图标、物品、武器和道具。"
+      },
+      "maker": {
+        "title": "精灵图表制作工具",
+        "text": "将 PNG 帧或 GIF 打包成精灵图表，并导出 PNG 与可选 JSON。"
+      },
+      "cutter": {
+        "title": "精灵图切割工具",
+        "text": "用可见、可编辑的网格，把精灵图表切割成独立 PNG 帧。"
+      }
+    }
   }
 }

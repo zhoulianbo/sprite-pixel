@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "title": "Gallery",
+    "description": "Browse sprite, animation and game asset examples from SpritePixel."
+  },
+  "title": "Gallery",
+  "description": "Browse generated sprites, animations and matching game assets.",
+  "emptyTitle": "No gallery items yet",
+  "emptyDescription": "Gallery content is empty for now. Published items will appear here later."
+}

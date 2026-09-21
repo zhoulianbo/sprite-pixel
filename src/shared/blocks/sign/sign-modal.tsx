@@ -39,14 +39,14 @@ function SignModalHeader({
       <div className="relative shrink-0">
         <div
           aria-hidden
-          className="bg-primary/25 absolute inset-0 rounded-2xl blur-md"
+          className="bg-primary/25 absolute inset-0 rounded-lg blur-md"
         />
-        <div className="bg-primary text-primary-foreground relative flex size-11 items-center justify-center rounded-2xl shadow-sm">
+        <div className="bg-primary text-primary-foreground relative flex size-11 items-center justify-center rounded-lg shadow-sm">
           <Lock className="size-5" strokeWidth={2.25} />
         </div>
       </div>
       <div className="min-w-0 space-y-1 pt-0.5">
-        <DialogTitle className="text-xl font-semibold tracking-tight">
+        <DialogTitle className="text-foreground text-xl font-semibold tracking-tight">
           {title}
         </DialogTitle>
         <DialogDescription className="text-muted-foreground text-sm">
@@ -71,8 +71,7 @@ export function SignModal({ callbackUrl = '/' }: { callbackUrl?: string }) {
     }
   };
 
-  const title =
-    mode === 'sign-in' ? t('sign_in_title') : t('sign_up_title');
+  const title = mode === 'sign-in' ? t('sign_in_title') : t('sign_up_title');
   const description =
     mode === 'sign-in' ? t('sign_in_description') : t('sign_up_description');
 
@@ -92,7 +91,7 @@ export function SignModal({ callbackUrl = '/' }: { callbackUrl?: string }) {
   if (isDesktop) {
     return (
       <Dialog open={isShowSignModal} onOpenChange={handleOpenChange}>
-        <DialogContent className="border-border/60 gap-5 rounded-2xl p-6 shadow-xl sm:max-w-[425px] **:data-[slot=dialog-close]:bg-muted **:data-[slot=dialog-close]:hover:bg-muted/80 **:data-[slot=dialog-close]:rounded-full **:data-[slot=dialog-close]:opacity-100 **:data-[slot=dialog-close]:p-1.5">
+        <DialogContent className="border-border bg-card text-card-foreground **:data-[slot=dialog-close]:bg-secondary **:data-[slot=dialog-close]:text-secondary-foreground **:data-[slot=dialog-close]:hover:bg-accent **:data-[slot=dialog-close]:hover:text-accent-foreground gap-5 rounded-xl p-6 shadow-none **:data-[slot=dialog-close]:rounded-md **:data-[slot=dialog-close]:p-1.5 **:data-[slot=dialog-close]:opacity-100 sm:max-w-[425px]">
           <DialogHeader className="space-y-0 text-left">
             <SignModalHeader title={title} description={description} />
           </DialogHeader>
@@ -104,15 +103,15 @@ export function SignModal({ callbackUrl = '/' }: { callbackUrl?: string }) {
 
   return (
     <Drawer open={isShowSignModal} onOpenChange={handleOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="border-border bg-card text-card-foreground rounded-t-xl">
         <DrawerHeader className="text-left">
           <div className="flex items-start gap-3.5">
             <div className="relative shrink-0">
               <div
                 aria-hidden
-                className="bg-primary/25 absolute inset-0 rounded-2xl blur-md"
+                className="bg-primary/25 absolute inset-0 rounded-lg blur-md"
               />
-              <div className="bg-primary text-primary-foreground relative flex size-11 items-center justify-center rounded-2xl shadow-sm">
+              <div className="bg-primary text-primary-foreground relative flex size-11 items-center justify-center rounded-lg shadow-sm">
                 <Lock className="size-5" strokeWidth={2.25} />
               </div>
             </div>

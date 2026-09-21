@@ -41,7 +41,7 @@ export class GeminiProvider implements AIProvider {
   }): Promise<AITaskResult> {
     const { mediaType, model, prompt, options } = params;
 
-    if (mediaType !== AIMediaType.IMAGE) {
+    if (mediaType !== AIMediaType.IMAGE && mediaType !== AIMediaType.TEXT) {
       throw new Error(`mediaType not supported: ${mediaType}`);
     }
 
@@ -54,6 +54,10 @@ export class GeminiProvider implements AIProvider {
     }
 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.configs.apiKey}`;
+
+    if (mediaType === AIMediaType.TEXT) {
+      return this.generateText({ apiUrl, prompt, options });
+    }
 
     const requestParts: any[] = [
       {
@@ -183,6 +187,69 @@ export class GeminiProvider implements AIProvider {
         createTime: new Date(),
       },
       taskResult: data,
+    };
+  }
+
+  private async generateText({
+    apiUrl,
+    prompt,
+    options,
+  }: {
+    apiUrl: string;
+    prompt: string;
+    options?: Record<string, unknown>;
+  }): Promise<AITaskResult> {
+    const payload = {
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: prompt }],
+        },
+      ],
+      generationConfig: {
+        temperature: options?.temperature ?? 0.6,
+        maxOutputTokens: options?.maxOutputTokens ?? 2048,
+        responseMimeType: options?.responseMimeType || 'application/json',
+      },
+    };
+
+    const resp = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      const errorText = await resp.text();
+      throw new Error(
+        `request failed with status: ${resp.status}, body: ${errorText}`
+      );
+    }
+
+    const data = await resp.json();
+    const parts = data.candidates?.[0]?.content?.parts;
+    if (!Array.isArray(parts) || parts.length === 0) {
+      throw new Error('no text parts returned');
+    }
+    const text = parts
+      .map((part: { text?: string }) => part.text || '')
+      .filter(Boolean)
+      .join('\n')
+      .trim();
+    if (!text) {
+      throw new Error('empty text response');
+    }
+
+    return {
+      taskStatus: AITaskStatus.SUCCESS,
+      taskId: nanoid(),
+      taskInfo: {
+        status: 'success',
+        createTime: new Date(),
+      },
+      taskResult: { text, raw: data },
     };
   }
 }

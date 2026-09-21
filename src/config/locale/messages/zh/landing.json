@@ -1,59 +1,54 @@
 {
   "header": {
     "id": "header",
+    "brand": {
+      "title": "SpritePixel",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "SpritePixel"
+      },
+      "url": "/"
+    },
     "nav": {
       "items": [
         {
-          "title": "功能亮点",
-          "url": "/#features",
-          "icon": "Sparkles"
+          "title": "首页",
+          "url": "/"
         },
         {
-          "title": "博客",
-          "url": "/blog",
-          "icon": "Newspaper"
+          "title": "功能",
+          "url": "/#features"
+        },
+        {
+          "title": "工具",
+          "children": [
+            {
+              "title": "AI 游戏图标生成器",
+              "url": "/ai-game-icon-generator",
+              "icon": "Layers",
+              "description": "批量制作风格一致的游戏图标"
+            },
+            {
+              "title": "精灵图表制作工具",
+              "url": "/sprite-sheet-maker",
+              "icon": "Grid2X2",
+              "description": "了解浏览器端动画帧打包工具"
+            },
+            {
+              "title": "精灵图切割工具",
+              "url": "/sprite-sheet-cutter",
+              "icon": "Scissors",
+              "description": "将精灵图表切割为独立动画帧"
+            }
+          ]
+        },
+        {
+          "title": "画廊",
+          "url": "/gallery"
         },
         {
           "title": "价格",
-          "url": "/pricing",
-          "icon": "DollarSign"
-        },
-        {
-          "title": "AI",
-          "icon": "RiRobot2Line",
-          "children": [
-            {
-              "title": "AI 聊天机器人",
-              "description": "与 AI 聊天机器人对话",
-              "url": "/chat",
-              "icon": "RiMessage2Line"
-            }
-          ]
-        },
-        {
-          "title": "内容",
-          "icon": "FileText",
-          "children": [
-            {
-              "title": "案例展示",
-              "description": "浏览产品案例",
-              "url": "/showcases",
-              "icon": "Box"
-            },
-            {
-              "title": "更新日志",
-              "description": "阅读更新日志",
-              "url": "/updates",
-              "icon": "Clock"
-            },
-            {
-              "title": "文档",
-              "description": "阅读文档",
-              "url": "/docs",
-              "target": "_blank",
-              "icon": "BookOpenText"
-            }
-          ]
+          "url": "/pricing"
         }
       ]
     },
@@ -64,80 +59,58 @@
       "show_sign_out": true,
       "items": [
         {
-          "title": "仪表盘",
+          "title": "工作区",
           "url": "/dashboard",
           "icon": "LayoutDashboard"
         }
       ]
-    },
-    "topbanner": {
-      "text": "此网站是 ShipAny 模板的演示站点，购买 ShipAny 模板，请访问 <a href='https://shipany.ai/zh/pricing' class='text-orange-300' target='_blank'>ShipAny 官网</a>"
     }
   },
   "footer": {
     "id": "footer",
+    "className": "border-t border-border bg-vault-navy",
     "brand": {
-      "description": "ShipAny 是专为 AI SaaS 创业项目打造的 NextJS 模板。丰富模板与组件，极速交付你的产品。"
+      "title": "SpritePixel",
+      "description": "面向独立游戏开发者、以项目为核心的 AI 游戏资产工作室，用于创建风格一致的精灵图、动画和配套资产套装。"
     },
     "nav": {
       "items": [
         {
-          "title": "关于我们",
+          "title": "产品",
           "children": [
             {
-              "title": "功能亮点",
-              "url": "/#features",
-              "target": "_self"
+              "title": "AI 精灵图生成器",
+              "url": "/#hero"
             },
             {
-              "title": "案例展示",
-              "url": "/showcases",
-              "target": "_self"
+              "title": "AI 游戏图标生成器",
+              "url": "/ai-game-icon-generator"
             },
             {
               "title": "价格",
-              "url": "/pricing",
-              "target": "_self"
+              "url": "/#pricing"
             }
           ]
         },
         {
-          "title": "资源",
+          "title": "免费工具",
           "children": [
             {
-              "title": "文档",
-              "url": "/docs",
-              "target": "_self"
+              "title": "精灵图表制作工具",
+              "url": "/sprite-sheet-maker"
             },
             {
-              "title": "博客",
-              "url": "/blog",
-              "target": "_self"
-            },
-            {
-              "title": "对话",
-              "url": "/chat",
-              "target": "_blank"
+              "title": "精灵图切割工具",
+              "url": "/sprite-sheet-cutter"
             }
           ]
         },
         {
-          "title": "合作伙伴",
+          "title": "联系",
           "children": [
             {
-              "title": "ShipAny",
-              "url": "https://shipany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "MCP.so",
-              "url": "https://mcp.so",
-              "target": "_blank"
+              "title": "support@spritepixel.com",
+              "url": "mailto:support@spritepixel.com"
             }
           ]
         }
@@ -154,6 +127,7 @@
           "url": "/terms-of-service"
         }
       ]
-    }
+    },
+    "copyright": "© 2026 SpritePixel。为独立游戏开发者而构建。"
   }
 }

@@ -14,6 +14,7 @@ export const revalidate = 3600;
 export const generateMetadata = getMetadata({
   metadataKey: 'pages.updates.metadata',
   canonicalUrl: '/updates',
+  noIndex: true,
 });
 
 export default async function UpdatesPage({

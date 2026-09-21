@@ -1,6 +1,6 @@
 import '@/config/style/global.css';
 
-import { JetBrains_Mono, Merriweather, Noto_Sans_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
@@ -15,23 +15,23 @@ import { UtmCapture } from '@/shared/blocks/common/utm-capture';
 import { Toaster } from '@/shared/components/ui/sonner';
 import { AppContextProvider } from '@/shared/contexts/app';
 import { getMetadata } from '@/shared/lib/seo';
+import { cn } from '@/shared/lib/utils';
 import { getAllConfigs } from '@/shared/models/config';
 import { getAdsService } from '@/shared/services/ads';
 import { getAffiliateService } from '@/shared/services/affiliate';
 import { getAnalyticsService } from '@/shared/services/analytics';
 import { getCustomerService } from '@/shared/services/customer_service';
 
-const notoSansMono = Noto_Sans_Mono({
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
   preload: true,
 });
 
-const merriweather = Merriweather({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-serif',
+  variable: '--font-heading',
   display: 'swap',
   preload: true,
 });
@@ -66,6 +66,8 @@ export default async function LocaleLayout({
   const isDebug = process.env.NEXT_PUBLIC_DEBUG === 'true';
 
   const appUrl = envConfigs.app_url || '';
+  const appearance = envConfigs.appearance || 'dark';
+  const htmlThemeClass = appearance === 'light' ? 'light' : 'dark';
 
   let adsMetaTags = null;
   let adsHeadScripts = null;
@@ -114,7 +116,15 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`${notoSansMono.variable} ${merriweather.variable} ${jetbrainsMono.variable}`}
+      className={cn(
+        inter.variable,
+        spaceGrotesk.variable,
+        jetbrainsMono.variable,
+        htmlThemeClass
+      )}
+      style={{
+        colorScheme: appearance === 'light' ? 'light' : 'dark',
+      }}
       suppressHydrationWarning
     >
       <head>
@@ -147,7 +157,7 @@ export default async function LocaleLayout({
       </head>
       <body suppressHydrationWarning className="overflow-x-hidden">
         <NextTopLoader
-          color="#6466F1"
+          color="#F6C453"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}

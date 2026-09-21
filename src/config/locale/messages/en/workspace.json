@@ -1,0 +1,590 @@
+{
+  "projects": {
+    "title": "My Projects",
+    "new": "New project",
+    "open": "Open project",
+    "assets": "{count, plural, =0 {No assets yet} =1 {1 asset} other {# assets}}",
+    "updated": "Updated {date}",
+    "default": "Default Project",
+    "empty": "Create your first project to begin building a consistent asset library.",
+    "menu": "Project actions",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteTitle": "Delete project",
+    "deleteDescription": "Delete “{name}”? It will be removed from your project list.",
+    "deleting": "Deleting…",
+    "deleteError": "The project could not be deleted. Try again."
+  },
+  "createProject": {
+    "title": "Create a project",
+    "description": "Set a reusable visual baseline for every asset you generate.",
+    "step": "Step {current} of 2",
+    "name": "Project name",
+    "namePlaceholder": "My action RPG",
+    "projectDescription": "Description (optional)",
+    "descriptionPlaceholder": "A compact fantasy roguelike",
+    "gameGenre": "Game genre",
+    "gameGenrePlaceholder": "Select a game genre",
+    "genres": {
+      "action_rpg": "Action RPG",
+      "roguelike": "Roguelike",
+      "platformer": "Platformer",
+      "adventure": "Adventure",
+      "strategy": "Strategy",
+      "casual": "Casual",
+      "other": "Other"
+    },
+    "style": "Art style",
+    "back": "Back",
+    "next": "Continue",
+    "create": "Create project",
+    "creating": "Creating…",
+    "error": "The project could not be created. Try again.",
+    "editTitle": "Edit project",
+    "editDescription": "Update this project’s name and visual baseline.",
+    "save": "Save",
+    "saving": "Saving…",
+    "editError": "The project could not be saved. Try again."
+  },
+  "selector": {
+    "label": "Current project",
+    "add": "Add project",
+    "loading": "Loading projects…",
+    "error": "Projects are unavailable"
+  },
+  "nav": {
+    "characters": "Characters",
+    "icons": "Icons",
+    "scenes": "Main scenes",
+    "ui": "UI screens",
+    "effects": "Effects",
+    "settings": "Project settings",
+    "back": "All projects"
+  },
+  "assets": {
+    "title": "My Assets",
+    "project": "{name}",
+    "characters": {
+      "title": "Characters",
+      "description": "Browse character images saved across all of your projects.",
+      "emptyTitle": "No character images yet",
+      "emptyDescription": "Character images will appear here after you generate them in a project."
+    },
+    "animations": {
+      "title": "Animations",
+      "description": "Browse character animations saved across all of your projects.",
+      "emptyTitle": "No animations yet",
+      "emptyDescription": "Animations will appear here after you generate them for a character."
+    },
+    "icons": {
+      "title": "Icons",
+      "description": "Browse game icons saved across all of your projects.",
+      "emptyTitle": "No icons yet",
+      "emptyDescription": "Icons will appear here after you generate them with the icon generator."
+    },
+    "sheets": {
+      "title": "Sprite sheets",
+      "description": "Browse sprite sheets saved across all of your projects.",
+      "emptyTitle": "No sprite sheets yet",
+      "emptyDescription": "Sprite sheets will appear here after an animation is generated."
+    }
+  },
+  "projectSettings": {
+    "title": "Project settings",
+    "description": "Update this project’s name, game genre and art style.",
+    "deleteHeading": "Delete project"
+  },
+  "emptySection": {
+    "title": "{section} workspace",
+    "description": "This project section is ready for assets, but generation is not included in this release.",
+    "back": "Back to characters"
+  },
+  "filePicker": {
+    "kindLabel": "Asset type",
+    "kinds": {
+      "character": "Characters",
+      "icon": "Icons",
+      "sheet": "Sprite sheets"
+    },
+    "loading": "Loading assets…",
+    "empty": "This project does not have any selectable assets yet.",
+    "characterTitle": "Choose an existing character",
+    "characterDescription": "Pick a character image from this project as the motion reference."
+  },
+  "characters": {
+    "title": "Characters",
+    "description": "Build each character from one trusted base reference through variations, directions and animation.",
+    "new": "New character",
+    "create": {
+      "trigger": "New character",
+      "title": "Generate a new character",
+      "description": "Generate a new character base image inside the current project.",
+      "promptLabel": "Describe the character you want to create",
+      "promptRequired": "Describe the character before generating.",
+      "currentProject": "Current project",
+      "generate": "Start generating",
+      "generating": "Generating…",
+      "previewTitle": "Generation preview",
+      "previewEmpty": "Your result will appear here"
+    },
+    "emptyTitle": "No characters yet",
+    "emptyDescription": "Generate a base character from the homepage or start here with a description.",
+    "open": "Open character",
+    "workflow": {
+      "base": "Base & variations",
+      "variations": "Variations",
+      "directions": "Directions",
+      "animations": "Animations",
+      "sheets": "Sprite sheets"
+    },
+    "stageDescriptions": {
+      "base": "Choose a base or variation, then edit its pose or costume.",
+      "directions": "Each set contains independent direction images you can inspect, download or animate.",
+      "animations": "Hover an animation to preview it, then click to open the editor.",
+      "sheets": "Inspect, enlarge and download the sprite sheet for each action direction."
+    },
+    "panels": {
+      "base": "Edit character",
+      "directions": "Generate directions",
+      "animations": "Generate animation",
+      "sheets": "Sprite sheet export"
+    },
+    "active": "Active base reference",
+    "selectedInput": "Selected",
+    "variation": "Character variation",
+    "more": "More actions",
+    "actions": "Character actions",
+    "rename": "Rename",
+    "delete": "Delete",
+    "renameTitle": "Rename character",
+    "renameDescription": "Update this character’s name.",
+    "nameLabel": "Character name",
+    "save": "Save",
+    "saving": "Saving…",
+    "renameError": "The name could not be saved. Try again.",
+    "deleteCharacterTitle": "Delete character",
+    "deleteCharacterDescription": "Delete “{name}”? It will be removed from this project.",
+    "deletingCharacter": "Deleting…",
+    "deleteCharacterError": "The character could not be deleted. Try again.",
+    "renameImageTitle": "Rename image",
+    "renameImageDescription": "Update this image’s name.",
+    "imageNameLabel": "Image name",
+    "deleteImage": "Delete",
+    "deleteImageTitle": "Delete this image",
+    "deleteImageDescription": "Delete this image from the character?",
+    "deletingImage": "Deleting…",
+    "deleteImageError": "The image could not be deleted. Try again.",
+    "setActive": "Set as active base",
+    "uploadBase": "Upload base image",
+    "uploading": "Uploading…",
+    "generateVariation": "Generate variation",
+    "generateDirections": "Generate directions",
+    "generateAnimation": "Generate animation",
+    "readyTitle": "Ready when you are",
+    "readyDescription": "Choose a workflow stage and describe the next consistent asset for {name}.",
+    "promptPlaceholder": "Describe what should change…",
+    "editPosePlaceholder": "Describe the pose, for example a two-handed sword stance.",
+    "editCostumePlaceholder": "Describe the costume change, for example a red cloak.",
+    "edit": "Edit",
+    "resultPlaceholder": "Your result will appear here",
+    "editReferenceRequired": "Choose an image to edit first.",
+    "generate": "Generate",
+    "generateCollection": "Generate set",
+    "generateWithCredits": "Generate · {credits} credits",
+    "processing": "Generating…",
+    "action": "Action",
+    "directionSection": "Direction",
+    "framesLabel": "Frames",
+    "directionFlipHint": "West, northwest and southwest views are mirrored from the east-facing ones — no extra cost.",
+    "directionCreditSummary": "{count}-way 1 × {credits} credits",
+    "fourDirections": "4 directions",
+    "eightDirections": "8 directions",
+    "referenceInput": "Generation input image",
+    "directionSource": "Source",
+    "chooseReference": "Choose character image",
+    "changeReference": "Change image",
+    "changeCharacter": "Change character",
+    "pickerTitle": "Choose generation input",
+    "pickerDescription": "Choose a base, variation or direction image from this character.",
+    "directionSet": "Direction set {number}",
+    "directionCount": "{count} independent directions",
+    "animateSet": "Animate set",
+    "missingDirection": "Direction missing",
+    "frames": "frames",
+    "emptyBase": "No base images or character variations yet.",
+    "emptyDirections": "No direction sets yet. Generate one from the panel.",
+    "emptyAnimations": "No animations yet",
+    "emptyAnimationsHint": "Choose a character image and action on the right, then generate",
+    "emptySheets": "Sprite sheets will appear here after an animation is generated.",
+    "sheetHelp": "Each sprite sheet belongs to one action direction. Enlarge or download it from its card."
+  },
+  "generation": {
+    "queued": "Queued",
+    "processing": "Generating your asset…",
+    "success": "Generation complete",
+    "partial": "Some items need attention",
+    "failed": "Generation failed",
+    "retry": "Retry failed items",
+    "download": "Download",
+    "zoom": "View details",
+    "openCharacter": "Generate sprite sheet",
+    "openEditor": "Edit animation",
+    "promptRequired": "Enter a description before generating.",
+    "motionReferenceRequired": "Upload a character image before generating.",
+    "referenceRequired": "Select the character image again to continue after sign-in.",
+    "notConfigured": "Generation is not configured yet. Add the model and storage settings in the admin console.",
+    "genericError": "The request could not be completed. Try again."
+  },
+  "directions": {
+    "none": "Base",
+    "north": "North",
+    "north_east": "North East",
+    "east": "East",
+    "south_east": "South East",
+    "south": "South",
+    "south_west": "South West",
+    "west": "West",
+    "north_west": "North West"
+  },
+  "icons": {
+    "metadata": {
+      "title": "AI Game Icon Generator – Create Icons, Items & Props | SpritePixel",
+      "description": "Generate up to 9 consistent game icons, items, weapons, skills, and props together on one 3×3 transparent sheet.",
+      "keywords": "AI Game Icon Generator, Game Icon Generator, AI Game Icons, Game Prop Generator, AI Game Item Generator, AI Game Asset Generator, RPG Icon Generator, Pixel Art Icon Generator"
+    },
+    "eyebrow": "Prompt or reference → game-ready icons",
+    "title": "AI Game Icon Generator",
+    "home": "Home",
+    "description": "Create up to 9 consistent game icons, items, weapons, skills, and props in one model request and download them as a single 3×3 transparent sheet.",
+    "listTitle": "Icons",
+    "listDescription": "Build matching inventory, skill and interface icons, then keep them with this project.",
+    "new": "New icon",
+    "emptyTitle": "No icons yet",
+    "emptyDescription": "Generate an icon set from the icon generator; results appear here.",
+    "board": "Asset Board",
+    "boardDescription": "One icon per line. Use “Name: description” for extra direction.",
+    "styleSource": "Style source",
+    "stylePresets": "Style presets",
+    "uploadReference": "Upload reference",
+    "uploadFile": "Upload file",
+    "chooseAsset": "Choose asset",
+    "selectedAsset": "Selected project asset",
+    "itemList": "Item list",
+    "listHint": "One item per line, formatted as “Name: description”. Up to 9 items.",
+    "quickInsert": "Quick insert:",
+    "expandAll": "Show all",
+    "collapse": "Collapse",
+    "filled": "{count}/{max} filled",
+    "preview": "Preview",
+    "pickerTitle": "Choose a reference asset",
+    "pickerDescription": "Pick an existing image from this project to guide the icon style.",
+    "pickerLoading": "Loading assets…",
+    "pickerEmpty": "This project does not have any selectable assets yet.",
+    "styleHints": {
+      "pixel-art": "Classic 16-color pixel look",
+      "hand-painted": "Painterly dark fantasy",
+      "cartoon": "Clean outlined cartoon props",
+      "anime-2d": "Modern anime illustration",
+      "dark-fantasy": "Moody metals and dungeon relics",
+      "cyberpunk": "Neon hardware and sci-fi chips"
+    },
+    "itemPresets": {
+      "crate": "Crate",
+      "torch": "Torch",
+      "barrel": "Barrel",
+      "chest": "Chest",
+      "door": "Door",
+      "lamp": "Lamp",
+      "rock": "Rock",
+      "bush": "Bush",
+      "sign": "Signpost",
+      "chair": "Chair",
+      "table": "Table",
+      "sword": "Sword",
+      "shield": "Shield",
+      "potion": "Potion",
+      "bookshelf": "Bookshelf",
+      "anvil": "Anvil",
+      "cauldron": "Cauldron",
+      "bench": "Bench",
+      "fence": "Fence",
+      "well": "Well",
+      "banner": "Banner",
+      "statue": "Statue",
+      "crystal": "Crystal",
+      "skull": "Skull",
+      "tombstone": "Tombstone",
+      "mushroom": "Mushroom",
+      "stump": "Stump",
+      "ladder": "Ladder",
+      "bucket": "Bucket",
+      "sack": "Sack"
+    },
+    "inputPlaceholder": "Health Potion: red glass vial with a cork\nIron Sword: worn short sword\nDash Skill: cyan speed streak",
+    "add": "Add item",
+    "reference": "Reference image",
+    "referenceHint": "Optional. A reference alone creates one icon item.",
+    "palette": "Palette notes",
+    "palettePlaceholder": "Warm gold, iron gray, cyan magic",
+    "background": "Background",
+    "transparent": "Transparent",
+    "dark": "Dark",
+    "light": "Light",
+    "generate": "Generate icon sheet",
+    "selected": "{count} selected",
+    "remove": "Remove",
+    "download": "Download icon",
+    "downloadZip": "Download successful ZIP",
+    "downloadSheet": "Download icon sheet",
+    "defaultSetName": "Game Icon Set",
+    "defaultItemName": "Reference Icon",
+    "ready": "Ready",
+    "empty": "Your generated 3×3 icon sheet will appear here",
+    "landing": {
+      "tag": "ICONS",
+      "badges": {
+        "set": "BATCH SET",
+        "types": "ASSET TYPES",
+        "styles": "STYLE PRESETS",
+        "regenerate": "SHEET RETRY",
+        "export": "GAME EXPORT",
+        "workflow": "3-STEP FLOW",
+        "tools": "MORE TOOLS",
+        "faq": "ICON FAQ"
+      },
+      "set": {
+        "title": "Generate Consistent Game Icons in One Batch",
+        "description": "Create inventory icons, weapons, potions, skills, collectibles, and other game assets in a unified visual style."
+      },
+      "types": {
+        "title": "Create More Than Just Icons",
+        "description": "Generate isolated game objects that can be used as inventory icons, world props, collectibles, or UI assets.",
+        "items": [
+          {
+            "title": "Inventory Icons",
+            "text": "Build matching backpack, loot, and equipment icons for an AI inventory icon generator workflow."
+          },
+          {
+            "title": "Weapons",
+            "text": "Generate isolated swords, bows, and staffs that work as UI icons or world pickups."
+          },
+          {
+            "title": "Potions & Items",
+            "text": "Create potions, keys, and consumables as a game item icon generator set."
+          },
+          {
+            "title": "Skills & Abilities",
+            "text": "Design skill and ability icons that stay readable at HUD size."
+          },
+          {
+            "title": "Props & Objects",
+            "text": "Produce crates, furniture, and other isolated objects with a game prop generator look."
+          },
+          {
+            "title": "Collectibles",
+            "text": "Make coins, gems, and quest objects that match the rest of your icon set."
+          }
+        ]
+      },
+      "styles": {
+        "title": "Choose a Style for Your Game Assets",
+        "description": "Pick a visual direction for the whole batch, then keep every icon and prop in the same language.",
+        "items": [
+          {
+            "id": "pixel-art",
+            "title": "Pixel Art",
+            "text": "Classic 16-color pixel art icon generator looks for retro RPGs and action games."
+          },
+          {
+            "id": "hand-painted",
+            "title": "Hand-painted RPG",
+            "text": "Painterly RPG icon generator shading for weapons, potions, and inventory art."
+          },
+          {
+            "id": "cartoon",
+            "title": "Cartoon",
+            "text": "Clean outlines and readable shapes for casual game icons and props."
+          },
+          {
+            "id": "anime-2d",
+            "title": "Anime",
+            "text": "Cel-shaded anime icons for skills, items, and UI."
+          },
+          {
+            "id": "dark-fantasy",
+            "title": "Dark Fantasy",
+            "text": "Moody metals, relics, and dungeon props for dark fantasy sets."
+          },
+          {
+            "id": "cyberpunk",
+            "title": "Cyberpunk",
+            "text": "Neon hardware, chips, and tech props for sci-fi inventories."
+          }
+        ]
+      },
+      "regenerate": {
+        "title": "Retry the Icon Sheet as One Consistent Set",
+        "description": "The complete 3×3 sheet is generated and retried as one image so its style stays consistent.",
+        "gridLabel": "9 icons",
+        "ok": "Kept",
+        "retry": "Regenerate sheet",
+        "cta": "Regenerate the sheet"
+      },
+      "export": {
+        "title": "Drop the result straight into your inventory UI",
+        "description": "Get one transparent 3×3 sheet with a locked style and predictable cells—download it or keep it in the project and wire it into UI and props right away.",
+        "items": [
+          {
+            "id": "batch",
+            "title": "One request, nine slots",
+            "text": "Generate up to nine icons in a single batch instead of tuning prompts one icon at a time."
+          },
+          {
+            "id": "transparent",
+            "title": "Transparent PNG for engines",
+            "text": "Clean alpha so icons stack on Unity, Godot, or Phaser UI and scenes without extra cutout work."
+          },
+          {
+            "id": "consistency",
+            "title": "Style locked across the sheet",
+            "text": "Weapons, potions, and skills share the same lighting and line work so the bar reads as one art pass."
+          },
+          {
+            "id": "download",
+            "title": "One file for the whole set",
+            "text": "Download a single 3×3 image instead of hunting for nine separate files."
+          },
+          {
+            "id": "project",
+            "title": "Saved to your project",
+            "text": "Every sheet is stored on the project so you can refine and download again from any device."
+          },
+          {
+            "id": "grid",
+            "title": "Predictable 3×3 cells",
+            "text": "Nine equal slots with transparent empties—easy to slice or map frames in your pipeline."
+          }
+        ]
+      },
+      "workflowTitle": "How it works",
+      "workflow": [
+        {
+          "title": "Describe your assets",
+          "text": "Add icons, weapons, props, items, or skills. Short names are enough to start a batch of up to 9."
+        },
+        {
+          "title": "Choose a style",
+          "text": "Select a preset or upload a reference image so the whole set stays consistent."
+        },
+        {
+          "title": "Generate & refine",
+          "text": "Generate up to 9 assets together on one consistent 3×3 image, then download the finished sheet."
+        }
+      ]
+    },
+    "faqTitle": "AI Game Icon Generator FAQ",
+    "faq": [
+      {
+        "q": "What is an AI game icon generator?",
+        "a": "An AI game icon generator creates game-ready icons from text descriptions or reference images, including inventory items, skills, weapons, abilities, and UI icons."
+      },
+      {
+        "q": "Can I generate multiple game icons at once?",
+        "a": "Yes. SpritePixel generates up to 9 icons together on one 3×3 image so the complete set shares one visual style."
+      },
+      {
+        "q": "How does retry work for an icon set?",
+        "a": "Retry regenerates the complete 3×3 sheet as one image, preserving the shared style and layout."
+      },
+      {
+        "q": "What types of game icons can I create?",
+        "a": "You can create inventory icons, skill icons, item icons, weapon icons, ability icons, status icons, and other game UI assets."
+      },
+      {
+        "q": "Can I create pixel art game icons?",
+        "a": "Yes. Pixel Art is one of the available styles, along with Hand-painted RPG, Cartoon, Anime, Dark Fantasy, and Cyberpunk."
+      },
+      {
+        "q": "Can I use a reference image?",
+        "a": "Yes. You can upload a reference image to help maintain a specific visual style across your generated icons."
+      },
+      {
+        "q": "What icon sizes are supported?",
+        "a": "You can generate game icons for common sizes such as 64×64, 128×128, and 256×256."
+      },
+      {
+        "q": "How do I download the generated icons?",
+        "a": "Download the complete transparent 3×3 icon sheet as one PNG."
+      },
+      {
+        "q": "Can I generate game props with the AI Game Icon Generator?",
+        "a": "Yes. You can generate isolated objects such as crates, weapons, potions, furniture, collectibles, and other game props in addition to traditional UI icons."
+      },
+      {
+        "q": "What's the difference between a game icon and a game prop?",
+        "a": "Game icons are usually designed for inventories, skills, and UI, while props are objects that may appear directly in the game world. SpritePixel can generate both using the same consistent style."
+      }
+    ],
+    "ctaTitle": "Ready to generate your icon set?",
+    "ctaText": "Describe up to 9 icons or props in the workspace above, pick a style, and generate one consistent 3×3 sheet.",
+    "ctaLabel": "Open the workspace",
+    "openProject": "Open project icons"
+  },
+  "editor": {
+    "title": "Animation editor",
+    "unsaved": "You have unsaved changes",
+    "history": "History",
+    "undo": "Undo",
+    "redo": "Redo",
+    "controls": "Playback",
+    "play": "Play",
+    "pause": "Pause",
+    "fps": "FPS",
+    "loop": "Loop",
+    "zoom": "Zoom",
+    "offset": "Frame offset",
+    "offsetX": "X offset",
+    "offsetY": "Y offset",
+    "delete": "Delete frame",
+    "save": "Save as new version",
+    "saving": "Saving…",
+    "downloadSheet": "Download sprite sheet",
+    "downloadFrames": "Download frame sequence ZIP",
+    "frame": "Frame {number}",
+    "back": "Back to character",
+    "saveError": "The new version could not be saved."
+  },
+  "errors": {
+    "GENERIC": "The request could not be completed. Try again.",
+    "UNAUTHORIZED": "Sign in to continue.",
+    "INSUFFICIENT_CREDITS": "Not enough credits. Top up to keep generating.",
+    "FILE_TOO_LARGE": "The image is larger than 10MB. Compress it and try again.",
+    "IMAGE_DIMENSIONS_EXCEEDED": "Image edges cannot exceed 4096 pixels.",
+    "INVALID_IMAGE": "Upload a valid image file.",
+    "INVALID_UPLOAD": "The upload is invalid. Choose the file again.",
+    "INVALID_GENERATION": "The generation settings are invalid. Check them and try again.",
+    "INVALID_PROJECT": "The project details are invalid. Check them and try again.",
+    "INVALID_REFERENCE": "The reference image is invalid. Choose it again.",
+    "INVALID_VERSION": "The version is invalid. Refresh and try again.",
+    "INVALID_TASK_COUNT": "This generation has too many or too few tasks.",
+    "REFERENCE_REQUIRED": "Upload a character image before generating.",
+    "REFERENCE_NOT_FOUND": "The reference image could not be found. Upload it again.",
+    "PROJECT_NOT_FOUND": "The current project could not be found. Refresh and try again.",
+    "INVALID_ASSET": "The character details are invalid. Check them and try again.",
+    "ASSET_NOT_FOUND": "The asset could not be found. Refresh and try again.",
+    "ASSET_REQUIRED": "Select a character first.",
+    "VARIANT_NOT_FOUND": "The variant could not be found. Refresh and try again.",
+    "ANIMATION_NOT_FOUND": "The animation could not be found. Refresh and try again.",
+    "ICON_ITEMS_REQUIRED": "Add at least one icon before generating.",
+    "ICON_DESCRIPTION_EXPAND_FAILED": "The item details could not be completed. Check the Gemini configuration and try again.",
+    "GENERATION_NOT_CONFIGURED": "Generation is not configured yet. Add the model and storage settings in the admin console.",
+    "STORAGE_NOT_CONFIGURED": "Storage is not configured yet. Add the storage settings in the admin console.",
+    "STORAGE_UPLOAD_FAILED": "The image could not be uploaded. Try again.",
+    "GENERATION_NOT_FOUND": "This generation could not be found.",
+    "GENERATION_FAILED": "Generation failed. Try again.",
+    "GENERATION_QUERY_FAILED": "The generation status could not be loaded. Try again.",
+    "GENERATION_RETRY_FAILED": "The retry could not be started. Try again.",
+    "GENERATION_ID_CONFLICT": "This generation already exists. Start a new one."
+  }
+}

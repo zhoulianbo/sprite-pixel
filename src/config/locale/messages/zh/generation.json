@@ -1,0 +1,74 @@
+{
+  "fields": {
+    "style": "风格",
+    "perspective": "视角",
+    "quality": "质量",
+    "characterType": "角色类型",
+    "editType": "类型",
+    "actionType": "动作类型",
+    "direction": "朝向",
+    "frames": "动画帧数",
+    "frameSize": "单帧尺寸"
+  },
+  "upload": {
+    "reference": "参考图",
+    "character": "角色图",
+    "remove": "删除图片",
+    "file": "上传",
+    "existing": "已有角色"
+  },
+  "options": {
+    "style": {
+      "pixel-art": "像素画",
+      "cartoon": "卡通风",
+      "illustration": "插画风",
+      "hand-painted": "手绘风",
+      "anime-2d": "二次元",
+      "dark-fantasy": "黑暗奇幻",
+      "cyberpunk": "赛博朋克"
+    },
+    "perspective": {
+      "side": "侧视图",
+      "top-down": "俯视图",
+      "front": "正视图",
+      "isometric": "等距视角"
+    },
+    "quality": {
+      "1k": "1K",
+      "2k": "2K",
+      "4k": "4K"
+    },
+    "characterType": {
+      "humanoid": "人形",
+      "monster": "怪物",
+      "animal": "动物",
+      "robot": "机器人",
+      "custom": "自定义"
+    },
+    "editType": {
+      "pose": "姿势",
+      "costume": "换装"
+    },
+    "actionType": {
+      "idle": "待机",
+      "walk": "行走",
+      "run": "奔跑",
+      "attack": "攻击",
+      "jump": "跳跃",
+      "hurt": "受伤",
+      "death": "死亡",
+      "custom": "自定义"
+    },
+    "direction": {
+      "right": "向右",
+      "left": "向左",
+      "up": "向上",
+      "down": "向下",
+      "four-way": "四方向",
+      "eight-way": "八方向"
+    },
+    "frames": {
+      "auto": "智能"
+    }
+  }
+}

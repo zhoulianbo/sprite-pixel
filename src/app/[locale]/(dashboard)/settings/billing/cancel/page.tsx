@@ -104,8 +104,20 @@ export default async function CancelBillingPage({
       throw new Error('cancel subscription failed');
     }
 
+    const providerStatus = result.subscriptionResult?.status;
+    const nextStatus =
+      result.subscriptionInfo?.status ||
+      (providerStatus === 'canceling'
+        ? SubscriptionStatus.PENDING_CANCEL
+        : SubscriptionStatus.CANCELED);
+
     await updateSubscriptionBySubscriptionNo(subscription.subscriptionNo, {
-      status: SubscriptionStatus.CANCELED,
+      status: nextStatus,
+      canceledAt: new Date(),
+      canceledEndAt:
+        nextStatus === SubscriptionStatus.PENDING_CANCEL
+          ? subscription.currentPeriodEnd
+          : new Date(),
     });
 
     return {

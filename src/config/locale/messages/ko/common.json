@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "title": "AI 스프라이트 생성기 - 2D 게임 에셋 제작 | SpritePixel",
+    "description": "SpritePixel AI 스프라이트 생성기로 게임용 캐릭터, 애니메이션 스프라이트 시트, 일관된 2D 에셋을 한 프로젝트에서 제작하세요.",
+    "keywords": "AI 스프라이트 생성기, 게임 스프라이트 생성기, 캐릭터 스프라이트 생성, 스프라이트 시트 생성기, AI 게임 에셋, 게임 아이콘 생성기, SpritePixel"
+  },
+  "sign": {
+    "sign_in_title": "로그인",
+    "sign_in_description": "계정에 로그인",
+    "sign_up_title": "회원가입",
+    "sign_up_description": "계정 만들기",
+    "email_title": "이메일",
+    "email_placeholder": "이메일을 입력하세요",
+    "password_title": "비밀번호",
+    "password_placeholder": "비밀번호를 입력하세요",
+    "forgot_password": "비밀번호를 잊으셨나요?",
+    "or": "또는",
+    "continue": "계속",
+    "no_account": "계정이 없으신가요?",
+    "already_have_account": "이미 계정이 있으신가요?",
+    "email_sign_in": "이메일로 로그인",
+    "google_sign_in_title": "Google로 로그인",
+    "github_sign_in_title": "GitHub로 로그인",
+    "close_title": "닫기",
+    "cancel_title": "취소",
+    "sign_out_title": "로그아웃",
+    "billing_title": "결제",
+    "name_title": "이름",
+    "name_placeholder": "이름을 입력하세요",
+    "email_verification_hint": "수신 가능한 이메일을 사용하세요. 가입 후 이메일 인증이 필요합니다.",
+    "admin_title": "관리자",
+    "credits_title": "크레딧: {credits}",
+    "verify_email_sent": "인증 이메일을 보냈습니다. 받은편지함을 확인하세요.",
+    "verify_email_required": "로그인하기 전에 이메일 주소를 인증하세요.",
+    "resend_verification": "인증 이메일 다시 보내기",
+    "resend_verification_sent": "인증 이메일을 다시 보냈습니다.",
+    "verify_email_page_title": "이메일을 확인하세요",
+    "verify_email_page_description": "계속하려면 다음 주소로 보낸 링크를 클릭하세요:",
+    "verify_email_continue": "계속",
+    "verify_email_tip": "인증을 마친 뒤 ‘계속’을 누르세요.",
+    "verify_email_not_verified_yet": "아직 인증되지 않았습니다. 이메일의 링크를 먼저 클릭하세요.",
+    "verify_email_account_mismatch": "현재 {current}(으)로 로그인했습니다. 이 페이지는 {expected}의 인증을 기다리고 있습니다.",
+    "resend_verification_countdown": "인증 이메일 다시 보내기({seconds}초)",
+    "resend_verification_wait": "{seconds}초 후 다시 보내세요.",
+    "back_to_sign_in": "로그인으로 돌아가기"
+  },
+  "payment": {
+    "choose_payment_method": "결제 수단 선택",
+    "choose_payment_method_description": "",
+    "cancel_title": "취소"
+  },
+  "locale_detector": {
+    "title": "브라우저 언어가 {locale}(으)로 감지되었습니다. 전환할까요?",
+    "switch_to": "{locale}(으)로 전환",
+    "selector_label": "언어 변경. 현재 언어: {locale}",
+    "close": "닫기"
+  },
+  "moreTools": {
+    "title": "더 많은 도구",
+    "description": "SpritePixel의 관련 브라우저 도구를 계속 사용하세요. 무료 스프라이트 도구는 추가 가입이 필요 없습니다.",
+    "items": {
+      "sprites": {
+        "title": "AI 스프라이트 생성기",
+        "text": "프로젝트 설명을 바탕으로 게임용 스프라이트와 동작을 만듭니다."
+      },
+      "icons": {
+        "title": "AI 게임 아이콘 생성기",
+        "text": "일관된 스타일의 게임 아이콘, 아이템, 무기와 소품을 한 번에 생성합니다."
+      },
+      "maker": {
+        "title": "스프라이트 시트 제작 도구",
+        "text": "PNG 프레임이나 GIF를 시트로 묶고 PNG와 선택형 JSON을 내보냅니다."
+      },
+      "cutter": {
+        "title": "스프라이트 시트 분할 도구",
+        "text": "확인하고 조정할 수 있는 그리드로 시트를 개별 PNG 프레임으로 나눕니다."
+      }
+    }
+  }
+}

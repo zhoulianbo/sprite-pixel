@@ -1,0 +1,590 @@
+{
+  "projects": {
+    "title": "マイプロジェクト",
+    "new": "新規プロジェクト",
+    "open": "プロジェクトを開く",
+    "assets": "{count, plural, =0 {素材はまだありません} other {素材 #件}}",
+    "updated": "{date}に更新",
+    "default": "既定のプロジェクト",
+    "empty": "最初のプロジェクトを作成して、統一感のある素材ライブラリを作りましょう。",
+    "menu": "プロジェクト操作",
+    "edit": "編集",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleteTitle": "プロジェクトを削除",
+    "deleteDescription": "「{name}」を削除しますか？プロジェクト一覧から削除されます。",
+    "deleting": "削除中…",
+    "deleteError": "プロジェクトを削除できませんでした。もう一度お試しください。"
+  },
+  "createProject": {
+    "title": "プロジェクトを作成",
+    "description": "生成するすべての素材に再利用できるビジュアル基準を設定します。",
+    "step": "2ステップ中{current}",
+    "name": "プロジェクト名",
+    "namePlaceholder": "アクションRPGプロジェクト",
+    "projectDescription": "説明（任意）",
+    "descriptionPlaceholder": "コンパクトなファンタジー・ローグライク",
+    "gameGenre": "ゲームジャンル",
+    "gameGenrePlaceholder": "ジャンルを選択",
+    "genres": {
+      "action_rpg": "アクションRPG",
+      "roguelike": "ローグライク",
+      "platformer": "プラットフォーム",
+      "adventure": "アドベンチャー",
+      "strategy": "ストラテジー",
+      "casual": "カジュアル",
+      "other": "その他"
+    },
+    "style": "アートスタイル",
+    "back": "戻る",
+    "next": "続ける",
+    "create": "プロジェクトを作成",
+    "creating": "作成中…",
+    "error": "プロジェクトを作成できませんでした。",
+    "editTitle": "プロジェクトを編集",
+    "editDescription": "プロジェクト名とビジュアル基準を更新します。",
+    "save": "保存",
+    "saving": "保存中…",
+    "editError": "プロジェクトを保存できませんでした。"
+  },
+  "selector": {
+    "label": "現在のプロジェクト",
+    "add": "プロジェクトを追加",
+    "loading": "プロジェクトを読み込み中…",
+    "error": "プロジェクトを取得できません"
+  },
+  "nav": {
+    "characters": "キャラクター",
+    "icons": "アイコン",
+    "scenes": "メインシーン",
+    "ui": "UI画面",
+    "effects": "エフェクト",
+    "settings": "プロジェクト設定",
+    "back": "すべてのプロジェクト"
+  },
+  "assets": {
+    "title": "マイアセット",
+    "project": "{name}",
+    "characters": {
+      "title": "キャラクター",
+      "description": "すべてのプロジェクトに保存されたキャラクター画像を確認できます。",
+      "emptyTitle": "キャラクター画像はまだありません",
+      "emptyDescription": "プロジェクトでキャラクターを生成すると、ここに表示されます。"
+    },
+    "animations": {
+      "title": "アニメーション",
+      "description": "すべてのプロジェクトに保存されたキャラクターアニメーションを確認できます。",
+      "emptyTitle": "アニメーションはまだありません",
+      "emptyDescription": "キャラクターのアニメーションを生成すると、ここに表示されます。"
+    },
+    "icons": {
+      "title": "アイコン",
+      "description": "すべてのプロジェクトに保存されたゲームアイコンを確認できます。",
+      "emptyTitle": "アイコンはまだありません",
+      "emptyDescription": "アイコンジェネレーターで作成すると、ここに表示されます。"
+    },
+    "sheets": {
+      "title": "スプライトシート",
+      "description": "すべてのプロジェクトに保存されたスプライトシートを確認できます。",
+      "emptyTitle": "スプライトシートはまだありません",
+      "emptyDescription": "アニメーションを生成すると、対応するスプライトシートがここに表示されます。"
+    }
+  },
+  "projectSettings": {
+    "title": "プロジェクト設定",
+    "description": "このプロジェクトの名前、ジャンル、アートスタイルを更新します。",
+    "deleteHeading": "プロジェクトを削除"
+  },
+  "emptySection": {
+    "title": "{section}ワークスペース",
+    "description": "このセクションには素材を保存できますが、このリリースでは生成機能は含まれていません。",
+    "back": "キャラクターに戻る"
+  },
+  "filePicker": {
+    "kindLabel": "素材の種類",
+    "kinds": {
+      "character": "キャラクター",
+      "icon": "アイコン",
+      "sheet": "スプライトシート"
+    },
+    "loading": "素材を読み込み中…",
+    "empty": "このプロジェクトには選択できる素材がありません。",
+    "characterTitle": "既存キャラクターを選択",
+    "characterDescription": "このプロジェクトのキャラクター画像を動きの参考に選びます。"
+  },
+  "characters": {
+    "title": "キャラクター",
+    "description": "信頼できる基準画像から、差分、多方向、アニメーションまで一貫して作成します。",
+    "new": "新しいキャラクター",
+    "create": {
+      "trigger": "新しいキャラクター",
+      "title": "新しいキャラクターを生成",
+      "description": "現在のプロジェクト内で新しいキャラクター基準画像を生成します。",
+      "promptLabel": "作りたいキャラクターを説明してください",
+      "promptRequired": "生成前にキャラクターを説明してください。",
+      "currentProject": "現在のプロジェクト",
+      "generate": "生成を開始",
+      "generating": "生成中…",
+      "previewTitle": "生成プレビュー",
+      "previewEmpty": "結果はここに表示されます"
+    },
+    "emptyTitle": "キャラクターはまだありません",
+    "emptyDescription": "ホームページで基準画像を生成するか、ここから説明を入力して開始できます。",
+    "open": "キャラクターを開く",
+    "workflow": {
+      "base": "基準画像と差分",
+      "variations": "差分",
+      "directions": "多方向",
+      "animations": "アニメーション",
+      "sheets": "スプライトシート"
+    },
+    "stageDescriptions": {
+      "base": "基準または差分を選び、ポーズや衣装を編集します。",
+      "directions": "各セットは独立した方向画像で構成され、確認、ダウンロード、アニメーション化できます。",
+      "animations": "アニメーションにカーソルを合わせてプレビューし、クリックして編集画面を開きます。",
+      "sheets": "各アクション方向のスプライトシートを確認、拡大、ダウンロードできます。"
+    },
+    "panels": {
+      "base": "キャラクターを編集",
+      "directions": "多方向を生成",
+      "animations": "アニメーションを生成",
+      "sheets": "スプライトシート出力"
+    },
+    "active": "現在の基準画像",
+    "selectedInput": "選択中",
+    "variation": "キャラクター差分",
+    "more": "その他の操作",
+    "actions": "キャラクター操作",
+    "rename": "名前を変更",
+    "delete": "削除",
+    "renameTitle": "キャラクター名を変更",
+    "renameDescription": "このキャラクターの名前を更新します。",
+    "nameLabel": "キャラクター名",
+    "save": "保存",
+    "saving": "保存中…",
+    "renameError": "名前を保存できませんでした。もう一度お試しください。",
+    "deleteCharacterTitle": "キャラクターを削除",
+    "deleteCharacterDescription": "「{name}」を削除しますか？このプロジェクトから削除されます。",
+    "deletingCharacter": "削除中…",
+    "deleteCharacterError": "キャラクターを削除できませんでした。もう一度お試しください。",
+    "renameImageTitle": "画像名を変更",
+    "renameImageDescription": "この画像の名前を更新します。",
+    "imageNameLabel": "画像名",
+    "deleteImage": "削除",
+    "deleteImageTitle": "この画像を削除",
+    "deleteImageDescription": "この画像をキャラクターから削除しますか？",
+    "deletingImage": "削除中…",
+    "deleteImageError": "画像を削除できませんでした。もう一度お試しください。",
+    "setActive": "基準画像に設定",
+    "uploadBase": "基準画像をアップロード",
+    "uploading": "アップロード中…",
+    "generateVariation": "差分を生成",
+    "generateDirections": "多方向を生成",
+    "generateAnimation": "アニメーションを生成",
+    "readyTitle": "準備完了",
+    "readyDescription": "ワークフローの段階を選び、{name} 向けに一貫した素材を続けて生成します。",
+    "promptPlaceholder": "変更内容を説明…",
+    "editPosePlaceholder": "ポーズを説明してください。例：両手持ちの剣の構え。",
+    "editCostumePlaceholder": "衣装の変更を説明してください。例：赤いマント。",
+    "edit": "編集",
+    "resultPlaceholder": "結果はここに表示されます",
+    "editReferenceRequired": "先に編集する画像を選んでください。",
+    "generate": "生成",
+    "generateCollection": "セットを生成",
+    "generateWithCredits": "生成 · {credits} クレジット",
+    "processing": "生成中…",
+    "action": "アクション",
+    "directionSection": "方向",
+    "framesLabel": "フレーム数",
+    "directionFlipHint": "西、北西、南西は東向きの画像を反転したもので、追加料金はかかりません。",
+    "directionCreditSummary": "{count}方向 1 × {credits} クレジット",
+    "fourDirections": "4方向",
+    "eightDirections": "8方向",
+    "referenceInput": "生成入力画像",
+    "directionSource": "ソース",
+    "chooseReference": "キャラクター画像を選択",
+    "changeReference": "画像を変更",
+    "changeCharacter": "キャラクターを変更",
+    "pickerTitle": "生成入力を選択",
+    "pickerDescription": "このキャラクターの基準画像、差分、または方向画像から選びます。",
+    "directionSet": "多方向セット {number}",
+    "directionCount": "{count} の独立した方向",
+    "animateSet": "セットをアニメーション化",
+    "missingDirection": "方向画像がありません",
+    "frames": "フレーム",
+    "emptyBase": "基準画像やキャラクター差分はまだありません。",
+    "emptyDirections": "多方向セットはまだありません。パネルから生成してください。",
+    "emptyAnimations": "アニメーションはまだありません",
+    "emptyAnimationsHint": "右側でキャラクター画像とアクションを選び、生成してください",
+    "emptySheets": "アニメーションを生成すると、スプライトシートがここに表示されます。",
+    "sheetHelp": "各スプライトシートは1つのアクション方向に対応します。カードから拡大またはダウンロードできます。"
+  },
+  "generation": {
+    "queued": "待機中",
+    "processing": "素材を生成中…",
+    "success": "生成完了",
+    "partial": "確認が必要な項目があります",
+    "failed": "生成に失敗しました",
+    "retry": "失敗項目を再試行",
+    "download": "ダウンロード",
+    "zoom": "詳細を表示",
+    "openCharacter": "スプライトシートを生成",
+    "openEditor": "アニメーションを編集",
+    "promptRequired": "生成前に説明を入力してください。",
+    "motionReferenceRequired": "キャラクター画像をアップロードしてください。",
+    "referenceRequired": "ログイン後にキャラクター画像を選び直してください。",
+    "notConfigured": "生成機能が未設定です。管理画面でモデルとストレージを設定してください。",
+    "genericError": "処理を完了できませんでした。もう一度お試しください。"
+  },
+  "directions": {
+    "none": "基準",
+    "north": "北",
+    "north_east": "北東",
+    "east": "東",
+    "south_east": "南東",
+    "south": "南",
+    "south_west": "南西",
+    "west": "西",
+    "north_west": "北西"
+  },
+  "icons": {
+    "metadata": {
+      "title": "AIゲームアイコンジェネレーター｜アイコン・アイテム・プロップ作成 | SpritePixel",
+      "description": "AIゲームアイコンジェネレーターで、統一感のあるゲームアイコン、アイテム、武器、スキル、プロップを最大9個、透明な3×3シートにまとめて生成します。",
+      "keywords": "AIゲームアイコンジェネレーター, ゲームアイコン生成, AIゲームアイコン, ゲームアイテム生成, RPGアイコン生成, ピクセルアートアイコン"
+    },
+    "eyebrow": "プロンプトまたは参考画像 → ゲーム向けアイコン",
+    "title": "AIゲームアイコンジェネレーター",
+    "home": "ホーム",
+    "description": "AIゲームアイコンジェネレーターで最大9個のゲームアイコン、アイテム、武器、スキル、プロップを一度に生成し、透明な3×3シートとしてダウンロードできます。",
+    "listTitle": "アイコン",
+    "listDescription": "統一感のあるインベントリ、スキル、画面アイコンを作成してプロジェクトに保存します。",
+    "new": "新しいアイコン",
+    "emptyTitle": "アイコンはまだありません",
+    "emptyDescription": "AIゲームアイコンジェネレーターでセットを作ると、ここに結果が表示されます。",
+    "board": "素材ボード",
+    "boardDescription": "1行に1アイコン。「名前：説明」で詳細を追加できます。",
+    "styleSource": "スタイルの基準",
+    "stylePresets": "スタイルプリセット",
+    "uploadReference": "参考画像をアップロード",
+    "uploadFile": "ファイルをアップロード",
+    "chooseAsset": "素材を選択",
+    "selectedAsset": "選択中のプロジェクト素材",
+    "itemList": "アイテム一覧",
+    "listHint": "1行に1件、「名前：説明」の形式で最大9件。",
+    "quickInsert": "すぐ追加：",
+    "expandAll": "すべて表示",
+    "collapse": "折りたたむ",
+    "filled": "{count}/{max}件入力",
+    "preview": "プレビュー",
+    "pickerTitle": "参考素材を選択",
+    "pickerDescription": "プロジェクト内の画像を選び、アイコンのスタイル基準にします。",
+    "pickerLoading": "素材を読み込み中…",
+    "pickerEmpty": "このプロジェクトには選択できる素材がありません。",
+    "styleHints": {
+      "pixel-art": "クラシックな16色ピクセル表現",
+      "hand-painted": "絵画調のダークファンタジー",
+      "cartoon": "輪郭が明瞭なカートゥーンプロップ",
+      "anime-2d": "現代的な2Dアニメイラスト",
+      "dark-fantasy": "重厚な金属とダンジョンの遺物",
+      "cyberpunk": "ネオンの機器とSFチップ"
+    },
+    "itemPresets": {
+      "crate": "木箱",
+      "torch": "たいまつ",
+      "barrel": "樽",
+      "chest": "宝箱",
+      "door": "扉",
+      "lamp": "ランプ",
+      "rock": "岩",
+      "bush": "茂み",
+      "sign": "標識",
+      "chair": "椅子",
+      "table": "テーブル",
+      "sword": "剣",
+      "shield": "盾",
+      "potion": "ポーション",
+      "bookshelf": "本棚",
+      "anvil": "金床",
+      "cauldron": "大釜",
+      "bench": "ベンチ",
+      "fence": "柵",
+      "well": "井戸",
+      "banner": "旗",
+      "statue": "像",
+      "crystal": "クリスタル",
+      "skull": "頭蓋骨",
+      "tombstone": "墓石",
+      "mushroom": "キノコ",
+      "stump": "切り株",
+      "ladder": "はしご",
+      "bucket": "バケツ",
+      "sack": "袋"
+    },
+    "inputPlaceholder": "回復ポーション：コルク栓の赤いガラス瓶\n鉄の剣：使い込まれた短剣\nダッシュスキル：シアンの速度軌跡",
+    "add": "項目を追加",
+    "reference": "参考画像",
+    "referenceHint": "任意。参考画像だけの場合はアイコンを1件作成します。",
+    "palette": "色指定",
+    "palettePlaceholder": "暖かい金、鉄の灰色、シアンの魔法光",
+    "background": "背景",
+    "transparent": "透明",
+    "dark": "暗色",
+    "light": "明色",
+    "generate": "アイコンシートを生成",
+    "selected": "{count}件選択",
+    "remove": "削除",
+    "download": "アイコンをダウンロード",
+    "downloadZip": "成功分をZIPでダウンロード",
+    "downloadSheet": "アイコンシートをダウンロード",
+    "defaultSetName": "ゲームアイコンセット",
+    "defaultItemName": "参考アイコン",
+    "ready": "準備完了",
+    "empty": "生成した3×3アイコンシートはここに表示されます",
+    "landing": {
+      "tag": "アイコン",
+      "badges": {
+        "set": "一括セット",
+        "types": "素材の種類",
+        "styles": "スタイルプリセット",
+        "regenerate": "シート再生成",
+        "export": "ゲーム出力",
+        "workflow": "3ステップ",
+        "tools": "その他のツール",
+        "faq": "アイコンの質問"
+      },
+      "set": {
+        "title": "AIゲームアイコンジェネレーターで統一セットを一括生成",
+        "description": "AIゲームアイコンジェネレーターでインベントリアイコン、武器、ポーション、スキル、収集品などを統一したビジュアルで作成します。"
+      },
+      "types": {
+        "title": "アイコン以外の素材も作成",
+        "description": "インベントリアイコン、ワールドプロップ、収集品、画面素材に使える独立オブジェクトを生成します。",
+        "items": [
+          {
+            "title": "インベントリアイコン",
+            "text": "バッグ、戦利品、装備の統一アイコンを作成。"
+          },
+          {
+            "title": "武器",
+            "text": "画面アイコンや拾得物に使える剣、弓、杖を生成。"
+          },
+          {
+            "title": "ポーションとアイテム",
+            "text": "ポーション、鍵、消耗品を同じゲームアイテムセットとして作成。"
+          },
+          {
+            "title": "スキルとアビリティ",
+            "text": "ゲーム画面のサイズでも読みやすいスキルと能力のアイコンを設計。"
+          },
+          {
+            "title": "プロップとオブジェクト",
+            "text": "木箱、家具など独立したゲーム内オブジェクトを生成。"
+          },
+          {
+            "title": "収集品",
+            "text": "セットに合うコイン、宝石、クエストアイテムを作成。"
+          }
+        ]
+      },
+      "styles": {
+        "title": "ゲーム素材のスタイルを選択",
+        "description": "一括生成全体の方向を決め、すべてのアイコンとプロップを同じ表現に保ちます。",
+        "items": [
+          {
+            "id": "pixel-art",
+            "title": "ピクセルアート",
+            "text": "レトロRPGやアクションゲーム向けの16色ピクセルアイコン。"
+          },
+          {
+            "id": "hand-painted",
+            "title": "手描きRPG",
+            "text": "武器、ポーション、インベントリ向けの絵画調RPG表現。"
+          },
+          {
+            "id": "cartoon",
+            "title": "カートゥーン",
+            "text": "カジュアルゲーム向けの明瞭な輪郭と形。"
+          },
+          {
+            "id": "anime-2d",
+            "title": "アニメ",
+            "text": "スキル、アイテム、画面向けのセル画調アイコン。"
+          },
+          {
+            "id": "dark-fantasy",
+            "title": "ダークファンタジー",
+            "text": "重厚な金属、遺物、ダンジョンのプロップ。"
+          },
+          {
+            "id": "cyberpunk",
+            "title": "サイバーパンク",
+            "text": "SFインベントリ向けのネオン機器、チップ、技術系プロップ。"
+          }
+        ]
+      },
+      "regenerate": {
+        "title": "AIゲームアイコンジェネレーターでシート全体を再生成",
+        "description": "AIゲームアイコンジェネレーターは3×3シート全体を1枚の画像として再試行するため、スタイルが揃います。",
+        "gridLabel": "9アイコン",
+        "ok": "保持",
+        "retry": "シートを再生成",
+        "cta": "AIゲームアイコンジェネレーターで再生成"
+      },
+      "export": {
+        "title": "結果をそのままインベントリ画面へ",
+        "description": "スタイルが揃い、セルが規則的な透明3×3シートを取得。ダウンロードまたはプロジェクト保存ですぐ使えます。",
+        "items": [
+          {
+            "id": "batch",
+            "title": "1回で9枠",
+            "text": "アイコンごとに調整せず、一括で最大9個を生成。"
+          },
+          {
+            "id": "transparent",
+            "title": "エンジン向け透明PNG",
+            "text": "透明部分を保ち、Unity、Godot、Phaserの画面やシーンにそのまま重ねられます。"
+          },
+          {
+            "id": "consistency",
+            "title": "シート全体でスタイル固定",
+            "text": "武器、ポーション、スキルの光と線が揃い、一度のアート制作に見えます。"
+          },
+          {
+            "id": "download",
+            "title": "セット全体を1ファイルで",
+            "text": "9個の別ファイルではなく、1枚の3×3画像をダウンロード。"
+          },
+          {
+            "id": "project",
+            "title": "プロジェクトに保存",
+            "text": "シートをプロジェクトへ保存し、別の端末でも調整・再ダウンロードできます。"
+          },
+          {
+            "id": "grid",
+            "title": "予測しやすい3×3セル",
+            "text": "9つの均等な枠と透明な空き枠で、分割やフレーム対応が簡単です。"
+          }
+        ]
+      },
+      "workflowTitle": "使い方",
+      "workflow": [
+        {
+          "title": "素材を説明",
+          "text": "アイコン、武器、プロップ、アイテム、スキルを追加。短い名前だけで最大9件の一括生成を始められます。"
+        },
+        {
+          "title": "スタイルを選択",
+          "text": "プリセットか参考画像を選び、セット全体を統一します。"
+        },
+        {
+          "title": "生成して仕上げる",
+          "text": "1枚の3×3画像に最大9素材をまとめて生成し、完成シートをダウンロードします。"
+        }
+      ]
+    },
+    "faqTitle": "AIゲームアイコンジェネレーター よくある質問",
+    "faq": [
+      {
+        "q": "AIゲームアイコンジェネレーターとは？",
+        "a": "テキストや参考画像からインベントリ、スキル、武器、能力、画面向けのゲームアイコンを作成するツールです。"
+      },
+      {
+        "q": "複数のゲームアイコンを一度に生成できますか？",
+        "a": "はい。SpritePixelは1枚の3×3画像に最大9個をまとめて生成し、セット全体のスタイルを揃えます。"
+      },
+      {
+        "q": "アイコンセットの再試行はどう動きますか？",
+        "a": "3×3シート全体を1枚の画像として再生成し、共通のスタイルと配置を保ちます。"
+      },
+      {
+        "q": "どのようなゲームアイコンを作れますか？",
+        "a": "インベントリ、スキル、アイテム、武器、能力、状態、その他のゲーム画面素材を作成できます。"
+      },
+      {
+        "q": "ピクセルアートのゲームアイコンも作れますか？",
+        "a": "はい。ピクセルアート、手描きRPG、カートゥーン、アニメ、ダークファンタジー、サイバーパンクから選べます。"
+      },
+      {
+        "q": "参考画像を使えますか？",
+        "a": "はい。参考画像をアップロードすると、セット全体で特定のスタイルを保ちやすくなります。"
+      },
+      {
+        "q": "対応するアイコンサイズは？",
+        "a": "64×64、128×128、256×256など一般的なサイズ向けに生成できます。"
+      },
+      {
+        "q": "生成したアイコンのダウンロード方法は？",
+        "a": "透明な3×3アイコンシート全体を1枚のPNGとしてダウンロードします。"
+      },
+      {
+        "q": "ゲーム用プロップも生成できますか？",
+        "a": "はい。木箱、武器、ポーション、家具、収集品などの独立オブジェクトも作成できます。"
+      },
+      {
+        "q": "ゲームアイコンとプロップの違いは？",
+        "a": "アイコンは主にインベントリ、スキル、画面用、プロップはゲーム世界に直接置かれる物体です。SpritePixelは両方を同じスタイルで作成できます。"
+      }
+    ],
+    "ctaTitle": "AIゲームアイコンジェネレーターを使いますか？",
+    "ctaText": "上のAIゲームアイコンジェネレーターで最大9個のアイコンまたはプロップを説明し、スタイルを選んで統一した3×3シートを生成します。",
+    "ctaLabel": "作業エリアを開く",
+    "openProject": "プロジェクトのアイコンを開く"
+  },
+  "editor": {
+    "title": "アニメーションエディター",
+    "unsaved": "未保存の変更があります",
+    "history": "履歴",
+    "undo": "元に戻す",
+    "redo": "やり直す",
+    "controls": "再生",
+    "play": "再生",
+    "pause": "一時停止",
+    "fps": "FPS",
+    "loop": "ループ",
+    "zoom": "ズーム",
+    "offset": "フレームオフセット",
+    "offsetX": "Xオフセット",
+    "offsetY": "Yオフセット",
+    "delete": "フレームを削除",
+    "save": "新しいバージョンとして保存",
+    "saving": "保存中…",
+    "downloadSheet": "スプライトシートをダウンロード",
+    "downloadFrames": "フレーム連番ZIPをダウンロード",
+    "frame": "フレーム {number}",
+    "back": "キャラクターに戻る",
+    "saveError": "新しいバージョンを保存できませんでした。"
+  },
+  "errors": {
+    "GENERIC": "処理を完了できませんでした。",
+    "UNAUTHORIZED": "ログインして続けてください。",
+    "INSUFFICIENT_CREDITS": "クレジットが不足しています。追加して続けてください。",
+    "FILE_TOO_LARGE": "画像が10MBを超えています。圧縮して再試行してください。",
+    "IMAGE_DIMENSIONS_EXCEEDED": "画像の一辺は4096px以下にしてください。",
+    "INVALID_IMAGE": "有効な画像ファイルをアップロードしてください。",
+    "INVALID_UPLOAD": "アップロードが無効です。ファイルを選び直してください。",
+    "INVALID_GENERATION": "生成設定が無効です。確認して再試行してください。",
+    "INVALID_PROJECT": "プロジェクト情報が無効です。",
+    "INVALID_REFERENCE": "参考画像が無効です。選び直してください。",
+    "INVALID_VERSION": "バージョンが無効です。再読み込みしてください。",
+    "INVALID_TASK_COUNT": "生成項目数が正しくありません。",
+    "REFERENCE_REQUIRED": "キャラクター画像をアップロードしてください。",
+    "REFERENCE_NOT_FOUND": "参考画像が見つかりません。再度アップロードしてください。",
+    "PROJECT_NOT_FOUND": "現在のプロジェクトが見つかりません。",
+    "INVALID_ASSET": "キャラクター情報が無効です。",
+    "ASSET_NOT_FOUND": "素材が見つかりません。",
+    "ASSET_REQUIRED": "キャラクターを選択してください。",
+    "VARIANT_NOT_FOUND": "差分が見つかりません。",
+    "ANIMATION_NOT_FOUND": "アニメーションが見つかりません。",
+    "ICON_ITEMS_REQUIRED": "生成前にアイコンを1件以上追加してください。",
+    "ICON_DESCRIPTION_EXPAND_FAILED": "アイテムの詳細を補完できませんでした。Gemini設定を確認してください。",
+    "GENERATION_NOT_CONFIGURED": "生成機能が未設定です。管理画面でモデルとストレージを設定してください。",
+    "STORAGE_NOT_CONFIGURED": "ストレージが未設定です。管理画面で設定してください。",
+    "STORAGE_UPLOAD_FAILED": "画像をアップロードできませんでした。",
+    "GENERATION_NOT_FOUND": "生成記録が見つかりません。",
+    "GENERATION_FAILED": "生成に失敗しました。",
+    "GENERATION_QUERY_FAILED": "生成状態を取得できませんでした。",
+    "GENERATION_RETRY_FAILED": "再試行を開始できませんでした。",
+    "GENERATION_ID_CONFLICT": "同じ生成がすでに存在します。新しく開始してください。"
+  }
+}

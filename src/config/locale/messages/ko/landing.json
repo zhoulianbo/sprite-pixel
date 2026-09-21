@@ -1,0 +1,86 @@
+{
+  "header": {
+    "nav": {
+      "items": [
+        { "title": "홈", "url": "/" },
+        { "title": "기능", "url": "/#features" },
+        {
+          "title": "도구",
+          "children": [
+            {
+              "title": "AI 게임 아이콘 생성기",
+              "url": "/ai-game-icon-generator",
+              "icon": "Layers",
+              "description": "일관된 게임 아이콘 세트를 일괄 생성"
+            },
+            {
+              "title": "스프라이트 시트 제작 도구",
+              "url": "/sprite-sheet-maker",
+              "icon": "Grid2X2",
+              "description": "브라우저에서 스프라이트 시트 제작"
+            },
+            {
+              "title": "스프라이트 시트 분할 도구",
+              "url": "/sprite-sheet-cutter",
+              "icon": "Scissors",
+              "description": "시트를 개별 프레임으로 분할"
+            }
+          ]
+        },
+        { "title": "갤러리", "url": "/gallery" },
+        { "title": "요금", "url": "/pricing" }
+      ]
+    },
+    "user_nav": {
+      "items": [
+        { "title": "작업 공간", "url": "/dashboard", "icon": "LayoutDashboard" }
+      ]
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "인디 게임 개발자를 위한 프로젝트 중심 AI 게임 에셋 스튜디오입니다. 일관된 스프라이트, 애니메이션과 에셋 세트를 만드세요."
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "제품",
+          "children": [
+            { "title": "AI 스프라이트 생성기", "url": "/#hero" },
+            {
+              "title": "AI 게임 아이콘 생성기",
+              "url": "/ai-game-icon-generator"
+            },
+            { "title": "요금", "url": "/#pricing" }
+          ]
+        },
+        {
+          "title": "무료 도구",
+          "children": [
+            {
+              "title": "스프라이트 시트 제작 도구",
+              "url": "/sprite-sheet-maker"
+            },
+            {
+              "title": "스프라이트 시트 분할 도구",
+              "url": "/sprite-sheet-cutter"
+            }
+          ]
+        },
+        {
+          "title": "회사",
+          "children": [
+            { "title": "문의", "url": "mailto:support@spritepixel.com" }
+          ]
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        { "title": "개인정보 보호", "url": "/privacy-policy" },
+        { "title": "이용약관", "url": "/terms-of-service" }
+      ]
+    },
+    "copyright": "© 2026 SpritePixel. 인디 게임 개발자를 위해 만들었습니다."
+  }
+}

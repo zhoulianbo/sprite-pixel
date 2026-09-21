@@ -1,0 +1,399 @@
+{
+  "ui": {
+    "home": "首頁",
+    "localBadge": "免費工具／本機工作區",
+    "sessionNote": "檔案只保留在此分頁，重新整理會清空工作區。",
+    "makerLabel": "Sprite Sheet 製作工作區",
+    "splitterLabel": "Sprite Sheet 分割工作區",
+    "settings": "設定",
+    "inputMode": "輸入模式",
+    "images": "圖片",
+    "gif": "GIF",
+    "layout": "圖表排列",
+    "grid": "網格",
+    "horizontal": "水平長條",
+    "vertical": "垂直長條",
+    "columns": "欄數",
+    "rows": "列數",
+    "padding": "外側邊距",
+    "gap": "影格間距",
+    "align": "影格對齊",
+    "bottom": "底部置中",
+    "center": "置中",
+    "top-left": "左上",
+    "bottomShort": "底部",
+    "centerShort": "置中",
+    "topLeftShort": "左上",
+    "background": "匯出背景",
+    "transparent": "透明",
+    "solidColor": "純色",
+    "sliceMode": "分割方式",
+    "byCount": "列數與欄數",
+    "byCountShort": "網格",
+    "bySize": "影格尺寸",
+    "bySizeShort": "尺寸",
+    "frameWidth": "影格寬度",
+    "frameHeight": "影格高度",
+    "offsetX": "左側偏移",
+    "offsetY": "頂部偏移",
+    "gapX": "水平間距",
+    "gapY": "垂直間距",
+    "trimRight": "右側邊距",
+    "trimBottom": "底部邊距",
+    "gridHelp": "工具會依圖片尺寸估算規則網格。相同尺寸可能有不同排列，匯出前請確認網格線對齊影格；未使用的右側與底部邊緣會另外顯示。",
+    "originalTiming": "沿用影格時間",
+    "fps": "播放／匯出 FPS",
+    "fpsShort": "FPS",
+    "timingHelp": "GIF 會保留原始影格時間，靜態圖片預設為 12 FPS。關閉此選項可為所有影格設定相同速度。",
+    "dropGif": "拖入 GIF 或點擊選擇",
+    "dropImages": "拖入影格或點擊選擇",
+    "dropSheet": "拖入 Sprite Sheet 或點擊選擇",
+    "gifLimits": "GIF · 最大 50 MiB · 最多 256 格／解碼後 3,200 萬像素",
+    "imageLimits": "PNG、JPG、靜態 WebP · 合計 50 MiB · 最多 256 格",
+    "upload": "選擇檔案",
+    "addImages": "新增圖片",
+    "generateAssets": "產生素材",
+    "clear": "清空工作區",
+    "replaceConfirm": "要取代目前圖片嗎？現有編輯會被清除，請先下載要保留的內容。",
+    "clearConfirm": "要清空工作區嗎？請先下載要保留的內容。",
+    "processing": "準備檔案中……",
+    "updating": "更新預覽與影格中……",
+    "progress": "已處理 {done}／{total}",
+    "cancel": "取消",
+    "cancelled": "已取消。來源檔仍保留，可調整設定或重新上傳。",
+    "previewMode": "預覽模式",
+    "sheet": "Sprite Sheet",
+    "animation": "動畫預覽",
+    "showGrid": "顯示網格",
+    "zoom": "預覽縮放",
+    "fit": "符合視窗",
+    "zoomIn": "放大",
+    "zoomOut": "縮小",
+    "resetZoom": "重設為符合視窗",
+    "frameIndex": "第 {current}／{total} 格",
+    "sheetPreview": "含影格邊界的 Sprite Sheet 預覽",
+    "adjustSettings": "請調整設定以建立有效圖表。",
+    "frameCount": "{count} 格",
+    "remainder": "未使用邊緣：右側 {x}px、底部 {y}px。若這些像素屬於影格，請調整網格。",
+    "downloadPng": "下載 PNG",
+    "downloadAtlas": "PNG＋JSON 壓縮檔",
+    "downloadZip": "下載 ZIP",
+    "formatJsonHash": "JSON Hash",
+    "formatJsonArray": "JSON Array",
+    "formatCss": "CSS",
+    "formatXml": "XML",
+    "formatGif": "GIF",
+    "includeGif": "同時匯出動畫 GIF",
+    "trimTransparent": "裁掉透明邊緣",
+    "engineImport": "遊戲引擎匯入方式",
+    "engineImportGodot": "Godot：可依單元格尺寸將 PNG 匯入 SpriteFrames 圖集，或搭配圖集匯入器使用 JSON Hash。JSON Array 依播放順序列出影格。",
+    "engineImportPhaser": "Phaser：使用 this.textures.addAtlas 載入 JSON Hash，或使用 addAtlasJSONArray 載入 JSON Array，並指向 sprite-sheet.png。",
+    "engineImportUnity": "Unity：依單元格尺寸把 PNG 切成 Sprite Sheet，或透過相容 TexturePacker 的匯入器讀取 JSON Hash。矩形會對應實際單元格。",
+    "exportFormats": "匯出格式",
+    "downloadFrame": "下載單格 PNG",
+    "downloadFrames": "下載影格 ZIP",
+    "toSplitter": "在分割工具中開啟",
+    "selectFrames": "至少選擇一個未排除的影格才能預覽或下載。",
+    "exportSuccess": "已開始下載。需要新角色或更多動作嗎？",
+    "aiCta": "探索 AI 精靈圖產生器",
+    "frames": "影格序列",
+    "sortHelp": "拖曳排序，或聚焦控制點後使用 ↑／↓。",
+    "selectAll": "全選",
+    "selectNone": "全部取消",
+    "selectAllNone": "全選／全不選",
+    "skipEmpty": "排除完全透明影格",
+    "rangeStart": "起始影格",
+    "rangeEnd": "結束影格",
+    "selectRange": "選擇範圍",
+    "rangeTab": "影格範圍",
+    "applyRange": "套用",
+    "previous": "上一格",
+    "next": "下一格",
+    "play": "播放",
+    "pause": "暫停",
+    "reorder": "調整 {name} 的順序",
+    "remove": "移除 {name}",
+    "dragInstructions": "使用上下方向鍵逐格移動此影格。",
+    "dragPicked": "已選取第 {index} 格。",
+    "dragMoved": "已移至第 {index} 個位置。",
+    "dragDropped": "已放到第 {index} 個位置。",
+    "dragCancelled": "已取消排序。",
+    "previousPreview": "已保留上一次有效結果。修正設定後即可再次匯出。",
+    "imagesToSheet": "圖片 → Sprite Sheet",
+    "gifToSheet": "GIF → Sprite Sheet",
+    "noFiles": "還沒有檔案？",
+    "addFramesHint": "拖入或點擊新增影格",
+    "replaceSource": "拖入或點擊取代來源",
+    "selectionHelp": "點擊選擇單格，按住 Shift 點擊可選擇範圍。",
+    "horizontalShort": "水平",
+    "verticalShort": "垂直",
+    "transparentBackground": "透明背景",
+    "spacingAndOffsets": "間距與偏移",
+    "timingSettings": "動畫時間",
+    "exportTitle": "匯出素材",
+    "includeJson": "包含 JSON 中繼資料",
+    "sheetLimits": "單張 PNG、JPG 或靜態 WebP · 50 MiB · 單邊最多 8192px",
+    "promisesLabel": "免費工具保證",
+    "promiseForever": "永久免費",
+    "promiseNoAccount": "不需註冊",
+    "promiseLocal": "本機處理",
+    "promiseFormats": "多種下載格式",
+    "errors": {
+      "invalidImage": "無法解碼檔案。請使用有效的 PNG、JPG、靜態 WebP，或在 GIF 模式上傳 GIF。",
+      "staticOnly": "暫不支援動態 PNG 與 WebP。請改用 GIF 或靜態影格。",
+      "fileLimit": "輸入超過 50 MiB，請減少檔案或縮小素材。",
+      "frameLimit": "工作區最多支援 256 格，請減少影格或加大分割單元格。",
+      "pixelLimit": "解碼影格超過 3,200 萬像素，請縮小尺寸或減少影格。",
+      "imageLimit": "圖片或圖表單邊超過 8192px 或 1,600 萬像素，請縮小尺寸、邊距或影格數。",
+      "invalidGrid": "影格尺寸與數量必須是正整數，間距必須是非負整數。",
+      "bounds": "網格超出圖片或無法容納完整影格，請檢查尺寸、偏移與間距。",
+      "empty": "請至少選擇一格。",
+      "singleFile": "此模式一次只能處理一個檔案。",
+      "canvasError": "瀏覽器無法建立圖片畫布，請縮小圖片或重新載入。",
+      "exportError": "匯出失敗，來源檔仍保留。請減少影格或先匯出 PNG。",
+      "fps": "請輸入 1 到 60 的影格率。"
+    }
+  },
+  "maker": {
+    "metadata": {
+      "title": "免費 Sprite Sheet 製作工具－圖片與 GIF 轉 PNG | SpritePixel",
+      "description": "免費線上 Sprite Sheet 製作工具，可將 PNG、JPG、WebP 或 GIF 排列成圖表，支援影格對齊、動畫預覽、PNG 與 JSON 匯出。",
+      "keywords": "Sprite Sheet 製作工具, 免費 Sprite Sheet Maker, GIF 轉 Sprite Sheet, 合併圖片, PNG JSON 匯出"
+    },
+    "eyebrow": "圖片與 GIF → 可用於遊戲的圖表",
+    "title": "免費 Sprite Sheet 製作工具",
+    "intro": "把多張圖片或動畫 GIF 整理成乾淨的 Sprite Sheet。這款免費 Sprite Sheet 製作工具可對齊影格、檢查動畫並匯出 PNG 與選用的 JSON，不需註冊。",
+    "stepsTitle": "三步完成 Sprite Sheet",
+    "steps": [
+      {
+        "title": "1. 加入圖片或 GIF",
+        "text": "在圖片模式拖入 PNG、JPG 或靜態 WebP，或切換到 GIF 模式擷取動畫。檔名會自然排序；尚無素材時，可先到首頁產生再回來整理。"
+      },
+      {
+        "title": "2. 排列並檢查每一格",
+        "text": "選擇網格、水平或垂直長條，設定欄數、邊距、間距與對齊。用動畫預覽找出缺漏或錯位，拖曳控制點修正順序。"
+      },
+      {
+        "title": "3. 下載可用素材",
+        "text": "下載透明 PNG，也可把 JSON、CSS、XML 或動畫 GIF 放入 ZIP，或直接在 Sprite Sheet 分割工具開啟結果。"
+      }
+    ],
+    "featuresTitle": "為影格序列設計的 Sprite Sheet 製作工具",
+    "features": [
+      {
+        "title": "完整還原 GIF 影格",
+        "text": "GIF 可能只儲存相鄰影格變化的像素。工具會重建每個時間點的完整圖像，保留透明區域與原始時間，也可統一設定 FPS。"
+      },
+      {
+        "title": "合併圖片而不拉伸",
+        "text": "最大來源尺寸會定義單元格，小圖片維持原始尺寸。底部置中適合角色共用地面線，置中與左上適合特效或介面素材。"
+      },
+      {
+        "title": "匯出前預覽動畫",
+        "text": "在完整圖表與動畫預覽間切換，可暫停、逐格前後移動並比較速度。預覽縮放不會改變匯出 PNG 的解析度。"
+      }
+    ],
+    "useCasesTitle": "從 PNG 到 Sprite Sheet 的實際遊戲流程",
+    "useCases": [
+      {
+        "title": "角色移動與動作循環",
+        "text": "把走路、跳躍或攻擊序列整理成規則網格，依播放順序排列並檢查每格底部接觸點。"
+      },
+      {
+        "title": "特效、圖示與既有動畫",
+        "text": "小型特效可用水平長條，圖示或動畫影格可用緊湊網格。此工具整理既有畫作，不會自動補中間格或把靜態圖片變成動畫。"
+      }
+    ],
+    "guideTitle": "Sprite Sheet 設定與匯出說明",
+    "guide": [
+      {
+        "title": "欄數、邊距與影格間距",
+        "text": "欄數決定每列單元格數量；外側邊距增加圖表周圍空間，影格間距則分隔相鄰單元格。調整時會即時更新輸出尺寸。"
+      },
+      {
+        "title": "透明 PNG 與 JSON 座標",
+        "text": "預設匯出透明背景。JSON 使用 TexturePacker 風格結構並包含檔名、來源尺寸、影格矩形與時間；同一 ZIP 也可放入其他格式。"
+      },
+      {
+        "title": "瀏覽器實際限制",
+        "text": "檔案只在本機處理。輸入上限 50 MiB、256 格與 3,200 萬解碼像素；單張圖片或輸出圖表單邊最多 8192px、面積最多 1,600 萬像素。"
+      }
+    ],
+    "faqTitle": "Sprite Sheet 製作工具常見問題",
+    "faqEyebrow": "匯出前先了解",
+    "faqText": "關於圖表匯出、GIF 時間與工具限制的實用說明。",
+    "faq": [
+      {
+        "title": "線上 Sprite Sheet 製作工具真的免費嗎？",
+        "text": "是。合併圖片、擷取 GIF、預覽與下載都免費且不需註冊；AI 素材產生是獨立流程。"
+      },
+      {
+        "title": "JPG 可以製作透明圖表嗎？",
+        "text": "影格之間的空白可透明，但 JPG 沒有透明通道，原有背景像素仍會保留。需要透明輪廓時請使用 PNG 或靜態 WebP。"
+      },
+      {
+        "title": "GIF 會保留原始速度嗎？",
+        "text": "會，只要開啟沿用影格時間。關閉後可為所有影格設定相同 FPS；PNG 本身不含播放時間。"
+      },
+      {
+        "title": "可以再分割並重新排列嗎？",
+        "text": "可以。在分割工具開啟即可於同一分頁傳遞圖表與設定，但重新整理後資料不會保留。"
+      },
+      {
+        "title": "可以取代進階材質打包工具嗎？",
+        "text": "此工具專注規則網格與長條，不會旋轉精靈、建立多邊形打包或多頁圖集。"
+      }
+    ],
+    "relatedTitle": "繼續處理精靈素材",
+    "relatedText": "已有打包圖片？可用 Sprite Sheet 分割工具擷取 PNG，再回到製作工具重新排列。",
+    "relatedLabel": "開啟 Sprite Sheet 分割工具",
+    "ctaTitle": "準備製作 Sprite Sheet 了嗎？",
+    "ctaText": "把圖片或 GIF 拖入上方工作區，排列影格並匯出 PNG。檔案會保留到此分頁重新整理為止。",
+    "ctaLabel": "開啟工作區",
+    "badges": {
+      "steps": "三步流程",
+      "features": "圖表功能",
+      "useCases": "遊戲用途",
+      "guide": "匯出指南",
+      "tools": "更多工具",
+      "faq": "製作常見問題"
+    },
+    "design": {
+      "tag": "製作",
+      "baseline": "Y＝基準線",
+      "hero": "把零散影格整理成下一段冒險。排列圖片或 GIF、檢查動作，再匯出遊戲素材。",
+      "proof": "用真實精靈試試看",
+      "workflow": "從畫作到素材的短流程",
+      "source": "來源／影格序列",
+      "result": "排列 → 預覽 → 匯出",
+      "alignment": "一致單元格／原始像素",
+      "motion": "檢查循環",
+      "selected": "保留需要的動作",
+      "detail": "為影格之間的工作而設計",
+      "next": "下一個角色從這裡開始"
+    }
+  },
+  "splitter": {
+    "metadata": {
+      "title": "免費 Sprite Sheet 分割工具－擷取 PNG 影格 | SpritePixel",
+      "description": "使用免費 Sprite Sheet 分割工具調整網格、尺寸、偏移與間距，預覽所選動畫並下載 PNG 或 ZIP。",
+      "keywords": "Sprite Sheet 分割工具, 免費 Sprite Sheet Cutter, 切割 Sprite Sheet, 擷取精靈影格, PNG 影格 ZIP"
+    },
+    "eyebrow": "Sprite Sheet → 獨立 PNG 影格",
+    "title": "免費 Sprite Sheet 分割工具",
+    "intro": "用可以清楚檢查的網格，把 Sprite Sheet 分割成獨立圖片。這款免費 Sprite Sheet 分割工具可調整尺寸、偏移與間距，預覽所選動畫並下載 PNG ZIP。",
+    "stepsTitle": "三步分割 Sprite Sheet",
+    "steps": [
+      {
+        "title": "1. 載入 Sprite Sheet",
+        "text": "上傳一張 PNG、JPG 或靜態 WebP。工具會依尺寸估算規則網格並立即切格，你仍可調整列欄、影格尺寸、偏移與間距。"
+      },
+      {
+        "title": "2. 讓網格對準影格",
+        "text": "輸入列欄數或切換到精確寬高，設定外框偏移與單元格間距。放大檢查編號網格，確保切割線不穿過影格。"
+      },
+      {
+        "title": "3. 選擇、預覽並擷取",
+        "text": "全選、點選個別影格或輸入連續範圍，播放確認順序，再下載單張 PNG 或多格 ZIP。"
+      }
+    ],
+    "featuresTitle": "讓切割邊界清楚可見的 Sprite Sheet 分割工具",
+    "features": [
+      {
+        "title": "依數量或精確尺寸分割",
+        "text": "可用列欄數或影格寬高描述規則網格。切換模式會沿用有效計算值，方便繼續微調。"
+      },
+      {
+        "title": "只保留真正需要的影格",
+        "text": "可選擇連續動作範圍、點選特定影格或排除完全透明單元格；按住 Shift 點擊可延伸選取。"
+      },
+      {
+        "title": "下載前檢查動作",
+        "text": "動畫預覽會由左至右、由上至下播放所選影格。可暫停、逐格檢查或設定統一 FPS。"
+      }
+    ],
+    "useCasesTitle": "為下一個工作擷取 Sprite Sheet 影格",
+    "useCases": [
+      {
+        "title": "分離角色動作或特效",
+        "text": "從大型動畫圖表擷取待機、跑步或攻擊循環，用範圍控制隔離單一動作而不影響其他列。"
+      },
+      {
+        "title": "還原可重用的 PNG 素材",
+        "text": "需要獨立圖示、縮圖或編輯器影格時，可把 Sprite Sheet 轉為 PNG。工具不會移除背景或擦掉已畫進來源的參考線。"
+      }
+    ],
+    "guideTitle": "網格設定、邊緣檢查與 PNG 匯出",
+    "guide": [
+      {
+        "title": "偏移與間距解決不同問題",
+        "text": "偏移會把第一個單元格移離圖片邊緣；間距則跳過單元格之間的像素。若每格越切越偏，應檢查間距。"
+      },
+      {
+        "title": "了解未使用邊緣與無效網格",
+        "text": "工具只使用完整整數像素單元格，不會拉伸影格或把殘缺單元格當成完整內容。無法容納完整影格時會阻止匯出。"
+      },
+      {
+        "title": "以 ZIP 下載精靈影格",
+        "text": "單選可下載 PNG，多選會建立含連續編號檔名的 ZIP；排除透明影格只會移除完全透明單元格。"
+      },
+      {
+        "title": "本機處理與記憶體限制",
+        "text": "圖片留在裝置上。來源上限 50 MiB、單邊 8192px、面積 1,600 萬像素；最多擷取 256 格與 3,200 萬解碼像素。"
+      }
+    ],
+    "faqTitle": "Sprite Sheet 分割工具常見問題",
+    "faqEyebrow": "匯出前先了解",
+    "faqText": "自動網格估算、未使用邊緣、下載與規則網格限制。",
+    "faq": [
+      {
+        "title": "如何把 Sprite Sheet 分割成獨立圖片？",
+        "text": "上傳圖表，設定相符的列欄或精確尺寸，選取要擷取的單元格。單選下載 PNG，多選下載 ZIP。"
+      },
+      {
+        "title": "可以偵測不規則或緊密打包的精靈嗎？",
+        "text": "工具會估算規則矩形網格，但無法只靠尺寸判斷旋轉、不同單元格大小或緊密圖集；這些格式需要中繼資料或專用工具。"
+      },
+      {
+        "title": "為什麼影格包含旁邊的精靈？",
+        "text": "通常是單元格尺寸或間距不符。放大檢查每列的第一格、第二格與最後一格，再修正偏移與間距。"
+      },
+      {
+        "title": "可以把 Sprite Sheet 轉成 GIF 嗎？",
+        "text": "可以。下載 ZIP 前勾選動畫 GIF，便會依目前順序與時間產生 GIF，PNG 影格仍會保留。"
+      },
+      {
+        "title": "使用分割工具需要帳號嗎？",
+        "text": "不需要。分割與下載 PNG 或 ZIP 都可免登入使用；AI 產生是首頁的獨立選用流程。"
+      }
+    ],
+    "relatedTitle": "用所選影格建立新圖表",
+    "relatedText": "Sprite Sheet 製作工具可將 PNG 或 GIF 組合成新網格或長條，並匯出 JSON 座標。",
+    "relatedLabel": "開啟 Sprite Sheet 製作工具",
+    "ctaTitle": "準備使用 Sprite Sheet 分割工具了嗎？",
+    "ctaText": "在上方 Sprite Sheet 分割工具工作區上傳圖表、對準網格並下載 PNG。檔案會保留到此分頁重新整理為止。",
+    "ctaLabel": "開啟工作區",
+    "badges": {
+      "steps": "三步分割",
+      "features": "網格控制",
+      "useCases": "影格用途",
+      "guide": "分割指南",
+      "tools": "更多工具",
+      "faq": "分割常見問題"
+    },
+    "design": {
+      "tag": "分割",
+      "baseline": "Y＝基準線",
+      "hero": "從一張圖表取出真正需要的影格。微調邊界、檢查動作，再把 PNG 帶回遊戲。",
+      "proof": "用真實精靈試試看",
+      "workflow": "從畫作到素材的短流程",
+      "source": "來源／Sprite Sheet",
+      "result": "選擇 → 擷取 → 下載",
+      "alignment": "一致單元格／原始像素",
+      "motion": "檢查循環",
+      "selected": "保留需要的動作",
+      "detail": "為影格之間的工作而設計",
+      "next": "下一個角色從這裡開始"
+    }
+  }
+}

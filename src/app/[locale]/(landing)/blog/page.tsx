@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic';
 export const generateMetadata = getMetadata({
   metadataKey: 'pages.blog.metadata',
   canonicalUrl: '/blog',
+  noIndex: true,
 });
 
 export default async function BlogPage({

@@ -1,0 +1,36 @@
+{
+  "title": "我的專案",
+  "description": "快速查看你的帳號活動與使用情況。",
+  "summaries": {
+    "label": "帳號概覽",
+    "credits": {
+      "title": "可用點數",
+      "description": "目前可使用的點數"
+    },
+    "api_keys": {
+      "title": "有效 API 金鑰",
+      "description": "目前已啟用的金鑰"
+    },
+    "payments": {
+      "title": "成功付款",
+      "description": "所有已完成的購買"
+    },
+    "subscriptions": {
+      "title": "訂閱紀錄",
+      "description": "帳號下的全部訂閱"
+    }
+  },
+  "recent": {
+    "title": "最近付款",
+    "description": "查看最近完成的交易紀錄。",
+    "empty": "尚無成功付款紀錄。",
+    "columns": {
+      "order_no": "訂單號",
+      "product": "產品",
+      "status": "狀態",
+      "type": "類型",
+      "amount": "金額",
+      "created_at": "建立時間"
+    }
+  }
+}

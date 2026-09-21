@@ -1,423 +1,346 @@
 {
   "page": {
-    "show_sections": [
-      "hero",
-      "logos",
-      "introduce",
-      "benefits",
-      "usage",
-      "features",
-      "stats",
-      "testimonials",
-      "faq",
-      "cta"
-    ],
+    "description": "使用 SpritePixel AI 精灵图生成器创建可用于游戏的角色精灵图、动画精灵图表和配套 2D 资产。",
+    "show_sections": ["home"],
     "sections": {
-      "hero": {
-        "id": "hero",
-        "title": "一小时快速上线你的 AI 创业项目",
-        "highlight_text": "一小时",
-        "description": "ShipAny 是用于构建 AI SaaS 创业项目的 NextJS 项目模板。<br/>集成常用功能，快速上线你的产品。",
-        "announcement": {
-          "badge": "全新",
-          "title": "🎉 ShipAny 模板二已发布",
-          "url": "/pricing"
-        },
-        "tip": "🎁 前 1000 名用户特价优惠",
-        "buttons": [
-          {
-            "title": "立即开始",
-            "icon": "Zap",
-            "url": "/pricing",
-            "target": "_self",
-            "variant": "default"
-          },
-          {
-            "title": "阅读文档",
-            "icon": "BookOpenText",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline"
-          }
-        ],
-        "show_avatars": true,
-        "avatars_tip": "999+ 用户在使用 ShipAny 上站",
-        "show_award": false,
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "image_invert": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "background_image": {
-          "src": "/imgs/bg/tree.jpg",
-          "alt": "hero"
-        }
-      },
-      "logos": {
-        "title": "ShipAny 使用以下技术栈构建",
-        "items": [
-          {
-            "title": "Next.js",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Next.js"
-            }
-          },
-          {
-            "title": "React",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "React"
-            }
-          },
-          {
-            "title": "TailwindCSS",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "TailwindCSS"
-            }
-          },
-          {
-            "title": "Shadcn/UI",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Shadcn/UI"
-            }
-          },
-          {
-            "title": "Vercel",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Vercel"
-            }
-          }
-        ]
-      },
-      "introduce": {
-        "block": "features-list",
-        "id": "introduce",
-        "title": "ShipAny 是什么？",
-        "label": "产品简介",
-        "description": "ShipAny 是专为 AI SaaS 创业项目打造的 NextJS 脚手架，包括丰富模板、组件及文档。",
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "introduce"
-        },
-        "items": [
-          {
-            "title": "开箱即用的模板",
-            "description": "从数十款生产级 AI SaaS 模板中选择，快速开启你的项目。",
-            "icon": "RiNextjsFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "基础设施搭建",
-            "description": "内置最佳实践，即刻拥有可扩展的基础设施。",
-            "icon": "RiDatabase2Line",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "极速部署",
-            "description": "AI SaaS 产品快速上线，助力小时级交付。",
-            "icon": "RiCloudyFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "AI 集成",
-            "description": "通过内置的 AI SDK，轻松为你的项目集成 AI 能力。",
-            "icon": "RiRobot2Line",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "benefits": {
-        "block": "features-accordion",
-        "id": "benefits",
-        "title": "为何选择 ShipAny",
-        "label": "产品优势",
-        "description": "你获得一切 AI 创业所需——从开箱即用的模板到专业技术支持。",
-        "items": [
-          {
-            "title": "全栈解决方案",
-            "description": "基于 Next.js，集成认证、支付、AI，一站式开箱即用。",
-            "icon": "RiNextjsFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "丰富模板库",
-            "description": "多样的 AI SaaS 模板，点击即用，涵盖聊天、图像生成等多场景。",
-            "icon": "RiClapperboardAiLine",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "专属技术指导",
-            "description": "享受专属技术支持与开发者社区，为你的成功保驾护航。",
-            "icon": "RiCodeFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          }
-        ]
-      },
-      "usage": {
-        "block": "features-step",
-        "id": "usage",
-        "title": "三步使用 ShipAny 极速上线",
-        "description": "只需三步，快速开启你的 AI SaaS 创业之路：",
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "usage"
-        },
-        "image_position": "left",
-        "text_align": "center",
-        "items": [
-          {
-            "title": "获取 ShipAny",
-            "description": "一次性购买 ShipAny，查收邮件获取代码与文档。",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "启动你的项目",
-            "description": "阅读说明文档，克隆 ShipAny 代码，开始开发你的 AI SaaS 项目。",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "个性化定制",
-            "description": "根据需求修改模板内容和数据，配置专属 AI 能力。",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "部署上线",
-            "description": "简单几步将你的项目推向生产环境，立刻为客户提供服务。",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "features": {
-        "id": "features",
-        "title": "ShipAny 核心功能",
-        "description": "一切你需要的工具，助力 AI SaaS 项目高效上线。",
-        "items": [
-          {
-            "title": "Next.js 项目模板",
-            "description": "生产就绪、支持 SEO 与多语言的 Next.js 脚手架。",
-            "icon": "RiNextjsFill"
-          },
-          {
-            "title": "身份认证与支付",
-            "description": "集成谷歌 OAuth、一键登录，以及 Stripe 支付。",
-            "icon": "RiKey2Fill"
-          },
-          {
-            "title": "数据基础设施",
-            "description": "内置 Supabase，稳定可靠的数据存储。",
-            "icon": "RiDatabase2Line"
-          },
-          {
-            "title": "一键部署",
-            "description": "自动化部署到 Vercel 或 Cloudflare，极速上线。",
-            "icon": "RiCloudy2Fill"
-          },
-          {
-            "title": "商业分析",
-            "description": "集成 Google Analytics、Search Console，助力业务增长。",
-            "icon": "RiBarChart2Line"
-          },
-          {
-            "title": "AI 原生基础设施",
-            "description": "预置 AI 集成、积分系统和 API 售卖能力。",
-            "icon": "RiRobot2Line"
-          }
-        ]
-      },
-      "stats": {
-        "id": "stats",
-        "title": "用户喜爱 ShipAny",
-        "description": "因其易用且上线飞快。",
-        "items": [
-          {
-            "title": "999+",
-            "description": "位用户"
-          },
-          {
-            "title": "200+",
-            "description": "组件块"
-          },
-          {
-            "title": "50+",
-            "description": "专业模板"
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "testimonials": {
-        "id": "testimonials",
-        "title": "用户对 ShipAny 的评价",
-        "description": "听听开发者与创始人用 ShipAny 快速上线 AI 创业项目的故事。",
-        "items": [
-          {
-            "name": "David Chen",
-            "role": "AIWallpaper.shop 创始人",
-            "quote": "ShipAny 为我们节省了数月开发时间。2 天上线 AI 壁纸业务，一周内就收到了第一笔付费订单！",
-            "image": {
-              "src": "/imgs/avatars/1.png",
-              "alt": "david"
-            }
-          },
-          {
-            "name": "Rachel Kim",
-            "role": "HeyBeauty.ai CTO",
-            "quote": "内置 AI 基础设施颠覆了开发体验，无需担心架构，只需专注核心功能，极快落地。",
-            "image": {
-              "src": "/imgs/avatars/2.png",
-              "alt": "rachel"
-            }
-          },
-          {
-            "name": "Marcus Thompson",
-            "role": "独立开发者",
-            "quote": "作为独立开发者，ShipAny 满足了全部需求——认证、支付、AI 集成、美观界面，一个周末上线 SaaS！",
-            "image": {
-              "src": "/imgs/avatars/3.png",
-              "alt": "marcus"
-            }
-          },
-          {
-            "name": "Sofia Garcia",
-            "role": "Melodisco CEO",
-            "quote": "模板高度可定制且生产级。我们几小时内搭建出了 AI 音乐平台，上市周期大大缩短！",
-            "image": {
-              "src": "/imgs/avatars/4.png",
-              "alt": "sofia"
-            }
-          },
-          {
-            "name": "James Wilson",
-            "role": "GPTs.works 技术负责人",
-            "quote": "ShipAny 基础设施极其稳定。我们从 0 到 1 万用户，无需关心后端维护，是最棒的 AI 创业投资。",
-            "image": {
-              "src": "/imgs/avatars/5.png",
-              "alt": "james"
-            }
-          },
-          {
-            "name": "Anna Zhang",
-            "role": "创业者",
-            "quote": "从想法到上线，仅用 3 天！ShipAny 模板和部署工具让我们极快验证 AI 商业创意。",
-            "image": {
-              "src": "/imgs/avatars/6.png",
-              "alt": "anna"
-            }
-          }
-        ]
-      },
-      "faq": {
-        "id": "faq",
-        "title": "关于 ShipAny 的常见问题",
-        "description": "还有其他问题？欢迎加入 Discord 或发邮件联系我们。",
-        "items": [
-          {
-            "question": "ShipAny 是什么？怎么帮到我？",
-            "answer": "ShipAny 是专为 AI SaaS 创业设计的 NextJS 全套脚手架，内含开箱即用的模板、基础设施搭建和部署工具，让你数小时内上线 AI 产品。"
-          },
-          {
-            "question": "使用 ShipAny 需要很高的技术水平吗？",
-            "answer": "有基础编程知识即可上手。ShipAny 面向开发者友好，详细文档和模板让初学者也能轻松起步，不需深厚 AI 或云计算背景。"
-          },
-          {
-            "question": "ShipAny 支持哪些类型的 AI SaaS 项目？",
-            "answer": "ShipAny 支持内容生成、数据分析、AI 聊天机器人、图片/内容生成器等多种主流 AI 应用场景。"
-          },
-          {
-            "question": "用 ShipAny 一般多久能上线？",
-            "answer": "借助 ShipAny，可在数小时内拿到产品原型并上线生产环境，预配置的一键部署大幅缩短开发周期。"
-          },
-          {
-            "question": "ShipAny 的基础设施包括哪些内容？",
-            "answer": "包含认证、数据库、API 集成、支付、云端部署等全栈解决方案，全部遵循业界最佳实践预配置。"
-          },
-          {
-            "question": "模板是否支持定制自己的品牌？",
-            "answer": "当然支持！所有模板均可自定义设计、功能和品牌，既保持基础架构稳定，又能满足个性扩展需求。"
-          }
-        ]
-      },
-      "cta": {
-        "id": "cta",
-        "title": "发布你的第一个 AI SaaS 项目",
-        "description": "从这里出发，用 ShipAny 极速交付。",
-        "buttons": [
-          {
-            "title": "获取 ShipAny",
-            "url": "https://shipany.ai",
-            "target": "_blank",
-            "icon": "Zap"
-          },
-          {
-            "title": "阅读文档",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline",
-            "icon": "BookOpenText"
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "subscribe": {
-        "id": "subscribe",
-        "title": "订阅我们的邮件通知",
-        "description": "获取 ShipAny 最新资讯与产品动态。",
-        "submit": {
-          "input": {
-            "placeholder": "输入邮箱"
-          },
-          "button": {
-            "title": "订阅"
-          },
-          "action": "/api/subscribe"
-        },
-        "className": "bg-muted"
+      "home": {
+        "id": "home",
+        "block": "home"
       }
     }
+  },
+  "messages": {
+    "eyebrow": "面向独立游戏创作者的 AI 精灵图生成器",
+    "heroTitle": "AI 精灵图生成器",
+    "heroTitleAccent": "AI 精灵图生成器",
+    "heroDescription": "在一个 AI 精灵图生成器中创建可用于游戏的 2D 角色、生成换装变体与多方向精灵图、制作动画，并导出精灵图表。",
+    "generationMode": "生成模式",
+    "promptPlaceholder": "一个披着红色斗篷的小小火焰骑士……",
+    "motionPromptPlaceholder": "例如：动作有力量感，身体略微前倾，披风自然跟随摆动……",
+    "startCreating": "开始生成",
+    "startCreatingBusy": "生成中…",
+    "createCharacter": "生成角色",
+    "generateMotion": "生成动作",
+    "defaultProject": "默认项目",
+    "chooseProject": "选择项目",
+    "addProject": "添加项目",
+    "characterDescription": "描述你想要生成的角色",
+    "motionDescription": "描述想要的动作",
+    "preview": "生成效果预览",
+    "previewEmpty": "生成结果将在这里显示",
+    "playAnimation": "播放动画",
+    "pauseAnimation": "暂停动画",
+    "playbackSpeed": "播放速度",
+    "framesPerSecond": "{count} 帧/秒",
+    "frameTotal": "{count} 帧",
+    "editAndDownload": "编辑与下载",
+    "surpriseMe": "随机灵感",
+    "generateVariations": "生成 4 个变体",
+    "generateAll": "生成全部",
+    "comingSoon": "即将推出",
+    "inspirations": [
+      "一个披着红色斗篷的小小火焰骑士……",
+      "一个带着黄铜罗盘的发条狐狸斥候",
+      "一位背着发光药囊的蘑菇村草药师",
+      "一只握着小扳手的蒸汽朋克猫头鹰工程师",
+      "一个穿着凹陷盔甲的史莱姆骑士，可爱像素风",
+      "一位披着沙色斗篷的沙漠游牧弓箭手",
+      "一个双手提着灯笼的水晶魔像矿工",
+      "一只戴着小帽子的女巫使魔猫",
+      "一位举着睡莲盾的青蛙圣骑士",
+      "一只背着喷气背包的太空信使浣熊"
+    ],
+    "valueBar": [
+      "生成游戏角色",
+      "创建换装变体",
+      "生成角色动画",
+      "导出精灵图表"
+    ],
+    "capabilities": {
+      "title": "一个 AI 精灵图生成器，覆盖完整 2D 游戏资产流程",
+      "description": "SpritePixel 帮助你在一个工作流中创建角色、换装变体、多方向精灵图与动画，并导出可直接使用的精灵图表。",
+      "items": [
+        {
+          "title": "生成角色",
+          "description": "使用 AI 创建原创 2D 游戏角色。"
+        },
+        {
+          "title": "角色换装",
+          "description": "保留同一角色形象，生成新的服装变体。"
+        },
+        {
+          "title": "多方向精灵图",
+          "description": "生成角色的正面、侧面与背面方向。"
+        },
+        {
+          "title": "生成角色动画",
+          "description": "把角色转换为连续的精灵动画动作。"
+        },
+        {
+          "title": "导出精灵图表",
+          "description": "导出便于游戏开发使用的整齐精灵图表。"
+        },
+        {
+          "title": "免费精灵图工具",
+          "description": "免费使用精灵图表制作工具与切割工具。"
+        }
+      ]
+    },
+    "features": {
+      "title": "从角色创意到可导出的精灵图表",
+      "description": "通过清晰的游戏资产工作流，从第一条角色提示词开始，完成换装、多方向、动画帧与最终导出。",
+      "items": [
+        {
+          "title": "用 AI 精灵图生成器创建游戏角色",
+          "description": "从提示词开始，为项目生成 2D 游戏角色。SpritePixel 帮助你为游戏世界建立统一的角色风格。",
+          "bullets": [
+            "从文字提示词开始",
+            "创建原创 2D 角色",
+            "为独立游戏项目而设计"
+          ],
+          "image": "/imgs/cases/character-generation.webp",
+          "alt": "从参数设置到完成狐狸法师角色的像素画生成示意"
+        },
+        {
+          "title": "无需重画角色即可生成换装变体",
+          "description": "保留同一角色形象，并通过 AI 精灵图生成器创建新的服装与造型变体。",
+          "bullets": [
+            "保留相同的基础角色",
+            "创建多种服装风格",
+            "适合皮肤、职业与 NPC 变体"
+          ],
+          "image": "/imgs/cases/outfit-variations.webp",
+          "alt": "同一像素画狐狸法师展示四套不同服装"
+        },
+        {
+          "title": "制作多方向角色精灵图",
+          "description": "为同一角色生成一致的方向视图，适用于俯视角或 RPG 游戏工作流。",
+          "bullets": [
+            "保持角色形象一致",
+            "适合 RPG 与俯视角游戏",
+            "便于制作移动角色套装"
+          ],
+          "image": "/imgs/cases/multi-direction-sprites.webp",
+          "alt": "同一像素画骑士的正面、右侧、背面和左侧视图"
+        },
+        {
+          "title": "把角色转换为连续的精灵动画",
+          "description": "使用 AI 精灵图生成器为角色创建移动或动作帧，并保持视觉风格一致。",
+          "bullets": [
+            "生成连续动画帧",
+            "保持画面风格统一",
+            "导出到游戏制作流程"
+          ],
+          "image": "/imgs/cases/animation-frames.webp",
+          "alt": "由时间线串联的八帧像素画角色动画"
+        },
+        {
+          "title": "导出可直接使用的精灵图表",
+          "description": "把生成的动画帧整理为精灵图表，并导入你的游戏开发流程。",
+          "bullets": [
+            "整齐组织的精灵图表输出",
+            "更便于开发中使用",
+            "适配现有资产制作流程"
+          ],
+          "image": "/imgs/cases/sprite-sheet-export.webp",
+          "alt": "单张像素画角色帧导出为八帧精灵图表"
+        }
+      ]
+    },
+    "tools": {
+      "title": "更多游戏资产制作工具",
+      "description": "使用 AI 创建游戏图标，或通过免费的精灵图表工具制作和管理 2D 游戏资产。",
+      "items": [
+        {
+          "title": "AI 游戏图标生成器",
+          "description": "使用 AI 生成物品、技能、武器、资源和物品栏所需的游戏图标。",
+          "badge": "AI 功能",
+          "cta": "生成游戏图标",
+          "href": "/ai-game-icon-generator"
+        },
+        {
+          "title": "免费精灵图表制作工具",
+          "description": "直接在浏览器中把独立精灵帧合并为整齐的精灵图表。",
+          "badge": "免费工具",
+          "cta": "制作精灵图表",
+          "href": "/sprite-sheet-maker"
+        },
+        {
+          "title": "免费精灵图表切割工具",
+          "description": "在几秒内把已有精灵图表切分为独立动画帧。",
+          "badge": "免费工具",
+          "cta": "切分精灵图表",
+          "href": "/sprite-sheet-cutter"
+        }
+      ]
+    },
+    "projectTitle": "用一个 AI 精灵图生成器构建风格一致的游戏世界。",
+    "projectDescription": "只需创建一次项目并确定视觉方向，AI 精灵图生成器就会在同一游戏世界中复用风格、视角和参考素材。",
+    "spriteTitle": "使用 AI 精灵图生成器创建可用于游戏的角色。",
+    "spriteDescription": "描述角色或上传参考图，AI 角色精灵图生成器会根据项目的风格、视角和分辨率创建可复用的精灵图变体。",
+    "animateTitle": "使用 AI 精灵图生成器制作可用于游戏的动画。",
+    "animateDescription": "使用 AI 动画精灵图表生成器制作待机、行走和攻击动画，逐帧预览动作效果，再导出完成的动画。",
+    "batchEyebrow": "生成整套资产，而不只是单张图片",
+    "batchTitle": "一次生成完整的游戏图标套装。",
+    "batchDescription": "粘贴物品列表，或让 AI 根据游戏项目推荐需要的资产，并用统一风格批量生成武器、药水、技能和物品栏图标。",
+    "styleTitle": "只需定义一次项目风格，之后在所有生成任务中复用。",
+    "styleDescription": "SpritePixel 会记住游戏的视觉规则，后续生成会自动继承风格、色板、视角、精灵图尺寸和参考图。",
+    "vaultTitle": "把一个游戏项目的所有资产集中保存在同一个资产仓库中。",
+    "vaultDescription": "不再让生成文件散落在下载目录中，确认后的资产统一归档到项目内，可继续复用、生成变体或导出。",
+    "workflowTitle": "AI 精灵图生成器如何工作",
+    "workflowDescription": "只需三个清晰步骤，即可从基础角色完成变体、动画帧与导出。",
+    "workflowSteps": [
+      {
+        "title": "创建角色",
+        "description": "使用 AI 精灵图生成器生成基础角色。"
+      },
+      {
+        "title": "添加变体或动画",
+        "description": "创建换装变体、多方向视图或连续动画帧。"
+      },
+      {
+        "title": "导出精灵图表",
+        "description": "导出精灵图资产，并用于你的游戏制作流程。"
+      }
+    ],
+    "useCasesTitle": "为独立游戏创作者而设计",
+    "useCasesDescription": "更快创建资产、保持统一的视觉风格，并减少小型游戏项目中重复的精灵图制作工作。",
+    "useCases": [
+      {
+        "title": "独立游戏开发者",
+        "description": "无需大型美术团队，也能建立统一的角色与资产方向。"
+      },
+      {
+        "title": "RPG / 俯视角项目",
+        "description": "创建多方向角色、造型变体、动画帧与可用的精灵图表。"
+      },
+      {
+        "title": "2D 原型团队",
+        "description": "快速探索角色与动作，同时维持连贯的视觉语言。"
+      },
+      {
+        "title": "游戏创作马拉松参与者",
+        "description": "用更少的手工作业，从创意快速推进到可使用的精灵图资产。"
+      }
+    ],
+    "toolsTitle": "面向游戏开发的免费精灵图表工具。",
+    "toolsDescription": "常见精灵图处理任务可直接在浏览器完成，不消耗积分。",
+    "makerTitle": "精灵图表制作工具",
+    "makerDescription": "在浏览器中把动画帧打包为精灵图表。",
+    "splitterTitle": "精灵图表切割工具",
+    "summary": {
+      "eyebrow": "一个连贯的制作流程",
+      "title": "从角色到精灵图表，只需一个 AI 精灵图生成器",
+      "description": "SpritePixel 帮助你在同一个工作流中生成角色、创建换装变体、制作多方向精灵图与动画，并导出精灵图表。",
+      "cta": "试用 AI 精灵图生成器"
+    },
+    "pricingTitle": "适用于 AI 精灵图生成流程的简单定价",
+    "pricingNote": "积分仅用于 AI 生成功能；精灵图表制作工具与切割工具始终可以在浏览器中免费使用。",
+    "faqTitle": "AI 精灵图生成器常见问题",
+    "faqDescription": "了解角色变体、多方向精灵图、动画帧、导出、积分与使用权等常见问题。",
+    "faq": [
+      {
+        "question": "这个 AI 精灵图生成器可以创建什么？",
+        "answer": "SpritePixel 可以创建原创 2D 角色、换装变体、多方向角色视图、连续动画帧、可导出的精灵图表，以及风格一致的游戏图标套装。具体可用控制项取决于你选择的资产流程。"
+      },
+      {
+        "question": "可以为同一角色创建换装变体吗？",
+        "answer": "可以。你可以从同一个基础角色或参考图开始，为皮肤、职业或 NPC 版本创建服装变体，并在生成能力允许的范围内尽量保留角色的核心形象。"
+      },
+      {
+        "question": "可以生成多方向精灵图吗？",
+        "answer": "可以。你可以根据方向设置，为 RPG 和俯视角游戏创建一致的角色方向视图，包括正面、侧面和背面输出。"
+      },
+      {
+        "question": "可以生成连续的精灵动画帧吗？",
+        "answer": "可以。AI 精灵图生成器可以根据角色创建移动或动作帧序列。你可以先预览结果，再进入动画编辑器继续处理和下载。"
+      },
+      {
+        "question": "可以导出精灵图表吗？",
+        "answer": "可以。生成的帧可以整理并下载为精灵图表或帧序列，用于你的开发流程。下载与导出不会消耗生成积分。"
+      },
+      {
+        "question": "精灵图表制作工具和切割工具免费吗？",
+        "answer": "免费。这两个工具都在浏览器中运行，不会消耗生成积分。AI 游戏图标生成器属于 AI 生成功能，需要使用积分。"
+      },
+      {
+        "question": "SpritePixel 适合哪些用户？",
+        "answer": "SpritePixel 面向独立开发者、2D 游戏创作者、RPG 与俯视角项目、原型团队和游戏创作马拉松参与者，帮助他们在没有大型美术流程的情况下制作可使用的资产。"
+      },
+      {
+        "question": "生成的精灵图可以用于游戏项目吗？",
+        "answer": "可以，但需要遵守 SpritePixel 服务条款，并确保你拥有上传参考素材的合法权利。你也需要确保提示词与上传内容不会侵犯第三方权利。"
+      }
+    ],
+    "assetSystem": "资产系统",
+    "forgeCanvas": {
+      "phaseLabels": ["读取项目上下文", "批量生成", "实战测试", "保存入库"],
+      "projectLabel": "项目_01 / 浣熊工坊",
+      "savedLabel": "风格已锁定 · 4 项资产已保存",
+      "footerStatuses": [
+        "正在读取项目风格",
+        "正在生成匹配资产套装",
+        "正在进行装备与攻击测试",
+        "正在保存到资产仓库"
+      ],
+      "loadError": "动画资产加载失败 · 请刷新重试",
+      "ariaLabel": "循环演示浣熊读取项目风格、生成匹配资产、测试攻击动作并将结果保存到资产仓库"
+    },
+    "demo": {
+      "assetPlaceholder": "资产占位 {number}",
+      "activeProject": "当前项目",
+      "projectName": "微型地牢",
+      "projectGenre": "类肉鸽角色扮演游戏",
+      "projectRules": [
+        { "label": "风格", "value": "像素艺术" },
+        { "label": "视角", "value": "俯视" },
+        { "label": "尺寸", "value": "64 × 64" },
+        { "label": "色板", "value": "暗黑奇幻" }
+      ],
+      "assetNames": ["骑士", "长剑", "药水", "技能", "盾牌", "钥匙"],
+      "metrics": [
+        { "label": "角色", "value": "06" },
+        { "label": "动画", "value": "12" },
+        { "label": "物品", "value": "34" },
+        { "label": "技能", "value": "16" }
+      ],
+      "generatorCharacter": "生成器 / 角色",
+      "promptLabel": "提示词",
+      "spritePrompt": "一个手持圆盾的微型地牢骑士",
+      "styleLabel": "风格",
+      "perspectiveLabel": "视角",
+      "pixelArt": "像素艺术",
+      "topDown": "俯视",
+      "animationPreview": "动画预览",
+      "actions": ["待机", "行走", "攻击"],
+      "loopOn": "循环开启",
+      "pngSpriteSheet": "PNG 精灵图表",
+      "assetList": "资产列表",
+      "selectedCount": "已选择 8 / 8",
+      "iconItems": [
+        "铁剑",
+        "金剑",
+        "木盾",
+        "生命药水",
+        "法力药水",
+        "魔法戒指",
+        "银钥匙",
+        "蓝宝石"
+      ],
+      "contextRules": [
+        { "label": "风格", "value": "像素艺术" },
+        { "label": "色板", "value": "暗黑奇幻" },
+        { "label": "视角", "value": "俯视" },
+        { "label": "描边", "value": "深色 / 1px" },
+        { "label": "尺寸", "value": "64 × 64" },
+        { "label": "参考图", "value": "03 个文件" }
+      ],
+      "vaultName": "微型地牢 / 资产仓库",
+      "vaultCategories": ["全部 68", "角色 06", "动画 12", "物品 34", "技能 16"]
+    },
+    "finalTitle": "使用 AI 精灵图生成器构建你的游戏角色",
+    "finalDescription": "创建角色、添加变体或动画，并为下一个 2D 游戏项目导出精灵图表。",
+    "createProject": "试用 AI 精灵图生成器",
+    "freeToolsCta": "使用免费精灵图工具"
   }
 }

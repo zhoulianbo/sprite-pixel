@@ -2,6 +2,7 @@ import {
   AIManager,
   FalProvider,
   GeminiProvider,
+  GrsaiProvider,
   KieProvider,
   ReplicateProvider,
 } from '@/extensions/ai';
@@ -18,6 +19,16 @@ export function getAIManagerWithConfigs(configs: Configs) {
       new KieProvider({
         apiKey: configs.kie_api_key,
         customStorage: configs.kie_custom_storage === 'true',
+      })
+    );
+  }
+
+  if (configs.grsai_api_key) {
+    aiManager.addProvider(
+      new GrsaiProvider({
+        apiKey: configs.grsai_api_key,
+        baseUrl: configs.grsai_base_url || undefined,
+        customStorage: configs.grsai_custom_storage === 'true',
       })
     );
   }

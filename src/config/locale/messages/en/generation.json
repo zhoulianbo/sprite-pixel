@@ -1,0 +1,74 @@
+{
+  "fields": {
+    "style": "Style",
+    "perspective": "Perspective",
+    "quality": "Quality",
+    "characterType": "Character type",
+    "editType": "Type",
+    "actionType": "Action",
+    "direction": "Direction",
+    "frames": "Frames",
+    "frameSize": "Frame size"
+  },
+  "upload": {
+    "reference": "Reference",
+    "character": "Character",
+    "remove": "Remove image",
+    "file": "Upload",
+    "existing": "Existing character"
+  },
+  "options": {
+    "style": {
+      "pixel-art": "Pixel Art",
+      "cartoon": "Cartoon",
+      "illustration": "Illustration",
+      "hand-painted": "Hand-painted",
+      "anime-2d": "Anime 2D",
+      "dark-fantasy": "Dark Fantasy",
+      "cyberpunk": "Cyberpunk"
+    },
+    "perspective": {
+      "side": "Side View",
+      "top-down": "Top-down",
+      "front": "Front View",
+      "isometric": "Isometric"
+    },
+    "quality": {
+      "1k": "1K",
+      "2k": "2K",
+      "4k": "4K"
+    },
+    "characterType": {
+      "humanoid": "Humanoid",
+      "monster": "Monster",
+      "animal": "Animal",
+      "robot": "Robot",
+      "custom": "Custom"
+    },
+    "editType": {
+      "pose": "Pose",
+      "costume": "Costume"
+    },
+    "actionType": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "attack": "Attack",
+      "jump": "Jump",
+      "hurt": "Hurt",
+      "death": "Death",
+      "custom": "Custom"
+    },
+    "direction": {
+      "right": "Right",
+      "left": "Left",
+      "up": "Up",
+      "down": "Down",
+      "four-way": "Four-way",
+      "eight-way": "Eight-way"
+    },
+    "frames": {
+      "auto": "Auto"
+    }
+  }
+}

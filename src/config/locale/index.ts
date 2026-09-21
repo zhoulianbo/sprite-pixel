@@ -2,15 +2,21 @@ import { envConfigs } from '..';
 
 export const localeNames: Record<string, string> = {
   en: 'English',
-  zh: '中文',
+  zh: '简体中文',
+  'zh-Hant': '繁體中文',
+  ja: '日本語',
+  ko: '한국어',
 };
 
 export const localeFlags: Record<string, string> = {
   en: '🇺🇸',
   zh: '🇨🇳',
+  'zh-Hant': '🇭🇰',
+  ja: '🇯🇵',
+  ko: '🇰🇷',
 };
 
-export const locales = ['en', 'zh'];
+export const locales = ['en', 'zh', 'zh-Hant', 'ja', 'ko'];
 
 export const defaultLocale = envConfigs.locale;
 
@@ -52,9 +58,13 @@ export const localeMessagesPaths = [
   'ai/chat',
   'activity/sidebar',
   'activity/chats',
+  'tools/sprites',
   'pages/index',
   'pages/pricing',
   'pages/showcases',
   'pages/blog',
   'pages/updates',
+  'pages/gallery',
+  'generation',
+  'workspace',
 ];

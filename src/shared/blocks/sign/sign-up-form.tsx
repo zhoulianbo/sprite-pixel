@@ -33,7 +33,8 @@ export function SignUpForm({
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { configs, setIsShowSignModal, setUser, fetchUserInfo } = useAppContext();
+  const { configs, setIsShowSignModal, setUser, fetchUserInfo } =
+    useAppContext();
 
   const isGoogleAuthEnabled = configs.google_auth_enabled === 'true';
   const isGithubAuthEnabled = configs.github_auth_enabled === 'true';
@@ -182,11 +183,14 @@ export function SignUpForm({
             }}
           >
             <div className="grid gap-2">
-              <Label htmlFor="signup-name">{t('name_title')}</Label>
+              <Label className="text-foreground" htmlFor="signup-name">
+                {t('name_title')}
+              </Label>
               <Input
                 id="signup-name"
                 type="text"
                 placeholder={t('name_placeholder')}
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground h-11 rounded-lg"
                 required
                 onChange={(e) => {
                   setName(e.target.value);
@@ -196,11 +200,14 @@ export function SignUpForm({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="signup-email">{t('email_title')}</Label>
+              <Label className="text-foreground" htmlFor="signup-email">
+                {t('email_title')}
+              </Label>
               <Input
                 id="signup-email"
                 type="email"
                 placeholder={t('email_placeholder')}
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground h-11 rounded-lg"
                 required
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -208,19 +215,22 @@ export function SignUpForm({
                 value={email}
               />
               {emailVerificationEnabled && (
-                <p className="text-amber-600 text-xs">
+                <p className="text-xs text-amber-600">
                   {t('email_verification_hint')}
                 </p>
               )}
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="signup-password">{t('password_title')}</Label>
+              <Label className="text-foreground" htmlFor="signup-password">
+                {t('password_title')}
+              </Label>
               <Input
                 id="signup-password"
                 type="password"
                 placeholder={t('password_placeholder')}
                 autoComplete="password"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground h-11 rounded-lg"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -228,8 +238,7 @@ export function SignUpForm({
 
             <Button
               type="submit"
-              variant="outline"
-              className="h-11 w-full rounded-xl"
+              className="h-11 w-full rounded-lg"
               disabled={loading}
             >
               {loading ? (
@@ -242,11 +251,11 @@ export function SignUpForm({
         )}
       </div>
       {isEmailAuthEnabled && (
-        <div className="flex w-full justify-center border-t py-4">
-          <p className="text-center text-xs text-neutral-500">
+        <div className="border-border flex w-full justify-center border-t py-4">
+          <p className="text-muted-foreground text-center text-xs">
             {t('already_have_account')}
             <span
-              className="cursor-pointer underline dark:text-white/70"
+              className="text-foreground hover:text-accent-foreground cursor-pointer underline"
               onClick={onSwitchToSignIn}
             >
               {t('sign_in_title')}

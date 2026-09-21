@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "title": "AI 精靈圖產生器－建立 2D 遊戲素材 | SpritePixel",
+    "description": "使用 SpritePixel AI 精靈圖產生器建立可直接用於遊戲的角色精靈、動畫精靈圖表與配套 2D 素材，並在同一專案中維持一致風格。",
+    "keywords": "AI 精靈圖產生器, 遊戲精靈產生器, 角色精靈產生器, 精靈圖表產生器, AI 遊戲素材, 遊戲圖示產生器, SpritePixel"
+  },
+  "sign": {
+    "sign_in_title": "登入",
+    "sign_in_description": "登入你的帳號",
+    "sign_up_title": "註冊",
+    "sign_up_description": "建立帳號",
+    "email_title": "電子郵件",
+    "email_placeholder": "輸入電子郵件",
+    "password_title": "密碼",
+    "password_placeholder": "輸入密碼",
+    "forgot_password": "忘記密碼？",
+    "or": "或",
+    "continue": "繼續",
+    "no_account": "還沒有帳號？",
+    "already_have_account": "已經有帳號？",
+    "email_sign_in": "使用電子郵件登入",
+    "google_sign_in_title": "使用 Google 登入",
+    "github_sign_in_title": "使用 GitHub 登入",
+    "close_title": "關閉",
+    "cancel_title": "取消",
+    "sign_out_title": "登出",
+    "billing_title": "帳務",
+    "name_title": "姓名",
+    "name_placeholder": "輸入姓名",
+    "email_verification_hint": "請使用可正常收信的電子郵件。註冊後必須完成驗證。",
+    "admin_title": "管理後台",
+    "credits_title": "點數：{credits}",
+    "verify_email_sent": "驗證信已寄出，請查看收件匣。",
+    "verify_email_required": "請先完成電子郵件驗證再登入。",
+    "resend_verification": "重新寄送驗證信",
+    "resend_verification_sent": "驗證信已重新寄出，請查看收件匣。",
+    "verify_email_page_title": "請查看電子郵件",
+    "verify_email_page_description": "若要繼續，請點擊寄送至下列信箱的連結：",
+    "verify_email_continue": "繼續",
+    "verify_email_tip": "完成驗證後，請點擊「繼續」。",
+    "verify_email_not_verified_yet": "尚未完成驗證，請先點擊信件中的連結。",
+    "verify_email_account_mismatch": "目前登入的是 {current}，本頁正在等待 {expected} 的驗證結果。",
+    "resend_verification_countdown": "重新寄送驗證信（{seconds} 秒）",
+    "resend_verification_wait": "請等待 {seconds} 秒後再重新寄送。",
+    "back_to_sign_in": "返回登入"
+  },
+  "payment": {
+    "choose_payment_method": "選擇付款方式",
+    "choose_payment_method_description": "",
+    "cancel_title": "取消"
+  },
+  "locale_detector": {
+    "title": "偵測到瀏覽器語言為{locale}，要切換嗎？",
+    "switch_to": "切換至{locale}",
+    "selector_label": "切換語言。目前語言：{locale}",
+    "close": "關閉"
+  },
+  "moreTools": {
+    "title": "更多工具",
+    "description": "繼續使用 SpritePixel 的配套瀏覽器工具。免費精靈工具不需額外註冊。",
+    "items": {
+      "sprites": {
+        "title": "AI 精靈圖產生器",
+        "text": "根據專案描述產生可用的遊戲精靈與配套動作。"
+      },
+      "icons": {
+        "title": "AI 遊戲圖示產生器",
+        "text": "一次產生風格一致的遊戲圖示、物品、武器與道具。"
+      },
+      "maker": {
+        "title": "Sprite Sheet 製作工具",
+        "text": "將 PNG 影格或 GIF 整理成 Sprite Sheet，並匯出 PNG 與選用的 JSON。"
+      },
+      "cutter": {
+        "title": "Sprite Sheet 分割工具",
+        "text": "用可見、可調整的網格，把 Sprite Sheet 分割成獨立 PNG 影格。"
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+# SpritePixel
+
+> A project-based AI game asset studio for indie 2D developers.
+
+SpritePixel helps 1–5 person game teams create consistent character sprites, animations, sprite sheets, and matching game icons in one project. Credits are used only for AI generation. Sprite Sheet Maker and Sprite Sheet Cutter run in the browser for free.
+
+Website: https://spritepixel.com
+Contact: support@spritepixel.com
+
+## Main
+
+- [AI Sprite Generator](https://spritepixel.com/): Create game-ready 2D characters, outfit variations, multi-direction sprites, animations, and exportable sprite sheets.
+- [Pricing](https://spritepixel.com/pricing): Compare free, subscription, and credit-pack plans. Sprite sheet tools stay free.
+- [AI Game Icon Generator](https://spritepixel.com/ai-game-icon-generator): Generate up to 9 consistent game icons, items, weapons, skills, and props on one transparent 3×3 sheet.
+- [Sprite Sheet Maker](https://spritepixel.com/sprite-sheet-maker): Free browser tool to pack PNG frames or a GIF into a sprite sheet, with PNG and optional JSON export.
+- [Sprite Sheet Cutter](https://spritepixel.com/sprite-sheet-cutter): Free browser tool to slice a sprite sheet into individual PNG frames.
+- [Gallery](https://spritepixel.com/gallery): Browse sprite, animation, and matching game-asset examples from SpritePixel.
+
+## Legal
+
+- [Privacy Policy](https://spritepixel.com/privacy-policy): How SpritePixel handles account, project, upload, generation, payment, and device information.
+- [Terms of Service](https://spritepixel.com/terms-of-service): Terms for using SpritePixel, including AI generation, free tools, credits, and commercial use.
+
+## Optional
+
+Localized homepages:
+
+- [English](https://spritepixel.com/)
+- [简体中文](https://spritepixel.com/zh)
+- [繁體中文](https://spritepixel.com/zh-Hant)
+- [日本語](https://spritepixel.com/ja)
+- [한국어](https://spritepixel.com/ko)

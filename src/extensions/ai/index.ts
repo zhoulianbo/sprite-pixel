@@ -75,6 +75,7 @@ export async function saveFiles(files: AIFile[]) {
 export const aiManager = new AIManager();
 
 export * from './kie';
+export * from './grsai';
 export * from './replicate';
 export * from './gemini';
 export * from './fal';

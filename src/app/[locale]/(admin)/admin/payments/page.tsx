@@ -107,6 +107,10 @@ export default async function PaymentsPage({
           label: t('list.filters.provider.options.creem'),
         },
         {
+          value: 'waffo',
+          label: t('list.filters.provider.options.waffo'),
+        },
+        {
           value: 'lemonsqueezy',
           label: t('list.filters.provider.options.lemonsqueezy'),
         },

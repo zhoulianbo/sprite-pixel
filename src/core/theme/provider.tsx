@@ -15,11 +15,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [locale]);
 
+  const appearance = envConfigs.appearance || 'dark';
+  const resolvedTheme = appearance === 'light' ? 'light' : 'dark';
+
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme={envConfigs.appearance}
-      enableSystem
+      defaultTheme={resolvedTheme}
+      forcedTheme={appearance === 'system' ? undefined : resolvedTheme}
+      enableSystem={appearance === 'system'}
       disableTransitionOnChange
     >
       {children}

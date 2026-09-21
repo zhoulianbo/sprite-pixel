@@ -1,0 +1,59 @@
+{
+  "fields": {
+    "subscription_no": "サブスクリプション番号",
+    "interval": "周期",
+    "provider": "決済事業者",
+    "current_period": "現在の期間",
+    "plan": "プラン",
+    "status": "ステータス",
+    "amount": "金額",
+    "created_at": "作成日時",
+    "end_time": "終了日時",
+    "action": "操作"
+  },
+  "view": {
+    "title": "現在のプラン",
+    "tip": "サブスクリプションは {date} に自動更新されます",
+    "end_tip": "サブスクリプションは {date} に自動キャンセルされます",
+    "no_subscription": "プランなし",
+    "buttons": {
+      "adjust": "プランを変更",
+      "subscribe": "購読する",
+      "manage": "サブスクリプションを管理",
+      "cancel": "サブスクリプションをキャンセル"
+    }
+  },
+  "list": {
+    "title": "サブスクリプション履歴",
+    "tabs": {
+      "all": "すべて",
+      "active": "有効",
+      "pending_cancel": "キャンセル予定",
+      "canceled": "キャンセル済み",
+      "trialing": "トライアル中",
+      "paused": "一時停止",
+      "expired": "期限切れ"
+    }
+  },
+  "cancel": {
+    "title": "サブスクリプションをキャンセル",
+    "description": "サブスクリプションをキャンセルしますか？",
+    "fields": {
+      "subscription_no": "サブスクリプション番号",
+      "subscription_amount": "サブスクリプション金額",
+      "interval_cycle": "課金周期",
+      "subscription_created_at": "サブスクリプション作成日時",
+      "current_period": "現在の期間",
+      "start_at": "開始日時",
+      "end_at": "終了日時"
+    },
+    "crumbs": {
+      "settings": "設定",
+      "billing": "お支払い",
+      "cancel": "サブスクリプションをキャンセル"
+    },
+    "buttons": {
+      "confirm_cancel": "キャンセルを確定"
+    }
+  }
+}

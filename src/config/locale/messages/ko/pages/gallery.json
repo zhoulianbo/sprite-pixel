@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "title": "갤러리",
+    "description": "SpritePixel의 스프라이트, 애니메이션, 게임 에셋 예시를 둘러보세요."
+  },
+  "title": "갤러리",
+  "description": "생성된 스프라이트, 애니메이션, 일관된 게임 에셋을 둘러보세요.",
+  "emptyTitle": "아직 갤러리 항목이 없습니다",
+  "emptyDescription": "갤러리 데이터는 나중에 연결됩니다. 지금은 표시할 내용이 없습니다."
+}

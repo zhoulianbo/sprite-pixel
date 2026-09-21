@@ -23,7 +23,7 @@ export function SidebarHeader({ header }: { header: SidebarHeaderType }) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               {header.brand && (
-                <Link href={header.brand.url || ''}>
+                <Link href={header.brand.url || '/'}>
                   {header.brand.logo && (
                     <img
                       src={header.brand.logo.src}

@@ -1,7 +1,12 @@
+import { isRootStorageKey } from '@/shared/lib/storage-paths';
+
 import type {
   StorageConfigs,
+  StorageDownloadResult,
   StorageDownloadUploadOptions,
   StorageProvider,
+  StorageSignedUploadOptions,
+  StorageSignedUploadResult,
   StorageUploadOptions,
   StorageUploadResult,
 } from '.';
@@ -51,21 +56,29 @@ export class R2Provider implements StorageProvider {
     );
   }
 
-  getPublicUrl = (options: { key: string; bucket?: string }) => {
-    const uploadBucket = options.bucket || this.configs.bucket;
+  private resolveObjectKey(key: string) {
+    if (isRootStorageKey(key)) return key;
     const uploadPath = this.getUploadPath();
-    const url = `${this.getEndpoint()}/${uploadBucket}/${uploadPath}/${options.key}`;
+    return uploadPath ? `${uploadPath}/${key}` : key;
+  }
+
+  private objectUrl(key: string, bucket?: string) {
+    const uploadBucket = bucket || this.configs.bucket;
+    return `${this.getEndpoint()}/${uploadBucket}/${this.resolveObjectKey(key)}`;
+  }
+
+  getPublicUrl = (options: { key: string; bucket?: string }) => {
+    const objectKey = this.resolveObjectKey(options.key);
     return this.configs.publicDomain
-      ? `${this.configs.publicDomain}/${uploadPath}/${options.key}`
-      : url;
+      ? `${this.configs.publicDomain}/${objectKey}`
+      : this.objectUrl(options.key, options.bucket);
   };
 
   exists = async (options: { key: string; bucket?: string }) => {
     try {
       const uploadBucket = options.bucket || this.configs.bucket;
       if (!uploadBucket) return false;
-      const uploadPath = this.getUploadPath();
-      const url = `${this.getEndpoint()}/${uploadBucket}/${uploadPath}/${options.key}`;
+      const url = this.objectUrl(options.key, uploadBucket);
 
       const { AwsClient } = await import('aws4fetch');
       const client = new AwsClient({
@@ -83,6 +96,37 @@ export class R2Provider implements StorageProvider {
       return response.ok;
     } catch {
       return false;
+    }
+  };
+
+  downloadFile = async (options: {
+    key: string;
+    bucket?: string;
+  }): Promise<StorageDownloadResult> => {
+    try {
+      const uploadBucket = options.bucket || this.configs.bucket;
+      const url = this.objectUrl(options.key, uploadBucket);
+      const { AwsClient } = await import('aws4fetch');
+      const client = new AwsClient({
+        accessKeyId: this.configs.accessKeyId,
+        secretAccessKey: this.configs.secretAccessKey,
+        region: this.configs.region || 'auto',
+      });
+      const response = await client.fetch(new Request(url));
+      if (!response.ok) {
+        return { success: false, error: `Download failed: ${response.status}` };
+      }
+      return {
+        success: true,
+        body: response.body,
+        contentType: response.headers.get('content-type') || undefined,
+        contentLength: response.headers.get('content-length') || undefined,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   };
 
@@ -104,11 +148,7 @@ export class R2Provider implements StorageProvider {
           ? new Uint8Array(options.body)
           : options.body;
 
-      const uploadPath = this.getUploadPath();
-
-      // R2 endpoint format: https://<accountId>.r2.cloudflarestorage.com
-      // Use custom endpoint if provided, otherwise use default
-      const url = `${this.getEndpoint()}/${uploadBucket}/${uploadPath}/${options.key}`;
+      const url = this.objectUrl(options.key, uploadBucket);
 
       const { AwsClient } = await import('aws4fetch');
 
@@ -148,7 +188,7 @@ export class R2Provider implements StorageProvider {
         success: true,
         location: url,
         bucket: uploadBucket,
-        uploadPath: uploadPath,
+        uploadPath: this.getUploadPath(),
         key: options.key,
         filename: options.key.split('/').pop(),
         url: publicUrl,
@@ -201,6 +241,61 @@ export class R2Provider implements StorageProvider {
         provider: this.name,
       };
     }
+  }
+
+  async createSignedUploadUrl(
+    options: StorageSignedUploadOptions
+  ): Promise<StorageSignedUploadResult> {
+    const uploadBucket = options.bucket || this.configs.bucket;
+    if (!uploadBucket) {
+      throw new Error('Bucket is required');
+    }
+    const expiresIn = Math.max(60, Math.min(options.expiresIn ?? 900, 3600));
+    const url = new URL(this.objectUrl(options.key, uploadBucket));
+    url.searchParams.set('X-Amz-Expires', String(expiresIn));
+    const { AwsClient } = await import('aws4fetch');
+    const client = new AwsClient({
+      accessKeyId: this.configs.accessKeyId,
+      secretAccessKey: this.configs.secretAccessKey,
+      region: this.configs.region || 'auto',
+    });
+    const signed = await client.sign(
+      new Request(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': options.contentType,
+        },
+      }),
+      { aws: { signQuery: true } }
+    );
+    return {
+      uploadUrl: signed.url,
+      headers: { 'Content-Type': options.contentType },
+    };
+  }
+
+  async createSignedDownloadUrl(options: {
+    key: string;
+    expiresIn?: number;
+    bucket?: string;
+  }) {
+    const downloadBucket = options.bucket || this.configs.bucket;
+    if (!downloadBucket) {
+      throw new Error('Bucket is required');
+    }
+    const expiresIn = Math.max(60, Math.min(options.expiresIn ?? 900, 3600));
+    const url = new URL(this.objectUrl(options.key, downloadBucket));
+    url.searchParams.set('X-Amz-Expires', String(expiresIn));
+    const { AwsClient } = await import('aws4fetch');
+    const client = new AwsClient({
+      accessKeyId: this.configs.accessKeyId,
+      secretAccessKey: this.configs.secretAccessKey,
+      region: this.configs.region || 'auto',
+    });
+    const signed = await client.sign(new Request(url, { method: 'GET' }), {
+      aws: { signQuery: true },
+    });
+    return signed.url;
   }
 }
 

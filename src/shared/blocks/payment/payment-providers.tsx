@@ -67,7 +67,7 @@ export function PaymentProviders({
   // Get allowed payment providers from pricing item
   // If payment_providers is set, use it; otherwise show all enabled providers
   const allowedProviders = pricingItem?.payment_providers;
-  
+
   // Helper function to check if a provider is allowed
   const isProviderAllowed = (providerName: string): boolean => {
     // If no payment_providers specified, allow all
@@ -95,6 +95,14 @@ export function PaymentProviders({
       title: 'Creem',
       icon_url: '/imgs/icons/creem.png',
       onClick: () => handlePayment({ provider: 'creem' }),
+    });
+  }
+
+  if (configs.waffo_enabled === 'true' && isProviderAllowed('waffo')) {
+    providers.push({
+      name: 'waffo',
+      title: 'Waffo',
+      onClick: () => handlePayment({ provider: 'waffo' }),
     });
   }
 

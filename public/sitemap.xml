@@ -1,15 +1,404 @@
-<?xml version='1.0' encoding='utf-8' standalone='yes'?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://your-domain.com/</loc>
-    <lastmod>2025-11-15T10:00:00+00:00</lastmod>
+    <loc>https://spritepixel.com/</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/"/>
   </url>
   <url>
-    <loc>https://your-domain.com/blog</loc>
-    <lastmod>2025-11-15T10:00:00+00:00</lastmod>
+    <loc>https://spritepixel.com/zh</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/"/>
   </url>
   <url>
-    <loc>https://your-domain.com/showcases</loc>
-    <lastmod>2025-11-15T10:00:00+00:00</lastmod>
+    <loc>https://spritepixel.com/zh-Hant</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/pricing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/pricing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/pricing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/pricing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/pricing</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/pricing"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/pricing"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/pricing"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ai-game-icon-generator</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/ai-game-icon-generator"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/ai-game-icon-generator</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/ai-game-icon-generator"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/ai-game-icon-generator</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/ai-game-icon-generator"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/ai-game-icon-generator</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/ai-game-icon-generator"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/ai-game-icon-generator</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/ai-game-icon-generator"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/ai-game-icon-generator"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/sprite-sheet-maker</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/sprite-sheet-maker</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/sprite-sheet-maker</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/sprite-sheet-maker</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/sprite-sheet-maker</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/sprite-sheet-cutter</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-cutter"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/sprite-sheet-cutter</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-cutter"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/sprite-sheet-cutter</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-cutter"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/sprite-sheet-cutter</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-cutter"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/sprite-sheet-cutter</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/sprite-sheet-cutter"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/sprite-sheet-cutter"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/gallery</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/gallery"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gallery"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/gallery</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/gallery"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gallery"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/gallery</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/gallery"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gallery"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/gallery</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/gallery"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gallery"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/gallery</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/gallery"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/gallery"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/gallery"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gallery"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/privacy-policy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/privacy-policy"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/privacy-policy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/privacy-policy"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/privacy-policy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/privacy-policy"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/privacy-policy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/privacy-policy"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/privacy-policy</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/privacy-policy"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/terms-of-service</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/terms-of-service</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh-Hant/terms-of-service</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ja/terms-of-service</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/ko/terms-of-service</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://spritepixel.com/zh/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://spritepixel.com/zh-Hant/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://spritepixel.com/ja/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
   </url>
 </urlset>

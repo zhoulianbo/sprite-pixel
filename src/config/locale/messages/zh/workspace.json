@@ -1,0 +1,590 @@
+{
+  "projects": {
+    "title": "我的项目",
+    "new": "新建项目",
+    "open": "打开项目",
+    "assets": "{count} 个资源",
+    "updated": "更新于 {date}",
+    "default": "默认项目",
+    "empty": "创建第一个项目，开始构建一致的游戏资源库。",
+    "menu": "项目操作",
+    "edit": "编辑",
+    "cancel": "取消",
+    "delete": "删除",
+    "deleteTitle": "删除项目",
+    "deleteDescription": "确定删除“{name}”吗？它将从项目列表中移除。",
+    "deleting": "删除中…",
+    "deleteError": "项目删除失败，请重试。"
+  },
+  "createProject": {
+    "title": "创建项目",
+    "description": "为项目里的所有生成资源设置可复用的视觉基准。",
+    "step": "第 {current} 步，共 2 步",
+    "name": "项目名称",
+    "namePlaceholder": "我的动作角色扮演游戏",
+    "projectDescription": "项目说明（可选）",
+    "descriptionPlaceholder": "一款紧凑的奇幻肉鸽游戏",
+    "gameGenre": "游戏类型",
+    "gameGenrePlaceholder": "选择游戏类型",
+    "genres": {
+      "action_rpg": "动作角色扮演",
+      "roguelike": "肉鸽",
+      "platformer": "平台跳跃",
+      "adventure": "冒险",
+      "strategy": "策略",
+      "casual": "休闲",
+      "other": "其他"
+    },
+    "style": "美术风格",
+    "back": "返回",
+    "next": "继续",
+    "create": "创建项目",
+    "creating": "创建中…",
+    "error": "项目创建失败，请重试。",
+    "editTitle": "编辑项目",
+    "editDescription": "更新这个项目的名称和视觉基准。",
+    "save": "保存",
+    "saving": "保存中…",
+    "editError": "项目保存失败，请重试。"
+  },
+  "selector": {
+    "label": "当前项目",
+    "add": "添加项目",
+    "loading": "正在加载项目…",
+    "error": "项目暂时不可用"
+  },
+  "nav": {
+    "characters": "角色",
+    "icons": "图标",
+    "scenes": "主场景",
+    "ui": "用户界面",
+    "effects": "特效",
+    "settings": "项目设置",
+    "back": "所有项目"
+  },
+  "assets": {
+    "title": "我的资产",
+    "project": "{name}",
+    "characters": {
+      "title": "角色",
+      "description": "查看所有项目中已保存的角色图片。",
+      "emptyTitle": "还没有角色图片",
+      "emptyDescription": "在项目中生成角色后，会显示在这里。"
+    },
+    "animations": {
+      "title": "动画",
+      "description": "查看所有项目中已保存的角色动画。",
+      "emptyTitle": "还没有动画",
+      "emptyDescription": "为角色生成动画后，会显示在这里。"
+    },
+    "icons": {
+      "title": "图标",
+      "description": "查看所有项目中已保存的游戏图标。",
+      "emptyTitle": "还没有图标",
+      "emptyDescription": "使用图标生成器创建图标后，会显示在这里。"
+    },
+    "sheets": {
+      "title": "精灵图",
+      "description": "查看所有项目中已保存的精灵图。",
+      "emptyTitle": "还没有精灵图",
+      "emptyDescription": "生成动画后，对应的精灵图会显示在这里。"
+    }
+  },
+  "projectSettings": {
+    "title": "项目设置",
+    "description": "更新这个项目的名称、游戏类型和美术风格。",
+    "deleteHeading": "删除项目"
+  },
+  "emptySection": {
+    "title": "{section}工作区",
+    "description": "这里已经可以归档项目资源，但本版本暂不提供对应的生成功能。",
+    "back": "返回角色"
+  },
+  "filePicker": {
+    "kindLabel": "素材类型",
+    "kinds": {
+      "character": "角色",
+      "icon": "图标",
+      "sheet": "精灵图"
+    },
+    "loading": "正在加载素材…",
+    "empty": "当前项目还没有可选择的素材。",
+    "characterTitle": "选择已有角色",
+    "characterDescription": "从当前项目里选择一张角色图，作为动作生成的参考。"
+  },
+  "characters": {
+    "title": "角色",
+    "description": "从一张可信的基准图出发，依次完成角色变体、多方向与动画。",
+    "new": "新建角色",
+    "create": {
+      "trigger": "新建角色",
+      "title": "生成新角色",
+      "description": "在当前项目中直接生成新的角色基准图。",
+      "promptLabel": "描述你想要生成的角色",
+      "promptRequired": "请先描述要生成的角色。",
+      "currentProject": "当前项目",
+      "generate": "开始生成",
+      "generating": "生成中……",
+      "previewTitle": "生成效果预览",
+      "previewEmpty": "生成结果将在这里显示"
+    },
+    "emptyTitle": "还没有角色",
+    "emptyDescription": "可在首页生成角色基准图，也可以从这里输入描述开始。",
+    "open": "打开角色",
+    "workflow": {
+      "base": "基准图与变体",
+      "variations": "角色变体",
+      "directions": "多方向",
+      "animations": "动画",
+      "sheets": "精灵图"
+    },
+    "stageDescriptions": {
+      "base": "选择角色基准或变体，基于当前图片编辑姿势或换装。",
+      "directions": "每一组由独立方向图片组成，可逐张查看、下载或生成动画。",
+      "animations": "将鼠标移到动画上预览，单击进入动画编辑器。",
+      "sheets": "按动作和方向查看、放大及下载对应的精灵图。"
+    },
+    "panels": {
+      "base": "编辑角色",
+      "directions": "生成多方向",
+      "animations": "生成动画",
+      "sheets": "精灵图导出"
+    },
+    "active": "当前基准图",
+    "selectedInput": "已选择",
+    "variation": "角色变体",
+    "more": "更多操作",
+    "actions": "角色操作",
+    "rename": "重命名",
+    "delete": "删除",
+    "renameTitle": "重命名角色",
+    "renameDescription": "更新这个角色的名称。",
+    "nameLabel": "角色名称",
+    "save": "保存",
+    "saving": "保存中……",
+    "renameError": "名称未能保存，请重试。",
+    "deleteCharacterTitle": "删除角色",
+    "deleteCharacterDescription": "删除“{name}”？它将从当前项目中移除。",
+    "deletingCharacter": "删除中……",
+    "deleteCharacterError": "角色未能删除，请重试。",
+    "renameImageTitle": "重命名图片",
+    "renameImageDescription": "更新这张图片的名称。",
+    "imageNameLabel": "图片名称",
+    "deleteImage": "删除",
+    "deleteImageTitle": "删除这张图片",
+    "deleteImageDescription": "从当前角色中删除这张图片？",
+    "deletingImage": "删除中……",
+    "deleteImageError": "图片未能删除，请重试。",
+    "setActive": "设为当前基准图",
+    "uploadBase": "上传基准图",
+    "uploading": "上传中……",
+    "generateVariation": "生成角色变体",
+    "generateDirections": "生成多方向",
+    "generateAnimation": "生成动画",
+    "readyTitle": "准备就绪",
+    "readyDescription": "选择一个工作流阶段，继续为 {name} 生成风格一致的资源。",
+    "promptPlaceholder": "描述想要的变化……",
+    "editPosePlaceholder": "描述想要的姿势，例如双手持剑、侧身警戒。",
+    "editCostumePlaceholder": "描述想要的换装，例如披上红色斗篷、换上轻甲。",
+    "edit": "编辑",
+    "resultPlaceholder": "生成结果将在这里显示",
+    "editReferenceRequired": "请先选择要编辑的图片。",
+    "generate": "生成",
+    "generateCollection": "生成合集",
+    "generateWithCredits": "生成 · {credits} 积分",
+    "processing": "生成中……",
+    "action": "行动",
+    "directionSection": "方向",
+    "framesLabel": "帧数",
+    "directionFlipHint": "西、西北和西南方向与朝东的方向呈镜像对称，无需额外费用。",
+    "directionCreditSummary": "{count}方向 1 × {credits}积分",
+    "fourDirections": "4 个方向",
+    "eightDirections": "8 个方向",
+    "referenceInput": "生成输入图片",
+    "directionSource": "源角色",
+    "chooseReference": "选择角色图片",
+    "changeReference": "更换图片",
+    "changeCharacter": "更换角色",
+    "pickerTitle": "选择生成输入",
+    "pickerDescription": "从当前角色的基准图、变体或方向图中选择一张。",
+    "directionSet": "多方向组合 {number}",
+    "directionCount": "{count} 个独立方向",
+    "animateSet": "整组生成动画",
+    "missingDirection": "方向图缺失",
+    "frames": "帧",
+    "emptyBase": "还没有基准图或角色变体。",
+    "emptyDirections": "还没有多方向组合，请从右侧开始生成。",
+    "emptyAnimations": "还没有动画",
+    "emptyAnimationsHint": "请在右侧选择角色图与动作参数，点击生成",
+    "emptySheets": "生成动画后，对应精灵图会显示在这里。",
+    "sheetHelp": "每张精灵图对应一个动作方向。可在卡片上放大查看或直接下载。"
+  },
+  "generation": {
+    "queued": "已排队",
+    "processing": "正在生成资源……",
+    "success": "生成完成",
+    "partial": "部分项目需要处理",
+    "failed": "生成失败",
+    "retry": "重试失败项",
+    "download": "下载",
+    "zoom": "查看细节",
+    "openCharacter": "生成精灵图",
+    "openEditor": "编辑动画",
+    "promptRequired": "请先填写生成描述。",
+    "motionReferenceRequired": "请先上传角色图。",
+    "referenceRequired": "登录返回后请重新选择角色图片。",
+    "notConfigured": "生成服务尚未配置，请先在后台设置模型与存储。",
+    "genericError": "请求未能完成，请重试。"
+  },
+  "directions": {
+    "none": "基准",
+    "north": "北",
+    "north_east": "东北",
+    "east": "东",
+    "south_east": "东南",
+    "south": "南",
+    "south_west": "西南",
+    "west": "西",
+    "north_west": "西北"
+  },
+  "icons": {
+    "metadata": {
+      "title": "AI 游戏图标生成器 – 批量制作图标、道具与物品 | SpritePixel",
+      "description": "用 AI 将最多 9 个风格一致的游戏图标、道具、武器和技能素材生成在一张透明 3×3 图片上。",
+      "keywords": "AI 游戏图标生成器, 游戏图标生成器, AI 游戏图标, 游戏道具生成器, AI 游戏物品生成器, AI 游戏素材生成器, RPG 图标生成器, 像素风图标生成器"
+    },
+    "eyebrow": "描述或参考图 → 可直接使用的游戏图标",
+    "title": "AI 游戏图标生成器",
+    "home": "首页",
+    "description": "一次模型请求生成最多 9 个风格一致的游戏图标、道具、武器和技能素材，并以一张透明 3×3 图片下载。",
+    "listTitle": "图标",
+    "listDescription": "批量制作风格一致的背包、技能和界面图标，并归档到当前项目。",
+    "new": "新建图标",
+    "emptyTitle": "还没有图标",
+    "emptyDescription": "可前往图标生成器批量创建，生成结果会同步到这里。",
+    "board": "资源面板",
+    "boardDescription": "每行一个图标；使用“名称：描述”补充细节。",
+    "styleSource": "风格来源",
+    "stylePresets": "风格预设",
+    "uploadReference": "上传参考图",
+    "uploadFile": "上传文件",
+    "chooseAsset": "选择素材",
+    "selectedAsset": "已选择项目素材",
+    "itemList": "道具列表",
+    "listHint": "每行一个，格式为「名称：描述」，最多 9 个。",
+    "quickInsert": "快速插入：",
+    "expandAll": "展开全部",
+    "collapse": "收起",
+    "filled": "已填 {count}/{max}",
+    "preview": "预览",
+    "pickerTitle": "选择参考素材",
+    "pickerDescription": "从当前项目已有图片中选择一张，作为这批图标的风格参考。",
+    "pickerLoading": "正在加载素材…",
+    "pickerEmpty": "当前项目还没有可选择的素材。",
+    "styleHints": {
+      "pixel-art": "经典 16 色像素风",
+      "hand-painted": "厚涂黑暗奇幻风",
+      "cartoon": "清晰描边的卡通道具",
+      "anime-2d": "现代动漫插画",
+      "dark-fantasy": "金属遗物与地牢道具",
+      "cyberpunk": "霓虹硬件与科幻芯片"
+    },
+    "itemPresets": {
+      "crate": "木箱",
+      "torch": "火把",
+      "barrel": "木桶",
+      "chest": "宝箱",
+      "door": "门",
+      "lamp": "灯",
+      "rock": "岩石",
+      "bush": "草丛",
+      "sign": "路牌",
+      "chair": "椅子",
+      "table": "桌子",
+      "sword": "剑",
+      "shield": "盾牌",
+      "potion": "药水",
+      "bookshelf": "书架",
+      "anvil": "铁砧",
+      "cauldron": "坩埚",
+      "bench": "长凳",
+      "fence": "栅栏",
+      "well": "水井",
+      "banner": "旗帜",
+      "statue": "雕像",
+      "crystal": "水晶",
+      "skull": "骷髅头",
+      "tombstone": "墓碑",
+      "mushroom": "蘑菇",
+      "stump": "树桩",
+      "ladder": "梯子",
+      "bucket": "水桶",
+      "sack": "麻袋"
+    },
+    "inputPlaceholder": "生命药水：带软木塞的红色玻璃瓶\n铁剑：有使用痕迹的短剑\n冲刺技能：青色速度残影",
+    "add": "添加项目",
+    "reference": "参考图",
+    "referenceHint": "可选；仅上传参考图时会自动创建一个图标项。",
+    "palette": "色板说明",
+    "palettePlaceholder": "暖金、铁灰、青色魔法",
+    "background": "背景",
+    "transparent": "透明",
+    "dark": "深色",
+    "light": "浅色",
+    "generate": "生成图标表",
+    "selected": "已选择 {count} 项",
+    "remove": "移除",
+    "download": "下载图标",
+    "downloadZip": "下载成功项 ZIP",
+    "downloadSheet": "下载图标表",
+    "defaultSetName": "游戏图标套装",
+    "defaultItemName": "参考图标",
+    "ready": "待生成",
+    "empty": "生成的 3×3 图标表会显示在这里",
+    "landing": {
+      "tag": "ICONS",
+      "badges": {
+        "set": "成套生成",
+        "types": "资产类型",
+        "styles": "风格预设",
+        "regenerate": "整图重试",
+        "export": "导出格式",
+        "workflow": "三步流程",
+        "tools": "配套工具",
+        "faq": "常见问题"
+      },
+      "set": {
+        "title": "一次批量生成风格一致的游戏图标",
+        "description": "用统一视觉语言创建背包图标、武器、药水、技能、收集物和其他游戏素材。"
+      },
+      "types": {
+        "title": "不止于图标",
+        "description": "生成独立的游戏物体，既可当作背包图标、世界道具、收集物，也可用于界面素材。",
+        "items": [
+          {
+            "title": "背包图标",
+            "text": "为战利品、装备和背包栏制作成套的 AI 背包图标。"
+          },
+          {
+            "title": "武器",
+            "text": "生成独立的剑、弓和法杖，可用于界面图标或场景拾取物。"
+          },
+          {
+            "title": "药水与物品",
+            "text": "把药水、钥匙和消耗品做成成套的游戏物品图标。"
+          },
+          {
+            "title": "技能与能力",
+            "text": "设计在游戏界面尺寸下依然清晰的技能和能力图标。"
+          },
+          {
+            "title": "道具与物体",
+            "text": "制作木箱、家具等独立物体，覆盖游戏道具生成需求。"
+          },
+          {
+            "title": "收集物",
+            "text": "生成金币、宝石和任务物品，并与整套图标保持同一风格。"
+          }
+        ]
+      },
+      "styles": {
+        "title": "为游戏素材选择风格",
+        "description": "为整批生成选定视觉方向，让图标和道具共用同一套语言。",
+        "items": [
+          {
+            "id": "pixel-art",
+            "title": "像素画",
+            "text": "适合复古 RPG 和动作游戏的经典 16 色像素图标。"
+          },
+          {
+            "id": "hand-painted",
+            "title": "手绘 RPG",
+            "text": "适合武器、药水和背包美术的厚涂 RPG 图标风格。"
+          },
+          {
+            "id": "cartoon",
+            "title": "卡通风",
+            "text": "轮廓清晰、造型易读，适合休闲游戏图标和道具。"
+          },
+          {
+            "id": "anime-2d",
+            "title": "二次元",
+            "text": "赛璐璐着色的动漫技能、物品和界面图标。"
+          },
+          {
+            "id": "dark-fantasy",
+            "title": "黑暗奇幻",
+            "text": "金属、遗物和地牢道具的深色奇幻套装。"
+          },
+          {
+            "id": "cyberpunk",
+            "title": "赛博朋克",
+            "text": "霓虹硬件、芯片和科技道具，适合科幻背包栏。"
+          }
+        ]
+      },
+      "regenerate": {
+        "title": "整张重试，保持整套图标风格一致",
+        "description": "完整的 3×3 图标表会作为一张图片生成和重试，让整套素材保持统一风格。",
+        "gridLabel": "9 个图标",
+        "ok": "保留",
+        "retry": "重新生成图标表",
+        "cta": "重做整张图标表"
+      },
+      "export": {
+        "title": "生成结果直接进背包栏，不必再抠图对齐",
+        "description": "一次拿到透明 3×3 图标表：风格统一、格位固定，下载或留在项目里都能马上接进界面与道具流程。",
+        "items": [
+          {
+            "id": "batch",
+            "title": "一次请求，填满九宫格",
+            "text": "最多 9 个图标同批生成，省去逐个写提示词、反复校对风格的重复劳动。"
+          },
+          {
+            "id": "transparent",
+            "title": "透明 PNG，直接进引擎",
+            "text": "保留透明通道，叠在 Unity、Godot 或 Phaser 的界面与场景里无需再抠底。"
+          },
+          {
+            "id": "consistency",
+            "title": "整表风格锁定",
+            "text": "武器、药水、技能共用同一套光影与描边，背包栏看起来像同一套美术资源。"
+          },
+          {
+            "id": "download",
+            "title": "一张图带走整套",
+            "text": "单张 3×3 图即可下载，不必在文件夹里凑齐九个零散文件。"
+          },
+          {
+            "id": "project",
+            "title": "自动进项目库",
+            "text": "生成结果写入当前项目，换设备也能接着改、接着下，不丢上下文。"
+          },
+          {
+            "id": "grid",
+            "title": "固定格位好对接",
+            "text": "九个等分格子，自切或写帧数据时尺寸可预期，空位保持透明。"
+          }
+        ]
+      },
+      "workflowTitle": "使用方式",
+      "workflow": [
+        {
+          "title": "描述你的素材",
+          "text": "添加图标、武器、道具、物品或技能。短名称也可以开始，一次最多 9 个。"
+        },
+        {
+          "title": "选择风格",
+          "text": "使用风格预设或上传参考图，让整套结果保持一致。"
+        },
+        {
+          "title": "生成并调整",
+          "text": "将最多 9 个素材一次生成在同一张 3×3 图片上，再下载完成的图标表。"
+        }
+      ]
+    },
+    "faqTitle": "AI 游戏图标生成器常见问题",
+    "faq": [
+      {
+        "q": "什么是 AI 游戏图标生成器？",
+        "a": "AI 游戏图标生成器根据文字描述或参考图创建可直接用于游戏的图标，覆盖背包物品、技能、武器、能力和界面图标。"
+      },
+      {
+        "q": "可以一次生成多个游戏图标吗？",
+        "a": "可以。SpritePixel 会将最多 9 个图标一起生成在一张 3×3 图片上，让整套视觉风格保持一致。"
+      },
+      {
+        "q": "图标套装如何重试？",
+        "a": "重试会把完整的 3×3 图标表作为一张图片重新生成，保留统一的风格和布局。"
+      },
+      {
+        "q": "可以生成哪些类型的游戏图标？",
+        "a": "可以生成背包图标、技能图标、物品图标、武器图标、能力图标、状态图标和其他游戏界面素材。"
+      },
+      {
+        "q": "可以生成像素风游戏图标吗？",
+        "a": "可以。像素画是可选风格之一，另外还有手绘 RPG、卡通风、二次元、黑暗奇幻和赛博朋克。"
+      },
+      {
+        "q": "可以使用参考图吗？",
+        "a": "可以。你可以上传参考图，帮助整批生成图标保持特定视觉风格。"
+      },
+      {
+        "q": "支持哪些图标尺寸？",
+        "a": "可以生成常见游戏尺寸，例如 64×64、128×128 和 256×256。"
+      },
+      {
+        "q": "如何下载生成的图标？",
+        "a": "可以将完整的透明 3×3 图标表作为一张 PNG 下载。"
+      },
+      {
+        "q": "AI 游戏图标生成器可以生成游戏道具吗？",
+        "a": "可以。除了传统界面图标，你还可以生成木箱、武器、药水、家具、收集物等独立游戏道具。"
+      },
+      {
+        "q": "游戏图标和游戏道具有什么区别？",
+        "a": "游戏图标通常用于背包、技能和界面；道具则可能直接出现在游戏世界里。SpritePixel 可以用同一套风格同时生成这两种素材。"
+      }
+    ],
+    "ctaTitle": "准备好生成图标套装了吗？",
+    "ctaText": "在上方工作台描述最多 9 个图标或道具，选择风格后即可生成一张风格一致的 3×3 图标表。",
+    "ctaLabel": "打开工作台",
+    "openProject": "打开项目图标"
+  },
+  "editor": {
+    "title": "动画编辑器",
+    "unsaved": "存在未保存的更改",
+    "history": "历史记录",
+    "undo": "撤销",
+    "redo": "重做",
+    "controls": "播放控制",
+    "play": "播放",
+    "pause": "暂停",
+    "fps": "帧率",
+    "loop": "循环播放",
+    "zoom": "缩放",
+    "offset": "帧偏移",
+    "offsetX": "X 偏移",
+    "offsetY": "Y 偏移",
+    "delete": "删除帧",
+    "save": "另存为新版本",
+    "saving": "保存中……",
+    "downloadSheet": "下载精灵图",
+    "downloadFrames": "下载帧序列 ZIP",
+    "frame": "第 {number} 帧",
+    "back": "返回角色",
+    "saveError": "新版本保存失败。"
+  },
+  "errors": {
+    "GENERIC": "请求未能完成，请重试。",
+    "UNAUTHORIZED": "请先登录后再继续。",
+    "INSUFFICIENT_CREDITS": "积分不足，请充值后再生成。",
+    "FILE_TOO_LARGE": "图片超过 10MB 限制，请压缩后再上传。",
+    "IMAGE_DIMENSIONS_EXCEEDED": "图片边长不能超过 4096 像素。",
+    "INVALID_IMAGE": "请上传有效的图片文件。",
+    "INVALID_UPLOAD": "上传内容无效，请重新选择文件。",
+    "INVALID_GENERATION": "生成参数无效，请检查后再试。",
+    "INVALID_PROJECT": "项目信息无效，请检查后再试。",
+    "INVALID_REFERENCE": "参考图无效，请重新选择。",
+    "INVALID_VERSION": "版本信息无效，请刷新后重试。",
+    "INVALID_TASK_COUNT": "本次生成任务数量不在允许范围内。",
+    "REFERENCE_REQUIRED": "请先上传角色图。",
+    "REFERENCE_NOT_FOUND": "找不到参考图，请重新上传。",
+    "PROJECT_NOT_FOUND": "找不到当前项目，请刷新后重试。",
+    "INVALID_ASSET": "角色信息无效，请检查后重试。",
+    "ASSET_NOT_FOUND": "找不到对应资源，请刷新后重试。",
+    "ASSET_REQUIRED": "请先选择一个角色。",
+    "VARIANT_NOT_FOUND": "找不到对应变体，请刷新后重试。",
+    "ANIMATION_NOT_FOUND": "找不到对应动画，请刷新后重试。",
+    "ICON_ITEMS_REQUIRED": "请先添加要生成的图标。",
+    "ICON_DESCRIPTION_EXPAND_FAILED": "道具细节补全失败，请检查 Gemini 配置后重试。",
+    "GENERATION_NOT_CONFIGURED": "生成服务尚未配置，请先在后台设置模型与存储。",
+    "STORAGE_NOT_CONFIGURED": "存储服务尚未配置，请先在后台完成设置。",
+    "STORAGE_UPLOAD_FAILED": "图片上传失败，请重试。",
+    "GENERATION_NOT_FOUND": "找不到这次生成任务。",
+    "GENERATION_FAILED": "生成失败，请重试。",
+    "GENERATION_QUERY_FAILED": "查询生成进度失败，请重试。",
+    "GENERATION_RETRY_FAILED": "重试失败，请稍后再试。",
+    "GENERATION_ID_CONFLICT": "生成任务冲突，请重新发起。"
+  }
+}

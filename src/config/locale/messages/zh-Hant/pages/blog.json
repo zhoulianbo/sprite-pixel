@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "title": "部落格",
+    "description": "閱讀我們最新的產品功能、解決方案與更新內容。"
+  },
+  "page": {
+    "title": "SpritePixel 部落格",
+    "sections": {
+      "blog": {
+        "id": "blog",
+        "title": "部落格",
+        "description": "閱讀我們最新的產品功能、解決方案與更新內容。"
+      }
+    }
+  },
+  "messages": {
+    "all": "全部",
+    "no_content": "暫無內容",
+    "crumb": "部落格",
+    "toc": "目錄"
+  }
+}

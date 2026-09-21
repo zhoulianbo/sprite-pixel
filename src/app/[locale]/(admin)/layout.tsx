@@ -1,12 +1,18 @@
 import { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { requireAdminAccess } from '@/core/rbac/permission';
 import { applySidebarWebsiteConfig } from '@/config/website';
 import { LocaleDetector } from '@/shared/blocks/common';
 import { DashboardLayout } from '@/shared/blocks/dashboard/layout';
+import { noIndexRobots } from '@/shared/lib/seo';
 import { getAllConfigs } from '@/shared/models/config';
 import { Sidebar as SidebarType } from '@/shared/types/blocks/dashboard';
+
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
 
 /**
  * Admin layout to manage datas
@@ -45,8 +51,11 @@ export default async function AdminLayout({
   if (configs.app_logo) {
     sidebar.header!.brand!.logo!.src = configs.app_logo;
   }
-  if (configs.version) {
-    sidebar.header!.version = configs.version;
+  if (sidebar.header) {
+    sidebar.header.version = undefined;
+  }
+  if (sidebar.user) {
+    sidebar.user.show_upgrade = false;
   }
 
   return (

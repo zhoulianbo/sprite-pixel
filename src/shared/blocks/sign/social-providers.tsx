@@ -160,7 +160,7 @@ export function SocialProviders({
             key={provider.name}
             type="button"
             variant={isGoogle ? 'default' : 'outline'}
-            className="h-11 w-full gap-2.5 rounded-xl text-sm font-medium"
+            className="h-11 w-full gap-2.5 rounded-lg text-sm font-medium"
             disabled={loading}
             onClick={provider.onClick}
           >

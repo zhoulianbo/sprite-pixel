@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "title": "ブログ",
+    "description": "最新の製品機能、ソリューション、アップデートをご覧ください。"
+  },
+  "page": {
+    "title": "SpritePixel ブログ",
+    "sections": {
+      "blog": {
+        "id": "blog",
+        "title": "ブログ",
+        "description": "最新の製品機能、ソリューション、アップデートをご覧ください。"
+      }
+    }
+  },
+  "messages": {
+    "all": "すべて",
+    "no_content": "コンテンツはありません",
+    "crumb": "ブログ",
+    "toc": "目次"
+  }
+}

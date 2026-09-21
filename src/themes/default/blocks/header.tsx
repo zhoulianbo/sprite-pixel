@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 import { Link, usePathname } from '@/core/i18n/navigation';
@@ -23,307 +23,275 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger as RawNavigationMenuTrigger,
+  NavigationMenuTrigger,
 } from '@/shared/components/ui/navigation-menu';
-import { useMedia } from '@/shared/hooks/use-media';
 import { cn } from '@/shared/lib/utils';
-import { NavItem } from '@/shared/types/blocks/common';
-import { Header as HeaderType } from '@/shared/types/blocks/landing';
+import type { NavItem } from '@/shared/types/blocks/common';
+import type { Header as HeaderType } from '@/shared/types/blocks/landing';
 
-// For Next.js hydration mismatch warning, conditionally render NavigationMenuTrigger only after mount to avoid inconsistency between server/client render
-function NavigationMenuTrigger(
-  props: React.ComponentProps<typeof RawNavigationMenuTrigger>
-) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  // Only render after client has mounted, to avoid SSR/client render id mismatch
-  if (!mounted) return null;
-  return <RawNavigationMenuTrigger {...props} />;
-}
+const topLevelLinkClass =
+  'inline-flex h-8 items-center justify-center rounded-md px-3 py-0 text-sm font-medium leading-none text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus-visible:ring-2 focus-visible:ring-ring data-[current=true]:bg-primary/10 data-[current=true]:text-primary';
+const triggerClass =
+  'h-8 rounded-md bg-transparent px-3 py-0 text-muted-foreground hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary data-[current=true]:bg-primary/10 data-[current=true]:text-primary data-[state=open]:bg-primary/10 data-[state=open]:text-primary data-[state=open]:hover:bg-primary/10 data-[state=open]:focus:bg-primary/10';
+const dropdownLinkClass =
+  'grid w-full grid-cols-[20px_minmax(0,1fr)] items-start gap-3 overflow-hidden rounded-md px-3 py-3 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus-visible:ring-2 focus-visible:ring-ring data-[current=true]:bg-primary/10 data-[current=true]:text-primary';
+const mobileLinkClass =
+  'flex min-h-12 w-full flex-row items-center gap-2 rounded-md px-3 py-3 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary focus:bg-primary/10 focus:text-primary focus-visible:ring-2 focus-visible:ring-ring data-[current=true]:bg-primary/10 data-[current=true]:text-primary';
 
 export function Header({ header }: { header: HeaderType }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const isScrolledRef = useRef(false);
-  const scrollRafRef = useRef<number | null>(null);
-  const isLarge = useMedia('(min-width: 64rem)');
   const pathname = usePathname();
+  const [hash, setHash] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [desktopMenu, setDesktopMenu] = useState('');
 
   useEffect(() => {
-    // Listen to scroll event to enable header styles on scroll
-    const handleScroll = () => {
-      // Coalesce high-frequency scroll events & only update state when value changes.
-      if (scrollRafRef.current != null) return;
-      scrollRafRef.current = window.requestAnimationFrame(() => {
-        scrollRafRef.current = null;
-        const next = window.scrollY > 50;
-        if (next === isScrolledRef.current) return;
-        isScrolledRef.current = next;
-        setIsScrolled(next);
-      });
-    };
-
-    // Initialize once on mount.
-    handleScroll();
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
+    const syncLocation = () => setHash(window.location.hash);
+    syncLocation();
+    window.addEventListener('hashchange', syncLocation);
+    window.addEventListener('popstate', syncLocation);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollRafRef.current != null) {
-        window.cancelAnimationFrame(scrollRafRef.current);
-        scrollRafRef.current = null;
-      }
+      window.removeEventListener('hashchange', syncLocation);
+      window.removeEventListener('popstate', syncLocation);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 64rem)');
+    const closeMobileMenu = () => {
+      if (media.matches) setIsMobileMenuOpen(false);
+    };
+    const escapeMenu = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    media.addEventListener('change', closeMobileMenu);
+    document.addEventListener('keydown', escapeMenu);
+    return () => {
+      media.removeEventListener('change', closeMobileMenu);
+      document.removeEventListener('keydown', escapeMenu);
     };
   }, []);
 
-  // Navigation menu for large screens
-  const NavMenu = () => {
-    return (
-      <NavigationMenu
-        viewport={false}
-        className="**:data-[slot=navigation-menu-content]:top-10 max-lg:hidden"
-      >
-        <NavigationMenuList className="gap-2">
-          {header.nav?.items?.map((item, idx) => {
-            if (!item.children || item.children.length === 0) {
-              return (
-                <NavigationMenuLink key={idx} asChild>
-                  <Link
-                    href={item.url || ''}
-                    target={item.target || '_self'}
-                    className={`flex flex-row items-center gap-2 px-4 py-1.5 text-sm ${
-                      item.is_active || pathname.endsWith(item.url as string)
-                        ? 'bg-muted/40 text-muted-foreground'
-                        : ''
-                    }`}
-                  >
-                    {item.icon && <SmartIcon name={item.icon as string} />}
-                    {item.title}
-                  </Link>
-                </NavigationMenuLink>
-              );
-            }
-
-            return (
-              <NavigationMenuItem key={idx}>
-                <NavigationMenuTrigger className="flex flex-row items-center gap-2 text-sm">
-                  {item.icon && (
-                    <SmartIcon name={item.icon as string} className="h-4 w-4" />
-                  )}
-                  {item.title}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="min-w-2xs origin-top p-0.5">
-                  <div className="border-foreground/5 bg-card ring-foreground/5 rounded-[calc(var(--radius)-2px)] border border-transparent p-2 shadow ring-1">
-                    <ul className="mt-1 space-y-2">
-                      {item.children?.map((subItem: NavItem, index: number) => (
-                        <ListItem
-                          key={index}
-                          href={subItem.url || ''}
-                          target={subItem.target || '_self'}
-                          title={subItem.title || ''}
-                          description={subItem.description || ''}
-                        >
-                          {subItem.icon && (
-                            <SmartIcon name={subItem.icon as string} />
-                          )}
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            );
-          })}
-        </NavigationMenuList>
-      </NavigationMenu>
-    );
+  const isActive = (item: NavItem): boolean => {
+    if (item.children?.length) return item.children.some(isActive);
+    if (!item.url || !item.url.startsWith('/')) return false;
+    const [path, anchor = ''] = item.url.split('#');
+    return pathname === path && hash === (anchor ? '#' + anchor : '');
   };
 
-  // Mobile menu using Accordion, shown on small screens
-  const MobileMenu = ({ closeMenu }: { closeMenu: () => void }) => {
-    return (
-      <nav
-        role="navigation"
-        className="w-full [--color-border:--alpha(var(--color-foreground)/5%)] [--color-muted:--alpha(var(--color-foreground)/5%)]"
-      >
-        <Accordion
-          type="single"
-          collapsible
-          className="-mx-4 mt-0.5 space-y-0.5 **:hover:no-underline"
+  const selectItem = (item: NavItem) => {
+    setHash(item.url?.includes('#') ? '#' + item.url.split('#')[1] : '');
+    setIsMobileMenuOpen(false);
+    setDesktopMenu('');
+  };
+
+  return (
+    <header className="border-border text-foreground bg-vault-navy fixed inset-x-0 top-0 z-50 border-b">
+      <div className="container flex min-h-14 flex-wrap items-center justify-between gap-x-4 lg:min-h-18 lg:flex-nowrap">
+        {header.brand && <BrandLogo brand={header.brand} />}
+        <NavigationMenu
+          value={desktopMenu}
+          onValueChange={setDesktopMenu}
+          viewport={false}
+          className="hidden lg:flex"
         >
-          {header.nav?.items?.map((item, idx) => {
-            return (
-              <AccordionItem
-                key={idx}
-                value={item.title || ''}
-                className="group relative border-b-0 before:pointer-events-none before:absolute before:inset-x-4 before:bottom-0 before:border-b"
+          <NavigationMenuList className="gap-1">
+            {header.nav?.items?.map((item, index) => (
+              <NavigationMenuItem
+                key={item.title || index}
+                value={String(index)}
               >
-                {item.children && item.children.length > 0 ? (
+                {item.children?.length ? (
                   <>
-                    <AccordionTrigger className="data-[state=open]:bg-muted flex items-center justify-between px-4 py-3 text-lg **:!font-normal">
+                    <NavigationMenuTrigger
+                      data-current={isActive(item)}
+                      className={triggerClass}
+                    >
                       {item.title}
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-5">
-                      <ul>
-                        {item.children?.map((subItem: NavItem, iidx) => (
-                          <li key={iidx}>
-                            <Link
-                              href={subItem.url || ''}
-                              onClick={closeMenu}
-                              className="grid grid-cols-[auto_1fr] items-center gap-2.5 px-4 py-2"
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="border-border w-[calc(100vw-2rem)] rounded-lg p-2 group-data-[viewport=false]/navigation-menu:translate-x-0 md:w-[340px]">
+                      <ul className="space-y-1">
+                        {item.children.map((child) => (
+                          <li key={child.title}>
+                            <NavigationMenuLink
+                              asChild
+                              className={dropdownLinkClass}
                             >
-                              <div
-                                aria-hidden
-                                className="flex items-center justify-center *:size-4"
+                              <Link
+                                href={child.url || '/'}
+                                target={child.target}
+                                onClick={() => selectItem(child)}
+                                data-current={isActive(child)}
+                                aria-current={
+                                  isActive(child) ? 'location' : undefined
+                                }
                               >
-                                {subItem.icon && (
-                                  <SmartIcon name={subItem.icon as string} />
+                                {child.icon && (
+                                  <SmartIcon
+                                    name={child.icon as string}
+                                    className="text-primary size-5 shrink-0"
+                                  />
                                 )}
-                              </div>
-                              <div className="text-base">{subItem.title}</div>
-                            </Link>
+                                <span className="min-w-0">
+                                  <span className="block truncate font-medium text-current">
+                                    {child.title}
+                                  </span>
+                                  {child.description && (
+                                    <span className="text-muted-foreground mt-1 block truncate text-xs leading-relaxed">
+                                      {child.description}
+                                    </span>
+                                  )}
+                                </span>
+                              </Link>
+                            </NavigationMenuLink>
                           </li>
                         ))}
                       </ul>
-                    </AccordionContent>
+                    </NavigationMenuContent>
                   </>
                 ) : (
-                  <Link
-                    href={item.url || ''}
-                    onClick={closeMenu}
-                    className="data-[state=open]:bg-muted flex items-center justify-between px-4 py-3 text-lg **:!font-normal"
-                  >
-                    {item.title}
-                  </Link>
+                  <NavigationMenuLink asChild className={topLevelLinkClass}>
+                    <Link
+                      href={item.url || '/'}
+                      target={item.target}
+                      onClick={() => selectItem(item)}
+                      data-current={isActive(item)}
+                      aria-current={
+                        isActive(item)
+                          ? hash
+                            ? 'location'
+                            : 'page'
+                          : undefined
+                      }
+                    >
+                      {item.title}
+                    </Link>
+                  </NavigationMenuLink>
                 )}
-              </AccordionItem>
-            );
-          })}
-        </Accordion>
-      </nav>
-    );
-  };
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
 
-  // List item for submenus in NavigationMenu
-  function ListItem({
-    title,
-    description,
-    children,
-    href,
-    target,
-    ...props
-  }: React.ComponentPropsWithoutRef<'li'> & {
-    href: string;
-    title: string;
-    description?: string;
-    target?: string;
-  }) {
-    return (
-      <li {...props}>
-        <NavigationMenuLink asChild>
-          <Link
-            href={href}
-            target={target || '_self'}
-            className="grid grid-cols-[auto_1fr] gap-3.5"
-          >
-            <div className="bg-background ring-foreground/10 relative flex size-9 items-center justify-center rounded border border-transparent shadow-sm ring-1">
-              {children}
-            </div>
-            <div className="space-y-0.5">
-              <div className="text-foreground text-sm font-medium">{title}</div>
-              <p className="text-muted-foreground line-clamp-1 text-xs">
-                {description}
-              </p>
-            </div>
-          </Link>
-        </NavigationMenuLink>
-      </li>
-    );
-  }
+        <button
+          type="button"
+          aria-label={isMobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="text-foreground hover:bg-primary/10 hover:text-primary focus-visible:ring-ring flex size-11 items-center justify-center rounded-md focus-visible:ring-2 lg:hidden"
+        >
+          {isMobileMenuOpen ? (
+            <X className="size-5" />
+          ) : (
+            <Menu className="size-5" />
+          )}
+        </button>
 
-  return (
-    <>
-      <header
-        data-state={isMobileMenuOpen ? 'active' : 'inactive'}
-        {...(isScrolled && { 'data-scrolled': true })}
-        className="has-data-[state=open]:bg-background/50 fixed inset-x-0 top-0 z-50 has-data-[state=open]:h-screen has-data-[state=open]:backdrop-blur"
-      >
         <div
+          id="mobile-navigation"
           className={cn(
-            'absolute inset-x-0 top-0 z-50 h-18 border-transparent ring-1 ring-transparent transition-all duration-300',
-            'in-data-scrolled:border-foreground/5 in-data-scrolled:bg-background/75 in-data-scrolled:border-b in-data-scrolled:backdrop-blur',
-            'has-data-[state=open]:ring-foreground/5 has-data-[state=open]:bg-card/75 has-data-[state=open]:h-[calc(var(--navigation-menu-viewport-height)+3.4rem)] has-data-[state=open]:border-b has-data-[state=open]:shadow-lg has-data-[state=open]:shadow-black/10 has-data-[state=open]:backdrop-blur',
-            'max-lg:in-data-[state=active]:bg-background/75 max-lg:h-14 max-lg:overflow-hidden max-lg:border-b max-lg:in-data-[state=active]:h-screen max-lg:in-data-[state=active]:backdrop-blur'
+            'order-last max-h-[calc(100dvh-56px)] w-full overflow-y-auto lg:hidden',
+            !isMobileMenuOpen && 'hidden'
           )}
         >
-          <div className="container">
-            <div className="relative flex flex-wrap items-center justify-between lg:py-5">
-              <div className="flex justify-between gap-8 max-lg:h-14 max-lg:w-full max-lg:border-b">
-                {/* Brand Logo */}
-                {header.brand && <BrandLogo brand={header.brand} />}
-
-                {/* Desktop Navigation Menu */}
-                {isLarge && <NavMenu />}
-                {/* Hamburger menu button for mobile navigation */}
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  aria-label={
-                    isMobileMenuOpen == true ? 'Close Menu' : 'Open Menu'
-                  }
-                  className="relative z-20 -m-2.5 -mr-3 block cursor-pointer p-2.5 lg:hidden"
+          <nav aria-label="Mobile">
+            <Accordion type="single" collapsible>
+              {header.nav?.items?.map((item, index) => (
+                <AccordionItem
+                  key={item.title || index}
+                  value={String(index)}
+                  className="border-border"
                 >
-                  <Menu className="m-auto size-5 duration-200 in-data-[state=active]:scale-0 in-data-[state=active]:rotate-180 in-data-[state=active]:opacity-0" />
-                  <X className="absolute inset-0 m-auto size-5 scale-0 -rotate-180 opacity-0 duration-200 in-data-[state=active]:scale-100 in-data-[state=active]:rotate-0 in-data-[state=active]:opacity-100" />
-                </button>
-              </div>
-
-              {/* Show mobile menu if needed */}
-              {!isLarge && isMobileMenuOpen && (
-                <MobileMenu closeMenu={() => setIsMobileMenuOpen(false)} />
-              )}
-
-              {/* Header right section: theme toggler, locale selector, sign, buttons */}
-              <div className="mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 in-data-[state=active]:flex max-lg:in-data-[state=active]:mt-6 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
-                <div className="flex w-full flex-row items-center gap-4 sm:flex-row sm:gap-6 sm:space-y-0 md:w-fit">
-                  {header.buttons &&
-                    header.buttons.map((button, idx) => (
-                      <Link
-                        key={idx}
-                        href={button.url || ''}
-                        target={button.target || '_self'}
+                  {item.children?.length ? (
+                    <>
+                      <AccordionTrigger
+                        data-current={isActive(item)}
                         className={cn(
-                          'focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
-                          'h-7 px-3 ring-0',
-                          button.variant === 'outline'
-                            ? 'bg-background border-primary ring-foreground/10 hover:bg-muted/50 dark:ring-foreground/15 dark:hover:bg-muted/50 border border-transparent shadow-sm ring-1 shadow-black/15 duration-200'
-                            : 'bg-primary text-primary-foreground hover:bg-primary/90 border-[0.5px] border-white/25 shadow-md ring-1 shadow-black/20 ring-(--ring-color) [--ring-color:color-mix(in_oklab,var(--color-foreground)15%,var(--color-primary))]'
+                          triggerClass,
+                          'h-auto min-h-12 w-full justify-between px-3 py-3 hover:no-underline'
                         )}
                       >
-                        {button.icon && (
-                          <SmartIcon
-                            name={button.icon as string}
-                            className="size-4"
-                          />
-                        )}
-                        <span>{button.title}</span>
-                      </Link>
-                    ))}
-
-                  {header.show_theme ? <ThemeToggler /> : null}
-                  {header.show_locale ? <LocaleSelector /> : null}
-                  <div className="flex-1 md:hidden"></div>
-                  {header.show_sign ? (
-                    <SignUser userNav={header.user_nav} />
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
+                        {item.title}
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-2">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.title}
+                            href={child.url || '/'}
+                            onClick={() => selectItem(child)}
+                            data-current={isActive(child)}
+                            aria-current={
+                              isActive(child) ? 'location' : undefined
+                            }
+                            className={cn(mobileLinkClass, 'pl-6')}
+                          >
+                            {child.icon && (
+                              <SmartIcon
+                                name={child.icon as string}
+                                className="text-primary size-4"
+                              />
+                            )}
+                            {child.title}
+                          </Link>
+                        ))}
+                      </AccordionContent>
+                    </>
+                  ) : (
+                    <Link
+                      href={item.url || '/'}
+                      onClick={() => selectItem(item)}
+                      data-current={isActive(item)}
+                      aria-current={
+                        isActive(item)
+                          ? hash
+                            ? 'location'
+                            : 'page'
+                          : undefined
+                      }
+                      className={mobileLinkClass}
+                    >
+                      {item.title}
+                    </Link>
+                  )}
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </nav>
         </div>
-      </header>
-    </>
+
+        <div
+          className={cn(
+            'items-center gap-3 lg:flex lg:shrink-0',
+            isMobileMenuOpen
+              ? 'order-last flex w-full flex-wrap py-4 lg:order-none lg:w-auto lg:py-0'
+              : 'hidden'
+          )}
+        >
+          {header.buttons?.map((button) => (
+            <Link
+              key={button.title}
+              href={button.url || '/'}
+              target={button.target}
+              className={cn(
+                'focus-visible:ring-ring inline-flex h-8 items-center gap-2 rounded-md px-3 text-sm font-medium focus-visible:ring-2',
+                button.variant === 'outline'
+                  ? 'border-primary/55 text-primary hover:bg-primary/10 border'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              )}
+            >
+              {button.icon && (
+                <SmartIcon name={button.icon as string} className="size-4" />
+              )}
+              {button.title}
+            </Link>
+          ))}
+          {header.show_theme && (
+            <ThemeToggler className="text-muted-foreground hover:bg-primary/10 hover:text-primary flex size-8 items-center justify-center rounded-md transition-colors" />
+          )}
+          {header.show_locale && <LocaleSelector />}
+          {header.show_sign && <SignUser userNav={header.user_nav} />}
+        </div>
+      </div>
+    </header>
   );
 }

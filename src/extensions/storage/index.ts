@@ -36,6 +36,26 @@ export interface StorageUploadResult {
   provider: string;
 }
 
+export interface StorageDownloadResult {
+  success: boolean;
+  body?: ReadableStream<Uint8Array> | null;
+  contentType?: string;
+  contentLength?: string;
+  error?: string;
+}
+
+export interface StorageSignedUploadOptions {
+  key: string;
+  contentType: string;
+  expiresIn?: number;
+  bucket?: string;
+}
+
+export interface StorageSignedUploadResult {
+  uploadUrl: string;
+  headers: Record<string, string>;
+}
+
 /**
  * Storage configs interface
  */
@@ -58,6 +78,21 @@ export interface StorageProvider {
 
   // get public url for key (optional)
   getPublicUrl?: (options: { key: string; bucket?: string }) => string;
+
+  downloadFile?: (options: {
+    key: string;
+    bucket?: string;
+  }) => Promise<StorageDownloadResult>;
+
+  createSignedUploadUrl?: (
+    options: StorageSignedUploadOptions
+  ) => Promise<StorageSignedUploadResult>;
+
+  createSignedDownloadUrl?: (options: {
+    key: string;
+    expiresIn?: number;
+    bucket?: string;
+  }) => Promise<string>;
 
   // upload file
   uploadFile(options: StorageUploadOptions): Promise<StorageUploadResult>;
@@ -140,6 +175,34 @@ export class StorageManager {
     const provider = this.ensureDefaultProvider();
     if (!provider.getPublicUrl) return undefined;
     return provider.getPublicUrl(options);
+  }
+
+  async downloadFile(options: { key: string; bucket?: string }) {
+    const provider = this.ensureDefaultProvider();
+    if (!provider.downloadFile) {
+      throw new Error('Storage provider does not support private downloads');
+    }
+    return provider.downloadFile(options);
+  }
+
+  async createSignedUploadUrl(options: StorageSignedUploadOptions) {
+    const provider = this.ensureDefaultProvider();
+    if (!provider.createSignedUploadUrl) {
+      throw new Error('SIGNED_UPLOAD_NOT_SUPPORTED');
+    }
+    return provider.createSignedUploadUrl(options);
+  }
+
+  async createSignedDownloadUrl(options: {
+    key: string;
+    expiresIn?: number;
+    bucket?: string;
+  }) {
+    const provider = this.ensureDefaultProvider();
+    if (!provider.createSignedDownloadUrl) {
+      throw new Error('SIGNED_DOWNLOAD_NOT_SUPPORTED');
+    }
+    return provider.createSignedDownloadUrl(options);
   }
 
   // download and upload using specific provider

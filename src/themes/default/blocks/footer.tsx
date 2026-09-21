@@ -55,7 +55,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
   return (
     <footer
       id={footer.id}
-      className={`py-8 sm:py-8 ${footer.className || ''} overflow-x-hidden`}
+      className={`text-foreground py-8 sm:py-8 ${footer.className || ''} overflow-x-hidden`}
       // overflow-x-hidden防止-footer-撑出水平滚动条
     >
       <div className="container space-y-8 overflow-x-hidden">
@@ -74,7 +74,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
           <div className="col-span-3 grid min-w-0 gap-6 sm:grid-cols-3">
             {footer.nav?.items.map((item, idx) => (
               <div key={idx} className="min-w-0 space-y-4 text-sm break-words">
-                <span className="block font-medium break-words">
+                <span className="text-foreground block font-medium break-words">
                   {item.title}
                 </span>
 
@@ -162,7 +162,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
                   key={index}
                   href={item.url || ''}
                   target={item.target || ''}
-                  className="text-muted-foreground hover:text-primary bg-background block cursor-pointer rounded-full p-2 duration-150"
+                  className="text-muted-foreground hover:bg-primary/10 hover:text-primary bg-background block cursor-pointer rounded-md p-2 duration-150"
                   aria-label={item.title || 'Social media link'}
                 >
                   {item.icon && (

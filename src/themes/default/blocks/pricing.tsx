@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Check, Loader2 } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Check, CircleCheck, Coins, Loader2, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 
+import { Link } from '@/core/i18n/navigation';
 import { SmartIcon } from '@/shared/blocks/common';
 import { PaymentModal } from '@/shared/blocks/payment/payment-modal';
 import { Badge } from '@/shared/components/ui/badge';
@@ -29,6 +30,7 @@ import { getCookie } from '@/shared/lib/cookie';
 import { cn } from '@/shared/lib/utils';
 import { Subscription } from '@/shared/models/subscription';
 import {
+  PricingCompareColumn,
   PricingCurrency,
   PricingItem,
   Pricing as PricingType,
@@ -52,6 +54,39 @@ function getCurrenciesFromItem(item: PricingItem | null): PricingCurrency[] {
   }
 
   return [defaultCurrency];
+}
+
+function getCompareColumn(
+  column: string | PricingCompareColumn
+): PricingCompareColumn {
+  return typeof column === 'string' ? { title: column } : column;
+}
+
+function isAffirmativeValue(value: string) {
+  return ['yes', 'y', 'true', '支持', '✓', '✔'].includes(
+    value.trim().toLowerCase()
+  );
+}
+
+function isNegativeValue(value: string) {
+  return ['—', '–', '-', 'no', 'n', 'false', '×', '✗'].includes(
+    value.trim().toLowerCase()
+  );
+}
+
+function SectionEyebrow({
+  icon: Icon,
+  children,
+}: {
+  icon: typeof CircleCheck;
+  children: ReactNode;
+}) {
+  return (
+    <div className="text-primary mb-4 inline-flex items-center gap-1.5 text-sm font-medium">
+      <Icon className="size-4" aria-hidden="true" />
+      {children}
+    </div>
+  );
 }
 
 // Helper function to select initial currency based on locale
@@ -80,10 +115,12 @@ export function Pricing({
   section,
   className,
   currentSubscription,
+  compact = false,
 }: {
   section: PricingType;
   className?: string;
   currentSubscription?: Subscription;
+  compact?: boolean;
 }) {
   const locale = useLocale();
   const t = useTranslations('pages.pricing.messages');
@@ -99,31 +136,9 @@ export function Pricing({
     currentSubscription?.productId || user?.currentSubscriptionProductId;
 
   const [group, setGroup] = useState(() => {
-    // find current pricing item
-    const currentItem = section.items?.find(
-      (i) => i.product_id === currentSubscriptionProductId
-    );
-
-    // First look for a group with is_featured set to true
     const featuredGroup = section.groups?.find((g) => g.is_featured);
-    // If no featured group exists, fall back to the first group
-    return (
-      currentItem?.group || featuredGroup?.name || section.groups?.[0]?.name
-    );
+    return featuredGroup?.name || section.groups?.[0]?.name;
   });
-
-  useEffect(() => {
-    if (!currentSubscriptionProductId) {
-      return;
-    }
-
-    const currentItem = section.items?.find(
-      (item) => item.product_id === currentSubscriptionProductId
-    );
-    if (currentItem?.group) {
-      setGroup(currentItem.group);
-    }
-  }, [currentSubscriptionProductId, section.items]);
 
   // current pricing item
   const [pricingItem, setPricingItem] = useState<PricingItem | null>(null);
@@ -218,6 +233,10 @@ export function Pricing({
   };
 
   const handlePayment = async (item: PricingItem) => {
+    if (!item.amount) {
+      return;
+    }
+
     if (!user) {
       setIsShowSignModal(true);
       return;
@@ -339,28 +358,40 @@ export function Pricing({
     }
   }, [section.items]);
 
+  const visibleItems =
+    section.items?.filter((item) => !item.group || item.group === group) || [];
+  const showPacksIntro = group === 'one-time' && section.packs_title;
+
   return (
     <section
-      id={section.id}
-      className={cn('py-24 md:py-36', section.className, className)}
+      id={compact ? undefined : section.id}
+      className={cn(section.className, className)}
     >
-      <div className="mx-auto mb-12 px-4 text-center md:px-8">
-        {section.sr_only_title && (
-          <h1 className="sr-only">{section.sr_only_title}</h1>
-        )}
-        <h2 className="mb-6 text-3xl font-bold text-pretty lg:text-4xl">
-          {section.title}
-        </h2>
-        <p className="text-muted-foreground mx-auto mb-4 max-w-xl lg:max-w-none lg:text-lg">
-          {section.description}
-        </p>
-      </div>
+      <div className={cn(!compact && 'py-24 md:py-36')}>
+      {!compact ? (
+        <div className="mx-auto mb-12 px-4 text-center md:px-8">
+          {section.sr_only_title && (
+            <h1 className="sr-only">{section.sr_only_title}</h1>
+          )}
+          <h2 className="mb-6 text-3xl font-bold text-pretty lg:text-4xl">
+            {section.title}
+          </h2>
+          <p className="text-muted-foreground mx-auto mb-4 max-w-2xl text-pretty lg:text-lg">
+            {section.description}
+          </p>
+        </div>
+      ) : null}
 
-      <div className="container">
+      <div className={cn(!compact && 'container')}>
         {section.groups && section.groups.length > 0 && (
-          <div className="mx-auto mt-8 mb-16 flex w-full justify-center md:max-w-lg">
-            <Tabs value={group} onValueChange={setGroup} className="">
-              <TabsList>
+          <div
+            className={cn(
+              'mx-auto flex w-full justify-center md:max-w-2xl',
+              compact ? 'mb-10' : 'mt-8 mb-16'
+            )}
+          >
+            <Tabs value={group} onValueChange={setGroup}>
+              <TabsList className="h-auto min-h-10 flex-wrap">
                 {section.groups.map((item, i) => {
                   return (
                     <TabsTrigger key={i} value={item.name || ''}>
@@ -376,31 +407,55 @@ export function Pricing({
           </div>
         )}
 
-        <div
-          className={`mx-auto mt-0 grid w-full gap-6 md:grid-cols-${
-            section.items?.filter((item) => !item.group || item.group === group)
-              ?.length
-          }`}
-        >
-          {section.items?.map((item: PricingItem, idx) => {
-            if (item.group && item.group !== group) {
-              return null;
-            }
+        {showPacksIntro ? (
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <h3 className="text-xl font-semibold">{section.packs_title}</h3>
+            {section.packs_description ? (
+              <p className="text-muted-foreground mt-2 text-sm lg:text-base">
+                {section.packs_description}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
+        <div
+          className={cn(
+            'mx-auto mt-0 grid w-full gap-6',
+            visibleItems.length >= 3
+              ? 'md:grid-cols-3'
+              : visibleItems.length === 2
+                ? 'md:grid-cols-2'
+                : 'md:grid-cols-1'
+          )}
+        >
+          {visibleItems.map((item: PricingItem, idx) => {
+            const isFreePlan = !item.amount;
             let isCurrentPlan = false;
             if (currentSubscriptionProductId === item.product_id) {
               isCurrentPlan = true;
+            } else if (user && !currentSubscriptionProductId && isFreePlan) {
+              isCurrentPlan = true;
             }
 
-            // Get currency state for this item
             const currencyState = itemCurrencies[item.product_id];
             const displayedItem = currencyState?.displayedItem || item;
             const selectedCurrency =
               currencyState?.selectedCurrency || item.currency;
             const currencies = getCurrenciesFromItem(item);
+            const showCurrencySelect =
+              item.group !== 'one-time' && currencies.length > 1;
+            const freeHref = user
+              ? '/dashboard'
+              : item.button?.url || '/sign-up';
 
             return (
-              <Card key={idx} className="relative">
+              <Card
+                key={idx}
+                className={cn(
+                  'relative',
+                  item.is_featured && 'border-accent-foreground/40 bg-accent/20'
+                )}
+              >
                 {item.label && (
                   <span className="absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full bg-linear-to-br/increasing from-purple-400 to-amber-300 px-3 py-1 text-xs font-medium text-amber-950 ring-1 ring-white/20 ring-offset-1 ring-offset-gray-950/5 ring-inset">
                     {item.label}
@@ -432,7 +487,7 @@ export function Pricing({
                       )}
                     </div>
 
-                    {currencies.length > 1 && (
+                    {showCurrencySelect && (
                       <Select
                         value={selectedCurrency}
                         onValueChange={(currency) =>
@@ -479,6 +534,22 @@ export function Pricing({
                         {t('current_plan')}
                       </span>
                     </Button>
+                  ) : isFreePlan ? (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="mt-4 h-9 w-full px-4 py-2"
+                    >
+                      <Link href={freeHref}>
+                        {item.button?.icon && (
+                          <SmartIcon
+                            name={item.button?.icon as string}
+                            className="size-4"
+                          />
+                        )}
+                        <span className="block">{item.button?.title}</span>
+                      </Link>
+                    </Button>
                   ) : (
                     <Button
                       onClick={() => handlePayment(item)}
@@ -516,10 +587,10 @@ export function Pricing({
                     <p className="text-sm font-medium">{item.features_title}</p>
                   )}
                   <ul className="list-outside space-y-3 text-sm">
-                    {item.features?.map((item, index) => (
+                    {item.features?.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2">
                         <Check className="size-3" />
-                        {item}
+                        {feature}
                       </li>
                     ))}
                   </ul>
@@ -529,6 +600,193 @@ export function Pricing({
           })}
         </div>
       </div>
+      </div>
+
+      {!compact && section.compare?.rows?.length ? (
+        <div className="bg-vault-navy py-24 md:py-28">
+          <div className="container">
+            {section.compare.badge ? (
+              <SectionEyebrow icon={CircleCheck}>
+                {section.compare.badge}
+              </SectionEyebrow>
+            ) : null}
+            {section.compare.title ? (
+              <h3 className="mb-3 text-2xl font-semibold lg:text-3xl">
+                {section.compare.title}
+              </h3>
+            ) : null}
+            {section.compare.description ? (
+              <p className="text-muted-foreground mb-10 max-w-3xl text-sm leading-6 lg:text-base">
+                {section.compare.description}
+              </p>
+            ) : null}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px] text-left text-sm">
+                <thead>
+                  <tr>
+                    <th className="text-muted-foreground px-5 py-4 font-medium">
+                      {section.compare.feature_label}
+                    </th>
+                    {section.compare.columns?.map((column) => {
+                      const item = getCompareColumn(column);
+                      return (
+                        <th
+                          key={item.title}
+                          className={cn(
+                            'border-border border-l px-5 py-4 font-semibold',
+                            item.featured && 'bg-card'
+                          )}
+                        >
+                          <span className="inline-flex flex-wrap items-center gap-2">
+                            {item.title}
+                            {item.label ? (
+                              <Badge
+                                variant={item.featured ? 'default' : 'outline'}
+                                className={cn(
+                                  'rounded-full',
+                                  !item.featured &&
+                                    'border-primary/40 bg-primary/10 text-primary'
+                                )}
+                              >
+                                {item.label}
+                              </Badge>
+                            ) : null}
+                          </span>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.compare.rows.map((row, rowIndex) => {
+                    const isLast = rowIndex === section.compare!.rows!.length - 1;
+                    return (
+                      <tr
+                        key={row.key || row.label}
+                        className="border-border border-t"
+                      >
+                        <th className="px-5 py-4 font-medium">{row.label}</th>
+                        {row.values.map((value, index) => {
+                          const column = getCompareColumn(
+                            section.compare!.columns?.[index] || ''
+                          );
+                          const showBoolean = row.kind === 'boolean';
+                          const yes = showBoolean && isAffirmativeValue(value);
+                          const no = showBoolean && isNegativeValue(value);
+
+                          return (
+                            <td
+                              key={`${row.label}-${index}`}
+                              className={cn(
+                                'border-border border-l px-5 py-4',
+                                column.featured && 'bg-card'
+                              )}
+                            >
+                              {showBoolean && (yes || no) ? (
+                                <span
+                                  className="inline-flex"
+                                  title={value}
+                                  aria-label={value}
+                                >
+                                  {yes ? (
+                                    <Check
+                                      className="text-primary size-4"
+                                      aria-hidden="true"
+                                    />
+                                  ) : (
+                                    <X
+                                      className="text-muted-foreground size-4"
+                                      aria-hidden="true"
+                                    />
+                                  )}
+                                </span>
+                              ) : (
+                                value
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {!compact &&
+      (section.credits_guide?.rows?.length || section.rules?.items?.length) ? (
+        <div className="py-24 md:py-28">
+          <div className="container grid gap-6 md:grid-cols-2 lg:gap-8">
+            {section.credits_guide?.rows?.length ? (
+              <div className="border-border bg-card rounded-xl border p-6 md:p-8">
+                {section.credits_guide.badge ? (
+                  <SectionEyebrow icon={Coins}>
+                    {section.credits_guide.badge}
+                  </SectionEyebrow>
+                ) : null}
+                {section.credits_guide.title ? (
+                  <h3 className="mb-6 text-xl font-semibold lg:text-2xl">
+                    {section.credits_guide.title}
+                  </h3>
+                ) : null}
+                <ul className="space-y-2.5">
+                  {section.credits_guide.rows.map((row) => (
+                    <li
+                      key={row.action}
+                      className="bg-background flex items-center justify-between gap-4 rounded-lg px-4 py-3 text-sm"
+                    >
+                      <span>{row.action}</span>
+                      <span className="text-primary shrink-0 font-medium">
+                        {row.cost}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {section.rules?.items?.length ? (
+              <div className="border-border bg-card rounded-xl border p-6 md:p-8">
+                {section.rules.badge ? (
+                  <SectionEyebrow icon={CircleCheck}>
+                    {section.rules.badge}
+                  </SectionEyebrow>
+                ) : null}
+                {section.rules.title ? (
+                  <h3 className="mb-3 text-xl font-semibold lg:text-2xl">
+                    {section.rules.title}
+                  </h3>
+                ) : null}
+                {section.rules.description ? (
+                  <p className="text-muted-foreground mb-6 text-sm leading-6">
+                    {section.rules.description}
+                  </p>
+                ) : null}
+                <ul className="space-y-2.5">
+                  {section.rules.items.map((rule) => (
+                    <li
+                      key={rule.title}
+                      className="bg-background flex items-start gap-3 rounded-lg px-4 py-3 text-sm"
+                    >
+                      <Check
+                        className="text-primary mt-0.5 size-4 shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span className="leading-6">
+                        <span className="font-medium">{rule.title}</span>
+                        {rule.description ? ` ${rule.description}` : ''}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <PaymentModal
         isLoading={isLoading}

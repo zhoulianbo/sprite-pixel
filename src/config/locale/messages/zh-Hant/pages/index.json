@@ -1,0 +1,335 @@
+{
+  "page": {
+    "description": "使用 SpritePixel AI 精靈圖產生器建立遊戲角色、動畫 Sprite Sheet 與風格一致的 2D 遊戲素材。"
+  },
+  "messages": {
+    "eyebrow": "為獨立遊戲創作者打造的 AI 精靈圖產生器",
+    "heroTitle": "AI 精靈圖產生器",
+    "heroTitleAccent": "AI 精靈圖產生器",
+    "heroDescription": "在同一個 AI 精靈圖產生器中建立可用於遊戲的 2D 角色、服裝變化、多方向精靈與動畫，最後匯出 Sprite Sheet。",
+    "generationMode": "產生模式",
+    "promptPlaceholder": "一位披著紅色斗篷的小小火焰騎士……",
+    "motionPromptPlaceholder": "例如：動作充滿活力、身體微微前傾，斗篷自然跟隨……",
+    "startCreating": "開始產生",
+    "startCreatingBusy": "產生中……",
+    "createCharacter": "產生角色",
+    "generateMotion": "產生動作",
+    "defaultProject": "預設專案",
+    "chooseProject": "選擇專案",
+    "addProject": "新增專案",
+    "characterDescription": "描述要產生的角色",
+    "motionDescription": "描述角色動作",
+    "preview": "產生預覽",
+    "previewEmpty": "產生結果會顯示在這裡",
+    "playAnimation": "播放動畫",
+    "pauseAnimation": "暫停動畫",
+    "playbackSpeed": "播放速度",
+    "framesPerSecond": "每秒 {count} 格",
+    "frameTotal": "{count} 格",
+    "editAndDownload": "編輯與下載",
+    "surpriseMe": "給我靈感",
+    "generateVariations": "產生 4 個變化",
+    "generateAll": "全部產生",
+    "comingSoon": "即將推出",
+    "inspirations": [
+      "披著紅色斗篷的小小火焰騎士……",
+      "帶著黃銅羅盤的發條狐狸斥候",
+      "腰間掛著發光藥水袋的蘑菇村藥草師",
+      "手持小扳手的蒸汽龐克貓頭鷹工程師",
+      "穿著凹痕盔甲、可愛像素畫風格的史萊姆騎士",
+      "披著沙色斗篷的沙漠遊牧弓箭手",
+      "雙手提燈的水晶魔像礦工",
+      "戴著小帽子的女巫使魔貓",
+      "揮舞睡蓮盾牌的青蛙聖騎士",
+      "背著噴射背包的太空信使浣熊"
+    ],
+    "valueBar": [
+      "產生角色",
+      "建立服裝變化",
+      "產生角色動畫",
+      "匯出 Sprite Sheet"
+    ],
+    "capabilities": {
+      "title": "一個 AI 精靈圖產生器，完成整套 2D 遊戲素材流程",
+      "description": "SpritePixel 將角色、服裝變化、多方向精靈、動畫與可匯出的 Sprite Sheet 放在同一套工作流程中。",
+      "items": [
+        {
+          "title": "產生角色",
+          "description": "使用 AI 建立原創 2D 遊戲角色。"
+        },
+        {
+          "title": "修改服裝",
+          "description": "保留角色特徵並產生新的服裝變化。"
+        },
+        {
+          "title": "多方向精靈",
+          "description": "建立正面、側面與背面的角色方向。"
+        },
+        {
+          "title": "產生角色動畫",
+          "description": "把角色轉換成可播放的精靈動作。"
+        },
+        {
+          "title": "匯出 Sprite Sheet",
+          "description": "匯出整理完成、可用於遊戲開發的 Sprite Sheet。"
+        },
+        {
+          "title": "免費精靈工具",
+          "description": "免費使用 Sprite Sheet 製作與分割工具。"
+        }
+      ]
+    },
+    "features": {
+      "title": "從角色構想到可匯出的 Sprite Sheet",
+      "description": "用 AI 精靈圖產生器依序完成角色、變化、多方向、動畫影格與匯出。",
+      "items": [
+        {
+          "title": "用 AI 精靈圖產生器建立遊戲角色",
+          "description": "從提示詞開始建立 2D 遊戲角色，並為整個遊戲世界維持一致的角色風格。",
+          "bullets": [
+            "從文字提示詞開始",
+            "建立原創 2D 角色",
+            "為獨立遊戲專案設計"
+          ],
+          "image": "/imgs/cases/character-generation.webp",
+          "alt": "從設定到完成的像素畫狐狸法師角色產生流程"
+        },
+        {
+          "title": "不用重畫角色也能產生服裝變化",
+          "description": "保留同一角色的主要特徵，使用 AI 精靈圖產生器建立新的服裝與造型。",
+          "bullets": [
+            "沿用同一基礎角色",
+            "建立多種服裝風格",
+            "適合造型、職業與 NPC 變化"
+          ],
+          "image": "/imgs/cases/outfit-variations.webp",
+          "alt": "同一位像素畫狐狸法師穿著四套不同服裝"
+        },
+        {
+          "title": "建立多方向角色精靈",
+          "description": "為同一角色產生一致的方向視圖，適合俯視角與 RPG 遊戲工作流程。",
+          "bullets": [
+            "維持角色特徵一致",
+            "適合 RPG 與俯視角遊戲",
+            "可組成移動用角色素材組"
+          ],
+          "image": "/imgs/cases/multi-direction-sprites.webp",
+          "alt": "像素畫騎士的正面、右側、背面與左側視圖"
+        },
+        {
+          "title": "把角色轉換成動畫動作",
+          "description": "使用 AI 精靈圖產生器建立移動或動作影格，同時維持角色的視覺風格。",
+          "bullets": ["產生動畫影格", "維持風格一致", "匯出到遊戲工作流程"],
+          "image": "/imgs/cases/animation-frames.webp",
+          "alt": "以時間軸串連的八格像素畫動畫"
+        },
+        {
+          "title": "匯出可直接使用的 Sprite Sheet",
+          "description": "把產生的影格整理成 Sprite Sheet，接入你的遊戲素材流程。",
+          "bullets": [
+            "規則排列的圖表輸出",
+            "更容易接入開發",
+            "配合現有素材流程"
+          ],
+          "image": "/imgs/cases/sprite-sheet-export.webp",
+          "alt": "單張像素畫角色影格匯出為八格 Sprite Sheet"
+        }
+      ]
+    },
+    "tools": {
+      "title": "更多遊戲素材製作工具",
+      "description": "使用 AI 建立遊戲圖示，或用免費 Sprite Sheet 工具整理 2D 遊戲素材。",
+      "items": [
+        {
+          "title": "AI 遊戲圖示產生器",
+          "description": "為物品、技能、武器、資源與背包產生可用於遊戲的圖示。",
+          "badge": "AI 功能",
+          "cta": "產生遊戲圖示",
+          "href": "/ai-game-icon-generator"
+        },
+        {
+          "title": "免費 Sprite Sheet 製作工具",
+          "description": "直接在瀏覽器中把獨立影格組合成整齊的 Sprite Sheet。",
+          "badge": "免費工具",
+          "cta": "製作 Sprite Sheet",
+          "href": "/sprite-sheet-maker"
+        },
+        {
+          "title": "免費 Sprite Sheet 分割工具",
+          "description": "快速把現有 Sprite Sheet 分割為獨立動畫影格。",
+          "badge": "免費工具",
+          "cta": "分割 Sprite Sheet",
+          "href": "/sprite-sheet-cutter"
+        }
+      ]
+    },
+    "workflowTitle": "AI 精靈圖產生器如何運作",
+    "workflowDescription": "用三個清楚步驟，從基礎角色前進到變化、動畫影格與匯出。",
+    "workflowSteps": [
+      {
+        "title": "建立角色",
+        "description": "用 AI 精靈圖產生器建立基礎角色。"
+      },
+      {
+        "title": "加入變化或動畫",
+        "description": "建立服裝變化、方向視圖或動畫影格。"
+      },
+      {
+        "title": "匯出 Sprite Sheet",
+        "description": "匯出精靈素材並接入你的工作流程。"
+      }
+    ],
+    "useCasesTitle": "為獨立遊戲創作者而設計",
+    "useCasesDescription": "更快建立素材、維持一致的視覺風格，並減少小型遊戲專案中的重複精靈製作工作。",
+    "useCases": [
+      {
+        "title": "獨立開發者",
+        "description": "不必配置大型美術團隊，也能建立一致的角色與素材方向。"
+      },
+      {
+        "title": "RPG／俯視角專案",
+        "description": "建立多方向角色、造型變化、動畫影格與可用於遊戲的圖表。"
+      },
+      {
+        "title": "2D 原型團隊",
+        "description": "快速探索角色與動作，同時維持連貫的視覺語言。"
+      },
+      {
+        "title": "遊戲創作活動參與者",
+        "description": "減少手動製作，迅速把構想變成可用的精靈素材。"
+      }
+    ],
+    "projectTitle": "用一個 AI 精靈圖產生器建立風格一致的遊戲世界。",
+    "projectDescription": "只要建立一次專案並設定視覺方向，AI 精靈圖產生器就會在同一個遊戲世界中沿用風格、視角與參考素材。",
+    "spriteTitle": "使用 AI 精靈圖產生器建立可直接用於遊戲的角色。",
+    "spriteDescription": "描述角色或上傳參考圖，AI 精靈圖產生器會套用專案的風格、視角與解析度，建立可重複使用的精靈變化。",
+    "animateTitle": "使用 AI 精靈圖產生器建立可遊玩的動畫。",
+    "animateDescription": "產生待機、行走與攻擊動畫，逐格預覽後再匯出完成的動畫。",
+    "batchEyebrow": "產生整套素材，而不只是一張圖片",
+    "batchTitle": "一次產生完整的遊戲圖示套組。",
+    "batchDescription": "貼上物品清單，或讓 AI 建議遊戲所需素材，再以共同風格產生武器、藥水、技能與背包物品。",
+    "styleTitle": "只設定一次風格，之後持續沿用。",
+    "styleDescription": "SpritePixel 會記住遊戲的風格、色盤、視角、精靈尺寸與參考素材，並套用到之後的產生結果。",
+    "vaultTitle": "把所有遊戲素材集中在同一個素材庫。",
+    "vaultDescription": "不再讓產生檔案散落在下載與資料夾中。核准的素材會依專案整理，隨時可重複使用、建立變化或匯出。",
+    "toolsTitle": "適合遊戲開發的免費 Sprite Sheet 工具。",
+    "toolsDescription": "使用簡單的瀏覽器工具處理常見精靈工作，不需消耗點數。",
+    "makerTitle": "Sprite Sheet 製作工具",
+    "makerDescription": "在瀏覽器中把動畫影格整理成 Sprite Sheet。",
+    "splitterTitle": "Sprite Sheet 分割工具",
+    "summary": {
+      "eyebrow": "一個連貫的製作流程",
+      "title": "從角色到 Sprite Sheet，只需一個 AI 精靈圖產生器",
+      "description": "SpritePixel 協助你在同一個流程中產生角色、建立服裝變化、製作多方向精靈與動畫，並匯出 Sprite Sheet。",
+      "cta": "試用 AI 精靈圖產生器"
+    },
+    "forgeCanvas": {
+      "phaseLabels": ["讀取專案脈絡", "批次產生", "實際測試", "儲存到素材庫"],
+      "projectLabel": "專案_01／浣熊工坊",
+      "savedLabel": "風格已鎖定 · 已儲存 4 項素材",
+      "footerStatuses": [
+        "正在讀取專案風格",
+        "正在產生配套素材",
+        "正在測試裝備與攻擊",
+        "正在儲存到素材庫"
+      ],
+      "loadError": "動畫素材載入失敗 · 請重新整理後再試",
+      "ariaLabel": "循環動畫展示浣熊讀取專案風格、產生配套素材、測試攻擊並把結果儲存到素材庫"
+    },
+    "demo": {
+      "assetPlaceholder": "素材預留位置 {number}",
+      "activeProject": "目前專案",
+      "projectName": "迷你地城",
+      "projectGenre": "類肉鴿角色扮演遊戲",
+      "projectRules": [
+        { "label": "風格", "value": "像素藝術" },
+        { "label": "視角", "value": "俯視" },
+        { "label": "尺寸", "value": "64 × 64" },
+        { "label": "色盤", "value": "黑暗奇幻" }
+      ],
+      "assetNames": ["騎士", "長劍", "藥水", "技能", "盾牌", "鑰匙"],
+      "metrics": [
+        { "label": "角色", "value": "06" },
+        { "label": "動畫", "value": "12" },
+        { "label": "物品", "value": "34" },
+        { "label": "技能", "value": "16" }
+      ],
+      "generatorCharacter": "產生器／角色",
+      "promptLabel": "提示詞",
+      "spritePrompt": "一位手持圓盾的迷你地城騎士",
+      "styleLabel": "風格",
+      "perspectiveLabel": "視角",
+      "pixelArt": "像素藝術",
+      "topDown": "俯視",
+      "animationPreview": "動畫預覽",
+      "actions": ["待機", "行走", "攻擊"],
+      "loopOn": "循環開啟",
+      "pngSpriteSheet": "PNG Sprite Sheet",
+      "assetList": "素材清單",
+      "selectedCount": "已選取 8／8",
+      "iconItems": [
+        "鐵劍",
+        "金劍",
+        "木盾",
+        "生命藥水",
+        "法力藥水",
+        "魔法戒指",
+        "銀鑰匙",
+        "藍寶石"
+      ],
+      "contextRules": [
+        { "label": "風格", "value": "像素藝術" },
+        { "label": "色盤", "value": "黑暗奇幻" },
+        { "label": "視角", "value": "俯視" },
+        { "label": "描邊", "value": "深色／1px" },
+        { "label": "尺寸", "value": "64 × 64" },
+        { "label": "參考圖", "value": "03 個檔案" }
+      ],
+      "vaultName": "迷你地城／素材庫",
+      "vaultCategories": ["全部 68", "角色 06", "動畫 12", "物品 34", "技能 16"]
+    },
+    "assetSystem": "素材系統",
+    "pricingTitle": "適合 AI 精靈圖產生器流程的簡明價格",
+    "pricingNote": "點數只用於 AI 產生功能；Sprite Sheet 製作與分割工具可永遠免費在瀏覽器中使用。",
+    "faqTitle": "AI 精靈圖產生器常見問題",
+    "faqDescription": "了解角色變化、多方向精靈、動畫影格、匯出、點數與使用權。",
+    "faq": [
+      {
+        "question": "AI 精靈圖產生器可以建立哪些素材？",
+        "answer": "SpritePixel 可以建立原創 2D 角色、服裝變化、多方向角色視圖、動畫影格、可匯出的 Sprite Sheet，以及風格一致的遊戲圖示組。可用控制項依所選素材流程而定。"
+      },
+      {
+        "question": "可以為同一角色建立服裝變化嗎？",
+        "answer": "可以。從同一個基礎角色或參考圖開始，為造型、職業或 NPC 版本建立服裝變化，並盡可能保留角色的核心特徵。"
+      },
+      {
+        "question": "可以產生多方向精靈嗎？",
+        "answer": "可以。可依方向設定建立適用於 RPG 與俯視角遊戲的正面、側面與背面角色視圖。"
+      },
+      {
+        "question": "可以產生動畫精靈影格嗎？",
+        "answer": "可以。AI 精靈圖產生器能從角色建立移動或動作影格序列，下載前可先預覽並進入動畫編輯器。"
+      },
+      {
+        "question": "可以匯出 Sprite Sheet 嗎？",
+        "answer": "可以。產生的影格能整理並下載為 Sprite Sheet 或影格序列；下載與匯出不消耗產生點數。"
+      },
+      {
+        "question": "Sprite Sheet 製作與分割工具免費嗎？",
+        "answer": "免費。兩個工具都在瀏覽器中執行，不消耗產生點數。AI 遊戲圖示產生器則會使用點數。"
+      },
+      {
+        "question": "SpritePixel 適合哪些使用者？",
+        "answer": "SpritePixel 適合獨立開發者、2D 遊戲創作者、RPG 與俯視角專案、原型團隊及遊戲創作活動參與者。"
+      },
+      {
+        "question": "產生的精靈可以用在遊戲專案嗎？",
+        "answer": "可以，但須遵守 SpritePixel 服務條款與上傳參考素材的權利規範。你有責任確保提示詞與素材不侵犯第三方權利。"
+      }
+    ],
+    "finalTitle": "用 AI 精靈圖產生器建立你的遊戲角色",
+    "finalDescription": "建立角色、加入服裝變化或動畫，再為下一個 2D 遊戲專案匯出 Sprite Sheet。",
+    "createProject": "試用 AI 精靈圖產生器",
+    "freeToolsCta": "使用免費精靈工具"
+  }
+}

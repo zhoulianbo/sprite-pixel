@@ -1,0 +1,65 @@
+{
+  "fields": {
+    "style": "スタイル",
+    "perspective": "視点",
+    "quality": "品質",
+    "characterType": "キャラクター種別",
+    "editType": "種類",
+    "actionType": "アクション",
+    "direction": "方向",
+    "frames": "フレーム数",
+    "frameSize": "フレームサイズ"
+  },
+  "upload": {
+    "reference": "参考画像",
+    "character": "キャラクター",
+    "remove": "画像を削除",
+    "file": "アップロード",
+    "existing": "既存キャラクター"
+  },
+  "options": {
+    "style": {
+      "pixel-art": "ピクセルアート",
+      "cartoon": "カートゥーン",
+      "illustration": "イラスト",
+      "hand-painted": "手描き",
+      "anime-2d": "2Dアニメ",
+      "dark-fantasy": "ダークファンタジー",
+      "cyberpunk": "サイバーパンク"
+    },
+    "perspective": {
+      "side": "横視点",
+      "top-down": "見下ろし",
+      "front": "正面",
+      "isometric": "アイソメトリック"
+    },
+    "quality": { "1k": "1K", "2k": "2K", "4k": "4K" },
+    "characterType": {
+      "humanoid": "人型",
+      "monster": "モンスター",
+      "animal": "動物",
+      "robot": "ロボット",
+      "custom": "カスタム"
+    },
+    "editType": { "pose": "ポーズ", "costume": "衣装" },
+    "actionType": {
+      "idle": "待機",
+      "walk": "歩行",
+      "run": "走行",
+      "attack": "攻撃",
+      "jump": "ジャンプ",
+      "hurt": "被ダメージ",
+      "death": "死亡",
+      "custom": "カスタム"
+    },
+    "direction": {
+      "right": "右",
+      "left": "左",
+      "up": "上",
+      "down": "下",
+      "four-way": "4方向",
+      "eight-way": "8方向"
+    },
+    "frames": { "auto": "自動" }
+  }
+}

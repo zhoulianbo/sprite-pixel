@@ -1,0 +1,108 @@
+{
+  "sidebar": {
+    "main_navs": [
+      {
+        "title": "ワークスペース",
+        "items": [
+          {
+            "title": "マイプロジェクト",
+            "url": "/dashboard",
+            "icon": "LayoutDashboard"
+          },
+          {
+            "title": "マイアセット",
+            "icon": "Images",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "キャラクター",
+                "url": "/dashboard/assets/characters",
+                "icon": "Users"
+              },
+              {
+                "title": "アニメーション",
+                "url": "/dashboard/assets/animations",
+                "icon": "Film"
+              },
+              {
+                "title": "アイコン",
+                "url": "/dashboard/assets/icons",
+                "icon": "Boxes"
+              },
+              {
+                "title": "スプライトシート",
+                "url": "/dashboard/assets/sheets",
+                "icon": "Table2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "アカウント",
+        "items": [
+          {
+            "title": "設定",
+            "url": "/settings",
+            "icon": "Settings",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "プロフィール",
+                "url": "/settings/profile"
+              },
+              {
+                "title": "お支払い",
+                "url": "/settings/billing"
+              },
+              {
+                "title": "支払い履歴",
+                "url": "/settings/payments"
+              },
+              {
+                "title": "クレジット",
+                "url": "/settings/credits"
+              },
+              {
+                "title": "セキュリティ",
+                "url": "/settings/security"
+              },
+              {
+                "title": "API キー",
+                "url": "/settings/apikeys"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "プロフィール",
+            "url": "/settings/profile",
+            "icon": "User"
+          }
+        ]
+      }
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "ホーム",
+            "url": "/",
+            "icon": "Home"
+          }
+        ]
+      }
+    }
+  },
+  "upgrade": {
+    "title": "アップグレード",
+    "description": "Pro にアップグレードしてすべての機能を利用",
+    "action": "アップグレード",
+    "url": "/pricing"
+  }
+}

@@ -1,360 +1,415 @@
 {
   "metadata": {
-    "title": "价格",
-    "description": "选择方案，立即开始"
+    "title": "AI 精灵图生成器价格、套餐与积分 | SpritePixel",
+    "description": "比较 SpritePixel AI 精灵图生成器的免费版、订阅套餐和积分包，按需生成游戏精灵图、动画精灵图表、图标和私有项目资产。"
   },
   "page": {
-    "title": "ShipAny 价格表",
+    "title": "AI 精灵图生成器价格与套餐",
     "sections": {
       "pricing": {
         "id": "pricing",
-        "title": "价格",
-        "description": "获取 ShipAny 的全部功能，极速交付你的 AI SaaS 创业项目。",
+        "title": "AI 精灵图生成器价格与套餐",
+        "description": "选择适合生成角色精灵图、动画精灵图表和配套游戏图标的订阅套餐或积分包。可以免费开始，再按需升级私有资产、更多项目或更快的生成队列。",
+        "packs_title": "需要更多积分？",
+        "packs_description": "无需订阅。需要更多生成次数时再购买积分。积分包只增加积分，不会解锁订阅权益。",
         "groups": [
           {
-            "name": "one-time",
-            "title": "按次付费"
-          },
-          {
             "name": "monthly",
-            "title": "包月",
-            "is_featured": true,
-            "label": "立省15%"
+            "title": "包月"
           },
           {
             "name": "yearly",
-            "title": "包年"
+            "title": "包年",
+            "is_featured": true,
+            "label": "最高省 35%"
+          },
+          {
+            "name": "one-time",
+            "title": "按次付费"
           }
         ],
         "items": [
           {
-            "title": "入门版",
-            "description": "开启你的第一个 SaaS 创业项目。",
+            "title": "免费版",
+            "description": "每月 10 积分",
             "features_title": "包含",
             "features": [
-              "100 积分，有效期 1 个月",
-              "NextJS 项目模板",
-              "SEO 友好结构",
-              "支持 Stripe 支付",
-              "Supabase 数据存储",
-              "Google Oauth & 一键登录",
-              "多语言（i18n）支持"
+              "每月 10 积分",
+              "1 个项目",
+              "资产默认公开",
+              "下载与导出",
+              "标准生成队列"
             ],
-            "interval": "one-time",
-            "amount": 9900,
+            "interval": "month",
+            "amount": 0,
             "currency": "USD",
-            "price": "$99",
-            "original_price": "$199",
-            "currencies": [
-              {
-                "currency": "CNY",
-                "amount": 69900,
-                "price": "¥699",
-                "original_price": "¥1399",
-                "payment_providers": ["stripe"]
-              }
-            ],
+            "price": "$0",
             "unit": "",
             "is_featured": false,
-            "tip": "一次付费，畅享无限项目部署！",
+            "tip": "用每月免费额度开始生成。",
             "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "免费开始",
+              "url": "/sign-up"
             },
-            "product_id": "starter",
-            "product_name": "ShipAny 模板入门版",
-            "credits": 100,
+            "product_id": "free-monthly",
+            "product_name": "SpritePixel 免费版",
+            "credits": 10,
             "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "免费版"
+          },
+          {
+            "title": "独立版",
+            "description": "每月 120 积分",
+            "label": "热门",
+            "features_title": "包含",
+            "features": [
+              "每月 120 积分",
+              "10 个项目",
+              "资产默认私有",
+              "可用于商业",
+              "每日免费积分",
+              "邮件支持",
+              "下载与导出",
+              "标准生成队列"
+            ],
+            "interval": "month",
+            "amount": 1200,
+            "currency": "USD",
+            "price": "$12",
+            "unit": "/月",
+            "is_featured": true,
+            "tip": "适合持续推进的独立项目。",
+            "button": {
+              "title": "订阅",
+              "url": "/pricing"
+            },
+            "product_id": "indie-monthly",
+            "product_name": "SpritePixel 独立版包月",
+            "credits": 120,
+            "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "独立版"
+          },
+          {
+            "title": "专业版",
+            "description": "每月 260 积分",
+            "features_title": "包含",
+            "features": [
+              "每月 260 积分",
+              "不限项目数",
+              "资产默认私有",
+              "可用于商业",
+              "每日免费积分",
+              "邮件支持",
+              "下载与导出",
+              "优先生成队列"
+            ],
+            "interval": "month",
+            "amount": 2400,
+            "currency": "USD",
+            "price": "$24",
+            "unit": "/月",
+            "is_featured": false,
+            "tip": "更多积分，生成更优先。",
+            "button": {
+              "title": "订阅",
+              "url": "/pricing"
+            },
+            "product_id": "pro-monthly",
+            "product_name": "SpritePixel 专业版包月",
+            "credits": 260,
+            "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "专业版"
+          },
+          {
+            "title": "免费版",
+            "description": "每月 10 积分",
+            "features_title": "包含",
+            "features": [
+              "每月 10 积分",
+              "1 个项目",
+              "资产默认公开",
+              "下载与导出",
+              "标准生成队列"
+            ],
+            "interval": "year",
+            "amount": 0,
+            "currency": "USD",
+            "price": "$0",
+            "unit": "",
+            "is_featured": false,
+            "tip": "用每月免费额度开始生成。",
+            "button": {
+              "title": "免费开始",
+              "url": "/sign-up"
+            },
+            "product_id": "free-yearly",
+            "product_name": "SpritePixel 免费版",
+            "credits": 10,
+            "valid_days": 30,
+            "group": "yearly",
+            "plan_name": "免费版"
+          },
+          {
+            "title": "独立版",
+            "description": "1,440 积分一次到账",
+            "label": "热门",
+            "features_title": "包含",
+            "features": [
+              "1,440 积分立即到账",
+              "有效期覆盖整个订阅年",
+              "10 个项目",
+              "资产默认私有",
+              "可用于商业",
+              "每日免费积分",
+              "邮件支持",
+              "下载与导出",
+              "标准生成队列"
+            ],
+            "interval": "year",
+            "amount": 10000,
+            "currency": "USD",
+            "price": "$100",
+            "original_price": "$144",
+            "unit": "/年",
+            "is_featured": true,
+            "tip": "相比包月约省 30%。",
+            "button": {
+              "title": "订阅",
+              "url": "/pricing"
+            },
+            "product_id": "indie-yearly",
+            "product_name": "SpritePixel 独立版包年",
+            "credits": 1440,
+            "valid_days": 365,
+            "group": "yearly",
+            "plan_name": "独立版"
+          },
+          {
+            "title": "专业版",
+            "description": "3,120 积分一次到账",
+            "features_title": "包含",
+            "features": [
+              "3,120 积分立即到账",
+              "有效期覆盖整个订阅年",
+              "不限项目数",
+              "资产默认私有",
+              "可用于商业",
+              "每日免费积分",
+              "邮件支持",
+              "下载与导出",
+              "优先生成队列"
+            ],
+            "interval": "year",
+            "amount": 18800,
+            "currency": "USD",
+            "price": "$188",
+            "original_price": "$288",
+            "unit": "/年",
+            "is_featured": false,
+            "tip": "相比包月约省 35%。",
+            "button": {
+              "title": "订阅",
+              "url": "/pricing"
+            },
+            "product_id": "pro-yearly",
+            "product_name": "SpritePixel 专业版包年",
+            "credits": 3120,
+            "valid_days": 365,
+            "group": "yearly",
+            "plan_name": "专业版"
+          },
+          {
+            "title": "快捷包",
+            "description": "40 积分",
+            "features_title": "包含",
+            "features": [
+              "40 积分",
+              "7 天后过期",
+              "仅增加积分，不含订阅权益",
+              "免费账户资产仍默认公开"
+            ],
+            "interval": "one-time",
+            "amount": 499,
+            "currency": "USD",
+            "price": "$4.99",
+            "unit": "",
+            "is_featured": false,
+            "tip": "首次体验或短期项目。",
+            "button": {
+              "title": "购买积分",
+              "url": "/pricing"
+            },
+            "product_id": "pack-quick",
+            "product_name": "SpritePixel 快捷包",
+            "credits": 40,
+            "valid_days": 7,
             "group": "one-time"
           },
           {
-            "title": "标准版",
-            "description": "快速交付你的 SaaS 创业项目。",
-            "label": "热门",
-            "features_title": "包含入门版功能，此外",
+            "title": "弹性包",
+            "description": "150 积分",
+            "features_title": "包含",
             "features": [
-              "200 积分，有效期 3 个月",
-              "支持 Vercel 或 Cloudflare 部署",
-              "自动生成隐私政策&服务条款",
-              "集成 Google Analytics",
-              "集成 Google Search Console",
-              "Discord 技术社区",
-              "首个上线项目技术支持",
-              "终身免费更新"
+              "150 积分",
+              "1 年后过期",
+              "仅增加积分，不含订阅权益",
+              "免费账户资产仍默认公开"
             ],
             "interval": "one-time",
-            "amount": 19900,
+            "amount": 1599,
             "currency": "USD",
-            "price": "$199",
-            "original_price": "$299",
-            "currencies": [
-              {
-                "currency": "CNY",
-                "amount": 139900,
-                "price": "¥1399",
-                "original_price": "¥1999",
-                "payment_providers": ["stripe"]
-              }
-            ],
-            "unit": "",
-            "is_featured": true,
-            "tip": "一次付费，畅享无限项目部署！",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard",
-            "product_name": "ShipAny 模板标准版",
-            "credits": 200,
-            "valid_days": 90,
-            "group": "one-time"
-          },
-          {
-            "title": "高级版",
-            "description": "交付任意 AI SaaS 创业项目。",
-            "features_title": "包含标准版功能，此外",
-            "features": [
-              "300 积分，有效期 1 年",
-              "内置 AI 业务功能",
-              "用户中心",
-              "积分系统",
-              "为你的 SaaS 售卖 API",
-              "后台管理系统",
-              "优先技术支持"
-            ],
-            "interval": "one-time",
-            "amount": 29900,
-            "currency": "USD",
-            "price": "$299",
-            "original_price": "$399",
-            "currencies": [
-              {
-                "currency": "CNY",
-                "amount": 199900,
-                "price": "¥1999",
-                "original_price": "¥2799",
-                "payment_providers": ["stripe", "creem"]
-              }
-            ],
+            "price": "$15.99",
             "unit": "",
             "is_featured": false,
-            "tip": "一次付费，畅享无限项目部署！",
+            "tip": "中等规模一次性项目。",
             "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "购买积分",
+              "url": "/pricing"
             },
-            "product_id": "premium",
-            "product_name": "ShipAny 模板高级版",
-            "credits": 300,
+            "product_id": "pack-flex",
+            "product_name": "SpritePixel 弹性包",
+            "credits": 150,
             "valid_days": 365,
             "group": "one-time"
           },
           {
-            "title": "入门版",
-            "description": "开启你的第一个 SaaS 创业项目。",
+            "title": "加强包",
+            "description": "320 积分",
             "features_title": "包含",
             "features": [
-              "100 积分，有效期 1 个月",
-              "NextJS 项目模板",
-              "SEO 友好结构",
-              "支持 Stripe 支付",
-              "Supabase 数据存储",
-              "Google Oauth & 一键登录",
-              "多语言（i18n）支持"
+              "320 积分",
+              "1 年后过期",
+              "仅增加积分，不含订阅权益",
+              "免费账户资产仍默认公开"
             ],
-            "interval": "month",
-            "amount": 8900,
+            "interval": "one-time",
+            "amount": 2999,
             "currency": "USD",
-            "price": "$89",
-            "original_price": "$99",
-            "unit": "/ 月",
+            "price": "$29.99",
+            "unit": "",
             "is_featured": false,
-            "tip": "按月付费，畅享无限项目部署！",
+            "tip": "更大规模的一次性项目。",
             "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "购买积分",
+              "url": "/pricing"
             },
-            "product_id": "starter-monthly",
-            "product_name": "ShipAny 模板入门版包月",
-            "credits": 100,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "入门版"
-          },
-          {
-            "title": "标准版",
-            "description": "快速交付你的 SaaS 创业项目。",
-            "label": "热门",
-            "features_title": "包含入门版功能，此外",
-            "features": [
-              "200 积分，有效期 1 个月",
-              "支持 Vercel 或 Cloudflare 部署",
-              "自动生成隐私政策&服务条款",
-              "集成 Google Analytics",
-              "集成 Google Search Console",
-              "Discord 技术社区",
-              "首个上线项目技术支持",
-              "终身免费更新"
-            ],
-            "interval": "month",
-            "amount": 16900,
-            "currency": "USD",
-            "price": "$169",
-            "original_price": "$199",
-            "unit": "/ 月",
-            "is_featured": true,
-            "tip": "按月付费，极速上线你的 SaaS 项目。",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard-monthly",
-            "product_name": "ShipAny 模板标准版包月",
-            "credits": 200,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "标准版"
-          },
-          {
-            "title": "高级版",
-            "description": "交付任意 AI SaaS 创业项目。",
-            "features_title": "包含标准版功能，此外",
-            "features": [
-              "300 积分，有效期 1 个月",
-              "内置 AI 业务功能",
-              "用户中心",
-              "积分系统",
-              "为你的 SaaS 售卖 API",
-              "后台管理系统",
-              "优先技术支持"
-            ],
-            "interval": "month",
-            "amount": 24900,
-            "currency": "USD",
-            "price": "$249",
-            "original_price": "$299",
-            "unit": "/ 月",
-            "is_featured": false,
-            "tip": "按月付费，助你交付任何 AI SaaS 项目。",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "premium-monthly",
-            "product_name": "ShipAny 模板高级版包月",
-            "credits": 300,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "高级版"
-          },
-          {
-            "title": "入门版",
-            "description": "开启你的第一个 SaaS 创业项目。",
-            "features_title": "包含",
-            "features": [
-              "100 积分，有效期 1 年",
-              "NextJS 项目模板",
-              "SEO 友好结构",
-              "支持 Stripe 支付",
-              "Supabase 数据存储",
-              "Google Oauth & 一键登录",
-              "多语言（i18n）支持"
-            ],
-            "interval": "year",
-            "amount": 82800,
-            "currency": "USD",
-            "price": "$69",
-            "original_price": "$89",
-            "unit": "/ 月",
-            "is_featured": false,
-            "tip": "按年付费，畅享无限项目部署！",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "starter-yearly",
-            "product_name": "ShipAny 模板入门版包年",
-            "credits": 1200,
+            "product_id": "pack-power",
+            "product_name": "SpritePixel 加强包",
+            "credits": 320,
             "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "入门版"
-          },
-          {
-            "title": "标准版",
-            "description": "快速交付你的 SaaS 创业项目。",
-            "label": "热门",
-            "features_title": "包含入门版功能，此外",
-            "features": [
-              "200 积分，有效期 1 年",
-              "支持 Vercel 或 Cloudflare 部署",
-              "自动生成隐私政策&服务条款",
-              "集成 Google Analytics",
-              "集成 Google Search Console",
-              "Discord 技术社区",
-              "首个上线项目技术支持",
-              "终身免费更新"
-            ],
-            "interval": "year",
-            "amount": 154800,
-            "currency": "USD",
-            "price": "$129",
-            "original_price": "$169",
-            "unit": "/ 月",
-            "is_featured": true,
-            "tip": "按年付费，极速上线你的 SaaS 项目。",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard-yearly",
-            "product_name": "ShipAny 模板标准版包年",
-            "credits": 2400,
-            "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "标准版"
-          },
-          {
-            "title": "高级版",
-            "description": "交付任意 AI SaaS 创业项目。",
-            "features_title": "包含标准版功能，此外",
-            "features": [
-              "300 积分，有效期 1 年",
-              "内置 AI 业务功能",
-              "用户中心",
-              "积分系统",
-              "为你的 SaaS 售卖 API",
-              "后台管理系统",
-              "优先技术支持"
-            ],
-            "interval": "year",
-            "amount": 226800,
-            "currency": "USD",
-            "price": "$189",
-            "original_price": "$249",
-            "unit": "/ 月",
-            "is_featured": false,
-            "tip": "按年付费，助你交付任何 AI SaaS 项目。",
-            "button": {
-              "title": "获取 ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "premium-yearly",
-            "product_name": "ShipAny 模板高级版包年",
-            "credits": 3600,
-            "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "高级版"
+            "group": "one-time"
           }
-        ]
+        ],
+        "compare": {
+          "badge": "权益对比",
+          "title": "每个订阅方案能解锁什么",
+          "description": "通过这个对比表判断你是只需要试用、需要日常生产方案，还是需要更高频率和更大批量能力。",
+          "feature_label": "功能",
+          "columns": [
+            { "title": "免费版" },
+            { "title": "独立版", "label": "热门", "featured": true },
+            { "title": "专业版", "label": "性价比" }
+          ],
+          "rows": [
+            {
+              "key": "credits",
+              "label": "积分",
+              "values": [
+                "10 / 月",
+                "120 / 月或 1,440 / 年",
+                "260 / 月或 3,120 / 年"
+              ]
+            },
+            {
+              "key": "privacy",
+              "label": "资产权限",
+              "highlight": true,
+              "values": ["默认公开", "默认私有", "默认私有"]
+            },
+            {
+              "key": "projects",
+              "label": "项目数",
+              "values": ["1", "10", "不限"]
+            },
+            {
+              "key": "commercial",
+              "label": "商业使用",
+              "kind": "boolean",
+              "values": ["—", "支持", "支持"]
+            },
+            {
+              "key": "download",
+              "label": "下载",
+              "kind": "boolean",
+              "values": ["支持", "支持", "支持"]
+            },
+            {
+              "key": "daily_credits",
+              "label": "每日免费积分",
+              "kind": "boolean",
+              "values": ["—", "支持", "支持"]
+            },
+            {
+              "key": "email_support",
+              "label": "邮件支持",
+              "kind": "boolean",
+              "values": ["—", "支持", "支持"]
+            },
+            {
+              "key": "priority",
+              "label": "生成优先级",
+              "values": ["标准", "标准", "优先"]
+            }
+          ]
+        },
+        "credits_guide": {
+          "badge": "积分消耗",
+          "title": "常见输出的积分成本",
+          "description": "2 积分可生成一张标准 1K 图片。一次批量生成最多 9 个游戏图标消耗 3 积分。",
+          "rows": [
+            { "action": "标准图片生成", "cost": "2" },
+            { "action": "一张动作精灵图表生成", "cost": "3" },
+            { "action": "批量游戏图标生成", "cost": "3" },
+            { "action": "单个图标重新生成", "cost": "1" },
+            { "action": "去背景 / 自动切图", "cost": "免费" },
+            { "action": "调整尺寸 / 精灵图表拼接", "cost": "免费" },
+            { "action": "ZIP / PNG / JSON 导出", "cost": "免费" }
+          ]
+        },
+        "rules": {
+          "badge": "规则说明",
+          "title": "积分和权限的工作方式",
+          "description": "价格体系由订阅权限和一次性积分补充共同组成。购买前最需要了解的规则如下。",
+          "items": [
+            {
+              "title": "包月方案",
+              "description": "积分随每个账单周期刷新，未使用的订阅积分不会结转到下一周期。"
+            },
+            {
+              "title": "包年方案",
+              "description": "年付积分会立即全部到账，并在整个订阅年内有效。"
+            },
+            {
+              "title": "积分包",
+              "description": "快捷包 7 天后过期，弹性包和加强包 1 年后过期。"
+            },
+            {
+              "title": "积分消耗顺序",
+              "description": "系统会优先消耗即将过期的积分。"
+            },
+            {
+              "title": "取消订阅",
+              "description": "可以随时取消订阅。当前权益会保留到已支付周期结束。"
+            },
+            {
+              "title": "资产权限",
+              "description": "独立版或专业版订阅有效期内创建的资产默认私有。免费账户和仅购买积分包的账户默认创建公开资产。"
+            }
+          ]
+        }
       }
     }
   },

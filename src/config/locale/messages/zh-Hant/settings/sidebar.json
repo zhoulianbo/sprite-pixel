@@ -1,0 +1,108 @@
+{
+  "sidebar": {
+    "main_navs": [
+      {
+        "title": "工作區",
+        "items": [
+          {
+            "title": "我的專案",
+            "url": "/dashboard",
+            "icon": "LayoutDashboard"
+          },
+          {
+            "title": "我的素材",
+            "icon": "Images",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "角色",
+                "url": "/dashboard/assets/characters",
+                "icon": "Users"
+              },
+              {
+                "title": "動畫",
+                "url": "/dashboard/assets/animations",
+                "icon": "Film"
+              },
+              {
+                "title": "圖示",
+                "url": "/dashboard/assets/icons",
+                "icon": "Boxes"
+              },
+              {
+                "title": "Sprite Sheet",
+                "url": "/dashboard/assets/sheets",
+                "icon": "Table2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "帳號",
+        "items": [
+          {
+            "title": "設定",
+            "url": "/settings",
+            "icon": "Settings",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "個人資料",
+                "url": "/settings/profile"
+              },
+              {
+                "title": "帳務",
+                "url": "/settings/billing"
+              },
+              {
+                "title": "付款",
+                "url": "/settings/payments"
+              },
+              {
+                "title": "點數",
+                "url": "/settings/credits"
+              },
+              {
+                "title": "安全性",
+                "url": "/settings/security"
+              },
+              {
+                "title": "API 金鑰",
+                "url": "/settings/apikeys"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "個人資料",
+            "url": "/settings/profile",
+            "icon": "User"
+          }
+        ]
+      }
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "首頁",
+            "url": "/",
+            "icon": "Home"
+          }
+        ]
+      }
+    }
+  },
+  "upgrade": {
+    "title": "升級",
+    "description": "升級到專業版以使用所有功能",
+    "action": "升級",
+    "url": "/pricing"
+  }
+}

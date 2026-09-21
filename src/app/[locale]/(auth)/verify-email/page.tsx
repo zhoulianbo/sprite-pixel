@@ -4,6 +4,7 @@ import { redirect } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
 import { VerifyEmailPage } from '@/shared/blocks/sign/verify-email';
+import { noIndexRobots } from '@/shared/lib/seo';
 
 export async function generateMetadata({
   params,
@@ -15,6 +16,7 @@ export async function generateMetadata({
 
   return {
     title: `${t('sign.verify_email_page_title')} - ${t('metadata.title')}`,
+    robots: noIndexRobots,
     alternates: {
       canonical:
         locale !== defaultLocale

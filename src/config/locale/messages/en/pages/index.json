@@ -1,424 +1,357 @@
 {
   "page": {
-    "show_sections": [
-      "hero",
-      "logos",
-      "introduce",
-      "benefits",
-      "usage",
-      "features",
-      "stats",
-      "testimonials",
-      "faq",
-      "cta"
-    ],
+    "description": "Create game-ready character sprites, sprite sheets and matching 2D assets with the SpritePixel AI Sprite Generator.",
+    "show_sections": ["home"],
     "sections": {
-      "hero": {
-        "id": "hero",
-        "title": "Ship AI Startups in hours, not days",
-        "highlight_text": "in hours",
-        "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups.<br/>Ship Fast with a variety of templates and components.",
-        "announcement": {
-          "badge": "New",
-          "title": "🎉 ShipAny Template Two",
-          "url": "/pricing"
-        },
-        "tip": "🎁 Special offer for the first 1000 users",
-        "buttons": [
-          {
-            "title": "Get Started",
-            "icon": "Zap",
-            "url": "/pricing",
-            "target": "_self",
-            "variant": "default"
-          },
-          {
-            "title": "Read Document",
-            "icon": "BookOpenText",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline"
-          }
-        ],
-        "show_avatars": true,
-        "avatars_tip": "999+ users are using ShipAny",
-        "show_award": false,
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "image_invert": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "hero",
-          "width": 1200,
-          "height": 800
-        },
-        "background_image": {
-          "src": "/imgs/bg/tree.jpg",
-          "alt": "hero"
-        }
-      },
-      "logos": {
-        "id": "logos",
-        "title": "ShipAny is built on the shoulders of giants",
-        "items": [
-          {
-            "title": "Next.js",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Next.js"
-            }
-          },
-          {
-            "title": "React",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "React"
-            }
-          },
-          {
-            "title": "TailwindCSS",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "TailwindCSS"
-            }
-          },
-          {
-            "title": "Shadcn/UI",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Shadcn/UI"
-            }
-          },
-          {
-            "title": "Vercel",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "Vercel"
-            }
-          }
-        ]
-      },
-      "introduce": {
-        "block": "features-list",
-        "id": "introduce",
-        "title": "What is ShipAny",
-        "label": "Introduce",
-        "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups, including templates, components, and documentation.",
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "introduce"
-        },
-        "items": [
-          {
-            "title": "Ready-to-use Templates",
-            "description": "Choose from dozens of production-ready AI SaaS templates to quickly start your project.",
-            "icon": "RiNextjsFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "Infrastructure Setup",
-            "description": "Get instant access to scalable infrastructure with best practices built-in.",
-            "icon": "RiDatabase2Line",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "Quick Deployment",
-            "description": "Deploy your AI SaaS application to production in hours, not days.",
-            "icon": "RiCloudyFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          },
-          {
-            "title": "AI Integration",
-            "description": "Integrate AI into your project with ease using our built-in AI SDK.",
-            "icon": "RiRobot2Line",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "introduce"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "benefits": {
-        "block": "features-accordion",
-        "id": "benefits",
-        "title": "Why Choose ShipAny",
-        "label": "Benefits",
-        "description": "Get everything you need to launch your AI startup - from ready-to-use templates to technical support.",
-        "items": [
-          {
-            "title": "Complete Framework",
-            "description": "Built on Next.js with authentication, payments, and AI integration - everything works out of the box.",
-            "icon": "RiNextjsFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "Rich Templates Library",
-            "description": "Choose from various AI SaaS templates to kickstart your project - chatbots, image generation, and more.",
-            "icon": "RiClapperboardAiLine",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          },
-          {
-            "title": "Technical Guidance",
-            "description": "Get dedicated support and join our developer community to ensure your successful launch.",
-            "icon": "RiCodeFill",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "benefits"
-            }
-          }
-        ]
-      },
-      "usage": {
-        "block": "features-step",
-        "id": "usage",
-        "title": "How to Launch with ShipAny",
-        "description": "Get your AI SaaS startup running in three simple steps:",
-        "image": {
-          "src": "/imgs/placeholder.svg",
-          "alt": "usage"
-        },
-        "image_position": "left",
-        "text_align": "center",
-        "items": [
-          {
-            "title": "Get ShipAny",
-            "description": "Buy ShipAny with a one-time payment. Check your email for the code and documentation.",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "Start Your Project",
-            "description": "Read the documentation and clone the code of ShipAny. Start building your AI SaaS startup.",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "Customize Your Project",
-            "description": "Modify the template with your data and contents. Specific AI functionality needs.",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          },
-          {
-            "title": "Deploy to Production",
-            "description": "Deploy your project to production with a few steps and start serving customers immediately.",
-            "image": {
-              "src": "/imgs/placeholder.svg",
-              "alt": "usage"
-            }
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "features": {
-        "id": "features",
-        "title": "Key Features of ShipAny",
-        "description": "Everything you need to launch your AI SaaS startup quickly and efficiently.",
-        "items": [
-          {
-            "title": "Next.js Boilerplate",
-            "description": "Production-ready Next.js templates with SEO-friendly structure and i18n support.",
-            "icon": "RiNextjsFill"
-          },
-          {
-            "title": "Authentication & Payments",
-            "description": "Integrated Google OAuth, one-tap login, and Stripe payment processing.",
-            "icon": "RiKey2Fill"
-          },
-          {
-            "title": "Data Infrastructure",
-            "description": "Built-in Supabase integration for reliable and scalable data storage.",
-            "icon": "RiDatabase2Line"
-          },
-          {
-            "title": "One-Click Deployment",
-            "description": "Seamless deployment to Vercel or Cloudflare with automated setup.",
-            "icon": "RiCloudy2Fill"
-          },
-          {
-            "title": "Business Analytics",
-            "description": "Integrated Google Analytics and Search Console for tracking growth.",
-            "icon": "RiBarChart2Line"
-          },
-          {
-            "title": "AI-Ready Infrastructure",
-            "description": "Pre-configured AI integration with built-in credits system and API sales.",
-            "icon": "RiRobot2Line"
-          }
-        ]
-      },
-      "stats": {
-        "id": "stats",
-        "title": "People Love ShipAny",
-        "description": "for it's easy to use and fast to ship.",
-        "items": [
-          {
-            "title": "999+",
-            "description": "Customers"
-          },
-          {
-            "title": "200+",
-            "description": "Blocks"
-          },
-          {
-            "title": "50+",
-            "description": "Templates"
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "testimonials": {
-        "id": "testimonials",
-        "title": "What Users Say About ShipAny",
-        "description": "Hear from developers and founders who launched their AI startups with ShipAny.",
-        "items": [
-          {
-            "name": "David Chen",
-            "role": "Founder of AIWallpaper.shop",
-            "quote": "ShipAny saved us months of development time. We launched our AI wallpaper business in just 2 days and got our first paying customer within a week!",
-            "image": {
-              "src": "/imgs/avatars/1.png",
-              "alt": "david"
-            }
-          },
-          {
-            "name": "Rachel Kim",
-            "role": "CTO at HeyBeauty.ai",
-            "quote": "The pre-built AI infrastructure is a game-changer. We didn't have to worry about architecture - just focused on our AI beauty tech and went live fast.",
-            "image": {
-              "src": "/imgs/avatars/2.png",
-              "alt": "rachel"
-            }
-          },
-          {
-            "name": "Marcus Thompson",
-            "role": "Solo Developer",
-            "quote": "As a solo developer, ShipAny gave me everything I needed - auth, payments, AI integration, and beautiful UI. Launched my SaaS in a weekend!",
-            "image": {
-              "src": "/imgs/avatars/3.png",
-              "alt": "marcus"
-            }
-          },
-          {
-            "name": "Sofia Garcia",
-            "role": "CEO of Melodisco",
-            "quote": "The templates are production-ready and highly customizable. We built our AI music platform in hours instead of months. Incredible time-to-market!",
-            "image": {
-              "src": "/imgs/avatars/4.png",
-              "alt": "sofia"
-            }
-          },
-          {
-            "name": "James Wilson",
-            "role": "Tech Lead at GPTs.works",
-            "quote": "ShipAny's infrastructure is rock-solid. We scaled from 0 to 10k users without touching the backend. Best investment for our AI startup.",
-            "image": {
-              "src": "/imgs/avatars/5.png",
-              "alt": "james"
-            }
-          },
-          {
-            "name": "Anna Zhang",
-            "role": "Startup Founder",
-            "quote": "From idea to launch in 3 days! ShipAny's templates and deployment tools made it possible to test our AI business concept incredibly fast.",
-            "image": {
-              "src": "/imgs/avatars/6.png",
-              "alt": "anna"
-            }
-          }
-        ]
-      },
-      "faq": {
-        "id": "faq",
-        "title": "Frequently Asked Questions About ShipAny",
-        "description": "Have another question? Contact us on Discord or by email.",
-        "items": [
-          {
-            "question": "What exactly is ShipAny and how does it work?",
-            "answer": "ShipAny is a comprehensive NextJS boilerplate designed specifically for building AI SaaS startups. It provides ready-to-use templates, infrastructure setup, and deployment tools that help you launch your AI business in hours instead of days."
-          },
-          {
-            "question": "Do I need advanced technical skills to use ShipAny?",
-            "answer": "While basic programming knowledge is helpful, ShipAny is designed to be developer-friendly. Our templates and documentation make it easy to get started, even if you're not an expert in AI or cloud infrastructure."
-          },
-          {
-            "question": "What types of AI SaaS can I build with ShipAny?",
-            "answer": "ShipAny supports a wide range of AI applications, from content generation to data analysis tools. Our templates cover popular use cases like AI chatbots, content generators, image processing apps, and more."
-          },
-          {
-            "question": "How long does it typically take to launch with ShipAny?",
-            "answer": "With ShipAny, you can have a working prototype in hours and a production-ready application in hours. Our one-click deployment and pre-configured infrastructure significantly reduce the traditional months-long development cycle."
-          },
-          {
-            "question": "What's included in the ShipAny infrastructure?",
-            "answer": "ShipAny provides a complete infrastructure stack including authentication, database setup, API integration, payment processing, and scalable cloud deployment. Everything is pre-configured following industry best practices."
-          },
-          {
-            "question": "Can I customize the templates to match my brand?",
-            "answer": "Absolutely! All ShipAny templates are fully customizable. You can modify the design, features, and functionality to match your brand identity and specific business requirements while maintaining the robust underlying infrastructure."
-          }
-        ]
-      },
-      "cta": {
-        "id": "cta",
-        "title": "Ship your first AI SaaS Startup",
-        "description": "Start from here, ship with ShipAny.",
-        "buttons": [
-          {
-            "title": "Get ShipAny",
-            "url": "https://shipany.ai",
-            "target": "_blank",
-            "icon": "Zap"
-          },
-          {
-            "title": "Read Document",
-            "url": "/docs",
-            "target": "_blank",
-            "variant": "outline",
-            "icon": "BookOpenText"
-          }
-        ],
-        "className": "bg-muted"
-      },
-      "subscribe": {
-        "id": "subscribe",
-        "title": "Subscribe to our newsletter",
-        "description": "Get the latest news and updates from ShipAny.",
-        "submit": {
-          "input": {
-            "placeholder": "Enter your email"
-          },
-          "button": {
-            "title": "Subscribe"
-          },
-          "action": "/api/subscribe"
-        },
-        "className": "bg-muted"
+      "home": {
+        "id": "home",
+        "block": "home"
       }
     }
+  },
+  "messages": {
+    "eyebrow": "AI SPRITE GENERATOR FOR INDIE GAME CREATORS",
+    "heroTitle": "AI Sprite Generator",
+    "heroTitleAccent": "AI Sprite Generator",
+    "heroDescription": "Create game-ready 2D characters, generate outfit variations, build multi-direction sprites, animate motion, and export sprite sheets — all in one AI Sprite Generator.",
+    "generationMode": "Generation mode",
+    "promptPlaceholder": "A small fire knight with a red cape...",
+    "motionPromptPlaceholder": "For example: energetic motion, a slight forward lean, and natural cape follow-through...",
+    "startCreating": "Start Generating",
+    "startCreatingBusy": "Generating…",
+    "createCharacter": "Generate Character",
+    "generateMotion": "Generate Motion",
+    "defaultProject": "Default Project",
+    "chooseProject": "Choose project",
+    "addProject": "Add Project",
+    "characterDescription": "Describe the character you want to generate",
+    "motionDescription": "Describe the motion",
+    "preview": "Generation Preview",
+    "previewEmpty": "Your result will appear here",
+    "playAnimation": "Play animation",
+    "pauseAnimation": "Pause animation",
+    "playbackSpeed": "Playback speed",
+    "framesPerSecond": "{count} fps",
+    "frameTotal": "{count} frames",
+    "editAndDownload": "Edit & Download",
+    "surpriseMe": "Surprise me",
+    "generateVariations": "Generate 4 variations",
+    "generateAll": "Generate all",
+    "comingSoon": "Coming soon",
+    "inspirations": [
+      "A tiny flame knight in a red cloak...",
+      "A clockwork fox scout carrying a brass compass",
+      "A Mushroom Village herbalist with a glowing potion pouch",
+      "A steampunk owl engineer holding a small wrench",
+      "A slime knight in dented armor, cute pixel art style",
+      "A desert nomad archer in a sand-colored cloak",
+      "A crystal golem miner carrying lanterns in both hands",
+      "A witch's familiar cat wearing a small hat",
+      "A frog paladin wielding a water-lily shield",
+      "A space-messenger raccoon with a jetpack"
+    ],
+    "valueBar": [
+      "Generate Characters",
+      "Create Outfit Variations",
+      "Generate Character Animations",
+      "Export Sprite Sheets"
+    ],
+    "capabilities": {
+      "title": "One AI Sprite Generator for Your 2D Game Workflow",
+      "description": "SpritePixel helps you create characters, outfit variations, directional sprites, animations, and export-ready sprite sheets from one place.",
+      "items": [
+        {
+          "title": "Generate Characters",
+          "description": "Create original 2D game characters with AI."
+        },
+        {
+          "title": "Edit Outfits",
+          "description": "Keep the same character and generate new outfit variations."
+        },
+        {
+          "title": "Multi-Direction Sprites",
+          "description": "Generate front, side, and back-facing character directions."
+        },
+        {
+          "title": "Generate Character Animations",
+          "description": "Turn characters into animated sprite actions."
+        },
+        {
+          "title": "Export Sprite Sheets",
+          "description": "Export organized sprite sheets for game development."
+        },
+        {
+          "title": "Free Sprite Tools",
+          "description": "Use Sprite Sheet Maker and Sprite Sheet Cutter for free."
+        }
+      ]
+    },
+    "features": {
+      "title": "From Character Idea to Export-Ready Sprite Sheet",
+      "description": "Follow a clear game-asset workflow with one AI Sprite Generator, from the first character prompt through variations, directions, animation frames, and export.",
+      "items": [
+        {
+          "title": "Create Game Characters with an AI Sprite Generator",
+          "description": "Start with a prompt and generate 2D game characters for your project. SpritePixel helps you create a consistent character style for your game world.",
+          "bullets": [
+            "Start from text prompts",
+            "Create original 2D characters",
+            "Designed for indie game projects"
+          ],
+          "image": "/imgs/cases/character-generation.webp",
+          "alt": "Pixel art character generation shown from settings to a finished fox mage sprite"
+        },
+        {
+          "title": "Generate Outfit Variations Without Redrawing the Character",
+          "description": "Keep the same character identity and create new costume or outfit variations with the AI Sprite Generator.",
+          "bullets": [
+            "Keep the same base character",
+            "Create multiple outfit styles",
+            "Useful for skins, classes, and NPC variants"
+          ],
+          "image": "/imgs/cases/outfit-variations.webp",
+          "alt": "The same pixel art fox mage wearing four different outfits"
+        },
+        {
+          "title": "Build Multi-Direction Character Sprites",
+          "description": "Generate consistent directional views for the same character, ready for top-down or RPG-style game workflows.",
+          "bullets": [
+            "Keep character identity consistent",
+            "Useful for RPG and top-down games",
+            "Great for movement-ready character sets"
+          ],
+          "image": "/imgs/cases/multi-direction-sprites.webp",
+          "alt": "One pixel art knight shown from front, right, back, and left views"
+        },
+        {
+          "title": "Turn Characters into Animated Sprite Actions",
+          "description": "Use the AI Sprite Generator to create movement or action-based frames from your character while keeping the visual style consistent.",
+          "bullets": [
+            "Generate animation frames",
+            "Keep style consistent",
+            "Export for your game workflow"
+          ],
+          "image": "/imgs/cases/animation-frames.webp",
+          "alt": "Eight sequential pixel art animation frames connected by a timeline"
+        },
+        {
+          "title": "Export Ready-to-Use Sprite Sheets",
+          "description": "Export your generated frames as organized sprite sheets for use in your game workflow.",
+          "bullets": [
+            "Organized sprite sheet output",
+            "Easier to use in development",
+            "Works with your asset pipeline"
+          ],
+          "image": "/imgs/cases/sprite-sheet-export.webp",
+          "alt": "A single pixel art character frame exported into an organized eight-frame sprite sheet"
+        }
+      ]
+    },
+    "tools": {
+      "title": "More Tools for Game Asset Creation",
+      "description": "Create game icons with AI, or use our free sprite sheet tools to build and manage your 2D game assets.",
+      "items": [
+        {
+          "title": "AI Game Icon Generator",
+          "description": "Generate game-ready icons for items, skills, weapons, resources, and inventory assets with AI.",
+          "badge": "AI Powered",
+          "cta": "Generate Game Icons",
+          "href": "/ai-game-icon-generator"
+        },
+        {
+          "title": "Free Sprite Sheet Maker",
+          "description": "Combine individual sprite frames into a clean sprite sheet directly in your browser.",
+          "badge": "Free Tool",
+          "cta": "Make a Sprite Sheet",
+          "href": "/sprite-sheet-maker"
+        },
+        {
+          "title": "Free Sprite Sheet Cutter",
+          "description": "Split an existing sprite sheet into individual animation frames in seconds.",
+          "badge": "Free Tool",
+          "cta": "Cut a Sprite Sheet",
+          "href": "/sprite-sheet-cutter"
+        }
+      ]
+    },
+    "projectTitle": "One AI Sprite Generator for a consistent game world.",
+    "projectDescription": "Create one project and define its visual direction once. The AI Sprite Generator then reuses that style, perspective and reference material across the same game world.",
+    "spriteTitle": "Create game-ready characters with an AI Sprite Generator.",
+    "spriteDescription": "Describe a character or upload a reference image. The AI character sprite generator applies your project style, perspective and resolution to create reusable sprite variations.",
+    "animateTitle": "Build playable animations with the AI Sprite Generator.",
+    "animateDescription": "Use the AI sprite sheet generator to produce idle, walk and attack animations, preview every frame, then export the finished animation.",
+    "batchEyebrow": "GENERATE SETS, NOT JUST IMAGES",
+    "batchTitle": "Generate an entire game icon set at once.",
+    "batchDescription": "Paste your item list or let AI suggest what your game needs. Generate matching weapons, potions, skills and inventory items in one shared style.",
+    "styleTitle": "Define the style once. Reuse it everywhere.",
+    "styleDescription": "SpritePixel remembers how your game should look — style, palette, perspective, sprite size and references are inherited across future generations.",
+    "vaultTitle": "Keep every game asset in one Vault.",
+    "vaultDescription": "Stop losing generated files across downloads and folders. Every approved asset is organized inside its project and ready for reuse, variation or export.",
+    "workflowTitle": "How the AI Sprite Generator Works",
+    "workflowDescription": "Move from a base character to variations, animation frames, and export in three straightforward steps.",
+    "workflowSteps": [
+      {
+        "title": "Create a Character",
+        "description": "Generate a base character with the AI Sprite Generator."
+      },
+      {
+        "title": "Add Variations or Animation",
+        "description": "Create outfit variations, directional views, or animation frames."
+      },
+      {
+        "title": "Export Your Sprite Sheet",
+        "description": "Export your sprite assets and use them in your workflow."
+      }
+    ],
+    "useCasesTitle": "Built for Indie Game Creators",
+    "useCasesDescription": "Create assets faster, keep a consistent visual style, and reduce repetitive sprite work across small game projects.",
+    "useCases": [
+      {
+        "title": "INDIE DEVELOPERS",
+        "description": "Build a consistent character and asset direction without a large art team."
+      },
+      {
+        "title": "RPG / TOP-DOWN PROJECTS",
+        "description": "Create directional characters, variations, animation frames, and game-ready sheets."
+      },
+      {
+        "title": "2D PROTOTYPE TEAMS",
+        "description": "Explore characters and motion quickly while keeping the visual language coherent."
+      },
+      {
+        "title": "GAME JAM CREATORS",
+        "description": "Move from idea to usable sprite assets with less manual production work."
+      }
+    ],
+    "toolsTitle": "Free sprite sheet tools for game development.",
+    "toolsDescription": "Use simple browser-based tools for common sprite tasks — no credits required.",
+    "makerTitle": "Sprite Sheet Maker",
+    "makerDescription": "Pack animation frames into a sprite sheet in your browser.",
+    "splitterTitle": "Sprite Sheet Cutter",
+    "summary": {
+      "eyebrow": "ONE CONNECTED WORKFLOW",
+      "title": "One AI Sprite Generator, from Character to Sprite Sheet",
+      "description": "SpritePixel helps you generate characters, create outfit variations, build directional sprites, generate animations, and export sprite sheets in one workflow.",
+      "cta": "Try AI Sprite Generator"
+    },
+    "pricingTitle": "Simple Pricing for AI Sprite Generator Workflows",
+    "pricingNote": "Credits are used for AI generation features. Sprite Sheet Maker and Sprite Sheet Cutter remain free to use in your browser.",
+    "faqTitle": "AI Sprite Generator FAQ",
+    "faqDescription": "Answers about character variations, directional sprites, animation frames, exports, credits, and usage rights.",
+    "faq": [
+      {
+        "question": "What can this AI Sprite Generator create?",
+        "answer": "SpritePixel can create original 2D characters, outfit variations, directional character views, animation frames, export-ready sprite sheets, and matching game icon sets. The available controls depend on the asset workflow you choose."
+      },
+      {
+        "question": "Can I create outfit variations of the same character?",
+        "answer": "Yes. Start from the same base character or reference and create costume variations for skins, classes, or NPC versions while preserving the character's core identity as closely as the generation allows."
+      },
+      {
+        "question": "Can I generate multi-direction sprites?",
+        "answer": "Yes. You can create consistent directional views of a character for RPG and top-down workflows, including front, side, and back-facing outputs according to the selected direction settings."
+      },
+      {
+        "question": "Can I generate animated sprite frames?",
+        "answer": "Yes. The AI Sprite Generator can create movement or action-based frame sequences from a character. You can preview the result and continue to the animation editor before downloading."
+      },
+      {
+        "question": "Can I export sprite sheets?",
+        "answer": "Yes. Generated frames can be organized and downloaded as sprite sheets or frame sequences for use in your development workflow. Downloads and exports do not consume generation credits."
+      },
+      {
+        "question": "Are Sprite Sheet Maker and Sprite Sheet Cutter free?",
+        "answer": "Yes. Both tools run in the browser and can be used without generation credits. The AI Game Icon Generator is an AI-powered generation feature and uses credits."
+      },
+      {
+        "question": "Who is SpritePixel for?",
+        "answer": "SpritePixel is designed for indie developers, 2D game creators, RPG and top-down projects, prototype teams, and game jam creators who need usable assets without a large art pipeline."
+      },
+      {
+        "question": "Can I use the generated sprites in my game project?",
+        "answer": "Yes, subject to the SpritePixel Terms and the rights of any reference material you upload. You are responsible for ensuring that your prompts and uploaded assets do not infringe third-party rights."
+      }
+    ],
+    "assetSystem": "ASSET SYSTEM",
+    "forgeCanvas": {
+      "phaseLabels": [
+        "PROJECT CONTEXT",
+        "BATCH GENERATE",
+        "PLAY TEST",
+        "SAVE TO VAULT"
+      ],
+      "projectLabel": "PROJECT_01 / RACCOON FORGE",
+      "savedLabel": "STYLE LOCKED · 4 ASSETS SAVED",
+      "footerStatuses": [
+        "READING PROJECT STYLE",
+        "GENERATING MATCHED SET",
+        "EQUIP + ATTACK TEST",
+        "SAVING TO ASSET VAULT"
+      ],
+      "loadError": "ANIMATION ASSETS FAILED TO LOAD · REFRESH TO RETRY",
+      "ariaLabel": "Looping animation of a raccoon reading project style, generating a matching asset set, testing an attack and saving everything to the Asset Vault"
+    },
+    "demo": {
+      "assetPlaceholder": "Asset placeholder {number}",
+      "activeProject": "ACTIVE PROJECT",
+      "projectName": "TINY DUNGEON",
+      "projectGenre": "Roguelike RPG",
+      "projectRules": [
+        { "label": "STYLE", "value": "Pixel Art" },
+        { "label": "VIEW", "value": "Top-down" },
+        { "label": "SIZE", "value": "64 × 64" },
+        { "label": "PALETTE", "value": "Dark Fantasy" }
+      ],
+      "assetNames": ["KNIGHT", "SWORD", "POTION", "SKILL", "SHIELD", "KEY"],
+      "metrics": [
+        { "label": "Characters", "value": "06" },
+        { "label": "Animations", "value": "12" },
+        { "label": "Items", "value": "34" },
+        { "label": "Skills", "value": "16" }
+      ],
+      "generatorCharacter": "GENERATOR / CHARACTER",
+      "promptLabel": "PROMPT",
+      "spritePrompt": "A tiny dungeon knight carrying a round shield",
+      "styleLabel": "STYLE",
+      "perspectiveLabel": "PERSPECTIVE",
+      "pixelArt": "Pixel Art",
+      "topDown": "Top-down",
+      "animationPreview": "ANIMATION PREVIEW",
+      "actions": ["IDLE", "WALK", "ATTACK"],
+      "loopOn": "LOOP ON",
+      "pngSpriteSheet": "PNG SPRITE SHEET",
+      "assetList": "ASSET LIST",
+      "selectedCount": "8 / 8 SELECTED",
+      "iconItems": [
+        "Iron Sword",
+        "Golden Sword",
+        "Wood Shield",
+        "Health Potion",
+        "Mana Potion",
+        "Magic Ring",
+        "Silver Key",
+        "Blue Gem"
+      ],
+      "contextRules": [
+        { "label": "STYLE", "value": "Pixel Art" },
+        { "label": "PALETTE", "value": "Dark Fantasy" },
+        { "label": "PERSPECTIVE", "value": "Top-down" },
+        { "label": "OUTLINE", "value": "Dark / 1px" },
+        { "label": "SIZE", "value": "64 × 64" },
+        { "label": "REFERENCES", "value": "03 files" }
+      ],
+      "vaultName": "TINY DUNGEON / VAULT",
+      "vaultCategories": [
+        "ALL 68",
+        "CHARACTERS 06",
+        "ANIMATIONS 12",
+        "ITEMS 34",
+        "SKILLS 16"
+      ]
+    },
+    "finalTitle": "Build Your Game Characters with an AI Sprite Generator",
+    "finalDescription": "Create a character, add variations or animation, and export a sprite sheet for your next 2D game project.",
+    "createProject": "Try AI Sprite Generator",
+    "freeToolsCta": "Use Free Sprite Tools"
   }
 }

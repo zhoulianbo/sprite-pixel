@@ -553,7 +553,7 @@ export function ImageUploader({
             <div className="relative overflow-hidden rounded-lg">
               <button
                 type="button"
-                className="flex h-32 w-32 flex-col items-center justify-center gap-2"
+                className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-lg"
                 onClick={openFilePicker}
               >
                 <div className="border-border flex h-10 w-10 items-center justify-center rounded-full border border-dashed">

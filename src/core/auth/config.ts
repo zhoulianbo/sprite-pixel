@@ -14,6 +14,7 @@ import {
 import { getUuid } from '@/shared/lib/hash';
 import { getClientIp } from '@/shared/lib/ip';
 import { grantCreditsForNewUser } from '@/shared/models/credit';
+import { ensureDefaultProject } from '@/shared/models/project';
 import { getEmailService } from '@/shared/services/email';
 import { grantRoleForNewUser } from '@/shared/services/rbac';
 
@@ -145,11 +146,12 @@ export async function getAuthOptions(configs: Record<string, string>) {
             return user;
           },
           after: async (user: any) => {
-            try {
-              if (!user.id) {
-                throw new Error('user id is required');
-              }
+            if (!user.id) {
+              console.warn('new user provisioning skipped: user id is missing');
+              return;
+            }
 
+            try {
               // grant credits for new user
               await grantCreditsForNewUser(user);
 
@@ -157,6 +159,14 @@ export async function getAuthOptions(configs: Record<string, string>) {
               await grantRoleForNewUser(user);
             } catch (e) {
               console.log('grant credits or role for new user failed', e);
+            }
+
+            try {
+              await ensureDefaultProject(user.id);
+            } catch {
+              // Account creation must remain available. Home/dashboard repairs
+              // a missing project through the same idempotent helper.
+              console.warn('default project provisioning will be retried');
             }
           },
         },

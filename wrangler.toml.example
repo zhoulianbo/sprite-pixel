@@ -39,6 +39,10 @@ database_name = ""
 database_id = ""
 migrations_dir = "src/config/db/migrations_d1"
 
+[[kv_namespaces]]
+binding = "CONFIG_CACHE"
+id = ""
+
 [[hyperdrive]]
 binding = "HYPERDRIVE"
 id = ""
@@ -56,7 +60,7 @@ NEXT_PUBLIC_APP_NAME = "Your App Name"
 NEXT_PUBLIC_THEME = "default"
 
 # appearance
-NEXT_PUBLIC_APPEARANCE = "system"
+NEXT_PUBLIC_APPEARANCE = "dark"
 
 # database
 DATABASE_PROVIDER = "postgresql"

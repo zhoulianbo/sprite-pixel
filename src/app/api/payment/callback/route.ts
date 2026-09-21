@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 import { envConfigs } from '@/config';
-import { PaymentType } from '@/extensions/payment/types';
+import { PaymentStatus, PaymentType } from '@/extensions/payment/types';
 import { findOrderByOrderNo } from '@/shared/models/order';
 import { getUserInfo } from '@/shared/models/user';
 import {
@@ -56,10 +56,12 @@ export async function GET(req: Request) {
 
     // console.log('callback payment session', session);
 
-    await handleCheckoutSuccess({
-      order,
-      session,
-    });
+    if (session.paymentStatus !== PaymentStatus.PROCESSING) {
+      await handleCheckoutSuccess({
+        order,
+        session,
+      });
+    }
 
     redirectUrl =
       order.callbackUrl ||

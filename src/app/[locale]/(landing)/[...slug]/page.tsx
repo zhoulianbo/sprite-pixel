@@ -3,7 +3,13 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
 import { envConfigs } from '@/config';
+import { noIndexRobots } from '@/shared/lib/seo';
 import { getLocalPage } from '@/shared/models/post';
+
+const INDEXABLE_STATIC_PAGES = new Set([
+  'privacy-policy',
+  'terms-of-service',
+]);
 
 export const revalidate = 3600;
 
@@ -53,6 +59,9 @@ export async function generateMetadata({
     return {
       title,
       description,
+      robots: INDEXABLE_STATIC_PAGES.has(staticPageSlug)
+        ? { index: true, follow: true }
+        : noIndexRobots,
       alternates: {
         canonical: canonicalUrl,
       },
@@ -77,6 +86,7 @@ export async function generateMetadata({
     return {
       title,
       description,
+      robots: noIndexRobots,
       alternates: {
         canonical: canonicalUrl,
       },
@@ -95,6 +105,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    robots: noIndexRobots,
     alternates: {
       canonical: canonicalUrl,
     },

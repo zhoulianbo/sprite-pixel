@@ -1,0 +1,45 @@
+User-agent: *
+Allow: /
+
+# Private app surfaces
+Disallow: /admin
+Disallow: /*/admin
+Disallow: /dashboard
+Disallow: /*/dashboard
+Disallow: /settings
+Disallow: /*/settings
+Disallow: /activity
+Disallow: /*/activity
+Disallow: /chat
+Disallow: /*/chat
+Disallow: /editor
+Disallow: /*/editor
+Disallow: /sign-in
+Disallow: /*/sign-in
+Disallow: /sign-up
+Disallow: /*/sign-up
+Disallow: /verify-email
+Disallow: /*/verify-email
+Disallow: /no-permission
+Disallow: /*/no-permission
+Disallow: /auth-popup
+Disallow: /*/auth-popup
+Disallow: /auth-callback
+Disallow: /*/auth-callback
+Disallow: /api/
+
+# Unpublished or placeholder public routes
+Disallow: /docs
+Disallow: /*/docs
+Disallow: /blog
+Disallow: /*/blog
+Disallow: /showcases
+Disallow: /*/showcases
+Disallow: /updates
+Disallow: /*/updates
+Disallow: /logs
+Disallow: /*/logs
+
+Disallow: /*?*q=
+
+Sitemap: https://spritepixel.com/sitemap.xml

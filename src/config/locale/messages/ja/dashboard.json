@@ -1,0 +1,36 @@
+{
+  "title": "マイプロジェクト",
+  "description": "アカウントの利用状況とアクティビティをすばやく確認できます。",
+  "summaries": {
+    "label": "アカウント概要",
+    "credits": {
+      "title": "利用可能なクレジット",
+      "description": "すぐに使えるクレジット"
+    },
+    "api_keys": {
+      "title": "有効な API キー",
+      "description": "現在有効なキー"
+    },
+    "payments": {
+      "title": "完了した支払い",
+      "description": "すべての購入履歴"
+    },
+    "subscriptions": {
+      "title": "サブスクリプション",
+      "description": "すべてのサブスクリプション記録"
+    }
+  },
+  "recent": {
+    "title": "最近の支払い",
+    "description": "最新の完了した取引です。",
+    "empty": "完了した支払いはまだありません。",
+    "columns": {
+      "order_no": "注文番号",
+      "product": "商品",
+      "status": "ステータス",
+      "type": "種類",
+      "amount": "金額",
+      "created_at": "作成日時"
+    }
+  }
+}

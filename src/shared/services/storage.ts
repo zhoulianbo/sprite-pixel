@@ -67,3 +67,13 @@ export async function getStorageService(
 
   return storageService;
 }
+
+export async function getAssetPublicUrlResolver() {
+  try {
+    const storage = await getStorageService();
+    return (storageKey?: string | null) =>
+      storageKey ? storage.getPublicUrl({ key: storageKey }) || '' : '';
+  } catch {
+    return (_storageKey?: string | null) => '';
+  }
+}

@@ -6,6 +6,7 @@
     "basic_payment": "基础支付",
     "stripe": "Stripe",
     "creem": "Creem",
+    "waffo": "Waffo",
     "paypal": "Paypal",
     "resend": "Resend",
     "r2": "Cloudflare R2",

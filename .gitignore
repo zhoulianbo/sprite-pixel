@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# SEO skill cache
+.seo-cache/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -60,6 +63,9 @@ src/config/db/migrations*
 .test
 
 *.sql
+# D1 migrations are part of the deployable SpritePixel database contract.
+!src/config/db/migrations_d1/
+!src/config/db/migrations_d1/**
 .source
 
 .chats

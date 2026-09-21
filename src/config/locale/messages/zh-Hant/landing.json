@@ -1,0 +1,77 @@
+{
+  "header": {
+    "nav": {
+      "items": [
+        { "title": "首頁", "url": "/" },
+        { "title": "功能", "url": "/#features" },
+        {
+          "title": "工具",
+          "children": [
+            {
+              "title": "AI 遊戲圖示產生器",
+              "url": "/ai-game-icon-generator",
+              "icon": "Layers",
+              "description": "批次產生風格一致的遊戲圖示組"
+            },
+            {
+              "title": "Sprite Sheet 製作工具",
+              "url": "/sprite-sheet-maker",
+              "icon": "Grid2X2",
+              "description": "在瀏覽器中整理並輸出 Sprite Sheet"
+            },
+            {
+              "title": "Sprite Sheet 分割工具",
+              "url": "/sprite-sheet-cutter",
+              "icon": "Scissors",
+              "description": "將 Sprite Sheet 分割為獨立影格"
+            }
+          ]
+        },
+        { "title": "作品展示", "url": "/gallery" },
+        { "title": "價格", "url": "/pricing" }
+      ]
+    },
+    "user_nav": {
+      "items": [
+        { "title": "工作區", "url": "/dashboard", "icon": "LayoutDashboard" }
+      ]
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "為獨立遊戲開發者打造、以專案為核心的 AI 遊戲素材工作室，用來建立風格一致的精靈、動畫與配套素材組。"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "產品",
+          "children": [
+            { "title": "AI 精靈圖產生器", "url": "/#hero" },
+            { "title": "AI 遊戲圖示產生器", "url": "/ai-game-icon-generator" },
+            { "title": "價格", "url": "/#pricing" }
+          ]
+        },
+        {
+          "title": "免費工具",
+          "children": [
+            { "title": "Sprite Sheet 製作工具", "url": "/sprite-sheet-maker" },
+            { "title": "Sprite Sheet 分割工具", "url": "/sprite-sheet-cutter" }
+          ]
+        },
+        {
+          "title": "公司",
+          "children": [
+            { "title": "聯絡我們", "url": "mailto:support@spritepixel.com" }
+          ]
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        { "title": "隱私權", "url": "/privacy-policy" },
+        { "title": "服務條款", "url": "/terms-of-service" }
+      ]
+    },
+    "copyright": "© 2026 SpritePixel。為獨立遊戲開發者打造。"
+  }
+}

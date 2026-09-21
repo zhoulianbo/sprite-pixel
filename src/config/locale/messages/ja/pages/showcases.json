@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "title": "ショーケース",
+    "description": "SpritePixel で作られた優れたプロジェクト"
+  },
+  "page": {
+    "title": "ショーケース",
+    "sections": {
+      "showcases": {
+        "id": "showcases",
+        "title": "SpritePixel で構築された AI SaaS スタートアップ",
+        "description": "使いやすく、すばやく公開できます。",
+        "groups": [
+          {
+            "name": "all",
+            "title": "すべて"
+          },
+          {
+            "name": "ai-chatbot",
+            "title": "AI チャットボット"
+          },
+          {
+            "name": "ai-image",
+            "title": "AI 画像"
+          },
+          {
+            "name": "ai-video",
+            "title": "AI 動画"
+          },
+          {
+            "name": "ai-audio",
+            "title": "AI 音声"
+          },
+          {
+            "name": "ai-music",
+            "title": "AI 音楽"
+          },
+          {
+            "name": "ai-coding",
+            "title": "AI コーディング"
+          },
+          {
+            "name": "other",
+            "title": "その他"
+          }
+        ],
+        "items": [
+          {
+            "title": "ThinkAny",
+            "description": "AI 検索エンジン",
+            "url": "https://thinkany.ai",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-chatbot"
+          },
+          {
+            "title": "HeyBeauty",
+            "description": "AI バーチャル試着",
+            "url": "https://heybeauty.ai",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-image"
+          },
+          {
+            "title": "AI Wallpaper",
+            "description": "AI 壁紙ジェネレーター",
+            "url": "https://aiwallpaper.shop",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-image"
+          },
+          {
+            "title": "AI Cover",
+            "description": "AI カバージェネレーター",
+            "url": "https://aicover.design",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-image"
+          },
+          {
+            "title": "GPTs Works",
+            "description": "GPTs ディレクトリ",
+            "url": "https://gpts.works",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "other"
+          },
+          {
+            "title": "Melodisco",
+            "description": "AI ミュージックプレーヤー",
+            "url": "https://melodis.co",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-music"
+          },
+          {
+            "title": "Pagen",
+            "description": "AI ランディングページジェネレーター",
+            "url": "https://pagen.so",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-coding"
+          },
+          {
+            "title": "SoraFM",
+            "description": "AI 動画ジェネレーター",
+            "url": "https://sorafm.trys.ai",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-video"
+          },
+          {
+            "title": "PodLM",
+            "description": "AI ポッドキャストジェネレーター",
+            "url": "https://podlm.ai",
+            "target": "_blank",
+            "image": {
+              "src": "/imgs/placeholder.svg",
+              "alt": "ショーケース"
+            },
+            "group": "ai-audio"
+          }
+        ]
+      }
+    }
+  }
+}

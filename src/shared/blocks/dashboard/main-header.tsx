@@ -31,7 +31,9 @@ export function MainHeader({
     <div className="flex flex-col">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex flex-col gap-2">
-          <h2 className="text-2xl font-bold tracking-tight">{title || ''}</h2>
+          <h2 className="text-foreground text-2xl font-bold tracking-tight">
+            {title || ''}
+          </h2>
           <p className="text-muted-foreground">{description || ''}</p>
         </div>
         <div>

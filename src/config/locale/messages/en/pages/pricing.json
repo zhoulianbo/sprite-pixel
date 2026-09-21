@@ -1,333 +1,419 @@
 {
   "metadata": {
-    "title": "Pricing",
-    "description": "Start with a plan"
+    "title": "AI Sprite Generator Pricing, Plans & Credits | SpritePixel",
+    "description": "Compare SpritePixel AI Sprite Generator pricing, monthly plans and credit packs for creating game sprites, sprite sheets, icons and private project assets."
   },
   "page": {
-    "title": "ShipAny Pricing",
+    "title": "AI Sprite Generator Pricing & Plans",
     "sections": {
       "pricing": {
         "id": "pricing",
-        "title": "Pricing",
-        "description": "Get all features of ShipAny, Ship your AI SaaS startups fast.",
+        "title": "AI Sprite Generator Pricing & Plans",
+        "description": "Choose a plan or credit pack for creating character sprites, animation sheets and matching game icons. Start free, then upgrade for private assets, more projects or a faster generation queue.",
+        "packs_title": "Need Extra Credits?",
+        "packs_description": "No subscription required. Buy credits whenever you need extra generations. Credit packs only add credits and do not unlock subscriber benefits.",
         "groups": [
           {
-            "name": "one-time",
-            "title": "Pay as you go"
-          },
-          {
             "name": "monthly",
-            "title": "Monthly",
-            "is_featured": true,
-            "label": "save 15%"
+            "title": "Monthly"
           },
           {
             "name": "yearly",
-            "title": "Annually"
+            "title": "Annually",
+            "is_featured": true,
+            "label": "Save up to 35%"
+          },
+          {
+            "name": "one-time",
+            "title": "Pay as you go"
           }
         ],
         "items": [
           {
-            "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
+            "title": "Free",
+            "description": "10 Credits / month",
             "features_title": "Includes",
             "features": [
-              "100 credits, valid for 1 month",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
+              "10 Credits each month",
+              "1 project",
+              "Public assets by default",
+              "Downloads and exports",
+              "Standard generation queue"
             ],
-            "interval": "one-time",
-            "amount": 9900,
+            "interval": "month",
+            "amount": 0,
             "currency": "USD",
-            "price": "$99",
-            "original_price": "$199",
+            "price": "$0",
             "unit": "",
             "is_featured": false,
-            "tip": "Pay once. Build unlimited projects!",
+            "tip": "Start generating with a free monthly allowance.",
             "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "Get started",
+              "url": "/sign-up"
             },
-            "product_id": "starter",
-            "product_name": "ShipAny Boilerplate Starter",
-            "credits": 100,
+            "product_id": "free-monthly",
+            "product_name": "SpritePixel Free",
+            "credits": 10,
             "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "Free"
+          },
+          {
+            "title": "Indie",
+            "description": "120 Credits / month",
+            "label": "Most Popular",
+            "features_title": "Includes",
+            "features": [
+              "120 Credits each month",
+              "10 projects",
+              "Private assets by default",
+              "Commercial use",
+              "Daily free credits",
+              "Email support",
+              "Downloads and exports",
+              "Standard generation queue"
+            ],
+            "interval": "month",
+            "amount": 1200,
+            "currency": "USD",
+            "price": "$12",
+            "unit": "/ mo",
+            "is_featured": true,
+            "tip": "Best for ongoing indie production.",
+            "button": {
+              "title": "Subscribe",
+              "url": "/pricing"
+            },
+            "product_id": "indie-monthly",
+            "product_name": "SpritePixel Indie Monthly",
+            "credits": 120,
+            "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "Indie"
+          },
+          {
+            "title": "Pro",
+            "description": "260 Credits / month",
+            "features_title": "Includes",
+            "features": [
+              "260 Credits each month",
+              "Unlimited projects",
+              "Private assets by default",
+              "Commercial use",
+              "Daily free credits",
+              "Email support",
+              "Downloads and exports",
+              "Priority generation queue"
+            ],
+            "interval": "month",
+            "amount": 2400,
+            "currency": "USD",
+            "price": "$24",
+            "unit": "/ mo",
+            "is_featured": false,
+            "tip": "More credits and a faster queue.",
+            "button": {
+              "title": "Subscribe",
+              "url": "/pricing"
+            },
+            "product_id": "pro-monthly",
+            "product_name": "SpritePixel Pro Monthly",
+            "credits": 260,
+            "valid_days": 30,
+            "group": "monthly",
+            "plan_name": "Pro"
+          },
+          {
+            "title": "Free",
+            "description": "10 Credits / month",
+            "features_title": "Includes",
+            "features": [
+              "10 Credits each month",
+              "1 project",
+              "Public assets by default",
+              "Downloads and exports",
+              "Standard generation queue"
+            ],
+            "interval": "year",
+            "amount": 0,
+            "currency": "USD",
+            "price": "$0",
+            "unit": "",
+            "is_featured": false,
+            "tip": "Start generating with a free monthly allowance.",
+            "button": {
+              "title": "Get started",
+              "url": "/sign-up"
+            },
+            "product_id": "free-yearly",
+            "product_name": "SpritePixel Free",
+            "credits": 10,
+            "valid_days": 30,
+            "group": "yearly",
+            "plan_name": "Free"
+          },
+          {
+            "title": "Indie",
+            "description": "1,440 Credits added upfront",
+            "label": "Most Popular",
+            "features_title": "Includes",
+            "features": [
+              "1,440 Credits added immediately",
+              "Valid for the full subscription year",
+              "10 projects",
+              "Private assets by default",
+              "Commercial use",
+              "Daily free credits",
+              "Email support",
+              "Downloads and exports",
+              "Standard generation queue"
+            ],
+            "interval": "year",
+            "amount": 10000,
+            "currency": "USD",
+            "price": "$100",
+            "original_price": "$144",
+            "unit": "/ year",
+            "is_featured": true,
+            "tip": "Save about 30% versus paying monthly.",
+            "button": {
+              "title": "Subscribe",
+              "url": "/pricing"
+            },
+            "product_id": "indie-yearly",
+            "product_name": "SpritePixel Indie Yearly",
+            "credits": 1440,
+            "valid_days": 365,
+            "group": "yearly",
+            "plan_name": "Indie"
+          },
+          {
+            "title": "Pro",
+            "description": "3,120 Credits added upfront",
+            "features_title": "Includes",
+            "features": [
+              "3,120 Credits added immediately",
+              "Valid for the full subscription year",
+              "Unlimited projects",
+              "Private assets by default",
+              "Commercial use",
+              "Daily free credits",
+              "Email support",
+              "Downloads and exports",
+              "Priority generation queue"
+            ],
+            "interval": "year",
+            "amount": 18800,
+            "currency": "USD",
+            "price": "$188",
+            "original_price": "$288",
+            "unit": "/ year",
+            "is_featured": false,
+            "tip": "Save about 35% versus paying monthly.",
+            "button": {
+              "title": "Subscribe",
+              "url": "/pricing"
+            },
+            "product_id": "pro-yearly",
+            "product_name": "SpritePixel Pro Yearly",
+            "credits": 3120,
+            "valid_days": 365,
+            "group": "yearly",
+            "plan_name": "Pro"
+          },
+          {
+            "title": "Quick Pack",
+            "description": "40 Credits",
+            "features_title": "Includes",
+            "features": [
+              "40 Credits",
+              "Expires after 7 days",
+              "Credits only — no subscriber benefits",
+              "Assets stay public on Free accounts"
+            ],
+            "interval": "one-time",
+            "amount": 499,
+            "currency": "USD",
+            "price": "$4.99",
+            "unit": "",
+            "is_featured": false,
+            "tip": "First try or a short project.",
+            "button": {
+              "title": "Buy credits",
+              "url": "/pricing"
+            },
+            "product_id": "pack-quick",
+            "product_name": "SpritePixel Quick Pack",
+            "credits": 40,
+            "valid_days": 7,
             "group": "one-time"
           },
           {
-            "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
-            "label": "Popular",
-            "features_title": "Everything in Starter, plus",
+            "title": "Flex Pack",
+            "description": "150 Credits",
+            "features_title": "Includes",
             "features": [
-              "200 credits, valid for 3 month",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
+              "150 Credits",
+              "Expires after 1 year",
+              "Credits only — no subscriber benefits",
+              "Assets stay public on Free accounts"
             ],
             "interval": "one-time",
-            "amount": 19900,
+            "amount": 1599,
             "currency": "USD",
-            "price": "$199",
-            "original_price": "$299",
-            "unit": "",
-            "is_featured": true,
-            "tip": "Pay once. Build unlimited projects!",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard",
-            "product_name": "ShipAny Boilerplate Standard",
-            "credits": 200,
-            "valid_days": 90,
-            "group": "one-time"
-          },
-          {
-            "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
-            "features_title": "Everything in Standard, plus",
-            "features": [
-              "300 credits, valid for 1 year",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
-            ],
-            "interval": "one-time",
-            "amount": 29900,
-            "currency": "USD",
-            "price": "$299",
-            "original_price": "$399",
+            "price": "$15.99",
             "unit": "",
             "is_featured": false,
-            "tip": "Pay once. Build unlimited projects!",
+            "tip": "A mid-size one-off project.",
             "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "Buy credits",
+              "url": "/pricing"
             },
-            "product_id": "premium",
-            "product_name": "ShipAny Boilerplate Premium",
-            "credits": 300,
+            "product_id": "pack-flex",
+            "product_name": "SpritePixel Flex Pack",
+            "credits": 150,
             "valid_days": 365,
             "group": "one-time"
           },
           {
-            "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
+            "title": "Power Pack",
+            "description": "320 Credits",
             "features_title": "Includes",
             "features": [
-              "100 credits, valid for 1 month",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
+              "320 Credits",
+              "Expires after 1 year",
+              "Credits only — no subscriber benefits",
+              "Assets stay public on Free accounts"
             ],
-            "interval": "month",
-            "amount": 8900,
+            "interval": "one-time",
+            "amount": 2999,
             "currency": "USD",
-            "price": "$89",
-            "original_price": "$99",
-            "unit": "/ month",
+            "price": "$29.99",
+            "unit": "",
             "is_featured": false,
-            "tip": "Pay monthly. Build unlimited projects!",
+            "tip": "A larger one-off project.",
             "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
+              "title": "Buy credits",
+              "url": "/pricing"
             },
-            "product_id": "starter-monthly",
-            "product_name": "ShipAny Boilerplate Starter Monthly",
-            "credits": 100,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "Starter"
-          },
-          {
-            "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
-            "label": "Popular",
-            "features_title": "Everything in Starter, plus",
-            "features": [
-              "200 credits, valid for 1 month",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
-            ],
-            "interval": "month",
-            "amount": 16900,
-            "currency": "USD",
-            "price": "$169",
-            "original_price": "$199",
-            "unit": "/ month",
-            "is_featured": true,
-            "tip": "Pay monthly. Ship Fast with your SaaS Startups.",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard-monthly",
-            "product_name": "ShipAny Boilerplate Standard Monthly",
-            "credits": 200,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "Standard"
-          },
-          {
-            "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
-            "features_title": "Everything in Standard, plus",
-            "features": [
-              "300 credits, valid for 1 month",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
-            ],
-            "interval": "month",
-            "amount": 24900,
-            "currency": "USD",
-            "price": "$249",
-            "original_price": "$299",
-            "unit": "/ month",
-            "is_featured": false,
-            "tip": "Pay monthly. Ship Any AI SaaS Startups.",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "premium-monthly",
-            "product_name": "ShipAny Boilerplate Premium Monthly",
-            "credits": 300,
-            "valid_days": 30,
-            "group": "monthly",
-            "plan_name": "Premium"
-          },
-          {
-            "title": "Starter",
-            "description": "Get started with your first SaaS startup.",
-            "features_title": "Includes",
-            "features": [
-              "100 credits, valid for 1 year",
-              "NextJS boilerplate",
-              "SEO-friendly structure",
-              "Payment with Stripe",
-              "Data storage with Supabase",
-              "Google Oauth & One-Tap Login",
-              "i18n support"
-            ],
-            "interval": "year",
-            "amount": 82800,
-            "currency": "USD",
-            "price": "$69",
-            "original_price": "$89",
-            "unit": "/ month",
-            "is_featured": false,
-            "tip": "Pay annually. Build unlimited projects!",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "starter-yearly",
-            "product_name": "ShipAny Boilerplate Starter Annually",
-            "credits": 1200,
+            "product_id": "pack-power",
+            "product_name": "SpritePixel Power Pack",
+            "credits": 320,
             "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "Starter"
-          },
-          {
-            "title": "Standard",
-            "description": "Ship Fast with your SaaS Startups.",
-            "label": "Popular",
-            "features_title": "Everything in Starter, plus",
-            "features": [
-              "200 credits, valid for 1 year",
-              "Deploy with Vercel or Cloudflare",
-              "Generation of Privacy & Terms",
-              "Google Analytics Integration",
-              "Google Search Console Integration",
-              "Discord community",
-              "Technical support for your first ship",
-              "Lifetime updates"
-            ],
-            "interval": "year",
-            "amount": 154800,
-            "currency": "USD",
-            "price": "$129",
-            "original_price": "$169",
-            "unit": "/ month",
-            "is_featured": true,
-            "tip": "Pay annually. Ship Fast with your SaaS Startups.",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "standard-yearly",
-            "product_name": "ShipAny Boilerplate Standard Annually",
-            "credits": 2400,
-            "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "Standard"
-          },
-          {
-            "title": "Premium",
-            "description": "Ship Any AI SaaS Startups.",
-            "features_title": "Everything in Standard, plus",
-            "features": [
-              "300 credits, valid for 1 year",
-              "Business Functions with AI",
-              "User Center",
-              "Credits System",
-              "API Sales for your SaaS",
-              "Admin System",
-              "Priority Technical Support"
-            ],
-            "interval": "year",
-            "amount": 226800,
-            "currency": "USD",
-            "price": "$189",
-            "original_price": "$249",
-            "unit": "/ month",
-            "is_featured": false,
-            "tip": "Pay annually. Ship Any AI SaaS Startups.",
-            "button": {
-              "title": "Get ShipAny",
-              "url": "/#pricing",
-              "icon": "RiFlashlightFill"
-            },
-            "product_id": "premium-yearly",
-            "product_name": "ShipAny Boilerplate Premium Annually",
-            "credits": 3600,
-            "valid_days": 365,
-            "group": "yearly",
-            "plan_name": "Premium"
+            "group": "one-time"
           }
-        ]
+        ],
+        "compare": {
+          "badge": "Plan comparison",
+          "title": "What each plan unlocks",
+          "description": "Use this table to decide whether you only need a trial, a daily production plan, or higher frequency and larger batches.",
+          "feature_label": "Feature",
+          "columns": [
+            { "title": "Free" },
+            { "title": "Indie", "label": "Popular", "featured": true },
+            { "title": "Pro", "label": "Best value" }
+          ],
+          "rows": [
+            {
+              "key": "credits",
+              "label": "Credits",
+              "values": [
+                "10 / mo",
+                "120 / mo or 1,440 / yr",
+                "260 / mo or 3,120 / yr"
+              ]
+            },
+            {
+              "key": "privacy",
+              "label": "Asset Privacy",
+              "highlight": true,
+              "values": [
+                "Public by default",
+                "Private by default",
+                "Private by default"
+              ]
+            },
+            {
+              "key": "projects",
+              "label": "Projects",
+              "values": ["1", "10", "Unlimited"]
+            },
+            {
+              "key": "commercial",
+              "label": "Commercial Use",
+              "kind": "boolean",
+              "values": ["—", "Yes", "Yes"]
+            },
+            {
+              "key": "download",
+              "label": "Downloads",
+              "kind": "boolean",
+              "values": ["Yes", "Yes", "Yes"]
+            },
+            {
+              "key": "daily_credits",
+              "label": "Daily free credits",
+              "kind": "boolean",
+              "values": ["—", "Yes", "Yes"]
+            },
+            {
+              "key": "email_support",
+              "label": "Email support",
+              "kind": "boolean",
+              "values": ["—", "Yes", "Yes"]
+            },
+            {
+              "key": "priority",
+              "label": "Queue Priority",
+              "values": ["Standard", "Standard", "Priority"]
+            }
+          ]
+        },
+        "credits_guide": {
+          "badge": "Credit usage",
+          "title": "Credit cost for common outputs",
+          "description": "2 Credits generate one standard 1K image. A batch of up to 9 game icons costs 3 Credits.",
+          "rows": [
+            { "action": "Standard image generation", "cost": "2" },
+            { "action": "One action sprite sheet", "cost": "3" },
+            { "action": "Batch game icons", "cost": "3" },
+            { "action": "Single icon regeneration", "cost": "1" },
+            { "action": "Background removal / auto slice", "cost": "Free" },
+            { "action": "Resize / sprite sheet packing", "cost": "Free" },
+            { "action": "ZIP / PNG / JSON export", "cost": "Free" }
+          ]
+        },
+        "rules": {
+          "badge": "How it works",
+          "title": "How credits and access work",
+          "description": "Pricing combines subscription access with one-time credit packs. These are the rules that matter most before you buy.",
+          "items": [
+            {
+              "title": "Monthly plans",
+              "description": "Credits refresh each billing cycle and unused subscription credits do not roll over."
+            },
+            {
+              "title": "Annual plans",
+              "description": "All annual Credits are added immediately and remain valid for the full subscription year."
+            },
+            {
+              "title": "Credit packs",
+              "description": "Quick Pack expires after 7 days. Flex and Power Packs expire after 1 year."
+            },
+            {
+              "title": "Credit usage order",
+              "description": "Credits that expire soonest are consumed first."
+            },
+            {
+              "title": "Cancellation",
+              "description": "Subscriptions can be canceled anytime. Current benefits remain active until the end of the paid billing period."
+            },
+            {
+              "title": "Privacy",
+              "description": "Assets created under an active Indie or Pro subscription are private by default. Free and credit-pack-only accounts create public assets by default."
+            }
+          ]
+        }
       }
     }
   },

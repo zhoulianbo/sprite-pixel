@@ -1,9 +1,15 @@
 import { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
 import { ConsoleLayout } from '@/shared/blocks/console/layout';
+import { noIndexRobots } from '@/shared/lib/seo';
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
 
 export default async function ActivityLayout({
   children,

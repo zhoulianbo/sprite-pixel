@@ -1,0 +1,590 @@
+{
+  "projects": {
+    "title": "我的專案",
+    "new": "新增專案",
+    "open": "開啟專案",
+    "assets": "{count, plural, =0 {尚無素材} other {# 個素材}}",
+    "updated": "更新於 {date}",
+    "default": "預設專案",
+    "empty": "建立第一個專案，開始累積風格一致的素材庫。",
+    "menu": "專案操作",
+    "edit": "編輯",
+    "cancel": "取消",
+    "delete": "刪除",
+    "deleteTitle": "刪除專案",
+    "deleteDescription": "確定刪除「{name}」嗎？它會從專案清單移除。",
+    "deleting": "刪除中……",
+    "deleteError": "無法刪除專案，請再試一次。"
+  },
+  "createProject": {
+    "title": "建立專案",
+    "description": "為之後產生的每項素材設定可重用的視覺基準。",
+    "step": "第 {current} 步，共 2 步",
+    "name": "專案名稱",
+    "namePlaceholder": "我的動作角色扮演遊戲",
+    "projectDescription": "說明（選填）",
+    "descriptionPlaceholder": "一款精簡的奇幻類肉鴿遊戲",
+    "gameGenre": "遊戲類型",
+    "gameGenrePlaceholder": "選擇遊戲類型",
+    "genres": {
+      "action_rpg": "動作角色扮演",
+      "roguelike": "類肉鴿",
+      "platformer": "平台動作",
+      "adventure": "冒險",
+      "strategy": "策略",
+      "casual": "休閒",
+      "other": "其他"
+    },
+    "style": "美術風格",
+    "back": "上一步",
+    "next": "繼續",
+    "create": "建立專案",
+    "creating": "建立中……",
+    "error": "無法建立專案，請再試一次。",
+    "editTitle": "編輯專案",
+    "editDescription": "更新專案名稱與視覺基準。",
+    "save": "儲存",
+    "saving": "儲存中……",
+    "editError": "無法儲存專案，請再試一次。"
+  },
+  "selector": {
+    "label": "目前專案",
+    "add": "新增專案",
+    "loading": "載入專案中……",
+    "error": "目前無法取得專案"
+  },
+  "nav": {
+    "characters": "角色",
+    "icons": "圖示",
+    "scenes": "主場景",
+    "ui": "使用者介面",
+    "effects": "特效",
+    "settings": "專案設定",
+    "back": "所有專案"
+  },
+  "assets": {
+    "title": "我的素材",
+    "project": "{name}",
+    "characters": {
+      "title": "角色",
+      "description": "查看所有專案中已儲存的角色圖片。",
+      "emptyTitle": "還沒有角色圖片",
+      "emptyDescription": "在專案中產生角色後，會顯示在這裡。"
+    },
+    "animations": {
+      "title": "動畫",
+      "description": "查看所有專案中已儲存的角色動畫。",
+      "emptyTitle": "還沒有動畫",
+      "emptyDescription": "為角色產生動畫後，會顯示在這裡。"
+    },
+    "icons": {
+      "title": "圖示",
+      "description": "查看所有專案中已儲存的遊戲圖示。",
+      "emptyTitle": "還沒有圖示",
+      "emptyDescription": "使用圖示產生器建立圖示後，會顯示在這裡。"
+    },
+    "sheets": {
+      "title": "Sprite Sheet",
+      "description": "查看所有專案中已儲存的 Sprite Sheet。",
+      "emptyTitle": "還沒有 Sprite Sheet",
+      "emptyDescription": "產生動畫後，對應的 Sprite Sheet 會顯示在這裡。"
+    }
+  },
+  "projectSettings": {
+    "title": "專案設定",
+    "description": "更新這個專案的名稱、遊戲類型與美術風格。",
+    "deleteHeading": "刪除專案"
+  },
+  "emptySection": {
+    "title": "{section}工作區",
+    "description": "這裡已經可以歸檔專案素材，但本版本暫不提供對應的產生功能。",
+    "back": "返回角色"
+  },
+  "filePicker": {
+    "kindLabel": "素材類型",
+    "kinds": {
+      "character": "角色",
+      "icon": "圖示",
+      "sheet": "Sprite Sheet"
+    },
+    "loading": "載入素材中……",
+    "empty": "此專案目前沒有可選素材。",
+    "characterTitle": "選擇現有角色",
+    "characterDescription": "從此專案選一張角色圖片作為動作參考。"
+  },
+  "characters": {
+    "title": "角色",
+    "description": "從一張可信的基準圖出發，依序完成角色變化、多方向與動畫。",
+    "new": "新增角色",
+    "create": {
+      "trigger": "新增角色",
+      "title": "產生新角色",
+      "description": "在目前專案中直接產生新的角色基準圖。",
+      "promptLabel": "描述你想要產生的角色",
+      "promptRequired": "請先描述要產生的角色。",
+      "currentProject": "目前專案",
+      "generate": "開始產生",
+      "generating": "產生中……",
+      "previewTitle": "產生效果預覽",
+      "previewEmpty": "產生結果將顯示在這裡"
+    },
+    "emptyTitle": "還沒有角色",
+    "emptyDescription": "可在首頁產生角色基準圖，也可以從這裡輸入描述開始。",
+    "open": "開啟角色",
+    "workflow": {
+      "base": "基準圖與變化",
+      "variations": "角色變化",
+      "directions": "多方向",
+      "animations": "動畫",
+      "sheets": "Sprite Sheet"
+    },
+    "stageDescriptions": {
+      "base": "選擇角色基準或變化，再編輯姿勢或換裝。",
+      "directions": "每一組由獨立方向圖片組成，可逐張查看、下載或產生動畫。",
+      "animations": "將滑鼠移到動畫上預覽，點擊進入動畫編輯器。",
+      "sheets": "依動作與方向查看、放大及下載對應的 Sprite Sheet。"
+    },
+    "panels": {
+      "base": "編輯角色",
+      "directions": "產生多方向",
+      "animations": "產生動畫",
+      "sheets": "Sprite Sheet 匯出"
+    },
+    "active": "目前基準圖",
+    "selectedInput": "已選擇",
+    "variation": "角色變化",
+    "more": "更多操作",
+    "actions": "角色操作",
+    "rename": "重新命名",
+    "delete": "刪除",
+    "renameTitle": "重新命名角色",
+    "renameDescription": "更新這個角色的名稱。",
+    "nameLabel": "角色名稱",
+    "save": "儲存",
+    "saving": "儲存中……",
+    "renameError": "名稱未能儲存，請再試一次。",
+    "deleteCharacterTitle": "刪除角色",
+    "deleteCharacterDescription": "刪除「{name}」嗎？它會從目前專案中移除。",
+    "deletingCharacter": "刪除中……",
+    "deleteCharacterError": "角色未能刪除，請再試一次。",
+    "renameImageTitle": "重新命名圖片",
+    "renameImageDescription": "更新這張圖片的名稱。",
+    "imageNameLabel": "圖片名稱",
+    "deleteImage": "刪除",
+    "deleteImageTitle": "刪除這張圖片",
+    "deleteImageDescription": "從目前角色中刪除這張圖片嗎？",
+    "deletingImage": "刪除中……",
+    "deleteImageError": "圖片未能刪除，請再試一次。",
+    "setActive": "設為目前基準圖",
+    "uploadBase": "上傳基準圖",
+    "uploading": "上傳中……",
+    "generateVariation": "產生角色變化",
+    "generateDirections": "產生多方向",
+    "generateAnimation": "產生動畫",
+    "readyTitle": "準備就緒",
+    "readyDescription": "選擇一個工作流程階段，繼續為 {name} 產生風格一致的素材。",
+    "promptPlaceholder": "描述想要的變化……",
+    "editPosePlaceholder": "描述想要的姿勢，例如雙手持劍、側身警戒。",
+    "editCostumePlaceholder": "描述想要的換裝，例如披上紅色斗篷、換上輕甲。",
+    "edit": "編輯",
+    "resultPlaceholder": "產生結果將顯示在這裡",
+    "editReferenceRequired": "請先選擇要編輯的圖片。",
+    "generate": "產生",
+    "generateCollection": "產生合集",
+    "generateWithCredits": "產生 · {credits} 點數",
+    "processing": "產生中……",
+    "action": "行動",
+    "directionSection": "方向",
+    "framesLabel": "影格數",
+    "directionFlipHint": "西、西北與西南方向與朝東的方向呈鏡像對稱，無需額外費用。",
+    "directionCreditSummary": "{count} 方向 1 × {credits} 點數",
+    "fourDirections": "4 個方向",
+    "eightDirections": "8 個方向",
+    "referenceInput": "產生輸入圖片",
+    "directionSource": "來源角色",
+    "chooseReference": "選擇角色圖片",
+    "changeReference": "更換圖片",
+    "changeCharacter": "更換角色",
+    "pickerTitle": "選擇產生輸入",
+    "pickerDescription": "從目前角色的基準圖、變化或方向圖中選擇一張。",
+    "directionSet": "多方向組合 {number}",
+    "directionCount": "{count} 個獨立方向",
+    "animateSet": "整組產生動畫",
+    "missingDirection": "方向圖缺失",
+    "frames": "影格",
+    "emptyBase": "還沒有基準圖或角色變化。",
+    "emptyDirections": "還沒有多方向組合，請從右側開始產生。",
+    "emptyAnimations": "還沒有動畫",
+    "emptyAnimationsHint": "請在右側選擇角色圖與動作參數，然後產生",
+    "emptySheets": "產生動畫後，對應 Sprite Sheet 會顯示在這裡。",
+    "sheetHelp": "每張 Sprite Sheet 對應一個動作方向。可在卡片上放大查看或直接下載。"
+  },
+  "generation": {
+    "queued": "已排入佇列",
+    "processing": "正在產生素材……",
+    "success": "產生完成",
+    "partial": "部分項目需要處理",
+    "failed": "產生失敗",
+    "retry": "重試失敗項目",
+    "download": "下載",
+    "zoom": "查看細節",
+    "openCharacter": "產生 Sprite Sheet",
+    "openEditor": "編輯動畫",
+    "promptRequired": "請先輸入描述。",
+    "motionReferenceRequired": "請先上傳角色圖片。",
+    "referenceRequired": "登入後請重新選擇角色圖片。",
+    "notConfigured": "產生功能尚未設定，請在管理後台加入模型與儲存設定。",
+    "genericError": "無法完成要求，請再試一次。"
+  },
+  "directions": {
+    "none": "基準",
+    "north": "北",
+    "north_east": "東北",
+    "east": "東",
+    "south_east": "東南",
+    "south": "南",
+    "south_west": "西南",
+    "west": "西",
+    "north_west": "西北"
+  },
+  "icons": {
+    "metadata": {
+      "title": "AI 遊戲圖示產生器－批次建立圖示、物品與道具 | SpritePixel",
+      "description": "在一張透明 3×3 圖表上，一次產生最多 9 個風格一致的遊戲圖示、物品、武器、技能與道具。",
+      "keywords": "AI 遊戲圖示產生器, 遊戲圖示產生器, AI 遊戲圖示, 遊戲道具產生器, RPG 圖示產生器, 像素圖示產生器"
+    },
+    "eyebrow": "提示詞或參考圖 → 可用於遊戲的圖示",
+    "title": "AI 遊戲圖示產生器",
+    "home": "首頁",
+    "description": "在一次模型要求中建立最多 9 個風格一致的遊戲圖示、物品、武器、技能與道具，並下載為一張透明 3×3 圖表。",
+    "listTitle": "圖示",
+    "listDescription": "建立配套的背包、技能與介面圖示，並儲存在目前專案。",
+    "new": "新增圖示",
+    "emptyTitle": "還沒有圖示",
+    "emptyDescription": "使用 AI 遊戲圖示產生器建立圖示組，結果會顯示在這裡。",
+    "board": "素材面板",
+    "boardDescription": "每行一個圖示，可使用「名稱：描述」補充細節。",
+    "styleSource": "風格來源",
+    "stylePresets": "風格預設",
+    "uploadReference": "上傳參考圖",
+    "uploadFile": "上傳檔案",
+    "chooseAsset": "選擇素材",
+    "selectedAsset": "已選專案素材",
+    "itemList": "項目清單",
+    "listHint": "每行一項，格式為「名稱：描述」，最多 9 項。",
+    "quickInsert": "快速加入：",
+    "expandAll": "顯示全部",
+    "collapse": "收合",
+    "filled": "已填 {count}/{max}",
+    "preview": "預覽",
+    "pickerTitle": "選擇參考素材",
+    "pickerDescription": "從專案選一張圖片，引導整套圖示的視覺風格。",
+    "pickerLoading": "載入素材中……",
+    "pickerEmpty": "此專案目前沒有可選素材。",
+    "styleHints": {
+      "pixel-art": "經典 16 色像素風",
+      "hand-painted": "厚塗黑暗奇幻",
+      "cartoon": "乾淨描邊的卡通道具",
+      "anime-2d": "現代 2D 動漫插畫",
+      "dark-fantasy": "陰鬱金屬與地城遺物",
+      "cyberpunk": "霓虹硬體與科幻晶片"
+    },
+    "itemPresets": {
+      "crate": "木箱",
+      "torch": "火把",
+      "barrel": "木桶",
+      "chest": "寶箱",
+      "door": "門",
+      "lamp": "燈",
+      "rock": "岩石",
+      "bush": "灌木",
+      "sign": "路牌",
+      "chair": "椅子",
+      "table": "桌子",
+      "sword": "劍",
+      "shield": "盾牌",
+      "potion": "藥水",
+      "bookshelf": "書架",
+      "anvil": "鐵砧",
+      "cauldron": "大釜",
+      "bench": "長椅",
+      "fence": "柵欄",
+      "well": "水井",
+      "banner": "旗幟",
+      "statue": "雕像",
+      "crystal": "水晶",
+      "skull": "骷髏",
+      "tombstone": "墓碑",
+      "mushroom": "蘑菇",
+      "stump": "樹樁",
+      "ladder": "梯子",
+      "bucket": "水桶",
+      "sack": "布袋"
+    },
+    "inputPlaceholder": "生命藥水：有軟木塞的紅色玻璃瓶\n鐵劍：磨損的短劍\n衝刺技能：青色速度軌跡",
+    "add": "加入項目",
+    "reference": "參考圖片",
+    "referenceHint": "選填。只提供參考圖時會建立一個圖示項目。",
+    "palette": "色盤備註",
+    "palettePlaceholder": "暖金色、鐵灰色、青色魔法光",
+    "background": "背景",
+    "transparent": "透明",
+    "dark": "深色",
+    "light": "淺色",
+    "generate": "產生圖示表",
+    "selected": "已選 {count} 項",
+    "remove": "移除",
+    "download": "下載圖示",
+    "downloadZip": "下載成功項目 ZIP",
+    "downloadSheet": "下載圖示表",
+    "defaultSetName": "遊戲圖示組",
+    "defaultItemName": "參考圖示",
+    "ready": "準備完成",
+    "empty": "產生的 3×3 圖示表會顯示在這裡",
+    "landing": {
+      "tag": "圖示",
+      "badges": {
+        "set": "批次圖示組",
+        "types": "素材類型",
+        "styles": "風格預設",
+        "regenerate": "整表重試",
+        "export": "遊戲匯出",
+        "workflow": "三步流程",
+        "tools": "更多工具",
+        "faq": "圖示問答"
+      },
+      "set": {
+        "title": "用 AI 遊戲圖示產生器批次建立一致圖示",
+        "description": "AI 遊戲圖示產生器會以統一視覺風格建立背包圖示、武器、藥水、技能、收集品與其他遊戲素材。"
+      },
+      "types": {
+        "title": "不只可以建立圖示",
+        "description": "產生可作為背包圖示、場景道具、收集品或介面素材的獨立物件。",
+        "items": [
+          {
+            "title": "背包圖示",
+            "text": "建立風格一致的背包、戰利品與裝備圖示。"
+          },
+          {
+            "title": "武器",
+            "text": "產生可作為介面圖示或場景拾取物的劍、弓與法杖。"
+          },
+          {
+            "title": "藥水與物品",
+            "text": "把藥水、鑰匙與消耗品建立成同一套遊戲物品圖示。"
+          },
+          {
+            "title": "技能與能力",
+            "text": "設計在遊戲介面尺寸下仍然清楚的技能與能力圖示。"
+          },
+          {
+            "title": "道具與物件",
+            "text": "建立木箱、家具與其他獨立場景物件。"
+          },
+          {
+            "title": "收集品",
+            "text": "製作與整套圖示風格一致的金幣、寶石與任務物品。"
+          }
+        ]
+      },
+      "styles": {
+        "title": "為遊戲素材選擇風格",
+        "description": "先為整個批次選定視覺方向，再讓每個圖示與道具維持相同語言。",
+        "items": [
+          {
+            "id": "pixel-art",
+            "title": "像素畫",
+            "text": "適合復古 RPG 與動作遊戲的經典 16 色像素圖示。"
+          },
+          {
+            "id": "hand-painted",
+            "title": "手繪 RPG",
+            "text": "適合武器、藥水與背包素材的厚塗 RPG 明暗。"
+          },
+          {
+            "id": "cartoon",
+            "title": "卡通",
+            "text": "適合休閒遊戲圖示與道具的乾淨描邊與清楚輪廓。"
+          },
+          {
+            "id": "anime-2d",
+            "title": "動漫",
+            "text": "適合技能、物品與介面的賽璐璐動漫圖示。"
+          },
+          {
+            "id": "dark-fantasy",
+            "title": "黑暗奇幻",
+            "text": "陰鬱金屬、遺物與地城道具。"
+          },
+          {
+            "id": "cyberpunk",
+            "title": "賽博龐克",
+            "text": "適合科幻背包的霓虹硬體、晶片與科技道具。"
+          }
+        ]
+      },
+      "regenerate": {
+        "title": "把整張圖示表當成同一套重新產生",
+        "description": "完整 3×3 圖表會以單張圖片產生與重試，因此整套風格能保持一致。",
+        "gridLabel": "9 個圖示",
+        "ok": "保留",
+        "retry": "重新產生整表",
+        "cta": "重新產生圖表"
+      },
+      "export": {
+        "title": "把結果直接放進背包介面",
+        "description": "取得風格固定、單元格規則的透明 3×3 圖表；可直接下載或保存在專案中。",
+        "items": [
+          {
+            "id": "batch",
+            "title": "一次要求，九個位置",
+            "text": "單次批次最多產生九個圖示，不必逐個調整提示詞。"
+          },
+          {
+            "id": "transparent",
+            "title": "遊戲引擎可用的透明 PNG",
+            "text": "保留透明通道，可直接疊在 Unity、Godot 或 Phaser 介面與場景。"
+          },
+          {
+            "id": "consistency",
+            "title": "整張圖表鎖定同一風格",
+            "text": "武器、藥水與技能共用光線與線條，看起來像同一輪美術製作。"
+          },
+          {
+            "id": "download",
+            "title": "整套只需一個檔案",
+            "text": "下載一張 3×3 圖片，不必整理九個分散檔案。"
+          },
+          {
+            "id": "project",
+            "title": "儲存到專案",
+            "text": "圖表會存入專案，可在任何裝置繼續調整與下載。"
+          },
+          {
+            "id": "grid",
+            "title": "可預期的 3×3 單元格",
+            "text": "九個等大位置與透明空格，方便在素材流程中切割或對應影格。"
+          }
+        ]
+      },
+      "workflowTitle": "使用方式",
+      "workflow": [
+        {
+          "title": "描述素材",
+          "text": "加入圖示、武器、道具、物品或技能，簡短名稱即可開始最多 9 項的批次。"
+        },
+        {
+          "title": "選擇風格",
+          "text": "選擇預設或上傳參考圖，讓整套素材維持一致。"
+        },
+        {
+          "title": "產生並完善",
+          "text": "在一張一致的 3×3 圖片上同時產生最多 9 項素材，再下載完成圖表。"
+        }
+      ]
+    },
+    "faqTitle": "AI 遊戲圖示產生器常見問題",
+    "faq": [
+      {
+        "q": "什麼是 AI 遊戲圖示產生器？",
+        "a": "AI 遊戲圖示產生器能根據文字或參考圖建立背包物品、技能、武器、能力與介面圖示。"
+      },
+      {
+        "q": "可以一次產生多個遊戲圖示嗎？",
+        "a": "可以。SpritePixel 會在一張 3×3 圖片上同時產生最多 9 個圖示，讓整套風格一致。"
+      },
+      {
+        "q": "圖示組的重試如何運作？",
+        "a": "重試會把完整 3×3 圖表當成一張圖片重新產生，保留共同風格與排列。"
+      },
+      {
+        "q": "可以建立哪些遊戲圖示？",
+        "a": "可以建立背包、技能、物品、武器、能力、狀態與其他遊戲介面圖示。"
+      },
+      {
+        "q": "可以建立像素畫遊戲圖示嗎？",
+        "a": "可以。可選風格包含像素畫、手繪 RPG、卡通、動漫、黑暗奇幻與賽博龐克。"
+      },
+      {
+        "q": "可以使用參考圖片嗎？",
+        "a": "可以。上傳參考圖可協助整套圖示維持指定風格。"
+      },
+      {
+        "q": "支援哪些圖示尺寸？",
+        "a": "可建立 64×64、128×128 與 256×256 等常用尺寸的遊戲圖示。"
+      },
+      {
+        "q": "如何下載產生的圖示？",
+        "a": "可將完整透明 3×3 圖示表下載為一張 PNG。"
+      },
+      {
+        "q": "可以用 AI 遊戲圖示產生器建立場景道具嗎？",
+        "a": "可以。除了傳統介面圖示，也能建立木箱、武器、藥水、家具、收集品等獨立物件。"
+      },
+      {
+        "q": "遊戲圖示與遊戲道具有何不同？",
+        "a": "圖示通常用於背包、技能與介面，道具則可能直接出現在遊戲世界。SpritePixel 能以同一風格建立兩者。"
+      }
+    ],
+    "ctaTitle": "準備使用 AI 遊戲圖示產生器了嗎？",
+    "ctaText": "在上方工作區描述最多 9 個圖示或道具，選擇風格並產生一張一致的 3×3 圖表。",
+    "ctaLabel": "開啟工作區",
+    "openProject": "開啟專案圖示"
+  },
+  "editor": {
+    "title": "動畫編輯器",
+    "unsaved": "有尚未儲存的變更",
+    "history": "歷史紀錄",
+    "undo": "復原",
+    "redo": "重做",
+    "controls": "播放控制",
+    "play": "播放",
+    "pause": "暫停",
+    "fps": "影格率",
+    "loop": "循環播放",
+    "zoom": "縮放",
+    "offset": "影格偏移",
+    "offsetX": "X 偏移",
+    "offsetY": "Y 偏移",
+    "delete": "刪除影格",
+    "save": "另存為新版本",
+    "saving": "儲存中……",
+    "downloadSheet": "下載 Sprite Sheet",
+    "downloadFrames": "下載影格序列 ZIP",
+    "frame": "第 {number} 影格",
+    "back": "返回角色",
+    "saveError": "新版本儲存失敗。"
+  },
+  "errors": {
+    "GENERIC": "無法完成要求，請再試一次。",
+    "UNAUTHORIZED": "請登入後繼續。",
+    "INSUFFICIENT_CREDITS": "點數不足，請儲值後繼續產生。",
+    "FILE_TOO_LARGE": "圖片大於 10MB，請壓縮後重試。",
+    "IMAGE_DIMENSIONS_EXCEEDED": "圖片單邊不可超過 4096 像素。",
+    "INVALID_IMAGE": "請上傳有效的圖片檔。",
+    "INVALID_UPLOAD": "上傳內容無效，請重新選擇檔案。",
+    "INVALID_GENERATION": "產生設定無效，請檢查後重試。",
+    "INVALID_PROJECT": "專案資料無效，請檢查後重試。",
+    "INVALID_REFERENCE": "參考圖無效，請重新選擇。",
+    "INVALID_VERSION": "版本無效，請重新整理後重試。",
+    "INVALID_TASK_COUNT": "產生項目數量不正確。",
+    "REFERENCE_REQUIRED": "請先上傳角色圖片。",
+    "REFERENCE_NOT_FOUND": "找不到參考圖片，請重新上傳。",
+    "PROJECT_NOT_FOUND": "找不到目前專案，請重新整理後重試。",
+    "INVALID_ASSET": "角色資料無效，請檢查後重試。",
+    "ASSET_NOT_FOUND": "找不到素材，請重新整理後重試。",
+    "ASSET_REQUIRED": "請先選擇角色。",
+    "VARIANT_NOT_FOUND": "找不到角色變化，請重新整理後重試。",
+    "ANIMATION_NOT_FOUND": "找不到動畫，請重新整理後重試。",
+    "ICON_ITEMS_REQUIRED": "請至少加入一個圖示再產生。",
+    "ICON_DESCRIPTION_EXPAND_FAILED": "無法補完物品細節，請檢查 Gemini 設定後重試。",
+    "GENERATION_NOT_CONFIGURED": "產生功能尚未設定，請在管理後台加入模型與儲存設定。",
+    "STORAGE_NOT_CONFIGURED": "儲存功能尚未設定，請在管理後台加入儲存設定。",
+    "STORAGE_UPLOAD_FAILED": "圖片上傳失敗，請再試一次。",
+    "GENERATION_NOT_FOUND": "找不到這次產生記錄。",
+    "GENERATION_FAILED": "產生失敗，請再試一次。",
+    "GENERATION_QUERY_FAILED": "無法取得產生狀態，請再試一次。",
+    "GENERATION_RETRY_FAILED": "無法開始重試，請再試一次。",
+    "GENERATION_ID_CONFLICT": "這次產生已存在，請開始新的產生。"
+  }
+}

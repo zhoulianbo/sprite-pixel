@@ -5,9 +5,36 @@
         "title": "Workspace",
         "items": [
           {
-            "title": "Dashboard",
+            "title": "My Projects",
             "url": "/dashboard",
             "icon": "LayoutDashboard"
+          },
+          {
+            "title": "My Assets",
+            "icon": "Images",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "Characters",
+                "url": "/dashboard/assets/characters",
+                "icon": "Users"
+              },
+              {
+                "title": "Animations",
+                "url": "/dashboard/assets/animations",
+                "icon": "Film"
+              },
+              {
+                "title": "Icons",
+                "url": "/dashboard/assets/icons",
+                "icon": "Boxes"
+              },
+              {
+                "title": "Sprite sheets",
+                "url": "/dashboard/assets/sheets",
+                "icon": "Table2"
+              }
+            ]
           }
         ]
       },
@@ -49,20 +76,6 @@
         ]
       }
     ],
-    "bottom_nav": {
-      "items": [
-        {
-          "title": "Pricing",
-          "url": "/pricing",
-          "icon": "CreditCard"
-        },
-        {
-          "title": "Home",
-          "url": "/",
-          "icon": "House"
-        }
-      ]
-    },
     "user": {
       "nav": {
         "items": [
@@ -85,5 +98,11 @@
         ]
       }
     }
+  },
+  "upgrade": {
+    "title": "Upgrade",
+    "description": "Upgrade to Pro to unlock all features",
+    "action": "Upgrade",
+    "url": "/pricing"
   }
 }

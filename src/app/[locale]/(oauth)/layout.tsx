@@ -1,3 +1,11 @@
+import type { Metadata } from 'next';
+
+import { noIndexRobots } from '@/shared/lib/seo';
+
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
+
 export default function OAuthLayout({
   children,
 }: {

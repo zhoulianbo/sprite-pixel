@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       return respErr('pricing item not found');
     }
 
-    if (!pricingItem.product_id && !pricingItem.amount) {
+    if (!pricingItem.product_id || !pricingItem.amount) {
       return respErr('invalid pricing item');
     }
 
@@ -141,12 +141,21 @@ export async function POST(req: Request) {
 
     const orderNo = getSnowId();
 
-    // get payment product id from pricing table in local file
-    // First try to get currency-specific payment_product_id
-    let paymentProductId = '';
+    // Prefer a provider-specific mapping so multiple providers can share the
+    // same pricing item without reusing another provider's product ID.
+    let paymentProductId =
+      (await getPaymentProductId(
+        pricingItem.product_id,
+        paymentProviderName,
+        checkoutCurrency
+      )) || '';
 
-    // If currency is provided and different from default, check currency-specific payment_product_id
-    if (currency && currency.toLowerCase() !== defaultCurrency) {
+    // Then try the currency-specific product ID in the pricing table.
+    if (
+      !paymentProductId &&
+      currency &&
+      currency.toLowerCase() !== defaultCurrency
+    ) {
       const selectedCurrencyData = pricingItem.currencies?.find(
         (c: PricingCurrency) =>
           c.currency.toLowerCase() === currency.toLowerCase()
@@ -156,18 +165,9 @@ export async function POST(req: Request) {
       }
     }
 
-    // Fallback to default payment_product_id if not found in currency config
+    // Fallback to the default product ID in the pricing table.
     if (!paymentProductId) {
       paymentProductId = pricingItem.payment_product_id || '';
-    }
-
-    // If still not found, get from payment provider's config
-    if (!paymentProductId) {
-      paymentProductId = await getPaymentProductId(
-        pricingItem.product_id,
-        paymentProviderName,
-        checkoutCurrency
-      );
     }
 
     // get preset promotion code for product_id
@@ -311,16 +311,18 @@ async function getPaymentProductId(
   provider: string,
   checkoutCurrency: string
 ) {
-  if (provider !== 'creem') {
-    // currently only creem supports payment product id mapping
+  if (provider !== 'creem' && provider !== 'waffo') {
     return;
   }
 
   try {
     const configs = await getAllConfigs();
-    const creemProductIds = configs.creem_product_ids;
-    if (creemProductIds) {
-      const productIds = JSON.parse(creemProductIds);
+    const configuredProductIds =
+      provider === 'waffo'
+        ? configs.waffo_product_ids
+        : configs.creem_product_ids;
+    if (configuredProductIds) {
+      const productIds = JSON.parse(configuredProductIds);
       return (
         productIds[`${productId}_${checkoutCurrency}`] || productIds[productId]
       );

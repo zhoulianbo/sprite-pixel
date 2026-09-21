@@ -1,0 +1,79 @@
+{
+  "sidebar": {
+    "buttons": [
+      {
+        "title": "새 채팅",
+        "icon": "Plus",
+        "url": "/chat",
+        "variant": "outline"
+      }
+    ],
+    "main_navs": [
+      {
+        "items": [
+          {
+            "title": "기록",
+            "icon": "History",
+            "url": "/chat/history"
+          }
+        ]
+      }
+    ],
+    "bottom_nav": {
+      "items": []
+    },
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "프로필",
+            "url": "/settings/profile",
+            "icon": "User",
+            "target": "_blank"
+          }
+        ]
+      }
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "홈",
+            "url": "/",
+            "icon": "Home",
+            "target": "_blank"
+          }
+        ]
+      }
+    }
+  },
+  "library": {
+    "title": "라이브러리",
+    "icon": "History",
+    "url": "/chat/history",
+    "more": "더보기",
+    "actions": {
+      "edit_title": "제목 편집",
+      "share": "공유",
+      "delete": "삭제"
+    }
+  },
+  "generator": {
+    "title": "오늘은 무엇을 도와드릴까요?",
+    "input_placeholder": "무엇이든 물어보세요"
+  },
+  "history": {
+    "title": "채팅 기록",
+    "description": "이전 대화를 확인하고 다시 열 수 있습니다.",
+    "empty": "아직 대화가 없습니다.",
+    "error": "대화를 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "signin": "채팅 기록을 보려면 로그인하세요.",
+    "summary": "총 {total}개 중 {from}-{to}개 표시",
+    "perPage": "페이지당",
+    "prev": "이전",
+    "next": "다음",
+    "open": "채팅 열기",
+    "untitled": "제목 없는 대화"
+  }
+}

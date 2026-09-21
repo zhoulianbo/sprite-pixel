@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "title": "AIスプライト生成ツール｜2Dゲーム素材を作成 | SpritePixel",
+    "description": "SpritePixelのAIスプライト生成ツールで、ゲーム向けキャラクター、アニメーション用スプライトシート、統一感のある2D素材を作成できます。",
+    "keywords": "AIスプライト生成ツール, ゲームスプライト生成, キャラクタースプライト生成, スプライトシート生成, AIゲーム素材, ゲームアイコン生成, SpritePixel"
+  },
+  "sign": {
+    "sign_in_title": "ログイン",
+    "sign_in_description": "アカウントにログイン",
+    "sign_up_title": "新規登録",
+    "sign_up_description": "アカウントを作成",
+    "email_title": "メールアドレス",
+    "email_placeholder": "メールアドレスを入力",
+    "password_title": "パスワード",
+    "password_placeholder": "パスワードを入力",
+    "forgot_password": "パスワードをお忘れですか？",
+    "or": "または",
+    "continue": "続ける",
+    "no_account": "アカウントをお持ちでないですか？",
+    "already_have_account": "すでにアカウントをお持ちですか？",
+    "email_sign_in": "メールアドレスでログイン",
+    "google_sign_in_title": "Googleでログイン",
+    "github_sign_in_title": "GitHubでログイン",
+    "close_title": "閉じる",
+    "cancel_title": "キャンセル",
+    "sign_out_title": "ログアウト",
+    "billing_title": "お支払い",
+    "name_title": "名前",
+    "name_placeholder": "名前を入力",
+    "email_verification_hint": "受信可能なメールアドレスを使用してください。登録後にメール認証が必要です。",
+    "admin_title": "管理画面",
+    "credits_title": "クレジット：{credits}",
+    "verify_email_sent": "確認メールを送信しました。受信トレイをご確認ください。",
+    "verify_email_required": "ログインする前にメールアドレスを確認してください。",
+    "resend_verification": "確認メールを再送信",
+    "resend_verification_sent": "確認メールを再送信しました。",
+    "verify_email_page_title": "メールをご確認ください",
+    "verify_email_page_description": "続けるには、次のアドレスに送信されたリンクをクリックしてください：",
+    "verify_email_continue": "続ける",
+    "verify_email_tip": "確認後に「続ける」をクリックしてください。",
+    "verify_email_not_verified_yet": "まだ確認されていません。先にメール内のリンクをクリックしてください。",
+    "verify_email_account_mismatch": "現在 {current} でログイン中です。このページは {expected} の確認を待っています。",
+    "resend_verification_countdown": "確認メールを再送信（{seconds}秒）",
+    "resend_verification_wait": "再送信するには {seconds} 秒お待ちください。",
+    "back_to_sign_in": "ログインに戻る"
+  },
+  "payment": {
+    "choose_payment_method": "支払い方法を選択",
+    "choose_payment_method_description": "",
+    "cancel_title": "キャンセル"
+  },
+  "locale_detector": {
+    "title": "ブラウザーの言語は{locale}です。切り替えますか？",
+    "switch_to": "{locale}に切り替える",
+    "selector_label": "言語を変更。現在の言語：{locale}",
+    "close": "閉じる"
+  },
+  "moreTools": {
+    "title": "その他のツール",
+    "description": "SpritePixelの関連ブラウザーツールを続けて利用できます。無料のスプライトツールは追加登録不要です。",
+    "items": {
+      "sprites": {
+        "title": "AIスプライト生成ツール",
+        "text": "プロジェクトの説明からゲーム向けスプライトとアクションを作成します。"
+      },
+      "icons": {
+        "title": "AIゲームアイコンジェネレーター",
+        "text": "統一感のあるゲームアイコン、アイテム、武器、プロップを一括生成します。"
+      },
+      "maker": {
+        "title": "スプライトシート作成ツール",
+        "text": "PNGフレームやGIFをスプライトシートにまとめ、PNGと任意のJSONを出力します。"
+      },
+      "cutter": {
+        "title": "スプライトシート分割ツール",
+        "text": "見やすく編集可能なグリッドで、シートを個別のPNGフレームに分割します。"
+      }
+    }
+  }
+}

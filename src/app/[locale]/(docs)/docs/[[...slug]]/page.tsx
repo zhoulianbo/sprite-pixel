@@ -9,6 +9,7 @@ import {
 } from 'fumadocs-ui/page';
 
 import { source } from '@/core/docs/source';
+import { noIndexRobots } from '@/shared/lib/seo';
 
 export const revalidate = 86400;
 export const dynamic = 'force-static';
@@ -60,5 +61,6 @@ export async function generateMetadata(props: {
   return {
     title: page.data.title,
     description: page.data.description,
+    robots: noIndexRobots,
   };
 }

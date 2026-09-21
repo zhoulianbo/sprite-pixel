@@ -1,0 +1,399 @@
+{
+  "ui": {
+    "home": "Home",
+    "localBadge": "FREE TOOLS / LOCAL WORKSPACE",
+    "sessionNote": "Files stay in this tab. Refreshing clears your workspace.",
+    "makerLabel": "Sprite Sheet Maker workspace",
+    "splitterLabel": "Sprite Sheet Cutter workspace",
+    "settings": "Settings",
+    "inputMode": "Input mode",
+    "images": "Images",
+    "gif": "GIF",
+    "layout": "Sheet layout",
+    "grid": "Grid",
+    "horizontal": "Horizontal strip",
+    "vertical": "Vertical strip",
+    "columns": "Columns",
+    "rows": "Rows",
+    "padding": "Outer margin",
+    "gap": "Frame gap",
+    "align": "Frame alignment",
+    "bottom": "Bottom center",
+    "center": "Center",
+    "top-left": "Top left",
+    "bottomShort": "Bottom",
+    "centerShort": "Center",
+    "topLeftShort": "Top left",
+    "background": "Export background",
+    "transparent": "Transparent",
+    "solidColor": "Solid color",
+    "sliceMode": "Split by",
+    "byCount": "Rows and columns",
+    "byCountShort": "Grid",
+    "bySize": "Frame dimensions",
+    "bySizeShort": "Size",
+    "frameWidth": "Frame width",
+    "frameHeight": "Frame height",
+    "offsetX": "Left offset",
+    "offsetY": "Top offset",
+    "gapX": "Horizontal gap",
+    "gapY": "Vertical gap",
+    "trimRight": "Right margin",
+    "trimBottom": "Bottom margin",
+    "gridHelp": "The tool estimates a regular grid from the image dimensions. Because one size can represent different layouts, confirm that the grid lines match the frames before exporting; unused right and bottom edges are reported.",
+    "originalTiming": "Use frame timing",
+    "fps": "Playback / export FPS",
+    "fpsShort": "FPS",
+    "timingHelp": "GIFs keep their frame timing. Static images default to 12 FPS. Disable this option to set one speed for every frame.",
+    "dropGif": "Drop a GIF or click to choose",
+    "dropImages": "Drop frames or click to choose",
+    "dropSheet": "Drop a sprite sheet or click to choose",
+    "gifLimits": "GIF · 50 MiB · up to 256 frames / 32 million decoded pixels",
+    "imageLimits": "PNG, JPG, static WebP · 50 MiB total · up to 256 frames",
+    "upload": "Choose files",
+    "addImages": "Add images",
+    "generateAssets": "Generate assets",
+    "clear": "Clear workspace",
+    "replaceConfirm": "Replace the current images? Your current edits will be cleared. Download anything you want to keep first.",
+    "clearConfirm": "Clear this workspace? Download anything you want to keep first.",
+    "processing": "Preparing files…",
+    "updating": "Updating preview and frames…",
+    "progress": "Processed {done} of {total}",
+    "cancel": "Cancel",
+    "cancelled": "Cancelled. Your source files are still here; adjust a setting or upload again to retry.",
+    "previewMode": "Preview mode",
+    "sheet": "Sprite sheet",
+    "animation": "Animation preview",
+    "showGrid": "Grid overlay",
+    "zoom": "Preview zoom",
+    "fit": "Fit",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "resetZoom": "Reset to fit",
+    "frameIndex": "Frame {current} / {total}",
+    "sheetPreview": "Sprite sheet preview with frame boundaries",
+    "adjustSettings": "Adjust the settings above to create a valid sheet.",
+    "frameCount": "{count} frames",
+    "remainder": "Unused edge: {x}px on the right, {y}px at the bottom. Adjust the grid if those pixels belong to a frame.",
+    "downloadPng": "Download PNG",
+    "downloadAtlas": "PNG + JSON ZIP",
+    "downloadZip": "Download ZIP",
+    "formatJsonHash": "JSON Hash",
+    "formatJsonArray": "JSON Array",
+    "formatCss": "CSS",
+    "formatXml": "XML",
+    "formatGif": "GIF",
+    "includeGif": "Include animated GIF",
+    "trimTransparent": "Crop transparent edges",
+    "engineImport": "How engines import this export",
+    "engineImportGodot": "Godot: import the PNG as a SpriteFrames atlas by cell size, or use JSON Hash with an atlas importer. JSON Array lists frames in playback order.",
+    "engineImportPhaser": "Phaser: load JSON Hash with this.textures.addAtlas, or JSON Array with addAtlasJSONArray, pointing at sprite-sheet.png.",
+    "engineImportUnity": "Unity: slice the PNG as a sprite sheet by cell size, or import JSON Hash with a TexturePacker-compatible importer. Rectangles match packed cells, not a guessed grid.",
+    "exportFormats": "Export formats",
+    "downloadFrame": "Download frame PNG",
+    "downloadFrames": "Download frames ZIP",
+    "toSplitter": "Open in Cutter",
+    "selectFrames": "Select at least one non-excluded frame to preview or download.",
+    "exportSuccess": "Download requested. Need a new character or more actions?",
+    "aiCta": "Explore AI Sprite Generator",
+    "frames": "Frame sequence",
+    "sortHelp": "Drag to reorder, or focus a handle and use ↑ / ↓.",
+    "selectAll": "Select all",
+    "selectNone": "Select none",
+    "selectAllNone": "Select all / none",
+    "skipEmpty": "Exclude fully transparent frames",
+    "rangeStart": "From frame",
+    "rangeEnd": "To frame",
+    "selectRange": "Select range",
+    "rangeTab": "Frame range",
+    "applyRange": "Apply",
+    "previous": "Previous",
+    "next": "Next",
+    "play": "Play",
+    "pause": "Pause",
+    "reorder": "Reorder {name}",
+    "remove": "Remove {name}",
+    "dragInstructions": "Use the Up and Down arrow keys to move this frame one position at a time.",
+    "errors": {
+      "invalidImage": "This file could not be decoded. Use a valid PNG, JPG, static WebP, or GIF in GIF mode.",
+      "staticOnly": "Animated PNG and WebP are not supported. Export a GIF for GIF mode, or use static frames.",
+      "fileLimit": "Input exceeds 50 MiB. Remove some files or use a smaller source.",
+      "frameLimit": "This workspace supports up to 256 frames. Reduce the frame count or use a larger slicing cell.",
+      "pixelLimit": "Decoded frames exceed 32 million pixels. Reduce frame dimensions or frame count.",
+      "imageLimit": "An image or sheet exceeds 8192px per edge or 16 million pixels. Reduce dimensions, margins, or frame count.",
+      "invalidGrid": "Use positive whole numbers for frame sizes and counts, and nonnegative whole numbers for spacing.",
+      "bounds": "The grid extends beyond the image or leaves no complete frame. Check dimensions, offsets, and gaps.",
+      "empty": "Choose at least one frame.",
+      "singleFile": "This mode accepts one file at a time.",
+      "canvasError": "Your browser could not create the image canvas. Try smaller images or reload the page.",
+      "exportError": "The export could not finish. Your source files are still here; try fewer frames or export PNG first.",
+      "fps": "Enter a frame rate from 1 to 60."
+    },
+    "dragPicked": "Picked up frame {index}.",
+    "dragMoved": "Moved to position {index}.",
+    "dragDropped": "Dropped frame at position {index}.",
+    "dragCancelled": "Reordering cancelled.",
+    "previousPreview": "The last valid result is retained. Fix the settings to enable a new export.",
+    "imagesToSheet": "Images → Sprite sheet",
+    "gifToSheet": "GIF → Sprite sheet",
+    "noFiles": "No files ready?",
+    "addFramesHint": "Drop or click to add frames",
+    "replaceSource": "Drop or click to replace source",
+    "selectionHelp": "Click a frame to select it. Shift-click to select a range.",
+    "horizontalShort": "Horizontal",
+    "verticalShort": "Vertical",
+    "transparentBackground": "Transparent background",
+    "spacingAndOffsets": "Spacing & offsets",
+    "timingSettings": "Animation timing",
+    "exportTitle": "Export your assets",
+    "includeJson": "Include JSON metadata",
+    "sheetLimits": "One PNG, JPG or static WebP · 50 MiB · up to 8192px per edge",
+    "promisesLabel": "Free tool guarantees",
+    "promiseForever": "Free forever",
+    "promiseNoAccount": "No registration",
+    "promiseLocal": "Local processing",
+    "promiseFormats": "Multiple download formats"
+  },
+  "maker": {
+    "metadata": {
+      "title": "Free Sprite Sheet Maker — Images & GIF to PNG | SpritePixel",
+      "description": "Free online sprite sheet maker for PNG, JPG, WebP, or GIF. Align frames, preview animation, and export PNG with JSON. No sign-up, processed in your browser.",
+      "keywords": "sprite sheet maker, free sprite sheet maker, gif to sprite sheet, combine images sprite sheet, sprite sheet generator, PNG JSON export"
+    },
+    "eyebrow": "IMAGES & GIF → GAME-READY SHEETS",
+    "title": "Free Sprite Sheet Maker",
+    "intro": "Turn individual images or an animated GIF into a clean, organized sprite sheet. This free online sprite sheet maker aligns your frames, lets you check the animation, and exports PNG with optional JSON metadata — no account needed.",
+    "stepsTitle": "How to make a sprite sheet in three steps",
+    "steps": [
+      {
+        "title": "1. Add your images or GIF",
+        "text": "Drop PNG, JPG, or static WebP frames into Images mode, or switch to GIF to extract an animation. Image filenames sort naturally, so run-2 comes before run-10. If you still need artwork, generate assets on the home page, then come back here to arrange the frames."
+      },
+      {
+        "title": "2. Arrange and check every frame",
+        "text": "Choose a grid, horizontal strip, or vertical strip. Set columns, outer margin, and frame gaps, then pick an alignment for different-sized images. Use the animation preview to find missing or misplaced frames. Drag the frame handles to fix their order before you export."
+      },
+      {
+        "title": "3. Download a useful asset",
+        "text": "Download a transparent sprite sheet as PNG, add JSON, CSS, XML, or an animated GIF to a ZIP, or open the result directly in Sprite Sheet Cutter. That handoff carries the grid settings, names, and timing within this browser tab."
+      }
+    ],
+    "featuresTitle": "A sprite sheet generator built around your frame sequence",
+    "features": [
+      {
+        "title": "GIF to sprite sheet, with complete frames",
+        "text": "A GIF can store only the pixels that change between frames. The GIF to sprite sheet workflow reconstructs the full image for each moment, including transparent areas and frame disposal. Original frame timing stays available for animation preview and JSON export; you can override it with a consistent FPS when needed."
+      },
+      {
+        "title": "Combine images without stretching them",
+        "text": "When you combine images into a sprite sheet, the largest source width and height define the grid cell. Smaller images keep their original dimensions. Bottom-center alignment helps characters share a ground line, while center and top-left alignment suit effects or interface assets. Transparent source margins stay intact unless you turn on Crop transparent edges."
+      },
+      {
+        "title": "Preview the animation before exporting",
+        "text": "Switch between the full sheet and sprite sheet animation preview to inspect both layout and motion. Pause on a frame, step forward or backward, and compare timing. Pixelated display keeps small sprites crisp; preview zoom changes what you see, not the resolution of the exported PNG."
+      }
+    ],
+    "useCasesTitle": "From PNG to sprite sheet for real game workflows",
+    "useCases": [
+      {
+        "title": "Character movement and action loops",
+        "text": "Group a short walk, jump, or attack sequence into a regular grid for your game prototype. Put the frames in playback order and check the contact point at the bottom of each cell. If a character still appears to jump vertically, inspect the transparent margins in the source frames; alignment cannot infer the location of the feet."
+      },
+      {
+        "title": "Effects, icons, and imported animation",
+        "text": "Use horizontal strips for small effects, or a compact grid for icons and animation frames. GIF input is useful when the animation already exists as one file. This sprite sheet creator packages existing artwork; it does not invent in-between frames or turn a still image into a new animated character."
+      }
+    ],
+    "guideTitle": "Sprite sheet settings and export details",
+    "guide": [
+      {
+        "title": "Columns, margins, and frame spacing",
+        "text": "Columns control how many cells appear across a grid. Outer margin adds empty space around the sheet, while frame gap separates neighboring cells. These are different settings: importing the wrong gap into an engine can make the next sprite bleed into a frame. The displayed output dimensions update as you adjust the layout."
+      },
+      {
+        "title": "Transparent PNG and JSON coordinates",
+        "text": "The default export background is transparent; a selected solid color is baked into the PNG. JSON uses a TexturePacker-style hash with unique filenames, source dimensions, frame rectangles, and duration. You can also export JSON Array, CSS, XML, or an animated GIF in the same ZIP. PNG grid slicing and JSON atlas import are different workflows; see the engine notes in the export panel."
+      },
+      {
+        "title": "Practical browser limits",
+        "text": "Files are processed locally with no upload endpoint. The input limit is 50 MiB and 256 frames, with a 32-million-pixel decoded frame budget. Each source image or output sheet is limited to 8192 pixels per edge and 16 million pixels. Reduce dimensions or split a long animation if a limit is reached. Refreshing the page clears the workspace."
+      }
+    ],
+    "faqTitle": "Sprite Sheet Maker FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Practical details about exporting sheets, GIF timing, and what this free tool does not do.",
+    "faq": [
+      {
+        "title": "Is this online sprite sheet maker really free?",
+        "text": "Yes. Combining images, extracting GIF frames, previewing, and downloading the result are free and do not require registration. AI asset generation is a separate product flow; it is not a step you must complete to get your exported sheet."
+      },
+      {
+        "title": "Can I create a transparent sprite sheet from JPG?",
+        "text": "The unused space between JPG frames can be transparent, but a JPG has no alpha channel. Existing background pixels stay in the image. Use PNG or static WebP with transparency when you need a transparent character silhouette."
+      },
+      {
+        "title": "Will a GIF keep its original animation speed?",
+        "text": "Yes, with Use frame timing enabled. Disable that option to apply one FPS value to every frame. A PNG cannot carry playback timing by itself; use the duration values in the JSON or configure timing in your engine."
+      },
+      {
+        "title": "Can I cut the result and rearrange it again?",
+        "text": "Yes. Open in Cutter carries your sheet into the companion tool without a download and upload round trip. The handoff lasts within the current tab and does not survive a page refresh."
+      },
+      {
+        "title": "Does this replace an advanced texture packer?",
+        "text": "This tool focuses on regular grids and strips. It can crop transparent margins when you enable that option. It does not rotate sprites, create polygon packing, or generate multiple atlas pages. Those specialized packing tasks require a different workflow."
+      }
+    ],
+    "relatedTitle": "Keep working with your sprites",
+    "relatedText": "Already have a packed image? Use Sprite Sheet Cutter to extract individual PNG frames, then continue in Maker if you need a new layout.",
+    "relatedLabel": "Open Sprite Sheet Cutter",
+    "ctaTitle": "Ready to make your sprite sheet?",
+    "ctaText": "Drop images or a GIF into the workspace above, arrange the frames, and export a PNG sheet. Files stay in this tab until you refresh.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP FLOW",
+      "features": "SHEET FEATURES",
+      "useCases": "GAME USES",
+      "guide": "EXPORT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "MAKER FAQ"
+    },
+    "design": {
+      "tag": "MAKE",
+      "baseline": "Y = BASELINE",
+      "hero": "A free sprite sheet maker for your next adventure. Arrange images or a GIF, check the motion, and export your next game asset.",
+      "proof": "Try it with a real sprite",
+      "workflow": "A SHORT PATH FROM ART TO ASSET",
+      "source": "SOURCE / FRAME SEQUENCE",
+      "result": "ARRANGE → PREVIEW → EXPORT",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  },
+  "splitter": {
+    "metadata": {
+      "title": "Free Sprite Sheet Cutter — Extract PNG Frames | SpritePixel",
+      "description": "Cut a sprite sheet into PNG frames online. Adjust grid size, offsets and gaps, preview selected frames, and download a ZIP. Free sprite sheet cutter, no sign-up.",
+      "keywords": "sprite sheet cutter, free sprite sheet cutter, cut sprite sheet, extract sprite frames, sprite sheet slicer, PNG frames ZIP"
+    },
+    "eyebrow": "SPRITE SHEET → INDIVIDUAL PNG FRAMES",
+    "title": "Free Sprite Sheet Cutter",
+    "intro": "Cut a sprite sheet into individual images with a grid you can actually inspect. This free sprite sheet cutter lets you adjust frame dimensions, offsets, and gaps, preview a selected animation, and download PNG frames as a ZIP — directly in your browser.",
+    "stepsTitle": "How to cut a sprite sheet in three steps",
+    "steps": [
+      {
+        "title": "1. Load your sprite sheet",
+        "text": "Upload one PNG, JPG, or static WebP image. The tool estimates a regular grid from its dimensions and slices it immediately; you can still adjust rows, columns, frame size, offsets, and gaps. If you still need a sheet, generate assets on the home page, then return here to cut your own artwork."
+      },
+      {
+        "title": "2. Match the grid to the frames",
+        "text": "Enter rows and columns if you know the layout, or switch to exact frame width and height. Set left and top offsets for an outer border, plus horizontal and vertical gaps between cells. Check the numbered overlay at a larger zoom so no frame crosses a cutting line."
+      },
+      {
+        "title": "3. Select, preview, and extract",
+        "text": "Select all frames, click individual cells, or enter a continuous range. Preview the selected animation to confirm the order, then download one PNG or a ZIP of frames. To rebuild a different grid or strip, download the frames and continue in Sprite Sheet Maker."
+      }
+    ],
+    "featuresTitle": "A sprite sheet cutter that makes the boundaries visible",
+    "features": [
+      {
+        "title": "Slice by counts or exact dimensions",
+        "text": "The sprite sheet cutter supports two ways to describe a regular grid. Rows and columns divide the usable image area into whole-pixel cells; frame dimensions use the exact width and height you enter. Switching modes carries valid computed values across, so you can refine a layout without starting the setup again."
+      },
+      {
+        "title": "Keep the frames you actually need",
+        "text": "A single sheet may contain several actions and unused cells. Choose one range for a walk cycle, add specific frames with a click, or exclude cells whose pixels are entirely transparent. Original grid numbers remain visible even when your selection is smaller. Shift-click extends a selection from the last clicked frame."
+      },
+      {
+        "title": "Check motion before downloading files",
+        "text": "Animation preview plays selected frames in row-major order: left to right, then top to bottom. Pause, step through the sequence, or set a uniform FPS to find an incorrect cut. When a sheet arrives from Maker, its frame names and timing accompany the original grid setup. A plain PNG upload has no timing metadata."
+      }
+    ],
+    "useCasesTitle": "Cut frames from a sprite sheet for your next task",
+    "useCases": [
+      {
+        "title": "Separate a character action or effect",
+        "text": "Extract a short idle, run, or attack loop from a larger animation sheet. The frame range controls make it easier to isolate one action while leaving the other rows alone. If the asset packs different actions in different rows, select the matching grid numbers instead of assuming that the entire sheet is one continuous animation."
+      },
+      {
+        "title": "Recover reusable PNG assets",
+        "text": "Convert a sprite sheet to PNG files when you need individual icons, thumbnails, or frames for another editor. Each extracted image preserves the pixels inside its cell, including transparent padding. This sprite sheet cutter does not remove backgrounds, erase guide lines already baked into the source, or reinterpret the artwork."
+      }
+    ],
+    "guideTitle": "Grid settings, edge checks, and PNG exports",
+    "guide": [
+      {
+        "title": "Offsets and gaps solve different problems",
+        "text": "An offset moves the first cutting cell away from the left or top image edge. A gap skips pixels between cells. Right and bottom margins can exclude an outer border, including margins passed from Maker. If every cut drifts farther from the artwork across a row, check the horizontal gap rather than shifting the entire grid."
+      },
+      {
+        "title": "Understand unused edges and invalid grids",
+        "text": "Cells use whole pixels. When an image does not divide evenly, the tool reports unused pixels at the right and bottom instead of stretching the frames or silently treating a partial cell as complete. A grid that cannot fit a full frame blocks export. Recheck the dimensions against your source before accepting the preview."
+      },
+      {
+        "title": "Download sprite frames as ZIP",
+        "text": "Select one frame for a direct PNG download or several for a ZIP containing consecutively numbered filenames. Grid numbers and source names help you trace each exported image back to its place in the sheet. Excluding transparent frames only removes fully transparent cells, not dark cells or images with a solid background."
+      },
+      {
+        "title": "Local processing and memory limits",
+        "text": "Your image stays on your device. Uploads are limited to 50 MiB, 8192 pixels per edge, and 16 million pixels per source image. Extraction supports up to 256 frames and 32 million decoded frame pixels. Close an oversized selection or increase cell size if needed. The workspace is temporary, so download results before refreshing."
+      }
+    ],
+    "faqTitle": "Sprite Sheet Cutter FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Practical details about automatic grid estimates, unused edges, downloads, and the limits of regular grids.",
+    "faq": [
+      {
+        "title": "How do I cut a sprite sheet into individual images?",
+        "text": "Upload the sheet, match its rows and columns or exact frame size, then select the cells to extract. Download produces one PNG for a single selected cell or a ZIP for several. The grid overlay shows the precise area used for each cut."
+      },
+      {
+        "title": "Can this sprite sheet cutter detect irregular or tightly packed sprites?",
+        "text": "The tool estimates regular rectangular grids from image dimensions, but dimensions alone cannot reliably identify rotated frames, variable cell sizes, or tightly packed texture atlases. Those formats need frame metadata or a specialized unpacker. Adjust the estimate to the source specification when needed."
+      },
+      {
+        "title": "Why do my extracted frames include another sprite?",
+        "text": "The cutting cells probably do not match the original frame dimensions or spacing. Zoom into the overlay and check the first cell, the next cell, and the final cell of a row. Correct offsets and gaps before exporting again."
+      },
+      {
+        "title": "Can I turn a sprite sheet into a GIF?",
+        "text": "Yes. Check Include animated GIF before downloading a ZIP. The GIF plays the selected frames in order, using the current timing. PNG frames remain in the same archive."
+      },
+      {
+        "title": "Do I need an account to use this free sprite sheet cutter?",
+        "text": "No account is required. You can cut a sprite sheet and download PNG frames or a ZIP without signing in. AI generation is optional and separate, available from the home page, and it never blocks your PNG or ZIP download."
+      }
+    ],
+    "relatedTitle": "Build a new sheet from your selected frames",
+    "relatedText": "Sprite Sheet Maker combines PNG frames or a GIF into a new grid or strip. After you download the extracted frames, you can change the arrangement, align different-sized images, or export a sheet with JSON coordinates.",
+    "relatedLabel": "Open Sprite Sheet Maker",
+    "ctaTitle": "Ready to cut your sprite sheet?",
+    "ctaText": "Upload a sprite sheet in the workspace above, match the grid to the frames, and download PNG files. Files stay in this tab until you refresh.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP CUT",
+      "features": "GRID CONTROL",
+      "useCases": "FRAME USES",
+      "guide": "CUT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "CUTTER FAQ"
+    },
+    "design": {
+      "tag": "CUT",
+      "baseline": "Y = BASELINE",
+      "hero": "A free sprite sheet cutter for the frames you actually need. Fine-tune the cuts, check the motion, and take your PNGs back to your game.",
+      "proof": "Try it with a real sprite",
+      "workflow": "A SHORT PATH FROM ART TO ASSET",
+      "source": "SOURCE / SPRITE SHEET",
+      "result": "SELECT → EXTRACT → DOWNLOAD",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  }
+}

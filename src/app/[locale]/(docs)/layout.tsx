@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
+import type { Metadata } from 'next';
 import type { Translations } from 'fumadocs-ui/i18n';
 import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
 import { RootProvider } from 'fumadocs-ui/provider';
 
 import { source } from '@/core/docs/source';
+import { noIndexRobots } from '@/shared/lib/seo';
 
 import { baseOptions } from './layout.config';
 
@@ -24,6 +26,10 @@ const locales = [
     locale: 'zh',
   },
 ];
+
+export const metadata: Metadata = {
+  robots: noIndexRobots,
+};
 
 export default async function DocsRootLayout({
   children,

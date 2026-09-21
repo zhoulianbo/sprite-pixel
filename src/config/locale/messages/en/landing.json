@@ -1,59 +1,54 @@
 {
   "header": {
     "id": "header",
+    "brand": {
+      "title": "SpritePixel",
+      "logo": {
+        "src": "/logo.png",
+        "alt": "SpritePixel"
+      },
+      "url": "/"
+    },
     "nav": {
       "items": [
         {
-          "title": "Features",
-          "url": "/#features",
-          "icon": "Sparkles"
+          "title": "Home",
+          "url": "/"
         },
         {
-          "title": "Blog",
-          "url": "/blog",
-          "icon": "Newspaper"
+          "title": "Features",
+          "url": "/#features"
+        },
+        {
+          "title": "Tools",
+          "children": [
+            {
+              "title": "AI Game Icon Generator",
+              "url": "/ai-game-icon-generator",
+              "icon": "Layers",
+              "description": "Generate matching game icon sets in batches"
+            },
+            {
+              "title": "Sprite Sheet Maker",
+              "url": "/sprite-sheet-maker",
+              "icon": "Grid2X2",
+              "description": "Explore browser-based sprite sheet packing"
+            },
+            {
+              "title": "Sprite Sheet Cutter",
+              "url": "/sprite-sheet-cutter",
+              "icon": "Scissors",
+              "description": "Cut sprite sheets into individual frames"
+            }
+          ]
+        },
+        {
+          "title": "Gallery",
+          "url": "/gallery"
         },
         {
           "title": "Pricing",
-          "url": "/pricing",
-          "icon": "DollarSign"
-        },
-        {
-          "title": "AI",
-          "icon": "RiRobot2Line",
-          "children": [
-            {
-              "title": "AI Chatbot",
-              "description": "Chat with AI chatbot",
-              "url": "/chat",
-              "icon": "RiMessage2Line"
-            }
-          ]
-        },
-        {
-          "title": "Content",
-          "icon": "FileText",
-          "children": [
-            {
-              "title": "Showcases",
-              "description": "Explore product showcases",
-              "url": "/showcases",
-              "icon": "Box"
-            },
-            {
-              "title": "Updates",
-              "description": "Read Update Logs",
-              "url": "/updates",
-              "icon": "Clock"
-            },
-            {
-              "title": "Docs",
-              "description": "Read Documentation",
-              "url": "/docs",
-              "target": "_blank",
-              "icon": "BookOpenText"
-            }
-          ]
+          "url": "/pricing"
         }
       ]
     },
@@ -64,80 +59,58 @@
       "show_sign_out": true,
       "items": [
         {
-          "title": "Dashboard",
+          "title": "Workspace",
           "url": "/dashboard",
           "icon": "LayoutDashboard"
         }
       ]
-    },
-    "topbanner": {
-      "text": "This website is a demo site for the ShipAny template. To purchase the ShipAny template, please visit the <a href='https://shipany.ai/pricing' class='text-orange-300' target='_blank'>ShipAny website</a>"
     }
   },
   "footer": {
     "id": "footer",
+    "className": "border-t border-border bg-vault-navy",
     "brand": {
-      "description": "ShipAny is a NextJS boilerplate for building AI SaaS startups. Ship Fast with a variety of templates and components."
+      "title": "SpritePixel",
+      "description": "A project-based AI game asset studio for indie developers creating consistent sprites, animations and matching asset sets."
     },
     "nav": {
       "items": [
         {
-          "title": "About",
+          "title": "Product",
           "children": [
             {
-              "title": "Features",
-              "url": "/#features",
-              "target": "_self"
+              "title": "AI Sprite Generator",
+              "url": "/#hero"
             },
             {
-              "title": "Showcases",
-              "url": "/showcases",
-              "target": "_self"
+              "title": "AI Game Icon Generator",
+              "url": "/ai-game-icon-generator"
             },
             {
               "title": "Pricing",
-              "url": "/pricing",
-              "target": "_self"
+              "url": "/#pricing"
             }
           ]
         },
         {
-          "title": "Resources",
+          "title": "Free Tools",
           "children": [
             {
-              "title": "Documents",
-              "url": "/docs",
-              "target": "_self"
+              "title": "Sprite Sheet Maker",
+              "url": "/sprite-sheet-maker"
             },
             {
-              "title": "Blog",
-              "url": "/blog",
-              "target": "_self"
-            },
-            {
-              "title": "Chat",
-              "url": "/chat",
-              "target": "_self"
+              "title": "Sprite Sheet Cutter",
+              "url": "/sprite-sheet-cutter"
             }
           ]
         },
         {
-          "title": "Friends",
+          "title": "Company",
           "children": [
             {
-              "title": "ShipAny",
-              "url": "https://shipany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "ThinkAny",
-              "url": "https://thinkany.ai",
-              "target": "_blank"
-            },
-            {
-              "title": "MCP.so",
-              "url": "https://mcp.so",
-              "target": "_blank"
+              "title": "Contact",
+              "url": "mailto:support@spritepixel.com"
             }
           ]
         }
@@ -146,14 +119,15 @@
     "agreement": {
       "items": [
         {
-          "title": "Privacy Policy",
+          "title": "Privacy",
           "url": "/privacy-policy"
         },
         {
-          "title": "Terms of Service",
+          "title": "Terms",
           "url": "/terms-of-service"
         }
       ]
-    }
+    },
+    "copyright": "© 2026 SpritePixel. Built for indie game developers."
   }
 }

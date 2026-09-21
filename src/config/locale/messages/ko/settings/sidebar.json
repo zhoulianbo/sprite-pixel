@@ -1,0 +1,108 @@
+{
+  "sidebar": {
+    "main_navs": [
+      {
+        "title": "워크스페이스",
+        "items": [
+          {
+            "title": "내 프로젝트",
+            "url": "/dashboard",
+            "icon": "LayoutDashboard"
+          },
+          {
+            "title": "내 에셋",
+            "icon": "Images",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "캐릭터",
+                "url": "/dashboard/assets/characters",
+                "icon": "Users"
+              },
+              {
+                "title": "애니메이션",
+                "url": "/dashboard/assets/animations",
+                "icon": "Film"
+              },
+              {
+                "title": "아이콘",
+                "url": "/dashboard/assets/icons",
+                "icon": "Boxes"
+              },
+              {
+                "title": "스프라이트 시트",
+                "url": "/dashboard/assets/sheets",
+                "icon": "Table2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "계정",
+        "items": [
+          {
+            "title": "설정",
+            "url": "/settings",
+            "icon": "Settings",
+            "is_expand": true,
+            "children": [
+              {
+                "title": "프로필",
+                "url": "/settings/profile"
+              },
+              {
+                "title": "결제",
+                "url": "/settings/billing"
+              },
+              {
+                "title": "결제 내역",
+                "url": "/settings/payments"
+              },
+              {
+                "title": "크레딧",
+                "url": "/settings/credits"
+              },
+              {
+                "title": "보안",
+                "url": "/settings/security"
+              },
+              {
+                "title": "API 키",
+                "url": "/settings/apikeys"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "프로필",
+            "url": "/settings/profile",
+            "icon": "User"
+          }
+        ]
+      }
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "홈",
+            "url": "/",
+            "icon": "Home"
+          }
+        ]
+      }
+    }
+  },
+  "upgrade": {
+    "title": "업그레이드",
+    "description": "Pro로 업그레이드하여 모든 기능을 사용하세요",
+    "action": "업그레이드",
+    "url": "/pricing"
+  }
+}

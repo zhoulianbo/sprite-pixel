@@ -1,0 +1,65 @@
+{
+  "fields": {
+    "style": "스타일",
+    "perspective": "시점",
+    "quality": "품질",
+    "characterType": "캐릭터 유형",
+    "editType": "유형",
+    "actionType": "동작",
+    "direction": "방향",
+    "frames": "프레임 수",
+    "frameSize": "프레임 크기"
+  },
+  "upload": {
+    "reference": "참고 이미지",
+    "character": "캐릭터",
+    "remove": "이미지 제거",
+    "file": "업로드",
+    "existing": "기존 캐릭터"
+  },
+  "options": {
+    "style": {
+      "pixel-art": "픽셀 아트",
+      "cartoon": "카툰",
+      "illustration": "일러스트",
+      "hand-painted": "핸드 페인팅",
+      "anime-2d": "2D 애니메이션",
+      "dark-fantasy": "다크 판타지",
+      "cyberpunk": "사이버펑크"
+    },
+    "perspective": {
+      "side": "측면",
+      "top-down": "탑다운",
+      "front": "정면",
+      "isometric": "아이소메트릭"
+    },
+    "quality": { "1k": "1K", "2k": "2K", "4k": "4K" },
+    "characterType": {
+      "humanoid": "인간형",
+      "monster": "몬스터",
+      "animal": "동물",
+      "robot": "로봇",
+      "custom": "사용자 지정"
+    },
+    "editType": { "pose": "포즈", "costume": "의상" },
+    "actionType": {
+      "idle": "대기",
+      "walk": "걷기",
+      "run": "달리기",
+      "attack": "공격",
+      "jump": "점프",
+      "hurt": "피격",
+      "death": "사망",
+      "custom": "사용자 지정"
+    },
+    "direction": {
+      "right": "오른쪽",
+      "left": "왼쪽",
+      "up": "위",
+      "down": "아래",
+      "four-way": "4방향",
+      "eight-way": "8방향"
+    },
+    "frames": { "auto": "자동" }
+  }
+}

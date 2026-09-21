@@ -15,7 +15,7 @@ const socialLinks: SocialLink[] = [
     icon: 'RiTwitterXFill',
     url: 'https://x.com/your-app-name',
     target: '_blank',
-    enabled: true,
+    enabled: false,
   },
   {
     title: 'GitHub',
@@ -34,7 +34,7 @@ const socialLinks: SocialLink[] = [
   {
     title: 'Email',
     icon: 'Mail',
-    url: 'mailto:support@your-domain.com',
+    url: 'mailto:support@spritepixel.com',
     target: '_self',
     enabled: true,
   },
@@ -61,11 +61,11 @@ export const websiteConfig = {
     landing: {
       header: {
         showSign: true,
-        showTheme: true,
+        showTheme: false,
         showLocale: true,
       },
       footer: {
-        showTheme: true,
+        showTheme: false,
         showLocale: true,
       },
     },
@@ -76,7 +76,7 @@ export const websiteConfig = {
       showSignOut: true,
       signOutCallback: '/',
       signInCallback: '/dashboard',
-      showTheme: true,
+      showTheme: false,
       showLocale: false,
       variant: 'sidebar' as const,
     },
@@ -86,7 +86,7 @@ export const websiteConfig = {
       showEmail: false,
       showSignOut: true,
       signOutCallback: '/',
-      showTheme: true,
+      showTheme: false,
       showLocale: false,
       variant: 'sidebar' as const,
     },
@@ -170,7 +170,7 @@ export function applySidebarWebsiteConfig(
             ? '/admin'
             : variant === 'chat'
               ? '/chat'
-              : '/dashboard',
+              : '/',
       },
       show_trigger: layoutConfig.showTrigger,
     },

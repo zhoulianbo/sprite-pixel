@@ -6,9 +6,9 @@ import { Brand as BrandType } from '@/shared/types/blocks/common';
 export function BrandLogo({ brand }: { brand: BrandType }) {
   return (
     <Link
-      href={brand.url || ''}
+      href={brand.url || '/'}
       target={brand.target || '_self'}
-      className={`flex items-center space-x-3 ${brand.className}`}
+      className={`text-foreground flex items-center space-x-3 ${brand.className || ''}`}
     >
       {brand.logo && (
         <Image
@@ -16,12 +16,21 @@ export function BrandLogo({ brand }: { brand: BrandType }) {
           alt={brand.title ? '' : brand.logo.alt || ''}
           width={brand.logo.width || 80}
           height={brand.logo.height || 80}
-          className="h-8 w-auto rounded-lg"
+          className="h-8 w-auto rounded-none"
           unoptimized={brand.logo.src.startsWith('http')}
         />
       )}
       {brand.title && (
-        <span className="text-lg font-medium">{brand.title}</span>
+        <span className="text-lg font-medium">
+          {brand.title === 'SpritePixel' ? (
+            <>
+              <span className="text-foreground">Sprite</span>
+              <span className="text-primary">Pixel</span>
+            </>
+          ) : (
+            brand.title
+          )}
+        </span>
       )}
     </Link>
   );

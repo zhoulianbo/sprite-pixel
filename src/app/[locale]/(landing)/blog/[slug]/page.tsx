@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getThemePage } from '@/core/theme';
 import { envConfigs } from '@/config';
+import { noIndexRobots } from '@/shared/lib/seo';
 import { Empty } from '@/shared/blocks/common';
 import { getPost } from '@/shared/models/post';
 import { DynamicPage } from '@/shared/types/blocks/landing';
@@ -33,6 +34,7 @@ export async function generateMetadata({
     return {
       title: `${slug} | ${t('title')}`,
       description: t('description'),
+      robots: noIndexRobots,
       alternates: {
         canonical: canonicalUrl,
       },
@@ -42,6 +44,7 @@ export async function generateMetadata({
   return {
     title: `${post.title} | ${t('title')}`,
     description: post.description,
+    robots: noIndexRobots,
     alternates: {
       canonical: canonicalUrl,
     },

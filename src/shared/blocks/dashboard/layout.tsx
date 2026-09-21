@@ -8,15 +8,17 @@ import { Sidebar } from './sidebar';
 export function DashboardLayout({
   children,
   sidebar,
+  sidebarWidth = 'calc(var(--spacing) * 72)',
 }: {
   children: ReactNode;
   sidebar: SidebarType;
+  sidebarWidth?: string;
 }) {
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': 'calc(var(--spacing) * 72)',
+          '--sidebar-width': sidebarWidth,
           '--header-height': 'calc(var(--spacing) * 14)',
         } as React.CSSProperties
       }

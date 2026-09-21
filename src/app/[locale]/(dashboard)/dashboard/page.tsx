@@ -1,40 +1,37 @@
+import { Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
-import { Empty, SmartIcon } from '@/shared/blocks/common';
-import { MainHeader } from '@/shared/blocks/dashboard';
-import { TableCard } from '@/shared/blocks/table';
+import { gameGenreValues } from '@/config/project';
+import { Header, Main } from '@/shared/blocks/dashboard';
+import { ProjectCard } from '@/shared/blocks/projects/project-card';
+import { ProjectCreateDialog } from '@/shared/blocks/projects/project-create-dialog';
+import { Button } from '@/shared/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui/card';
-import { ApikeyStatus, getApikeysCount } from '@/shared/models/apikey';
-import { getRemainingCredits } from '@/shared/models/credit';
-import {
-  getOrders,
-  getOrdersCount,
-  Order,
-  OrderStatus,
-} from '@/shared/models/order';
-import { getSubscriptionsCount } from '@/shared/models/subscription';
+  ensureDefaultProject,
+  isSystemDefaultProject,
+  listProjects,
+} from '@/shared/models/project';
 import { getUserInfo } from '@/shared/models/user';
-import { Table } from '@/shared/types/blocks/table';
 
-function formatOrderAmount(order: Order, locale: string) {
-  const currency = (order.paymentCurrency || order.currency || 'USD')
-    .toUpperCase()
-    .trim();
-  const amount = (order.paymentAmount || order.amount || 0) / 100;
-
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency,
-    }).format(amount);
-  } catch {
-    return `${currency} ${amount.toFixed(2)}`;
+function genreLabel(
+  genre: string,
+  t: Awaited<ReturnType<typeof getTranslations>>
+) {
+  if (!genre) return '';
+  const key = `createProject.genres.${genre}`;
+  if ((gameGenreValues as readonly string[]).includes(genre) && t.has(key)) {
+    return t(key);
   }
+  return genre.replaceAll('_', ' ');
+}
+
+function styleLabel(
+  style: string,
+  t: Awaited<ReturnType<typeof getTranslations>>
+) {
+  if (!style) return '';
+  const key = `options.style.${style.replaceAll('_', '-')}`;
+  return t.has(key) ? t(key) : style.replaceAll('_', ' ');
 }
 
 export default async function DashboardPage({
@@ -43,138 +40,92 @@ export default async function DashboardPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations('workspace');
+  const tg = await getTranslations('generation');
   const user = await getUserInfo();
-
   if (!user) {
-    return <Empty message="no auth" />;
+    return (
+      <>
+        <Header />
+        <Main>
+          <div className="mx-auto flex min-h-[50vh] max-w-lg items-center justify-center text-center">
+            <p className="text-muted-foreground">{t('projects.empty')}</p>
+          </div>
+        </Main>
+      </>
+    );
   }
-
-  const t = await getTranslations('dashboard');
-  const [
-    remainingCredits,
-    activeApiKeys,
-    paidOrders,
-    subscriptions,
-    recentOrders,
-  ] = await Promise.all([
-    getRemainingCredits(user.id),
-    getApikeysCount({
-      userId: user.id,
-      status: ApikeyStatus.ACTIVE,
-    }),
-    getOrdersCount({
-      userId: user.id,
-      status: OrderStatus.PAID,
-    }),
-    getSubscriptionsCount({ userId: user.id }),
-    getOrders({
-      userId: user.id,
-      status: OrderStatus.PAID,
-      page: 1,
-      limit: 8,
-    }),
-  ]);
-
-  const summaries = [
-    {
-      title: t('summaries.credits.title'),
-      value: remainingCredits,
-      description: t('summaries.credits.description'),
-      icon: 'Coins',
-    },
-    {
-      title: t('summaries.api_keys.title'),
-      value: activeApiKeys,
-      description: t('summaries.api_keys.description'),
-      icon: 'KeyRound',
-    },
-    {
-      title: t('summaries.payments.title'),
-      value: paidOrders,
-      description: t('summaries.payments.description'),
-      icon: 'ReceiptText',
-    },
-    {
-      title: t('summaries.subscriptions.title'),
-      value: subscriptions,
-      description: t('summaries.subscriptions.description'),
-      icon: 'RefreshCw',
-    },
-  ];
-
-  const table: Table = {
-    columns: [
-      {
-        name: 'orderNo',
-        title: t('recent.columns.order_no'),
-        type: 'copy',
-      },
-      {
-        name: 'productName',
-        title: t('recent.columns.product'),
-        placeholder: '-',
-      },
-      {
-        name: 'status',
-        title: t('recent.columns.status'),
-        type: 'label',
-        metadata: { variant: 'outline' },
-      },
-      {
-        name: 'paymentType',
-        title: t('recent.columns.type'),
-        type: 'label',
-        metadata: { variant: 'outline' },
-      },
-      {
-        title: t('recent.columns.amount'),
-        callback: (order: Order) => formatOrderAmount(order, locale),
-      },
-      {
-        name: 'createdAt',
-        title: t('recent.columns.created_at'),
-        type: 'time',
-      },
-    ],
-    data: recentOrders,
-    emptyMessage: t('recent.empty'),
-  };
+  await ensureDefaultProject(user.id);
+  const projects = await listProjects(user.id);
 
   return (
-    <div className="space-y-8">
-      <MainHeader title={t('title')} description={t('description')} />
+    <>
+      <Header />
+      <Main>
+        <div className="w-full space-y-8">
+          <header className="flex flex-col justify-between gap-5 border-b pb-7 sm:flex-row sm:items-end">
+            <div className="max-w-2xl space-y-2">
+              <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+                {t('projects.title')}
+              </h1>
+            </div>
+            <ProjectCreateDialog
+              trigger={
+                <Button className="h-10">
+                  <Sparkles className="size-4" />
+                  {t('projects.new')}
+                </Button>
+              }
+            />
+          </header>
 
-      <section
-        aria-label={t('summaries.label')}
-        className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
-      >
-        {summaries.map((summary) => (
-          <Card key={summary.title} className="gap-4 py-5 shadow-none">
-            <CardHeader className="grid grid-cols-[1fr_auto] items-start gap-3 px-5">
-              <div className="space-y-2">
-                <CardTitle className="text-muted-foreground text-sm font-medium">
-                  {summary.title}
-                </CardTitle>
-                <div className="text-3xl font-semibold tracking-tight">
-                  {summary.value}
-                </div>
-              </div>
-              <div className="bg-muted text-muted-foreground flex size-9 items-center justify-center rounded-lg border">
-                <SmartIcon name={summary.icon} size={17} />
-              </div>
-            </CardHeader>
-            <CardContent className="text-muted-foreground px-5 text-xs">
-              {summary.description}
-            </CardContent>
-          </Card>
-        ))}
-      </section>
-
-      <TableCard
-        title={t('recent.title')}
-        description={t('recent.description')}
-        table={table}
-      />
-    </div>
+          <section className="grid w-full max-w-[90rem] grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            {projects.map(
+              (project: {
+                id: string;
+                name: string;
+                description: string | null;
+                gameGenre: string;
+                artStyle: string;
+                settingsJson: string;
+                updatedAt: string;
+                assetCount: number;
+              }) => {
+                const title =
+                  isSystemDefaultProject(project) &&
+                  project.name === 'Default Project'
+                    ? t('projects.default')
+                    : project.name;
+                const updated = new Intl.DateTimeFormat(locale, {
+                  dateStyle: 'medium',
+                }).format(new Date(project.updatedAt));
+                return (
+                  <ProjectCard
+                    key={project.id}
+                    project={{
+                      id: project.id,
+                      name: project.name,
+                      description: project.description,
+                      settingsJson: project.settingsJson,
+                      gameGenre: project.gameGenre,
+                      artStyle: project.artStyle,
+                    }}
+                    title={title}
+                    genre={genreLabel(project.gameGenre, t)}
+                    style={styleLabel(project.artStyle, tg)}
+                    assetsLabel={t('projects.assets', {
+                      count: project.assetCount,
+                    })}
+                    updatedLabel={t('projects.updated', { date: updated })}
+                    genreLabel={t('createProject.gameGenre')}
+                    styleLabel={t('createProject.style')}
+                  />
+                );
+              }
+            )}
+          </section>
+        </div>
+      </Main>
+    </>
   );
 }

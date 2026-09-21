@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getThemePage } from '@/core/theme';
 import { envConfigs } from '@/config';
 import { Empty } from '@/shared/blocks/common';
+import { noIndexRobots } from '@/shared/lib/seo';
 import {
   PostType as DBPostType,
   getPosts,
@@ -38,6 +39,7 @@ export async function generateMetadata({
   return {
     title: `${slug} | ${t('title')}`,
     description: t('description'),
+    robots: noIndexRobots,
     alternates: {
       canonical:
         locale !== envConfigs.locale

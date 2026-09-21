@@ -1,0 +1,79 @@
+{
+  "sidebar": {
+    "buttons": [
+      {
+        "title": "新しいチャット",
+        "icon": "Plus",
+        "url": "/chat",
+        "variant": "outline"
+      }
+    ],
+    "main_navs": [
+      {
+        "items": [
+          {
+            "title": "履歴",
+            "icon": "History",
+            "url": "/chat/history"
+          }
+        ]
+      }
+    ],
+    "bottom_nav": {
+      "items": []
+    },
+    "user": {
+      "nav": {
+        "items": [
+          {
+            "title": "プロフィール",
+            "url": "/settings/profile",
+            "icon": "User",
+            "target": "_blank"
+          }
+        ]
+      }
+    },
+    "footer": {
+      "nav": {
+        "items": [
+          {
+            "title": "ホーム",
+            "url": "/",
+            "icon": "Home",
+            "target": "_blank"
+          }
+        ]
+      }
+    }
+  },
+  "library": {
+    "title": "ライブラリ",
+    "icon": "History",
+    "url": "/chat/history",
+    "more": "もっと見る",
+    "actions": {
+      "edit_title": "タイトルを編集",
+      "share": "共有",
+      "delete": "削除"
+    }
+  },
+  "generator": {
+    "title": "今日は何をお手伝いしましょうか？",
+    "input_placeholder": "何でも聞いてください"
+  },
+  "history": {
+    "title": "チャット履歴",
+    "description": "過去の会話を確認できます。",
+    "empty": "会話はまだありません。",
+    "error": "会話の読み込みに失敗しました。",
+    "retry": "再試行",
+    "signin": "チャット履歴を見るにはログインしてください。",
+    "summary": "{total}件中 {from}-{to}件を表示",
+    "perPage": "表示件数",
+    "prev": "前へ",
+    "next": "次へ",
+    "open": "チャットを開く",
+    "untitled": "無題の会話"
+  }
+}

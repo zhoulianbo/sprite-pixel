@@ -35,7 +35,18 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return [];
+    return [
+      {
+        source: '/sprite-sheet-splitter',
+        destination: '/sprite-sheet-cutter',
+        permanent: true,
+      },
+      {
+        source: '/zh/sprite-sheet-splitter',
+        destination: '/zh/sprite-sheet-cutter',
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [
@@ -88,7 +99,7 @@ const nextConfig = {
     return config;
   },
   experimental: {
-    turbopackFileSystemCacheForDev: true,
+    // Next 15.5 does not support turbopackFileSystemCacheForDev; it stale-caches HMR chunks.
     // Disable mdxRs for Vercel deployment compatibility with fumadocs-mdx
     ...(process.env.VERCEL ? {} : { mdxRs: true }),
   },

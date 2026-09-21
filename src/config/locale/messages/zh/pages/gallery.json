@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "title": "画廊",
+    "description": "浏览 SpritePixel 的精灵图、动画与游戏素材示例。"
+  },
+  "title": "画廊",
+  "description": "浏览已生成的精灵图、动画和配套游戏素材。",
+  "emptyTitle": "暂无画廊内容",
+  "emptyDescription": "画廊数据稍后接入，当前暂无展示内容。"
+}

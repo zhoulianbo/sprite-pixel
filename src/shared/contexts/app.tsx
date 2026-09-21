@@ -12,7 +12,6 @@ import {
 } from 'react';
 
 import { getAuthClient } from '@/core/auth/client';
-import { envConfigs } from '@/config';
 import { websiteConfig } from '@/config/website';
 import { User } from '@/shared/models/user';
 
@@ -43,9 +42,10 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const userRef = useRef<User | null>(null);
 
-  // is check sign (true during SSR and initial render to avoid hydration mismatch when auth is enabled)
-  const [isCheckSign, setIsCheckSign] = useState(
-    websiteConfig.auth.enabled && !!envConfigs.auth_secret
+  // Keep SSR and the first client render on the same auth-checking state.
+  // AUTH_SECRET is server-only, so it must not participate in this initial value.
+  const [isCheckSign, setIsCheckSign] = useState<boolean>(
+    websiteConfig.auth.enabled
   );
 
   // show sign modal

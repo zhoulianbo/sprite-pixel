@@ -3,6 +3,7 @@ import {
   PaymentManager,
   PayPalProvider,
   StripeProvider,
+  WaffoProvider,
 } from '@/extensions/payment';
 import {
   PaymentSession,
@@ -81,6 +82,18 @@ export function getPaymentServiceWithConfigs(configs: Configs) {
     );
   }
 
+  // add Waffo Pancake provider
+  if (configs.waffo_enabled === 'true') {
+    paymentManager.addProvider(
+      new WaffoProvider({
+        merchantId: configs.waffo_merchant_id,
+        privateKey: configs.waffo_private_key,
+        environment: configs.waffo_environment === 'prod' ? 'prod' : 'test',
+      }),
+      defaultProvider === 'waffo'
+    );
+  }
+
   // add paypal provider
   if (configs.paypal_enabled === 'true') {
     paymentManager.addProvider(
@@ -141,7 +154,10 @@ export async function handleCheckoutSuccess({
   }
 
   // Only process orders in CREATED or PENDING status
-  if (order.status !== OrderStatus.CREATED && order.status !== OrderStatus.PENDING) {
+  if (
+    order.status !== OrderStatus.CREATED &&
+    order.status !== OrderStatus.PENDING
+  ) {
     console.log(`Order ${orderNo} status is ${order.status}, not processing`);
     return;
   }

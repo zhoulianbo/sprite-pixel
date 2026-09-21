@@ -1,0 +1,90 @@
+{
+  "header": {
+    "nav": {
+      "items": [
+        { "title": "ホーム", "url": "/" },
+        { "title": "機能", "url": "/#features" },
+        {
+          "title": "ツール",
+          "children": [
+            {
+              "title": "AIゲームアイコンジェネレーター",
+              "url": "/ai-game-icon-generator",
+              "icon": "Layers",
+              "description": "統一感のあるゲームアイコンを一括生成"
+            },
+            {
+              "title": "スプライトシート作成ツール",
+              "url": "/sprite-sheet-maker",
+              "icon": "Grid2X2",
+              "description": "ブラウザーでスプライトシートを作成"
+            },
+            {
+              "title": "スプライトシート分割ツール",
+              "url": "/sprite-sheet-cutter",
+              "icon": "Scissors",
+              "description": "シートを個別フレームに分割"
+            }
+          ]
+        },
+        { "title": "ギャラリー", "url": "/gallery" },
+        { "title": "料金", "url": "/pricing" }
+      ]
+    },
+    "user_nav": {
+      "items": [
+        {
+          "title": "ワークスペース",
+          "url": "/dashboard",
+          "icon": "LayoutDashboard"
+        }
+      ]
+    }
+  },
+  "footer": {
+    "brand": {
+      "description": "インディーゲーム開発者向けのプロジェクト型AIゲーム素材スタジオ。統一感のあるスプライト、アニメーション、素材セットを作成できます。"
+    },
+    "nav": {
+      "items": [
+        {
+          "title": "製品",
+          "children": [
+            { "title": "AIスプライト生成ツール", "url": "/#hero" },
+            {
+              "title": "AIゲームアイコンジェネレーター",
+              "url": "/ai-game-icon-generator"
+            },
+            { "title": "料金", "url": "/#pricing" }
+          ]
+        },
+        {
+          "title": "無料ツール",
+          "children": [
+            {
+              "title": "スプライトシート作成ツール",
+              "url": "/sprite-sheet-maker"
+            },
+            {
+              "title": "スプライトシート分割ツール",
+              "url": "/sprite-sheet-cutter"
+            }
+          ]
+        },
+        {
+          "title": "会社情報",
+          "children": [
+            { "title": "お問い合わせ", "url": "mailto:support@spritepixel.com" }
+          ]
+        }
+      ]
+    },
+    "agreement": {
+      "items": [
+        { "title": "プライバシー", "url": "/privacy-policy" },
+        { "title": "利用規約", "url": "/terms-of-service" }
+      ]
+    },
+    "copyright": "© 2026 SpritePixel。インディーゲーム開発者のために。"
+  }
+}

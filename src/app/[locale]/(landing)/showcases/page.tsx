@@ -9,6 +9,7 @@ export const revalidate = 3600;
 export const generateMetadata = getMetadata({
   metadataKey: 'pages.showcases.metadata',
   canonicalUrl: '/showcases',
+  noIndex: true,
 });
 
 export default async function ShowcasesPage({
