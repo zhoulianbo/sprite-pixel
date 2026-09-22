@@ -1,11 +1,13 @@
 import { envConfigs } from '@/config';
 import { AIMediaType } from '@/extensions/ai';
+import { ContentSafetyError } from '@/extensions/content-safety';
 import { getUuid } from '@/shared/lib/hash';
 import { respData, respErr } from '@/shared/lib/resp';
 import { createAITask, NewAITask } from '@/shared/models/ai_task';
 import { getRemainingCredits } from '@/shared/models/credit';
 import { getUserInfo } from '@/shared/models/user';
 import { getAIService } from '@/shared/services/ai';
+import { assertPromptAllowedForGeneration } from '@/shared/services/content-safety';
 
 export async function POST(request: Request) {
   try {
@@ -77,6 +79,15 @@ export async function POST(request: Request) {
     }
 
     const callbackUrl = `${envConfigs.app_url}/api/ai/notify/${provider}`;
+
+    try {
+      await assertPromptAllowedForGeneration(prompt);
+    } catch (error) {
+      if (error instanceof ContentSafetyError) {
+        return respErr(error.code);
+      }
+      throw error;
+    }
 
     const params: any = {
       mediaType,

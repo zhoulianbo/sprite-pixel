@@ -41,6 +41,7 @@ import {
   SPRITE_DIRECTIONS,
 } from '@/config/generation/sprite';
 import { AIMediaType, AITaskStatus } from '@/extensions/ai';
+import { ContentSafetyError } from '@/extensions/content-safety';
 import { getUuid } from '@/shared/lib/hash';
 import { imageInfo } from '@/shared/lib/sprite-tools/image-info';
 import {
@@ -58,6 +59,7 @@ import { findAssetFileById, getProjectItem } from '@/shared/models/asset';
 import { getRemainingCredits } from '@/shared/models/credit';
 import { getOwnedProject } from '@/shared/models/project';
 import { getAIService } from '@/shared/services/ai';
+import { assertPromptAllowedForGeneration } from '@/shared/services/content-safety';
 import {
   getAssetPublicUrlResolver,
   getStorageService,
@@ -628,7 +630,9 @@ async function dispatchTask({
       options: JSON.stringify(persistedOptions),
       status: AITaskStatus.FAILED,
       taskId: null,
-      taskInfo: JSON.stringify({ errorCode: 'PROVIDER_DISPATCH_FAILED' }),
+      taskInfo: JSON.stringify({
+        errorCode: 'PROVIDER_DISPATCH_FAILED',
+      }),
       costCredits: 0,
       scene: referenceFileId ? 'image-to-image' : 'text-to-image',
     });
@@ -690,6 +694,23 @@ export async function startSpriteGeneration(
     throw new SpriteGenerationError('REFERENCE_REQUIRED');
   }
   input.referenceFileId = resolvedReferenceFileId;
+
+  // Only scan user-authored text. Expanded / templated prompts are not scanned again.
+  try {
+    await assertPromptAllowedForGeneration(input.prompt);
+    for (const item of (input.items || []).filter(
+      (entry) => entry.selected !== false
+    )) {
+      const text = [item.name, item.description].filter(Boolean).join('\n');
+      await assertPromptAllowedForGeneration(text);
+    }
+  } catch (error) {
+    if (error instanceof ContentSafetyError) {
+      throw new SpriteGenerationError(error.code, error.status);
+    }
+    throw error;
+  }
+
   if (input.type === 'icon_batch') {
     input.items = await expandIconItemDescriptions(input);
   }
