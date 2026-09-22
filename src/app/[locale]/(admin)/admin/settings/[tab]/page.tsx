@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { setRequestLocale } from 'next-intl/server';
 
 import { PERMISSIONS, requireAllPermissions } from '@/core/rbac';
@@ -60,6 +61,10 @@ export default async function SettingsPage({
     });
 
     await saveConfigs(latestConfigs);
+
+    if (passby?.tab === 'analytics') {
+      revalidatePath('/', 'layout');
+    }
 
     return {
       status: 'success',

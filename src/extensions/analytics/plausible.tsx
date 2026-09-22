@@ -3,13 +3,15 @@ import Script from 'next/script';
 
 import { AnalyticsConfigs, AnalyticsProvider } from '.';
 
+import { buildPlausibleBootstrapScript } from './plausible-utils';
+
 /**
  * Plausible analytics configs
  * @docs https://plausible.io/docs/integration-guides
  */
 export interface PlausibleAnalyticsConfigs extends AnalyticsConfigs {
-  domain: string; // data domain
-  src: string; // script src
+  domain: string; // tracked site hostname in Plausible dashboard
+  src: string; // hashed loader script URL (pa-*.js)
 }
 
 /**
@@ -26,24 +28,25 @@ export class PlausibleAnalyticsProvider implements AnalyticsProvider {
   }
 
   getHeadScripts(): ReactNode {
+    const src = this.configs.src.trim();
+    if (!src) {
+      return null;
+    }
+
     return (
       <>
-        {/* Plausible Analytics */}
         <Script
-          id={this.name}
+          id={`${this.name}-loader`}
+          src={src}
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }
-            `,
-          }}
+          async
         />
         <Script
-          data-domain={this.configs.domain}
-          src={this.configs.src}
+          id={`${this.name}-init`}
           strategy="afterInteractive"
-          defer
-          async
+          dangerouslySetInnerHTML={{
+            __html: buildPlausibleBootstrapScript(src),
+          }}
         />
       </>
     );
