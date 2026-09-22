@@ -50,6 +50,56 @@ Default asset visibility depends on the plan in effect when an asset is created.
 
 Check the current plan description before uploading or generating content. Do not submit confidential, personal or restricted content to a project that may be public. Visibility controls may be available, but we cannot guarantee immediate removal of copies already cached by search engines, third parties or prior lawful visitors.
 
+## AI Models and Access Providers
+
+SpritePixel uses third-party AI APIs for image generation and related features. **As of the effective date shown at the top of this page**, the production Service calls the following models and access sources:
+
+| Feature | Access provider / API source | Model name |
+| --- | --- | --- |
+| Character sprites, character animations and game icon batch generation | OpenAI API | `gpt-image-2.5` |
+| Optional icon name/description preprocessing (does not consume credits) | Google Gemini API | `gemini-2.5-flash` |
+
+We may add, replace or retire models or providers to maintain quality, safety, cost and legal compliance. When we make a **material** change to the primary image-generation model or access provider used for paid AI features, we will update this section and publish a new effective date on this page where practicable.
+
+Generated output is also subject to the safety and use policies of the underlying providers, in addition to the Acceptable Use Policy below.
+
+## Acceptable Use Policy for AI-Generated Content
+
+This section applies to prompts, reference images, uploads, exports and AI-generated outputs. It forms part of these Terms.
+
+### Prohibited content
+
+You must **not** use the Service to create, upload, request, store, share, export or distribute content that includes or promotes:
+
+1. **Sexual or NSFW content** — pornography, explicit nudity intended to arouse, or other sexually explicit material.
+2. **Graphic violence or gore** — extreme violence, torture, or disturbing gore created to shock or glorify harm.
+3. **Hate speech** — content that attacks, dehumanizes or incites violence or discrimination against individuals or groups based on protected characteristics.
+4. **Child safety violations** — sexualization of minors, child sexual abuse material (CSAM), or any content that endangers minors.
+5. **Deepfakes and impersonation** — synthetic media intended to deceive others about a real person's identity, or non-consensual impersonation of a real person (including public figures) in a harmful or fraudulent manner.
+
+This list is in addition to, and does not limit, the general prohibitions elsewhere in these Terms or applicable law.
+
+## Reporting violations
+
+If you believe a user, prompt, upload or output violates this policy, email **[support@spritepixel.com](mailto:support@spritepixel.com)** with:
+
+- the account email (if you have an account);
+- the project name, generation task ID, page URL or approximate date and time;
+- a clear description of the concern; and
+- screenshots or other supporting information where available.
+
+We may request additional details. Do not attach unlawful material in a report when a description is sufficient.
+
+### Content moderation and enforcement
+
+SpritePixel uses a layered approach to content safety:
+
+- **Automated safeguards** — provider-side safety filters, rate limits, logging and abuse-prevention controls on generation tasks;
+- **Review and enforcement** — investigation of credible reports and suspicious activity; removal or restriction of content; suspension or termination of accounts; refunds are handled only under the failure-handling rules in these Terms, not for policy violations;
+- **Records** — retention of generation and security logs as described in the [Privacy Policy](/privacy-policy) for investigation and legal compliance.
+
+We may block or remove prompts or outputs that appear to violate this policy or provider rules before or after generation. No moderation system is perfect; you remain responsible for your use of the Service.
+
 ## Prohibited Use
 
 You may not:
@@ -60,7 +110,7 @@ You may not:
 - scrape, attack, reverse engineer or otherwise disrupt the Service, except where applicable law expressly permits it;
 - access another user's private project, account or non-public data;
 - impersonate another person, commit payment fraud, abuse refunds or create duplicate accounts to obtain improper benefits; or
-- generate, distribute or sell content in a manner prohibited by an applicable provider or law.
+- generate, distribute or sell content in a manner prohibited by an applicable provider or law, including the **Acceptable Use Policy for AI-Generated Content** above.
 
 We may restrict, remove, suspend or terminate content or accounts suspected of violating these rules and may preserve or disclose necessary records when legally required.
 
@@ -133,7 +183,7 @@ The SpritePixel website, brand, interface, software, documentation and other con
 
 ## Third-Party Services
 
-The Service may depend on AI models, payments, authentication, storage, email and other third-party services. Those services are governed by their own terms and privacy policies. Their availability, processing time and output are not entirely controlled by SpritePixel.
+The Service may depend on AI models, payments, authentication, storage, email and other third-party services. Those services are governed by their own terms and privacy policies. Their availability, processing time and output are not entirely controlled by SpritePixel. For the image-generation models and API sources we currently use in production, see **AI Models and Access Providers** above.
 
 ## Availability and Disclaimers
 
