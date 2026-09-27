@@ -23,7 +23,25 @@ export type ProjectAssetPickerFile = {
   url: string;
   name?: string | null;
   itemId?: string | null;
+  projectId?: string;
+  projectName?: string | null;
+  projectSettingsJson?: string;
 };
+
+function displayPickerProjectName(
+  file: ProjectAssetPickerFile,
+  defaultLabel: string
+) {
+  try {
+    const settings = JSON.parse(file.projectSettingsJson || '{}');
+    if (settings.systemDefault && file.projectName === 'Default Project') {
+      return defaultLabel;
+    }
+  } catch {
+    // keep stored name
+  }
+  return file.projectName || defaultLabel;
+}
 
 export function ProjectAssetPicker({
   open,
@@ -47,6 +65,7 @@ export function ProjectAssetPicker({
   onSelect: (file: ProjectAssetPickerFile) => void;
 }) {
   const t = useTranslations('workspace.filePicker');
+  const tProjects = useTranslations('workspace.projects');
   const notifyApiError = useProductApiFeedback();
   const notifyApiErrorRef = useRef(notifyApiError);
   notifyApiErrorRef.current = notifyApiError;
@@ -54,6 +73,7 @@ export function ProjectAssetPicker({
   const [state, setState] = useState<'idle' | 'loading' | 'ready'>('idle');
   const [files, setFiles] = useState<ProjectAssetPickerFile[]>([]);
   const kindsKey = kinds.join(',');
+  const showProjectLabels = !projectId;
 
   useEffect(() => {
     const nextKinds = kindsKey.split(',') as ProjectFileKind[];
@@ -63,14 +83,15 @@ export function ProjectAssetPicker({
   }, [kind, kindsKey]);
 
   useEffect(() => {
-    if (!open || !projectId) return;
+    if (!open) return;
     let cancelled = false;
     setState('loading');
+    const url = projectId
+      ? `/api/projects/${projectId}/files?kind=${kind}`
+      : `/api/files?kind=${kind}`;
     void (async () => {
       try {
-        const payload = await readApiPayload(
-          await fetch(`/api/projects/${projectId}/files?kind=${kind}`)
-        );
+        const payload = await readApiPayload(await fetch(url));
         if (cancelled) return;
         setFiles(payload.data.files || []);
         setState('ready');
@@ -146,8 +167,18 @@ export function ProjectAssetPicker({
                     alt={file.name || selectLabel}
                     className="size-full object-contain [image-rendering:pixelated]"
                   />
+                  {showProjectLabels ? (
+                    <span className="absolute inset-x-0 bottom-0 bg-black/70 px-2 py-1.5 text-left text-xs text-white">
+                      {t('projectOverlay', {
+                        name: displayPickerProjectName(
+                          file,
+                          tProjects('default')
+                        ),
+                      })}
+                    </span>
+                  ) : null}
                   {selectedId === file.id ? (
-                    <Check className="text-primary absolute right-2 bottom-2 size-4" />
+                    <Check className="text-primary absolute top-2 right-2 size-4" />
                   ) : null}
                 </button>
               ))
@@ -155,7 +186,7 @@ export function ProjectAssetPicker({
           {state === 'ready' && !files.length ? (
             <div className="text-muted-foreground col-span-full flex min-h-48 flex-col items-center justify-center gap-3 text-sm">
               <ImagePlus className="size-7" />
-              {t('empty')}
+              {showProjectLabels ? t('emptyAll') : t('empty')}
             </div>
           ) : null}
         </div>

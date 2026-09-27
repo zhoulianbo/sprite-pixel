@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-
 import { ScanAction, ScanReasonCode } from '@waffo/pancake-ts';
 
 import {
@@ -58,14 +57,65 @@ test('assertPromptAllowedForGeneration blocks restricted prompts', async () => {
     },
   };
 
-  await assert.rejects(
-    () => assertPromptAllowedForGeneration('blocked prompt', { scanner }),
-    (error: unknown) =>
-      error instanceof ContentSafetyError && error.code === 'PROMPT_BLOCKED'
-  );
+  const originalConsoleError = console.error;
+  const logs: string[] = [];
+  console.error = (message) => logs.push(String(message));
+  try {
+    await assert.rejects(
+      () => assertPromptAllowedForGeneration('blocked prompt', { scanner }),
+      (error: unknown) =>
+        error instanceof ContentSafetyError && error.code === 'PROMPT_BLOCKED'
+    );
+  } finally {
+    console.error = originalConsoleError;
+  }
+  assert.deepEqual(JSON.parse(logs[0]), {
+    event: 'content_safety_prompt_blocked',
+    provider: 'mock',
+    action: 'block',
+    reasonCode: ScanReasonCode.RestrictedContent,
+    matchedCategories: ['adult_nsfw'],
+    requestId: null,
+  });
 });
 
-test('scanGenerationPrompt maps provider failures to CONTENT_SAFETY_FAILED', async () => {
+test('assertPromptAllowedForGeneration allows review and logs details without the prompt', async () => {
+  const scanner: PromptScanner = {
+    name: 'waffo',
+    async scanPrompt() {
+      return {
+        action: 'review',
+        reasonCode: ScanReasonCode.ServiceDegraded,
+        matchedCategories: [],
+        requestId: 'REQ_test',
+        provider: 'waffo',
+      };
+    },
+  };
+  const originalConsoleWarn = console.warn;
+  const logs: string[] = [];
+  console.warn = (message) => logs.push(String(message));
+  try {
+    const result = await assertPromptAllowedForGeneration(
+      'private prompt text',
+      { scanner }
+    );
+    assert.equal(result?.action, 'review');
+  } finally {
+    console.warn = originalConsoleWarn;
+  }
+  assert.deepEqual(JSON.parse(logs[0]), {
+    event: 'content_safety_prompt_review_bypassed',
+    provider: 'waffo',
+    action: 'review',
+    reasonCode: ScanReasonCode.ServiceDegraded,
+    matchedCategories: [],
+    requestId: 'REQ_test',
+  });
+  assert.doesNotMatch(logs[0], /private prompt text/);
+});
+
+test('scanGenerationPrompt logs and allows provider failures as review', async () => {
   const scanner: PromptScanner = {
     name: 'mock',
     async scanPrompt() {
@@ -73,10 +123,24 @@ test('scanGenerationPrompt maps provider failures to CONTENT_SAFETY_FAILED', asy
     },
   };
 
-  await assert.rejects(
-    () => scanGenerationPrompt('hello', { scanner }),
-    (error: unknown) =>
-      error instanceof ContentSafetyError &&
-      error.code === 'CONTENT_SAFETY_FAILED'
-  );
+  const originalConsoleError = console.error;
+  const logs: string[] = [];
+  console.error = (message) => logs.push(String(message));
+  try {
+    const result = await scanGenerationPrompt('hello', { scanner });
+    assert.deepEqual(result, {
+      action: 'review',
+      reasonCode: 'service_degraded',
+      matchedCategories: [],
+      provider: 'mock',
+    });
+  } finally {
+    console.error = originalConsoleError;
+  }
+  assert.deepEqual(JSON.parse(logs[0]), {
+    event: 'content_safety_scan_failed',
+    provider: 'mock',
+    code: 'CONTENT_SAFETY_FAILED',
+    reason: 'network down',
+  });
 });

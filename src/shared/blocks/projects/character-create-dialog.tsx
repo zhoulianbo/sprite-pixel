@@ -112,6 +112,23 @@ export function CharacterCreateDialog({
       window.setTimeout(() => poll(generationId).catch(handleError), 1800);
       return;
     }
+    if (
+      ['failed', 'postprocessing_failed', 'canceled'].includes(
+        payload.data.status
+      )
+    ) {
+      console.error(
+        JSON.stringify({
+          event: 'sprite_generation_failed',
+          generationId,
+          status: payload.data.status,
+          reason:
+            payload.data.failureReason ||
+            payload.data.failureCode ||
+            'GENERATION_FAILED',
+        })
+      );
+    }
     finish(payload);
   };
 

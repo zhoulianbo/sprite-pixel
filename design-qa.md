@@ -213,3 +213,19 @@ final result: passed with external-service E2E deferred until configuration
 ## Final Result (Homepage Project Composer Adjustments, 2026-09-15)
 
 final result: passed
+
+## Homepage Sprite Generation Workflow Refresh (2026-09-26)
+
+- Source visual truth: `/Users/miracle/Downloads/首页.png` (`1920 × 1050` pixels), with `docs/SpritePixel_Animation_SpriteSheet_V1.md` used only as product-flow reference and the user's seven requested changes as the acceptance contract.
+- Rendered implementation: Codex browser capture from `/zh` at the desktop viewport. The capture API did not expose a persistent screenshot path.
+- Layout evidence: the Sprite Sheet tab is first and selected; the work surface is split into a character/project rail and an action/configuration area; action cards use the supplied `/imgs/actions` artwork and expose a visible Gold selected state; frame count, per-frame size and the primary action share the bottom control row.
+- Conditional UI evidence: Idle has no customization panel. Jump, Dash, Attack, Shoot, Cast, Hurt, Death and Custom are wired to render their action-specific controls in the same conditional region, with the free-text field limited to actions that need additional direction.
+- Workflow evidence: progress is represented by four stages (queue, video generation, media processing and completion), and a successful response routes directly to `/editor/animations/{versionId}`.
+- Upload evidence: the save-character confirmation contains the image preview, character name and shared project selector; the selector retains its existing create-project path.
+- Responsive implementation: the two-column work surface collapses at `860px`, action labels collapse to a single column at `640px`, and control groups wrap without fixed page width. A separate live mobile interaction capture was not completed in this pass.
+- Runtime note: the desktop initial state rendered correctly. A full interaction replay was blocked because the user's existing Turbopack dev process rewrote the shared `.next` directory while the isolated production preview was running; the temporary preview was stopped without touching the user's process.
+- Code validation: TypeScript compilation passed, 18 focused generation/workflow tests passed, and the production build completed before the shared `.next` directory was rewritten by the active dev process.
+
+## Final Result (Homepage Sprite Generation Workflow Refresh, 2026-09-26)
+
+final result: passed for implementation and static desktop comparison; live responsive interaction QA deferred because of the shared `.next` dev/build conflict

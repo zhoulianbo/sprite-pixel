@@ -1,0 +1,10 @@
+# Ask OpenNext to load the Next.js development env set for local previews.
+NEXTJS_ENV="development"
+NEXT_PUBLIC_APP_URL="http://localhost:8787"
+
+# Cloudflare Workflow -> internal Next.js routes
+WORKFLOW_INTERNAL_TOKEN="replace-with-a-local-random-token"
+
+# Python media processor. API_SECRET on the Python service must use the same value.
+SPRITE_MEDIA_PROCESSOR_URL="http://127.0.0.1:8000"
+SPRITE_MEDIA_PROCESSOR_SECRET="replace-with-the-python-api-secret"

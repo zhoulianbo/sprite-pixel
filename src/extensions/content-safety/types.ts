@@ -8,7 +8,7 @@ export type PromptScanLocale = 'ja' | 'en' | 'zh';
 export type PromptScanAction = 'allow' | 'review' | 'block';
 
 export type PromptScanResult = {
-  /** Continue to generation only when `allow`. */
+  /** Generation is rejected only when the provider explicitly returns `block`. */
   action: PromptScanAction;
   reasonCode: string;
   matchedCategories: string[];

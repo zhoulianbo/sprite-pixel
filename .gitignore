@@ -38,9 +38,13 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env
 .env.local
+.env.*.local
 .env.development
 .env.test
 .env.production
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 
 # vercel
 .vercel
@@ -70,3 +74,6 @@ src/config/db/migrations*
 .source
 
 .chats
+
+# local script output
+/tmp/

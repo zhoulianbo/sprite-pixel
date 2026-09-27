@@ -123,10 +123,29 @@ export async function getAnimationEditorData(
 ) {
   const [context] = await db()
     .select({
-      version: animationVersion,
-      clip: animationClip,
-      set: animationSet,
-      item: assetItem,
+      version: {
+        id: animationVersion.id,
+        fps: animationVersion.fps,
+        frameWidth: animationVersion.frameWidth,
+        frameHeight: animationVersion.frameHeight,
+        versionNo: animationVersion.versionNo,
+      },
+      clip: {
+        id: animationClip.id,
+        direction: animationClip.direction,
+      },
+      set: {
+        id: animationSet.id,
+        loop: animationSet.loop,
+        projectId: animationSet.projectId,
+        itemId: animationSet.itemId,
+        name: animationSet.name,
+        action: animationSet.action,
+      },
+      item: {
+        id: assetItem.id,
+        name: assetItem.name,
+      },
     })
     .from(animationVersion)
     .innerJoin(animationClip, eq(animationClip.id, animationVersion.clipId))
@@ -136,19 +155,40 @@ export async function getAnimationEditorData(
     .where(and(eq(animationVersion.id, versionId), eq(project.userId, userId)))
     .limit(1);
   if (!context) return null;
-  const frames = await db()
-    .select({ frame: animationFrame, file: assetFile })
-    .from(animationFrame)
-    .innerJoin(assetFile, eq(assetFile.id, animationFrame.fileId))
-    .where(eq(animationFrame.versionId, versionId))
-    .orderBy(asc(animationFrame.frameIndex));
-  const urlFor = await getAssetPublicUrlResolver();
+  const [versions, frames, urlFor] = await Promise.all([
+    db()
+      .select({
+        id: animationVersion.id,
+        versionNo: animationVersion.versionNo,
+        isCurrent: animationVersion.isCurrent,
+      })
+      .from(animationVersion)
+      .where(eq(animationVersion.clipId, context.clip.id))
+      .orderBy(asc(animationVersion.versionNo)),
+    db()
+      .select({
+        id: animationFrame.id,
+        fileId: animationFrame.fileId,
+        frameIndex: animationFrame.frameIndex,
+        durationMs: animationFrame.durationMs,
+        offsetX: animationFrame.offsetX,
+        offsetY: animationFrame.offsetY,
+        metadataJson: animationFrame.metadataJson,
+        storageKey: assetFile.storageKey,
+      })
+      .from(animationFrame)
+      .innerJoin(assetFile, eq(assetFile.id, animationFrame.fileId))
+      .where(eq(animationFrame.versionId, versionId))
+      .orderBy(asc(animationFrame.frameIndex)),
+    getAssetPublicUrlResolver(),
+  ]);
   return {
     ...context,
-    frames: frames.map(({ frame, file }: any) => ({
+    versions,
+    frames: frames.map((frame: any) => ({
       ...frame,
       metadata: JSON.parse(frame.metadataJson || '{}'),
-      file: { ...file, url: urlFor(file.storageKey) },
+      file: { url: urlFor(frame.storageKey) },
     })),
   };
 }
@@ -162,6 +202,7 @@ export async function saveAnimationVersion(
     loop: boolean;
     frames: Array<{
       frameId: string;
+      fileId?: string;
       durationMs?: number | null;
       offsetX: number;
       offsetY: number;
@@ -240,12 +281,12 @@ export async function saveAnimationVersion(
           return {
             id: getUuid(),
             versionId,
-            fileId: source.fileId,
+            fileId: frame.fileId || source.fileId,
             frameIndex,
             durationMs: frame.durationMs ?? source.durationMs,
-            offsetX: frame.offsetX,
-            offsetY: frame.offsetY,
-            metadataJson: source.metadataJson,
+            offsetX: frame.fileId ? 0 : frame.offsetX,
+            offsetY: frame.fileId ? 0 : frame.offsetY,
+            metadataJson: frame.fileId ? '{}' : source.metadataJson,
             createdAt: now,
           };
         })

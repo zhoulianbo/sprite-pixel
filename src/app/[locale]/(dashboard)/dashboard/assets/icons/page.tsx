@@ -33,6 +33,7 @@ export default async function AssetIconsPage() {
         href: `/dashboard/projects/${item.projectId}/icons`,
         imageUrl: item.preview?.url,
       }))}
+      zoomLabel={t('icons.zoom')}
     />
   );
 }

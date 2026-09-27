@@ -8,9 +8,11 @@ import {
 import {
   extensionFromMime,
   generationAssetType,
+  isCompletableUploadKey,
   isProviderReachableUrl,
   isRootStorageKey,
   projectAssetStorageKey,
+  uploadStorageKeyForRole,
   userUploadStorageKey,
 } from '../src/shared/lib/storage-paths';
 
@@ -21,6 +23,35 @@ test('user uploads go under uploads/YYYY-MM', () => {
     new Date('2026-09-16T09:00:00.000Z')
   );
   assert.equal(key, 'uploads/2026-09/file-1.png');
+});
+
+test('character reference uploads go under projects/{id}/character', () => {
+  assert.equal(
+    uploadStorageKeyForRole('proj-1', 'reference', 'file-1', 'png'),
+    'projects/proj-1/character/file-1.png'
+  );
+  assert.equal(
+    uploadStorageKeyForRole('proj-1', 'base_reference', 'file-2', 'webp'),
+    'projects/proj-1/character/file-2.webp'
+  );
+  assert.equal(
+    uploadStorageKeyForRole(
+      'proj-1',
+      'motion_reference',
+      'file-3',
+      'png',
+      new Date('2026-09-16T09:00:00.000Z')
+    ),
+    'uploads/2026-09/file-3.png'
+  );
+  assert.equal(
+    isCompletableUploadKey('projects/proj-1/character/file-1.png', 'proj-1'),
+    true
+  );
+  assert.equal(
+    isCompletableUploadKey('projects/other/character/file-1.png', 'proj-1'),
+    false
+  );
 });
 
 test('generated assets go under projects/{id}/{type}', () => {

@@ -12,9 +12,12 @@ import {
   IconDeviceGamepad2,
   IconDownload,
   IconFlask,
+  IconChevronDown,
+  IconChevronUp,
   IconFolder,
   IconLoader2,
   IconMovie,
+  IconPhoto,
   IconPhotoAi,
   IconPlayerPause,
   IconPlayerPlay,
@@ -27,7 +30,8 @@ import {
 } from '@tabler/icons-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { generationDefaults, mapGenerationOptions } from '@/config/generation';
+import { useRouter } from '@/core/i18n/navigation';
+import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
 import { getGenerationCredits } from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
@@ -100,6 +104,23 @@ type HeroSelectOption = {
   label: string;
 };
 
+const collapsedMotionActionCount = 10;
+
+function resolveProjectLabel(
+  project: { name?: string | null; settingsJson?: string } | null | undefined,
+  defaultLabel: string
+) {
+  if (!project?.name) return defaultLabel;
+  try {
+    return JSON.parse(project.settingsJson || '{}').systemDefault &&
+      project.name === 'Default Project'
+      ? defaultLabel
+      : project.name;
+  } catch {
+    return project.name;
+  }
+}
+
 type CapabilityItem = {
   title: string;
   description: string;
@@ -164,8 +185,61 @@ function HeroOptionSelect({
   );
 }
 
+function HeroOptionButtons({
+  label,
+  value,
+  onValueChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: HeroSelectOption[];
+}) {
+  return (
+    <div className="contents">
+      <span className="text-muted-foreground whitespace-nowrap pt-1.5 text-sm font-medium">
+        {label}
+      </span>
+      <div
+        className="flex min-w-0 flex-wrap gap-2"
+        role="group"
+        aria-label={label}
+      >
+        {options.map((option) => {
+          const selected = value === option.value;
+          return (
+            <button
+              aria-pressed={selected}
+              className={cn(
+                'inline-flex min-h-8 items-center rounded-md border px-3 text-sm font-medium transition-colors',
+                selected
+                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
+                  : 'text-foreground/80 hover:border-primary/55 border-white/12 bg-secondary/55'
+              )}
+              key={option.value}
+              onClick={() => onValueChange(option.value)}
+              type="button"
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 type MotionCharacterRef =
-  | { origin: 'vault'; itemId: string; fileId: string; previewUrl: string }
+  | {
+      origin: 'vault';
+      itemId: string;
+      fileId: string;
+      previewUrl: string;
+      projectId?: string;
+      projectName?: string;
+      projectSettingsJson?: string;
+    }
   | { origin: 'upload'; file: File };
 
 function vaultRefFromCharacterGeneration(
@@ -195,6 +269,7 @@ function HeroUpload({
   onPickExisting,
   uploadActionLabel,
   existingActionLabel,
+  onBeforePick,
 }: {
   id: string;
   label: string;
@@ -206,6 +281,7 @@ function HeroUpload({
   onPickExisting?: () => void;
   uploadActionLabel?: string;
   existingActionLabel?: string;
+  onBeforePick?: () => boolean;
 }) {
   const [previewUrl, setPreviewUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -258,6 +334,12 @@ function HeroUpload({
                 className={emptyButtonClass}
                 title={label}
                 type="button"
+                onClick={(event) => {
+                  if (onBeforePick && !onBeforePick()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                }}
               >
                 <IconPlus aria-hidden="true" />
                 <span className="max-w-full truncate text-[10px] leading-tight font-medium">
@@ -266,11 +348,21 @@ function HeroUpload({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" side="top" className="min-w-36">
-              <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
+              <DropdownMenuItem
+                onSelect={() => {
+                  if (!onBeforePick || onBeforePick()) {
+                    fileInputRef.current?.click();
+                  }
+                }}
+              >
                 <IconUpload className="size-4" />
                 {uploadActionLabel}
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => onPickExisting()}>
+              <DropdownMenuItem
+                onSelect={() => {
+                  if (!onBeforePick || onBeforePick()) onPickExisting();
+                }}
+              >
                 <IconFolder className="size-4" />
                 {existingActionLabel}
               </DropdownMenuItem>
@@ -291,21 +383,27 @@ function HeroUpload({
         </>
       ) : (
         <>
-          <label
+          <button
             aria-invalid={missingRequiredFile || undefined}
             className={emptyButtonClass}
-            htmlFor={id}
+            onClick={() => {
+              if (!onBeforePick || onBeforePick()) {
+                fileInputRef.current?.click();
+              }
+            }}
             title={label}
+            type="button"
           >
             <IconPlus aria-hidden="true" />
             <span className="max-w-full truncate text-[10px] leading-tight font-medium">
               {label}
             </span>
-          </label>
+          </button>
           <input
             accept="image/*"
             className="sr-only"
             id={id}
+            ref={fileInputRef}
             onChange={(event) => {
               onFileChange(event.target.files?.[0] || null);
               event.target.value = '';
@@ -546,6 +644,7 @@ function HeroPreview({
   continueLabel,
   continueHref,
   onContinue,
+  footer,
 }: {
   label: string;
   emptyLabel: string;
@@ -566,6 +665,7 @@ function HeroPreview({
   continueLabel?: string;
   continueHref?: string;
   onContinue?: () => void;
+  footer?: ReactNode;
 }) {
   const PreviewIcon = motion ? IconMovie : IconPhotoAi;
 
@@ -649,6 +749,7 @@ function HeroPreview({
                 </a>
               ) : null}
             </div>
+            {footer}
           </>
         ) : failed ? (
           <>
@@ -722,6 +823,8 @@ function HeroComposer({
   onPickExisting,
   uploadActionLabel,
   existingActionLabel,
+  onBeforeUpload,
+  previewFooter,
 }: {
   promptId: string;
   promptLabel: string;
@@ -766,6 +869,8 @@ function HeroComposer({
   onPickExisting?: () => void;
   uploadActionLabel?: string;
   existingActionLabel?: string;
+  onBeforeUpload?: () => boolean;
+  previewFooter?: ReactNode;
 }) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_minmax(196px,220px)] items-stretch gap-4 max-[760px]:grid-cols-1">
@@ -798,6 +903,7 @@ function HeroComposer({
                 onPickExisting={onPickExisting}
                 uploadActionLabel={uploadActionLabel}
                 existingActionLabel={existingActionLabel}
+                onBeforePick={onBeforeUpload}
               />
             </div>
           </div>
@@ -848,6 +954,7 @@ function HeroComposer({
         continueLabel={continueLabel}
         continueHref={continueHref}
         onContinue={onContinue}
+        footer={previewFooter}
       />
     </div>
   );
@@ -971,6 +1078,7 @@ function FeatureShowcase({
 
 export function Home({ section: _section }: { section: Section }) {
   const locale = useLocale();
+  const router = useRouter();
   const t = useTranslations('pages.index.messages');
   const tPricing = useTranslations('pages.pricing');
   const tGeneration = useTranslations('generation');
@@ -993,7 +1101,7 @@ export function Home({ section: _section }: { section: Section }) {
   }[];
   const faqItems = t.raw('faq') as { question: string; answer: string }[];
   const pricingSection = tPricing.raw('page.sections.pricing') as PricingType;
-  const [heroMode, setHeroMode] = useState<'character' | 'motion'>('character');
+  const [heroMode, setHeroMode] = useState<'character' | 'motion'>('motion');
   const [prompt, setPrompt] = useState('');
   const [motionPrompt, setMotionPrompt] = useState('');
   const [characterReference, setCharacterReference] = useState<File | null>(
@@ -1002,6 +1110,16 @@ export function Home({ section: _section }: { section: Section }) {
   const [motionCharacter, setMotionCharacter] =
     useState<MotionCharacterRef | null>(null);
   const [characterPickerOpen, setCharacterPickerOpen] = useState(false);
+  const [uploadConfirmOpen, setUploadConfirmOpen] = useState(false);
+  const [pendingCharacterUpload, setPendingCharacterUpload] =
+    useState<File | null>(null);
+  const [pendingCharacterPreview, setPendingCharacterPreview] = useState('');
+  const [uploadedCharacterName, setUploadedCharacterName] = useState('');
+  const [savingUploadedCharacter, setSavingUploadedCharacter] = useState(false);
+  const [generatedCharacterName, setGeneratedCharacterName] = useState('');
+  const [generatedCharacterSaved, setGeneratedCharacterSaved] = useState(false);
+  const [savingGeneratedCharacter, setSavingGeneratedCharacter] =
+    useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectSummary | null>(
     null
   );
@@ -1014,7 +1132,6 @@ export function Home({ section: _section }: { section: Section }) {
     useState<string>('idle');
   const [motionGenerationResult, setMotionGenerationResult] =
     useState<any>(null);
-  const [motionGenerationError, setMotionGenerationError] = useState('');
   const [characterStyle, setCharacterStyle] = useState<string>(
     generationDefaults.style
   );
@@ -1027,9 +1144,17 @@ export function Home({ section: _section }: { section: Section }) {
   const [motionType, setMotionType] = useState<string>(
     generationDefaults.actionType
   );
-  const [motionDirection, setMotionDirection] = useState<string>(
-    generationDefaults.direction
-  );
+  const [showMoreActions, setShowMoreActions] = useState(false);
+  const [motionActionConfig, setMotionActionConfig] = useState({
+    jumpType: 'in-place',
+    dashType: 'forward',
+    weapon: 'keep-current',
+    attackStyle: 'auto',
+    shootType: 'bow',
+    castType: 'quick',
+    severity: 'light',
+    deathType: 'collapse',
+  });
   const [motionFrames, setMotionFrames] = useState<string>(
     generationDefaults.frames
   );
@@ -1039,6 +1164,7 @@ export function Home({ section: _section }: { section: Section }) {
   const [animatedPlaceholder, setAnimatedPlaceholder] = useState('');
   const [validationAttempted, setValidationAttempted] = useState(false);
   const inspirationIndexRef = useRef(0);
+  const motionFileInputRef = useRef<HTMLInputElement>(null);
 
   const localize = (path: string) =>
     locale === defaultLocale ? path : `/${locale}${path}`;
@@ -1084,6 +1210,16 @@ export function Home({ section: _section }: { section: Section }) {
   }, [isCheckSign, user]);
 
   useEffect(() => {
+    if (!pendingCharacterUpload) {
+      setPendingCharacterPreview('');
+      return;
+    }
+    const url = URL.createObjectURL(pendingCharacterUpload);
+    setPendingCharacterPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [pendingCharacterUpload]);
+
+  useEffect(() => {
     const stored = window.sessionStorage.getItem('sv_pending_generation');
     if (!stored) return;
     try {
@@ -1092,10 +1228,8 @@ export function Home({ section: _section }: { section: Section }) {
       if (pending.mode === 'motion') {
         setMotionPrompt(pending.prompt || '');
         setMotionType(pending.action || generationDefaults.actionType);
-        setMotionDirection(pending.direction || generationDefaults.direction);
         setMotionFrames(pending.frames || generationDefaults.frames);
         setMotionFrameSize(pending.frameSize || generationDefaults.frameSize);
-        setMotionGenerationError(tProduct('generation.referenceRequired'));
       } else {
         setPrompt(pending.prompt || '');
         setCharacterStyle(pending.style || generationDefaults.style);
@@ -1128,6 +1262,15 @@ export function Home({ section: _section }: { section: Section }) {
       file,
       role,
     });
+
+  const requireSignedIn = () => {
+    if (isCheckSign) return false;
+    if (!user) {
+      notifyApiError('UNAUTHORIZED');
+      return false;
+    }
+    return true;
+  };
 
   const applyGenerationPayload = (
     payload: any,
@@ -1164,9 +1307,27 @@ export function Home({ section: _section }: { section: Section }) {
           ),
         1800
       );
-    } else {
-      window.sessionStorage.removeItem(activeGenerationKey(resolvedMode));
-      window.sessionStorage.removeItem('sv_active_generation');
+      return;
+    }
+    window.sessionStorage.removeItem(activeGenerationKey(resolvedMode));
+    window.sessionStorage.removeItem('sv_active_generation');
+    if (
+      ['failed', 'postprocessing_failed', 'canceled'].includes(
+        payload.data.status
+      )
+    ) {
+      console.error(
+        JSON.stringify({
+          event: 'sprite_generation_failed',
+          generationId,
+          status: payload.data.status,
+          reason:
+            payload.data.failureReason ||
+            payload.data.failureCode ||
+            'GENERATION_FAILED',
+        })
+      );
+      handleGenerationError(resolvedMode, 'GENERATION_FAILED');
     }
   };
 
@@ -1174,37 +1335,45 @@ export function Home({ section: _section }: { section: Section }) {
     mode: 'character' | 'motion',
     error: unknown
   ) => {
-    const message = notifyApiError(error);
     if (mode === 'motion') {
       setMotionGenerationStatus('failed');
-      setMotionGenerationError(message);
-    } else {
-      setCharacterGenerationStatus('failed');
-      setCharacterGenerationError(message);
+      return;
     }
+    const message = notifyApiError(error);
+    setCharacterGenerationStatus('failed');
+    setCharacterGenerationError(message);
   };
 
   const startProject = async (event?: FormEvent) => {
     event?.preventDefault();
+    if (!requireSignedIn()) return;
     const submittedPrompt =
       heroMode === 'character' ? prompt.trim() : motionPrompt.trim();
     setValidationAttempted(true);
-    if (!submittedPrompt || (heroMode === 'motion' && !motionCharacter)) return;
-    if (isCheckSign) return;
-    if (!user) {
-      notifyApiError('UNAUTHORIZED');
+    if (
+      (heroMode === 'character' && !submittedPrompt) ||
+      (heroMode === 'motion' && motionType === 'custom' && !submittedPrompt) ||
+      (heroMode === 'motion' && !motionCharacter)
+    )
       return;
-    }
-    if (!selectedProject) {
+    if (
+      !selectedProject &&
+      !(
+        heroMode === 'motion' &&
+        motionCharacter?.origin === 'vault' &&
+        motionCharacter.projectId
+      )
+    ) {
       notifyApiError('PROJECT_NOT_FOUND');
       return;
     }
     setValidationAttempted(false);
     if (heroMode === 'motion') {
       setMotionGenerationStatus('validating');
-      setMotionGenerationError('');
       setMotionGenerationResult(null);
     } else {
+      setGeneratedCharacterSaved(false);
+      setGeneratedCharacterName('');
       setCharacterGenerationStatus('validating');
       setCharacterGenerationError('');
       setCharacterGenerationResult(null);
@@ -1216,6 +1385,10 @@ export function Home({ section: _section }: { section: Section }) {
         referenceFileId = motionCharacter.fileId;
         itemId = motionCharacter.itemId;
       } else {
+        if (!selectedProject?.id) {
+          notifyApiError('PROJECT_NOT_FOUND');
+          return;
+        }
         const referenceFile =
           heroMode === 'character'
             ? characterReference
@@ -1230,19 +1403,17 @@ export function Home({ section: _section }: { section: Section }) {
             )
           : undefined;
       }
+      const targetProjectId =
+        heroMode === 'motion' &&
+        motionCharacter?.origin === 'vault' &&
+        motionCharacter.projectId
+          ? motionCharacter.projectId
+          : selectedProject?.id;
+      if (!targetProjectId) {
+        notifyApiError('PROJECT_NOT_FOUND');
+        return;
+      }
       const generationId = crypto.randomUUID();
-      const directionMode =
-        motionDirection === 'eight-way'
-          ? '8'
-          : motionDirection === 'four-way'
-            ? '4'
-            : 'single';
-      const directionMap: Record<string, string> = {
-        up: 'north',
-        right: 'east',
-        down: 'south',
-        left: 'west',
-      };
       const request =
         heroMode === 'character'
           ? {
@@ -1261,14 +1432,15 @@ export function Home({ section: _section }: { section: Section }) {
               itemId,
               referenceFileId,
               action: motionType,
-              directionMode,
-              direction: directionMap[motionDirection] || 'east',
+              actionConfig: motionActionConfig,
+              directionMode: 'single',
+              direction: 'east',
               frames: motionFrames === 'auto' ? 'auto' : Number(motionFrames),
               fps: 12,
               frameSize: motionFrameSize,
             };
       const response = await fetch(
-        `/api/projects/${selectedProject.id}/generations`,
+        `/api/projects/${targetProjectId}/generations`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1327,11 +1499,30 @@ export function Home({ section: _section }: { section: Section }) {
   }, []);
 
   const characterPreviewItem = characterGenerationResult?.items?.find(
-    (item: any) => item.status === 'success' && item.file?.url
+    (item: any) =>
+      item.status === 'success' && (item.file?.url || item.previewUrl)
   );
-  const motionPreviewItem = motionGenerationResult?.items?.find(
-    (item: any) => item.status === 'success' && item.file?.url
-  );
+  const characterPreviewUrl =
+    characterPreviewItem?.file?.url || characterPreviewItem?.previewUrl || '';
+  useEffect(() => {
+    if (!characterPreviewItem || generatedCharacterSaved) return;
+    setGeneratedCharacterName((current) =>
+      current.trim()
+        ? current
+        : String(characterGenerationResult?.prompt || '')
+            .trim()
+            .slice(0, 60)
+    );
+  }, [
+    characterGenerationResult,
+    characterPreviewItem,
+    generatedCharacterSaved,
+  ]);
+  useEffect(() => {
+    if (characterGenerationResult?.itemId && characterPreviewItem?.file?.url) {
+      setGeneratedCharacterSaved(true);
+    }
+  }, [characterGenerationResult?.itemId, characterPreviewItem?.file?.url]);
   const statusLabelFor = (
     status: string,
     error: string,
@@ -1355,34 +1546,183 @@ export function Home({ section: _section }: { section: Section }) {
     characterGenerationError,
     tProduct('generation.processing')
   );
-  const motionStatusLabel = statusLabelFor(
-    motionGenerationStatus,
-    motionGenerationError,
-    tProduct('generation.processing')
-  );
   const editorVersionId = motionGenerationResult?.items?.find(
     (item: any) => item.editorVersionId
   )?.editorVersionId;
-  const motionContinueHref = motionPreviewItem
-    ? editorVersionId
-      ? localize(`/editor/animations/${editorVersionId}`)
-      : undefined
-    : undefined;
+  useEffect(() => {
+    if (motionGenerationStatus === 'success' && editorVersionId) {
+      router.push(`/editor/animations/${editorVersionId}`);
+    }
+  }, [editorVersionId, motionGenerationStatus, router]);
+
+  const motionPhase =
+    motionGenerationResult?.items?.find((item: any) => item.phase)?.phase ||
+    (motionGenerationStatus === 'validating'
+      ? 'validating'
+      : motionGenerationStatus === 'pending'
+        ? 'queued'
+        : motionGenerationStatus === 'processing'
+          ? 'video_generation'
+          : motionGenerationStatus === 'success'
+            ? 'completed'
+            : motionGenerationStatus === 'failed'
+              ? 'failed'
+              : 'idle');
+  const motionProgressStep =
+    motionPhase === 'validating'
+      ? 1
+      : motionPhase === 'queued'
+        ? 1
+        : motionPhase === 'video_generation'
+          ? 2
+          : motionPhase === 'media_processing'
+            ? 3
+            : motionPhase === 'completed'
+              ? 4
+              : 0;
   const openMotionFromCharacter = async () => {
     const vault = vaultRefFromCharacterGeneration(characterGenerationResult);
     if (!vault) return;
-    setMotionCharacter(vault);
+    setMotionCharacter({
+      ...vault,
+      projectId: selectedProject?.id,
+      projectName: selectedProject?.name,
+      projectSettingsJson: selectedProject?.settingsJson,
+    });
     setHeroMode('motion');
     setValidationAttempted(false);
   };
+
+  const setUploadedMotionCharacter = (file: File | null) => {
+    setMotionCharacter(file ? { origin: 'upload', file } : null);
+    if (!file) {
+      setPendingCharacterUpload(null);
+      setUploadConfirmOpen(false);
+      return;
+    }
+    setPendingCharacterUpload(file);
+    setUploadedCharacterName(file.name.replace(/\.[^.]+$/, '').slice(0, 80));
+    setUploadConfirmOpen(true);
+  };
+
+  const confirmUploadedCharacter = async () => {
+    if (!pendingCharacterUpload || !uploadedCharacterName.trim()) return;
+    if (!requireSignedIn()) return;
+    if (!selectedProject) {
+      notifyApiError('PROJECT_NOT_FOUND');
+      return;
+    }
+    setSavingUploadedCharacter(true);
+    try {
+      const fileId = await uploadReference(
+        pendingCharacterUpload,
+        selectedProject.id,
+        'reference'
+      );
+      const payload = await readApiPayload(
+        await fetch(`/api/projects/${selectedProject.id}/characters`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileId,
+            name: uploadedCharacterName.trim(),
+          }),
+        })
+      );
+      setMotionCharacter({
+        origin: 'vault',
+        itemId: payload.data.item.id,
+        fileId: payload.data.file.id,
+        previewUrl: payload.data.file.url,
+        projectId: selectedProject.id,
+        projectName: selectedProject.name,
+        projectSettingsJson: selectedProject.settingsJson,
+      });
+      setUploadConfirmOpen(false);
+      setPendingCharacterUpload(null);
+    } catch (error) {
+      notifyApiError(error);
+    } finally {
+      setSavingUploadedCharacter(false);
+    }
+  };
+
+  const saveGeneratedCharacter = async () => {
+    const generationId = characterGenerationResult?.id;
+    if (!generationId || !generatedCharacterName.trim() || !selectedProject)
+      return;
+    setSavingGeneratedCharacter(true);
+    try {
+      const payload = await readApiPayload(
+        await fetch(
+          `/api/projects/${selectedProject.id}/generations/${generationId}/character`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: generatedCharacterName.trim() }),
+          }
+        )
+      );
+      setCharacterGenerationResult(payload.data);
+      setGeneratedCharacterSaved(true);
+    } catch (error) {
+      notifyApiError(error);
+    } finally {
+      setSavingGeneratedCharacter(false);
+    }
+  };
   const activePrompt = heroMode === 'character' ? prompt : motionPrompt;
   const validationMessage = validationAttempted
-    ? !activePrompt.trim()
+    ? heroMode === 'character' && !activePrompt.trim()
       ? tProduct('generation.promptRequired')
-      : heroMode === 'motion' && !motionCharacter
-        ? tProduct('generation.motionReferenceRequired')
-        : undefined
+      : heroMode === 'motion' && motionType === 'custom' && !activePrompt.trim()
+        ? tProduct('generation.promptRequired')
+        : heroMode === 'motion' && !motionCharacter
+          ? tProduct('generation.motionReferenceRequired')
+          : undefined
     : undefined;
+  const motionActions = mapGenerationOptions('actionType', translateGeneration);
+  const visibleMotionActions = showMoreActions
+    ? motionActions
+    : motionActions.slice(0, collapsedMotionActionCount);
+  const motionCharacterPreview =
+    motionCharacter?.origin === 'vault'
+      ? motionCharacter.previewUrl
+      : pendingCharacterPreview;
+  const motionProjectLabel = resolveProjectLabel(
+    motionCharacter?.origin === 'vault'
+      ? {
+          name: motionCharacter.projectName || selectedProject?.name,
+          settingsJson:
+            motionCharacter.projectSettingsJson ||
+            selectedProject?.settingsJson,
+        }
+      : selectedProject,
+    t('defaultProject')
+  );
+  const motionSettingsType = [
+    'jump',
+    'dash',
+    'attack',
+    'shoot',
+    'cast',
+    'hurt',
+    'death',
+    'custom',
+  ].includes(motionType);
+  const motionDetailTypes = ['dash', 'attack', 'shoot', 'cast', 'custom'];
+  const motionBusy = ['validating', 'pending', 'processing'].includes(
+    motionGenerationStatus
+  );
+  const setActionConfig = (
+    key: keyof typeof motionActionConfig,
+    value: string
+  ) => setMotionActionConfig((current) => ({ ...current, [key]: value }));
+  const translatedOptions = (group: string, values: string[]) =>
+    values.map((value) => ({
+      value,
+      label: t(`motionOptions.${group}.${value}` as never),
+    }));
 
   return (
     <main className="bg-background text-foreground overflow-hidden">
@@ -1435,14 +1775,14 @@ export function Home({ section: _section }: { section: Section }) {
               >
                 {[
                   {
-                    id: 'character',
-                    label: t('createCharacter'),
-                    icon: IconPhotoAi,
-                  },
-                  {
                     id: 'motion',
                     label: t('generateMotion'),
                     icon: IconMovie,
+                  },
+                  {
+                    id: 'character',
+                    label: t('createCharacter'),
+                    icon: IconPhotoAi,
                   },
                 ].map(({ id, label, icon: TabIcon }) => {
                   const active = heroMode === id;
@@ -1487,6 +1827,7 @@ export function Home({ section: _section }: { section: Section }) {
                   SubmitIcon={IconSparkles}
                   file={characterReference}
                   onFileChange={setCharacterReference}
+                  onBeforeUpload={requireSignedIn}
                   removeLabel={tGeneration('upload.remove')}
                   selectedProject={selectedProject}
                   onProjectChange={setSelectedProject}
@@ -1499,7 +1840,7 @@ export function Home({ section: _section }: { section: Section }) {
                   result={
                     characterPreviewItem
                       ? {
-                          fileUrl: characterPreviewItem.file.url,
+                          fileUrl: characterPreviewUrl,
                           alt: characterGenerationResult?.prompt,
                         }
                       : null
@@ -1514,7 +1855,41 @@ export function Home({ section: _section }: { section: Section }) {
                   zoomLabel={tProduct('generation.zoom')}
                   continueLabel={tProduct('generation.openCharacter')}
                   onContinue={
-                    characterPreviewItem ? openMotionFromCharacter : undefined
+                    characterPreviewItem && generatedCharacterSaved
+                      ? openMotionFromCharacter
+                      : undefined
+                  }
+                  previewFooter={
+                    characterPreviewItem ? (
+                      <div className="flex w-full gap-2">
+                        <input
+                          aria-label={t('characterName')}
+                          className="border-border bg-background text-foreground focus:border-primary/60 min-w-0 flex-1 rounded-md border px-2.5 py-2 text-xs outline-none"
+                          disabled={generatedCharacterSaved}
+                          maxLength={80}
+                          onChange={(event) =>
+                            setGeneratedCharacterName(event.target.value)
+                          }
+                          placeholder={t('characterNamePlaceholder')}
+                          value={generatedCharacterName}
+                        />
+                        {!generatedCharacterSaved ? (
+                          <button
+                            className="bg-primary text-primary-foreground inline-flex min-h-8 shrink-0 items-center rounded-md px-2.5 text-xs font-semibold disabled:opacity-50"
+                            disabled={
+                              savingGeneratedCharacter ||
+                              !generatedCharacterName.trim()
+                            }
+                            onClick={saveGeneratedCharacter}
+                            type="button"
+                          >
+                            {savingGeneratedCharacter
+                              ? t('savingCharacter')
+                              : t('saveCharacter')}
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null
                   }
                   disabled={['validating', 'pending', 'processing'].includes(
                     characterGenerationStatus
@@ -1573,134 +1948,417 @@ export function Home({ section: _section }: { section: Section }) {
                 id="hero-motion-panel"
                 role="tabpanel"
               >
-                <HeroComposer
-                  SubmitIcon={IconMovie}
-                  file={
-                    motionCharacter?.origin === 'upload'
-                      ? motionCharacter.file
-                      : null
-                  }
-                  previewSrc={
-                    motionCharacter?.origin === 'vault'
-                      ? motionCharacter.previewUrl
-                      : undefined
-                  }
-                  onFileChange={(file) =>
-                    setMotionCharacter(file ? { origin: 'upload', file } : null)
-                  }
-                  removeLabel={tGeneration('upload.remove')}
-                  selectedProject={selectedProject}
-                  onProjectChange={setSelectedProject}
-                  onPromptChange={setMotionPrompt}
-                  placeholder={t('motionPromptPlaceholder')}
-                  previewEmpty={t('previewEmpty')}
-                  previewLabel={t('preview')}
-                  previewMotion
-                  result={
-                    motionPreviewItem
-                      ? {
-                          fileUrl: motionPreviewItem.file.url,
-                          alt: motionGenerationResult?.prompt,
-                          columns: Number(motionPreviewItem.metadata?.columns),
-                          rows: Number(motionPreviewItem.metadata?.rows),
-                          frameCount: Number(
-                            motionPreviewItem.metadata?.frameCount
-                          ),
-                          frameSize: Number(
-                            motionGenerationResult?.params?.frameSize ||
-                              motionFrameSize
-                          ),
-                          fps: Number(
-                            motionGenerationResult?.params?.fps || 12
-                          ),
-                        }
-                      : null
-                  }
-                  statusLabel={motionStatusLabel}
-                  failed={[
-                    'failed',
-                    'postprocessing_failed',
-                    'canceled',
-                  ].includes(motionGenerationStatus)}
-                  downloadLabel={tProduct('generation.download')}
-                  zoomLabel={tProduct('generation.zoom')}
-                  continueLabel={t('editAndDownload')}
-                  continueHref={motionContinueHref}
-                  disabled={['validating', 'pending', 'processing'].includes(
-                    motionGenerationStatus
-                  )}
-                  prompt={motionPrompt}
-                  promptId="homepage-motion-prompt"
-                  promptLabel={t('motionDescription')}
-                  submitLabel={t('startCreating')}
-                  busyLabel={t('startCreatingBusy')}
-                  credits={getGenerationCredits('animation', {
-                    taskCount:
-                      motionDirection === 'eight-way'
-                        ? 8
-                        : motionDirection === 'four-way'
-                          ? 4
-                          : 1,
-                  })}
-                  uploadId="homepage-motion-reference"
-                  uploadLabel={tGeneration('upload.character')}
-                  uploadRequired
-                  uploadActionLabel={tGeneration('upload.file')}
-                  existingActionLabel={tGeneration('upload.existing')}
-                  onPickExisting={() => {
-                    if (!user) {
-                      notifyApiError('UNAUTHORIZED');
-                      return;
-                    }
-                    if (!selectedProject) {
-                      notifyApiError('PROJECT_NOT_FOUND');
-                      return;
-                    }
-                    setCharacterPickerOpen(true);
-                  }}
-                  validationMessage={validationMessage}
-                >
-                  <HeroOptionSelect
-                    label={tGeneration('fields.actionType')}
-                    onValueChange={setMotionType}
-                    options={mapGenerationOptions(
-                      'actionType',
-                      translateGeneration
-                    )}
-                    value={motionType}
-                  />
-                  <HeroOptionSelect
-                    label={tGeneration('fields.direction')}
-                    onValueChange={setMotionDirection}
-                    options={mapGenerationOptions(
-                      'direction',
-                      translateGeneration
-                    )}
-                    value={motionDirection}
-                  />
-                  <HeroOptionSelect
-                    label={tGeneration('fields.frames')}
-                    onValueChange={setMotionFrames}
-                    options={mapGenerationOptions(
-                      'frames',
-                      translateGeneration
-                    )}
-                    value={motionFrames}
-                  />
-                  <HeroOptionSelect
-                    label={tGeneration('fields.frameSize')}
-                    onValueChange={setMotionFrameSize}
-                    options={mapGenerationOptions(
-                      'frameSize',
-                      translateGeneration
-                    )}
-                    value={motionFrameSize}
-                  />
-                </HeroComposer>
+                <div className="grid min-h-[330px] grid-cols-[240px_minmax(0,1fr)] gap-5 max-[860px]:grid-cols-1">
+                  <aside className="flex min-w-0 flex-col">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="text-sm font-semibold">
+                        {tGeneration('upload.character')}
+                      </span>
+                      <button
+                        className="text-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-primary ml-auto inline-flex h-8 items-center gap-1.5 rounded-md border border-white/12 bg-transparent px-3 text-xs font-medium"
+                        onClick={() => {
+                          if (requireSignedIn()) setCharacterPickerOpen(true);
+                        }}
+                        type="button"
+                      >
+                        <IconPhoto aria-hidden="true" className="size-4" />
+                        {tGeneration('upload.existing')}
+                      </button>
+                      <input
+                        ref={motionFileInputRef}
+                        accept="image/*"
+                        className="sr-only"
+                        id="homepage-motion-reference"
+                        onChange={(event) => {
+                          setUploadedMotionCharacter(
+                            event.target.files?.[0] || null
+                          );
+                          event.target.value = '';
+                        }}
+                        type="file"
+                      />
+                    </div>
+                    <div
+                      className={cn(
+                        'border-border relative flex min-h-[214px] flex-1 items-center justify-center overflow-hidden rounded-lg border bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.04)_75%)] bg-[size:16px_16px]',
+                        validationAttempted &&
+                          !motionCharacter &&
+                          'border-destructive'
+                      )}
+                    >
+                      {motionCharacterPreview ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            alt={tGeneration('upload.character')}
+                            className="size-full object-contain [image-rendering:pixelated]"
+                            src={motionCharacterPreview}
+                          />
+                          <div className="absolute inset-x-0 bottom-0 bg-black/70 px-3 py-2 text-sm text-white">
+                            {t('projectOverlay', { name: motionProjectLabel })}
+                          </div>
+                          <button
+                            aria-label={tGeneration('upload.remove')}
+                            className="bg-background/90 hover:bg-destructive hover:text-destructive-foreground absolute top-2 right-2 z-10 grid size-7 place-items-center rounded-full border border-white/15"
+                            onClick={() => setUploadedMotionCharacter(null)}
+                            type="button"
+                          >
+                            <IconX aria-hidden="true" className="size-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="text-muted-foreground hover:text-primary flex flex-col items-center gap-2 text-xs"
+                          onClick={() => {
+                            if (requireSignedIn())
+                              motionFileInputRef.current?.click();
+                          }}
+                          type="button"
+                        >
+                          <IconUpload
+                            aria-hidden="true"
+                            className="size-9 stroke-[1.3]"
+                          />
+                          {t('motionUploadEmpty')}
+                        </button>
+                      )}
+                    </div>
+                  </aside>
+
+                  <div className="flex min-w-0 flex-col gap-4">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-sm font-semibold">
+                          {tGeneration('fields.actionType')}
+                        </span>
+                        <button
+                          aria-expanded={showMoreActions}
+                          className="text-muted-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-primary inline-flex h-8 items-center gap-1 rounded-md border border-white/12 px-3 text-xs font-medium"
+                          onClick={() =>
+                            setShowMoreActions((current) => !current)
+                          }
+                          type="button"
+                        >
+                          {showMoreActions ? (
+                            <IconChevronUp
+                              aria-hidden="true"
+                              className="size-3.5"
+                            />
+                          ) : (
+                            <IconChevronDown
+                              aria-hidden="true"
+                              className="size-3.5"
+                            />
+                          )}
+                          {showMoreActions
+                            ? t('collapseActions')
+                            : t('moreActions')}
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-5 gap-2 max-[860px]:grid-cols-3 max-[560px]:grid-cols-2">
+                        {visibleMotionActions.map((action) => {
+                          const selected = motionType === action.value;
+                          const image = getActionTypeImage(action.value);
+                          return (
+                            <button
+                              aria-pressed={selected}
+                              className={cn(
+                                'bg-secondary/55 hover:border-primary/55 relative flex h-16 w-full items-center justify-center gap-2 overflow-hidden rounded-lg border px-2 text-sm font-semibold transition-colors',
+                                selected
+                                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
+                                  : 'text-foreground/80 border-white/12'
+                              )}
+                              key={action.value}
+                              onClick={() => {
+                                setMotionType(action.value);
+                                setMotionPrompt('');
+                              }}
+                              type="button"
+                            >
+                              {image ? (
+                                <NextImage
+                                  alt=""
+                                  aria-hidden="true"
+                                  className="size-9 shrink-0 object-contain [image-rendering:pixelated]"
+                                  height={36}
+                                  src={image}
+                                  width={36}
+                                />
+                              ) : (
+                                <IconSword
+                                  aria-hidden="true"
+                                  className="size-6 shrink-0"
+                                />
+                              )}
+                              <span className="truncate">{action.label}</span>
+                              {selected ? (
+                                <span className="bg-primary text-primary-foreground absolute top-1 right-1 grid size-4 place-items-center rounded-full">
+                                  <IconCheck
+                                    aria-hidden="true"
+                                    className="size-3"
+                                  />
+                                </span>
+                              ) : null}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {motionSettingsType ? (
+                      <div className="border-border bg-background/40 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 rounded-lg border p-3">
+                        {motionType === 'jump' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.jumpType')}
+                            onValueChange={(value) =>
+                              setActionConfig('jumpType', value)
+                            }
+                            options={translatedOptions('jumpType', [
+                              'in-place',
+                              'forward',
+                            ])}
+                            value={motionActionConfig.jumpType}
+                          />
+                        ) : null}
+                        {motionType === 'dash' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.dashType')}
+                            onValueChange={(value) =>
+                              setActionConfig('dashType', value)
+                            }
+                            options={translatedOptions('dashType', [
+                              'forward',
+                              'backward',
+                              'side',
+                            ])}
+                            value={motionActionConfig.dashType}
+                          />
+                        ) : null}
+                        {motionType === 'attack' ? (
+                          <>
+                            <HeroOptionButtons
+                              label={t('motionFields.weapon')}
+                              onValueChange={(value) =>
+                                setActionConfig('weapon', value)
+                              }
+                              options={translatedOptions('weapon', [
+                                'keep-current',
+                                'unarmed',
+                                'sword',
+                                'axe',
+                                'staff',
+                                'bow',
+                                'dagger',
+                                'spear',
+                              ])}
+                              value={motionActionConfig.weapon}
+                            />
+                            <HeroOptionButtons
+                              label={t('motionFields.attackStyle')}
+                              onValueChange={(value) =>
+                                setActionConfig('attackStyle', value)
+                              }
+                              options={translatedOptions('attackStyle', [
+                                'auto',
+                                'slash',
+                                'thrust',
+                                'heavy',
+                                'spin',
+                              ])}
+                              value={motionActionConfig.attackStyle}
+                            />
+                          </>
+                        ) : null}
+                        {motionType === 'shoot' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.shootType')}
+                            onValueChange={(value) =>
+                              setActionConfig('shootType', value)
+                            }
+                            options={translatedOptions('shootType', [
+                              'bow',
+                              'gun',
+                              'magic-bolt',
+                            ])}
+                            value={motionActionConfig.shootType}
+                          />
+                        ) : null}
+                        {motionType === 'cast' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.castType')}
+                            onValueChange={(value) =>
+                              setActionConfig('castType', value)
+                            }
+                            options={translatedOptions('castType', [
+                              'quick',
+                              'charge',
+                              'staff',
+                              'hand',
+                            ])}
+                            value={motionActionConfig.castType}
+                          />
+                        ) : null}
+                        {motionType === 'hurt' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.severity')}
+                            onValueChange={(value) =>
+                              setActionConfig('severity', value)
+                            }
+                            options={translatedOptions('severity', [
+                              'light',
+                              'heavy',
+                            ])}
+                            value={motionActionConfig.severity}
+                          />
+                        ) : null}
+                        {motionType === 'death' ? (
+                          <HeroOptionButtons
+                            label={t('motionFields.deathType')}
+                            onValueChange={(value) =>
+                              setActionConfig('deathType', value)
+                            }
+                            options={translatedOptions('deathType', [
+                              'collapse',
+                              'fall-back',
+                              'fall-forward',
+                            ])}
+                            value={motionActionConfig.deathType}
+                          />
+                        ) : null}
+                        {motionDetailTypes.includes(motionType) ? (
+                          <div className="contents">
+                            <span className="text-muted-foreground whitespace-nowrap pt-2 text-sm font-medium">
+                              {motionType === 'custom'
+                                ? t('customAction')
+                                : t('motionDetail')}
+                            </span>
+                            <textarea
+                              aria-label={
+                                motionType === 'custom'
+                                  ? t('customAction')
+                                  : t('motionDetail')
+                              }
+                              className="border-border bg-secondary/35 focus:border-primary/60 min-h-[72px] min-w-0 resize-y rounded-md border px-3 py-2 text-sm outline-none"
+                              id="homepage-motion-prompt"
+                              onChange={(event) =>
+                                setMotionPrompt(event.target.value)
+                              }
+                              placeholder={
+                                motionType === 'custom'
+                                  ? t('customActionPlaceholder')
+                                  : t('motionPromptPlaceholder')
+                              }
+                              value={motionPrompt}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-4">
+                      <div className="flex flex-wrap gap-2">
+                        <HeroOptionSelect
+                          label={tGeneration('fields.frames')}
+                          onValueChange={setMotionFrames}
+                          options={mapGenerationOptions(
+                            'frames',
+                            translateGeneration
+                          )}
+                          value={motionFrames}
+                        />
+                        <HeroOptionSelect
+                          label={tGeneration('fields.frameSize')}
+                          onValueChange={setMotionFrameSize}
+                          options={mapGenerationOptions(
+                            'frameSize',
+                            translateGeneration
+                          )}
+                          value={motionFrameSize}
+                        />
+                      </div>
+                      <div className="ml-auto flex min-w-[300px] flex-1 items-center justify-end gap-3 max-[640px]:w-full max-[640px]:min-w-0">
+                        {motionBusy ||
+                        motionPhase === 'completed' ||
+                        motionPhase === 'failed' ? (
+                          <div
+                            className="max-w-[360px] min-w-0 flex-1"
+                            role={
+                              motionPhase === 'failed' ? 'alert' : 'status'
+                            }
+                          >
+                            <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
+                              <span
+                                className={cn(
+                                  'truncate',
+                                  motionPhase === 'failed'
+                                    ? 'text-destructive'
+                                    : 'text-muted-foreground'
+                                )}
+                              >
+                                {t(`motionProgress.${motionPhase}` as never)}
+                              </span>
+                              {motionPhase === 'failed' ? null : (
+                                <span className="font-mono text-[10px]">
+                                  {motionProgressStep}/4
+                                </span>
+                              )}
+                            </div>
+                            <div className="grid h-1.5 grid-cols-4 gap-1">
+                              {[1, 2, 3, 4].map((step) => (
+                                <span
+                                  className={cn(
+                                    'rounded-full transition-colors',
+                                    step <= motionProgressStep
+                                      ? 'bg-primary'
+                                      : 'bg-white/12'
+                                  )}
+                                  key={step}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        ) : validationMessage ? (
+                          <p
+                            className="text-destructive min-w-0 flex-1 text-right text-sm font-medium"
+                            role="alert"
+                          >
+                            {validationMessage}
+                          </p>
+                        ) : null}
+                        <button
+                          className={cn(
+                            ctaClass,
+                            'min-h-12 shrink-0 rounded-lg px-5 normal-case disabled:cursor-not-allowed disabled:opacity-55'
+                          )}
+                          disabled={motionBusy}
+                          type="submit"
+                        >
+                          {motionBusy ? (
+                            <IconLoader2
+                              aria-hidden="true"
+                              className="animate-spin"
+                            />
+                          ) : (
+                            <IconMovie aria-hidden="true" />
+                          )}
+                          {motionBusy
+                            ? t('startCreatingBusy')
+                            : t('startCreating')}
+                          {motionBusy ? null : (
+                            <CreditCostMark
+                              credits={getGenerationCredits('animation', {
+                                taskCount: 1,
+                              })}
+                            />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <ProjectAssetPicker
                   open={characterPickerOpen}
                   onOpenChange={setCharacterPickerOpen}
-                  projectId={selectedProject?.id}
                   kinds={['character']}
                   selectedId={
                     motionCharacter?.origin === 'vault'
@@ -1716,9 +2374,97 @@ export function Home({ section: _section }: { section: Section }) {
                       itemId: file.itemId || '',
                       fileId: file.id,
                       previewUrl: file.url,
+                      projectId: file.projectId,
+                      projectName: file.projectName || undefined,
+                      projectSettingsJson: file.projectSettingsJson,
                     });
+                    if (
+                      file.projectId &&
+                      file.projectId !== selectedProject?.id
+                    ) {
+                      setSelectedProject((current) => ({
+                        id: file.projectId as string,
+                        name: file.projectName || current?.name || '',
+                        settingsJson:
+                          file.projectSettingsJson ||
+                          current?.settingsJson ||
+                          '{}',
+                        description: current?.description,
+                        gameGenre: current?.gameGenre || '',
+                        artStyle: current?.artStyle || '',
+                      }));
+                    }
                   }}
                 />
+                <Dialog
+                  open={uploadConfirmOpen}
+                  onOpenChange={(open) => {
+                    setUploadConfirmOpen(open);
+                  }}
+                >
+                  <DialogContent className="max-w-md rounded-xl">
+                    <DialogTitle>{t('saveUploadTitle')}</DialogTitle>
+                    <p className="text-muted-foreground text-sm">
+                      {t('saveUploadDescription')}
+                    </p>
+                    {pendingCharacterUpload && pendingCharacterPreview ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        alt={pendingCharacterUpload.name}
+                        className="border-border bg-secondary/40 max-h-64 w-full rounded-lg border object-contain"
+                        src={pendingCharacterPreview}
+                      />
+                    ) : null}
+                    <label className="space-y-2 text-sm font-medium">
+                      <span>{t('characterName')}</span>
+                      <input
+                        className="border-border bg-background text-foreground focus:border-primary/60 w-full rounded-md border px-3 py-2 outline-none"
+                        maxLength={80}
+                        onChange={(event) =>
+                          setUploadedCharacterName(event.target.value)
+                        }
+                        placeholder={t('characterNamePlaceholder')}
+                        value={uploadedCharacterName}
+                      />
+                    </label>
+                    <div className="space-y-2 text-sm font-medium">
+                      <span>{t('projectLabel')}</span>
+                      <ProjectSelector
+                        className="w-full [&_[data-slot=dropdown-menu-trigger]]:w-full"
+                        onChange={setSelectedProject}
+                        value={selectedProject?.id}
+                      />
+                      <p className="text-muted-foreground text-xs">
+                        {t('projectSelectHint')}
+                      </p>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button
+                        className="border-border hover:bg-secondary rounded-md border px-3 py-2 text-sm"
+                        onClick={() => {
+                          setUploadConfirmOpen(false);
+                        }}
+                        type="button"
+                      >
+                        {t('notNow')}
+                      </button>
+                      <button
+                        className="bg-primary text-primary-foreground rounded-md px-3 py-2 text-sm font-semibold disabled:opacity-50"
+                        disabled={
+                          savingUploadedCharacter ||
+                          !uploadedCharacterName.trim() ||
+                          !selectedProject
+                        }
+                        onClick={confirmUploadedCharacter}
+                        type="button"
+                      >
+                        {savingUploadedCharacter
+                          ? t('savingCharacter')
+                          : t('saveCharacter')}
+                      </button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </form>
           </div>

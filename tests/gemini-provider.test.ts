@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import { afterEach, test } from 'node:test';
 
-import { iconPromptExpandModel } from '../src/config/generation/model-routes';
-import { AIMediaType, AITaskStatus, GeminiProvider } from '../src/extensions/ai';
+import {
+  AIMediaType,
+  AITaskStatus,
+  GeminiProvider,
+} from '../src/extensions/ai';
 
 const originalFetch = globalThis.fetch;
 
@@ -20,7 +23,9 @@ test('Gemini text generate uses gemini-2.5-flash and returns JSON text', async (
       candidates: [
         {
           content: {
-            parts: [{ text: '{"items":[{"id":"a","description":"wooden barrel"}]}' }],
+            parts: [
+              { text: '{"items":[{"id":"a","description":"wooden barrel"}]}' },
+            ],
           },
         },
       ],
@@ -31,9 +36,12 @@ test('Gemini text generate uses gemini-2.5-flash and returns JSON text', async (
   const result = await provider.generate({
     params: {
       mediaType: AIMediaType.TEXT,
-      model: iconPromptExpandModel.model,
+      model: 'gemini-2.5-flash',
       prompt: 'expand',
-      options: { responseMimeType: 'application/json' },
+      options: {
+        reasoningEffort: 'none',
+        responseMimeType: 'application/json',
+      },
     },
   });
 
@@ -43,9 +51,63 @@ test('Gemini text generate uses gemini-2.5-flash and returns JSON text', async (
       ?.responseMimeType,
     'application/json'
   );
+  assert.deepEqual(
+    (
+      requestBody?.generationConfig as {
+        thinkingConfig?: { thinkingBudget?: number };
+      }
+    )?.thinkingConfig,
+    { thinkingBudget: 0 }
+  );
   assert.equal(result.taskStatus, AITaskStatus.SUCCESS);
   assert.equal(
     result.taskResult?.text,
     '{"items":[{"id":"a","description":"wooden barrel"}]}'
   );
+});
+
+test('Gemini text generation includes reference image bytes', async () => {
+  let requestBody: Record<string, any> | undefined;
+  globalThis.fetch = async (input, init) => {
+    if (String(input) === 'https://cdn.example.com/reference.png') {
+      return new Response(new Uint8Array([1, 2, 3]), {
+        headers: { 'content-type': 'image/png' },
+      });
+    }
+    requestBody = JSON.parse(String(init?.body || '{}'));
+    return Response.json({
+      candidates: [
+        {
+          content: {
+            parts: [
+              { text: '{"items":[{"id":"a","description":"orange book"}]}' },
+            ],
+          },
+        },
+      ],
+    });
+  };
+
+  const provider = new GeminiProvider({ apiKey: 'test-key' });
+  await provider.generate({
+    params: {
+      mediaType: AIMediaType.TEXT,
+      model: 'gemini-2.5-flash',
+      prompt: 'inspect the reference and expand',
+      options: {
+        images: ['https://cdn.example.com/reference.png'],
+        responseMimeType: 'application/json',
+      },
+    },
+  });
+
+  assert.deepEqual(requestBody?.contents?.[0]?.parts, [
+    { text: 'inspect the reference and expand' },
+    {
+      inlineData: {
+        mimeType: 'image/png',
+        data: 'AQID',
+      },
+    },
+  ]);
 });

@@ -22,7 +22,7 @@ const common = {
     .enum(['humanoid', 'monster', 'animal', 'robot', 'custom'])
     .optional(),
   frameSize: z
-    .union([z.enum(['32', '64', '128', '256']), z.number().int()])
+    .union([z.enum(['64', '128', '256']), z.number().int()])
     .optional(),
   width: z.number().int().min(16).max(512).optional(),
   height: z.number().int().min(16).max(512).optional(),
@@ -63,6 +63,31 @@ const requestSchema = z.discriminatedUnion('type', [
     itemId: z.string().uuid().optional(),
     variantId: z.string().uuid().optional(),
     action: z.string().trim().min(1).max(40),
+    actionConfig: z
+      .object({
+        jumpType: z.enum(['in-place', 'forward']).optional(),
+        dashType: z.enum(['forward', 'backward', 'side']).optional(),
+        weapon: z
+          .enum([
+            'keep-current',
+            'unarmed',
+            'sword',
+            'axe',
+            'staff',
+            'bow',
+            'dagger',
+            'spear',
+          ])
+          .optional(),
+        attackStyle: z
+          .enum(['auto', 'slash', 'thrust', 'heavy', 'spin'])
+          .optional(),
+        shootType: z.enum(['bow', 'gun', 'magic-bolt']).optional(),
+        castType: z.enum(['quick', 'charge', 'staff', 'hand']).optional(),
+        severity: z.enum(['light', 'heavy']).optional(),
+        deathType: z.enum(['collapse', 'fall-back', 'fall-forward']).optional(),
+      })
+      .optional(),
     directionMode: z.enum(['single', '4', '8']).default('single'),
     direction: z.string().trim().max(40).optional(),
     directionReferences: z
@@ -77,6 +102,9 @@ const requestSchema = z.discriminatedUnion('type', [
   z.object({
     ...common,
     type: z.literal('icon_batch'),
+    iconStyleSource: z
+      .enum(['preset', 'uploaded-reference', 'asset-reference'])
+      .optional(),
     items: z
       .array(
         z.object({

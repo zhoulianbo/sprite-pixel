@@ -1,8 +1,10 @@
 export {
+  actionTypeImages,
   CHARACTER_OUTPUT_ASPECT_RATIO,
   generationDefaults,
   generationOptionValues,
   generationQualityAspectRatio,
+  getActionTypeImage,
   getIconStylePreviewImage,
   getGenerationOptionLabel,
   iconStylePreviewImages,
@@ -22,6 +24,7 @@ export {
   directionMirrorOf,
   fitGptImagePixelSize,
   linkedDirections,
+  resolveAnimationVideoDuration,
   resolveDirectionSelection,
   resolveProviderAnimationSheetSize,
   toggleLinkedDirections,
@@ -30,11 +33,14 @@ export {
 } from './sprite';
 export {
   buildAnimationPrompt,
+  buildAnimationVideoPrompt,
   buildCharacterBasePrompt,
   buildCharacterEditPrompt,
   buildIconDescriptionExpandPrompt,
+  buildIconGenerationPrompt,
   buildIconSheetDetail,
   parseIconDescriptionExpandResult,
+  type IconStyleSource,
 } from './prompts';
 export {
   ICON_ITEM_PRESET_IDS,

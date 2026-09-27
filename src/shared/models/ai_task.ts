@@ -1,11 +1,16 @@
-import { and, count, desc, eq, sql } from 'drizzle-orm';
+import { and, count, desc, eq } from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import { aiTask, credit } from '@/config/db/schema';
 import { AITaskStatus } from '@/extensions/ai';
 import { appendUserToResult, User } from '@/shared/models/user';
 
-import { consumeCredits, CreditStatus } from './credit';
+import {
+  consumeCredits,
+  CreditStatus,
+  releaseReservedCredits,
+  settleReservedCredits,
+} from './credit';
 
 export type AITask = typeof aiTask.$inferSelect & {
   user?: User;
@@ -13,7 +18,10 @@ export type AITask = typeof aiTask.$inferSelect & {
 export type NewAITask = typeof aiTask.$inferInsert;
 export type UpdateAITask = Partial<Omit<NewAITask, 'id' | 'createdAt'>>;
 
-export async function createAITask(newAITask: NewAITask) {
+export async function createAITask(
+  newAITask: NewAITask,
+  options?: { reserveCredits?: boolean }
+) {
   const result = await db().transaction(async (tx: any) => {
     // 1. create task record
     const [taskResult] = await tx.insert(aiTask).values(newAITask).returning();
@@ -31,6 +39,9 @@ export async function createAITask(newAITask: NewAITask) {
           taskId: taskResult.id,
         }),
         tx,
+        status: options?.reserveCredits
+          ? CreditStatus.FROZEN
+          : CreditStatus.ACTIVE,
       });
 
       // 3. update task record with consumed credit id
@@ -63,32 +74,13 @@ export async function updateAITaskById(id: string, updateAITask: UpdateAITask) {
         .select()
         .from(credit)
         .where(eq(credit.id, updateAITask.creditId));
-      if (consumedCredit && consumedCredit.status === CreditStatus.ACTIVE) {
-        const consumedItems = JSON.parse(consumedCredit.consumedDetail || '[]');
-
-        // console.log('consumedItems', consumedItems);
-
-        // add back consumed credits
-        await Promise.all(
-          consumedItems.map((item: any) => {
-            if (item && item.creditId && item.creditsConsumed > 0) {
-              return tx
-                .update(credit)
-                .set({
-                  remainingCredits: sql`${credit.remainingCredits} + ${item.creditsConsumed}`,
-                })
-                .where(eq(credit.id, item.creditId));
-            }
-          })
-        );
-
-        // delete consumed credit record
-        await tx
-          .update(credit)
-          .set({
-            status: CreditStatus.DELETED,
-          })
-          .where(eq(credit.id, updateAITask.creditId));
+      if (
+        consumedCredit &&
+        [CreditStatus.ACTIVE, CreditStatus.FROZEN].includes(
+          consumedCredit.status as CreditStatus
+        )
+      ) {
+        await releaseReservedCredits(updateAITask.creditId, tx);
       }
     }
 
@@ -103,6 +95,12 @@ export async function updateAITaskById(id: string, updateAITask: UpdateAITask) {
   });
 
   return result;
+}
+
+export async function settleAITaskCredit(taskId: string) {
+  const task = await findAITaskById(taskId);
+  if (!task?.creditId) return undefined;
+  return settleReservedCredits(task.creditId);
 }
 
 export async function getAITasksCount({

@@ -199,17 +199,42 @@ export class GeminiProvider implements AIProvider {
     prompt: string;
     options?: Record<string, unknown>;
   }): Promise<AITaskResult> {
+    const imageUrls = Array.isArray(options?.images)
+      ? options.images
+      : Array.isArray(options?.image_input)
+        ? options.image_input
+        : [];
+    const requestParts: Array<Record<string, unknown>> = [{ text: prompt }];
+    for (const imageUrl of imageUrls) {
+      const imageResponse = await fetch(String(imageUrl));
+      if (!imageResponse.ok) {
+        throw new Error(
+          `text reference image fetch failed: ${imageResponse.status}`
+        );
+      }
+      requestParts.push({
+        inlineData: {
+          mimeType: imageResponse.headers.get('content-type') || 'image/jpeg',
+          data: Buffer.from(await imageResponse.arrayBuffer()).toString(
+            'base64'
+          ),
+        },
+      });
+    }
     const payload = {
       contents: [
         {
           role: 'user',
-          parts: [{ text: prompt }],
+          parts: requestParts,
         },
       ],
       generationConfig: {
         temperature: options?.temperature ?? 0.6,
         maxOutputTokens: options?.maxOutputTokens ?? 2048,
         responseMimeType: options?.responseMimeType || 'application/json',
+        ...(options?.reasoningEffort === 'none'
+          ? { thinkingConfig: { thinkingBudget: 0 } }
+          : {}),
       },
     };
 

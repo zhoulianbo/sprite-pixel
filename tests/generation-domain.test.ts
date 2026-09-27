@@ -3,6 +3,7 @@ import { test } from 'node:test';
 
 import {
   buildAnimationPrompt,
+  buildAnimationVideoPrompt,
   buildCharacterBasePrompt,
   buildCharacterEditPrompt,
   resolveGenerationAspectRatio,
@@ -16,6 +17,7 @@ import {
   fitGptImagePixelSize,
   resolveAnimationGrid,
   resolveAnimationSheetSize,
+  resolveAnimationVideoDuration,
   resolveDirectionSelection,
   SPRITE_DIRECTIONS,
   toggleLinkedDirections,
@@ -126,21 +128,21 @@ test('workspace direction aliases and batches use canonical directions', () => {
   assert.equal(groups[0].sourceFile?.id, 'source-file');
 });
 
-test('animation auto frames follow the action table and cap at four columns', () => {
+test('animation auto frames follow the optimized action ranges and square grid', () => {
   assert.deepEqual(resolveAnimationGrid('auto', 'idle'), {
-    frameCount: 4,
-    columns: 2,
-    rows: 2,
+    frameCount: 14,
+    columns: 4,
+    rows: 4,
   });
   assert.deepEqual(resolveAnimationGrid('auto', 'walk'), {
-    frameCount: 8,
+    frameCount: 16,
     columns: 4,
-    rows: 2,
+    rows: 4,
   });
   assert.deepEqual(resolveAnimationGrid('auto', 'death'), {
-    frameCount: 8,
-    columns: 4,
-    rows: 2,
+    frameCount: 18,
+    columns: 5,
+    rows: 4,
   });
   assert.deepEqual(resolveAnimationGrid(13), {
     frameCount: 13,
@@ -149,19 +151,27 @@ test('animation auto frames follow the action table and cap at four columns', ()
   });
 });
 
+test('animation video duration stays at the two-second action clip', () => {
+  assert.equal(resolveAnimationVideoDuration('run'), 2);
+  assert.equal(resolveAnimationVideoDuration('attack'), 2);
+  assert.equal(resolveAnimationVideoDuration('jump'), 2);
+  assert.equal(resolveAnimationVideoDuration('death'), 2);
+  assert.equal(resolveAnimationVideoDuration('custom-action'), 2);
+});
+
 test('animation sheet size is frame size times the grid', () => {
   assert.deepEqual(resolveAnimationSheetSize('auto', 32, 'walk'), {
-    frameCount: 8,
+    frameCount: 16,
     columns: 4,
-    rows: 2,
+    rows: 4,
     frameSize: 32,
     width: 128,
-    height: 64,
-    aspectRatio: '128x64',
+    height: 128,
+    aspectRatio: '128x128',
   });
   assert.equal(
     resolveAnimationSheetSize('auto', '256', 'idle').aspectRatio,
-    '512x512'
+    '1024x1024'
   );
 });
 
@@ -211,7 +221,7 @@ test('character and animation prompts follow the production templates', () => {
       '- clear silhouette',
       '- readable at small size',
       '- simple readable shapes for sprite animation',
-      '- clean pixel-art rendering',
+      '- clean game-ready rendering',
       '- transparent background',
       '- no text',
       '- no watermark',
@@ -233,13 +243,85 @@ test('character and animation prompts follow the production templates', () => {
   assert.match(animationPrompt, /one-shot action with readable anticipation/);
   assert.match(
     animationPrompt,
-    /frame 4: maximum extension and readable impact/
+    /key pose 4: maximum extension and readable impact/
   );
   assert.match(
     animationPrompt,
     /If user motion notes conflict with the selected action[\s\S]*ignore only the conflicting part/
   );
   assert.match(animationPrompt, /no grid lines, cell borders, gutters/);
+
+  const videoPrompt = buildAnimationVideoPrompt(
+    {
+      prompt: '披风自然跟随动作摆动',
+      action: 'run',
+      frames: 16,
+      frameSize: 128,
+    },
+    'east'
+  );
+  assert.match(videoPrompt, /Animate the provided character/);
+  assert.match(
+    videoPrompt,
+    /Run in place continuously at one steady pace[\s\S]*brief airborne moments/
+  );
+  assert.match(videoPrompt, /stable grip/);
+  assert.match(videoPrompt, /secondary motion in hair, clothing, capes/);
+  assert.doesNotMatch(videoPrompt, /Target key-frame count/);
+  assert.doesNotMatch(videoPrompt, /Ordered pose plan/);
+  assert.doesNotMatch(videoPrompt, /key pose \d/);
+  assert.doesNotMatch(videoPrompt, /sprite sheet PNG/);
+});
+
+test('video action prompts use continuous motion instead of frame choreography', () => {
+  const actions = [
+    'idle',
+    'walk',
+    'run',
+    'attack',
+    'jump',
+    'dash',
+    'shoot',
+    'cast',
+    'hurt',
+    'death',
+    'pickup',
+    'wave',
+  ];
+
+  for (const action of actions) {
+    const prompt = buildAnimationVideoPrompt({
+      action,
+      direction: 'east',
+      frames: 16,
+      frameSize: 128,
+    });
+    assert.match(prompt, /Continuous motion description:/);
+    assert.doesNotMatch(prompt, /frame \d|key pose|in-betweens/i);
+  }
+
+  const attackPrompt = buildAnimationVideoPrompt({
+    action: 'attack',
+    actionConfig: {
+      weapon: 'keep-current',
+      attackStyle: 'slash',
+    },
+    direction: 'east',
+  });
+  assert.match(attackPrompt, /exactly one fast, exaggerated strike/);
+  assert.match(attackPrompt, /use only the item already carried/);
+});
+
+test('none character presets leave style and perspective to the prompt', () => {
+  const prompt = buildCharacterBasePrompt({
+    prompt: 'a hand-drawn forest mage viewed from behind',
+    style: 'none',
+    perspective: 'none',
+    characterType: 'humanoid',
+  });
+  assert.doesNotMatch(prompt, /^Style:/m);
+  assert.doesNotMatch(prompt, /^Perspective:/m);
+  assert.match(prompt, /a hand-drawn forest mage viewed from behind/);
 });
 
 test('character edit prompts keep identity and follow pose or costume', () => {

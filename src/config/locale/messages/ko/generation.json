@@ -15,10 +15,11 @@
     "character": "캐릭터",
     "remove": "이미지 제거",
     "file": "업로드",
-    "existing": "기존 캐릭터"
+    "existing": "에셋 선택"
   },
   "options": {
     "style": {
+      "none": "없음",
       "pixel-art": "픽셀 아트",
       "cartoon": "카툰",
       "illustration": "일러스트",
@@ -28,6 +29,7 @@
       "cyberpunk": "사이버펑크"
     },
     "perspective": {
+      "none": "없음",
       "side": "측면",
       "top-down": "탑다운",
       "front": "정면",
@@ -46,10 +48,15 @@
       "idle": "대기",
       "walk": "걷기",
       "run": "달리기",
-      "attack": "공격",
       "jump": "점프",
+      "dash": "대시",
+      "attack": "공격",
+      "shoot": "사격",
+      "cast": "시전",
       "hurt": "피격",
       "death": "사망",
+      "pickup": "줍기",
+      "wave": "손 흔들기",
       "custom": "사용자 지정"
     },
     "direction": {

@@ -6,6 +6,7 @@ import {
   Film,
   ImageIcon,
   ImagePlus,
+  Images,
   Layers3,
   LoaderCircle,
   Sparkles,
@@ -15,7 +16,7 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
-import { generationDefaults, mapGenerationOptions } from '@/config/generation';
+import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
 import { getGenerationCredits } from '@/config/generation/model-routes';
 import {
   directionGenerateSource,
@@ -47,6 +48,7 @@ import {
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
 import {
+  actionDirectionLabel,
   characterAssetGridClass,
   characterWorkspacePath,
   characterWorkspaceStage,
@@ -94,6 +96,7 @@ export function CharacterWorkspace({
   const tg = useTranslations('workspace.generation');
   const td = useTranslations('workspace.directions');
   const to = useTranslations('generation');
+  const tm = useTranslations('pages.index.messages');
   const notifyApiError = useProductApiFeedback();
   const pathname = usePathname();
   const router = useRouter();
@@ -121,6 +124,16 @@ export function CharacterWorkspace({
   const [frameSize, setFrameSize] = useState<string>(
     generationDefaults.frameSize
   );
+  const [motionActionConfig, setMotionActionConfig] = useState({
+    jumpType: 'in-place',
+    dashType: 'forward',
+    weapon: 'keep-current',
+    attackStyle: 'auto',
+    shootType: 'bow',
+    castType: 'quick',
+    severity: 'light',
+    deathType: 'collapse',
+  });
   const [selectedDirections, setSelectedDirections] = useState<string[]>([
     ...SPRITE_DIRECTIONS[4],
   ]);
@@ -208,6 +221,10 @@ export function CharacterWorkspace({
 
   const directionLabel = (value: string) =>
     td.has(value as never) ? td(value as never) : value;
+  const actionLabel = (value: string) => {
+    const key = `options.actionType.${value}`;
+    return to.has(key as never) ? to(key as never) : value;
+  };
   const options = (
     key: 'editType' | 'actionType' | 'direction' | 'frames' | 'frameSize'
   ) => mapGenerationOptions(key, (path) => to(path as never));
@@ -244,6 +261,23 @@ export function CharacterWorkspace({
     if (['pending', 'processing'].includes(payload.data.status)) {
       window.setTimeout(() => poll(id).catch(fail), 1800);
     } else {
+      if (
+        ['failed', 'postprocessing_failed', 'canceled'].includes(
+          payload.data.status
+        )
+      ) {
+        console.error(
+          JSON.stringify({
+            event: 'sprite_generation_failed',
+            generationId: id,
+            status: payload.data.status,
+            reason:
+              payload.data.failureReason ||
+              payload.data.failureCode ||
+              'GENERATION_FAILED',
+          })
+        );
+      }
       setBusy(false);
       router.refresh();
     }
@@ -284,6 +318,10 @@ export function CharacterWorkspace({
       );
       return;
     }
+    if (stage === 'animations' && action === 'custom' && !prompt.trim()) {
+      setError(tg('promptRequired'));
+      return;
+    }
     setBusy(true);
     setError('');
     setStatus('queued');
@@ -321,6 +359,7 @@ export function CharacterWorkspace({
         ...base,
         type: 'animation',
         action,
+        actionConfig: motionActionConfig,
         directionMode: 'single',
         direction: selectedDirection,
         frames: frames === 'auto' ? 'auto' : Number(frames),
@@ -409,9 +448,52 @@ export function CharacterWorkspace({
     stage === 'animations' ? 'animation' : 'character',
     { taskCount: Math.max(retryCount, 1), retry: true }
   );
-  const animationDirections = options('direction').filter(
-    (option) => !['four-way', 'eight-way'].includes(option.value)
-  );
+  const motionSettingsType = [
+    'jump',
+    'dash',
+    'attack',
+    'shoot',
+    'cast',
+    'hurt',
+    'death',
+    'custom',
+  ].includes(action);
+  const motionDetailTypes = ['dash', 'attack', 'shoot', 'cast', 'custom'];
+  const motionPhase =
+    progress.find((item) => item.phase)?.phase ||
+    (status === 'validating'
+      ? 'validating'
+      : ['pending', 'queued'].includes(status)
+        ? 'queued'
+        : status === 'processing'
+          ? 'video_generation'
+          : status === 'success'
+            ? 'completed'
+            : ['failed', 'postprocessing_failed', 'canceled'].includes(status)
+              ? 'failed'
+              : 'idle');
+  const motionProgressStep =
+    motionPhase === 'validating' || motionPhase === 'queued'
+      ? 1
+      : motionPhase === 'video_generation'
+        ? 2
+        : motionPhase === 'media_processing'
+          ? 3
+          : motionPhase === 'completed'
+            ? 4
+            : 0;
+  const setActionConfig = (
+    key: keyof typeof motionActionConfig,
+    value: string
+  ) => setMotionActionConfig((current) => ({ ...current, [key]: value }));
+  const translatedMotionOptions = (group: string, values: string[]) =>
+    values.map((value) => ({
+      value,
+      label: tm(`motionOptions.${group}.${value}` as never),
+    }));
+  const variantLabel = (file: CharacterWorkspaceFile) =>
+    workspace.variants.find((variant) => variant.id === file.variantId)?.name ||
+    t('variation');
   const directionPreviewEntries = useMemo(() => {
     const byDirection = new Map<string, string>();
     for (const item of progress) {
@@ -648,29 +730,39 @@ export function CharacterWorkspace({
             <div className="space-y-5">
               {animationSets.map((group) => (
                 <section key={group.set.id}>
-                  <h2 className="mb-2 text-sm font-medium">{group.set.name}</h2>
                   <div className={characterAssetGridClass}>
-                    {group.clips.map((animation) => (
-                      <AnimationCard
-                        key={animation.clip.id}
-                        animation={animation}
-                        directionLabel={directionLabel}
-                        labels={{
-                          frames: t('frames'),
-                          open: tg('openEditor'),
-                          zoom: tg('zoom'),
-                          download: tg('download'),
-                          more: t('more'),
-                        }}
-                        onOpen={() => {
-                          if (animation.version) {
-                            router.push(
-                              `/editor/animations/${animation.version.id}`
-                            );
-                          }
-                        }}
-                      />
-                    ))}
+                    {group.clips.map((animation) => {
+                      const title = actionDirectionLabel(
+                        animation.set.action,
+                        animation.clip.direction,
+                        actionLabel,
+                        directionLabel
+                      );
+                      return (
+                        <AnimationCard
+                          key={animation.clip.id}
+                          animation={animation}
+                          title={title}
+                          labels={{
+                            frames: t('frames'),
+                            open: tg('openEditor'),
+                            zoom: tg('zoom'),
+                            download: tg('download'),
+                            more: t('more'),
+                            versionCount: t('versionCount', {
+                              count: animation.versionCount || 0,
+                            }),
+                          }}
+                          onOpen={() => {
+                            if (animation.version) {
+                              router.push(
+                                `/editor/animations/${animation.version.id}`
+                              );
+                            }
+                          }}
+                        />
+                      );
+                    })}
                   </div>
                 </section>
               ))}
@@ -759,26 +851,15 @@ export function CharacterWorkspace({
 
           {stage === 'animations' ? (
             <>
-              <ResultPreview
-                src={resultPreview}
-                placeholder={t('resultPlaceholder')}
+              <AnimationSourcePreview
+                alt={t('referenceInput')}
+                changeLabel={t('changeCharacter')}
+                disabled={busy}
+                emptyLabel={t('chooseReference')}
+                onChange={() => setPickerOpen(true)}
                 processing={busy}
                 processingLabel={t('processing')}
-              />
-              <RowOptionSelect
-                label={to('fields.actionType')}
-                value={action}
-                onValueChange={setAction}
-                options={options('actionType')}
-              />
-              <RowOptionSelect
-                label={to('fields.direction')}
-                value={direction}
-                onValueChange={(value) => {
-                  setDirection(value);
-                  setSelectedBatchId('');
-                }}
-                options={animationDirections}
+                src={selectedFile?.url}
               />
               <RowOptionSelect
                 label={t('framesLabel')}
@@ -792,20 +873,212 @@ export function CharacterWorkspace({
                 onValueChange={setFrameSize}
                 options={options('frameSize')}
               />
-              <PromptComposer
-                value={prompt}
-                onChange={setPrompt}
-                placeholder={t('promptPlaceholder')}
-                selectedFile={selectedFile}
-                referenceAlt={t('referenceInput')}
-                onPick={() => setPickerOpen(true)}
-                onClear={() => setSelectedFileId('')}
-                removeLabel={to('upload.remove')}
-                actionLabel={busy ? t('processing') : t('generate')}
-                credits={creditCost}
-                busy={busy}
-                onSubmit={generate}
+              <ActionTypeSelect
+                label={to('fields.actionType')}
+                onValueChange={(value) => {
+                  setAction(value);
+                  setPrompt('');
+                  setError('');
+                }}
+                options={options('actionType')}
+                value={action}
               />
+              {motionSettingsType ? (
+                <div className="border-border bg-background/40 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 rounded-lg border p-3">
+                  {action === 'jump' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.jumpType')}
+                      onValueChange={(value) =>
+                        setActionConfig('jumpType', value)
+                      }
+                      options={translatedMotionOptions('jumpType', [
+                        'in-place',
+                        'forward',
+                      ])}
+                      value={motionActionConfig.jumpType}
+                    />
+                  ) : null}
+                  {action === 'dash' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.dashType')}
+                      onValueChange={(value) =>
+                        setActionConfig('dashType', value)
+                      }
+                      options={translatedMotionOptions('dashType', [
+                        'forward',
+                        'backward',
+                        'side',
+                      ])}
+                      value={motionActionConfig.dashType}
+                    />
+                  ) : null}
+                  {action === 'attack' ? (
+                    <>
+                      <MotionOptionButtons
+                        label={tm('motionFields.weapon')}
+                        onValueChange={(value) =>
+                          setActionConfig('weapon', value)
+                        }
+                        options={translatedMotionOptions('weapon', [
+                          'keep-current',
+                          'unarmed',
+                          'sword',
+                          'axe',
+                          'staff',
+                          'bow',
+                          'dagger',
+                          'spear',
+                        ])}
+                        value={motionActionConfig.weapon}
+                      />
+                      <MotionOptionButtons
+                        label={tm('motionFields.attackStyle')}
+                        onValueChange={(value) =>
+                          setActionConfig('attackStyle', value)
+                        }
+                        options={translatedMotionOptions('attackStyle', [
+                          'auto',
+                          'slash',
+                          'thrust',
+                          'heavy',
+                          'spin',
+                        ])}
+                        value={motionActionConfig.attackStyle}
+                      />
+                    </>
+                  ) : null}
+                  {action === 'shoot' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.shootType')}
+                      onValueChange={(value) =>
+                        setActionConfig('shootType', value)
+                      }
+                      options={translatedMotionOptions('shootType', [
+                        'bow',
+                        'gun',
+                        'magic-bolt',
+                      ])}
+                      value={motionActionConfig.shootType}
+                    />
+                  ) : null}
+                  {action === 'cast' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.castType')}
+                      onValueChange={(value) =>
+                        setActionConfig('castType', value)
+                      }
+                      options={translatedMotionOptions('castType', [
+                        'quick',
+                        'charge',
+                        'staff',
+                        'hand',
+                      ])}
+                      value={motionActionConfig.castType}
+                    />
+                  ) : null}
+                  {action === 'hurt' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.severity')}
+                      onValueChange={(value) =>
+                        setActionConfig('severity', value)
+                      }
+                      options={translatedMotionOptions('severity', [
+                        'light',
+                        'heavy',
+                      ])}
+                      value={motionActionConfig.severity}
+                    />
+                  ) : null}
+                  {action === 'death' ? (
+                    <MotionOptionButtons
+                      label={tm('motionFields.deathType')}
+                      onValueChange={(value) =>
+                        setActionConfig('deathType', value)
+                      }
+                      options={translatedMotionOptions('deathType', [
+                        'collapse',
+                        'fall-back',
+                        'fall-forward',
+                      ])}
+                      value={motionActionConfig.deathType}
+                    />
+                  ) : null}
+                  {motionDetailTypes.includes(action) ? (
+                    <div className="contents">
+                      <span className="text-muted-foreground whitespace-nowrap pt-2 text-sm font-medium">
+                        {action === 'custom'
+                          ? tm('customAction')
+                          : tm('motionDetail')}
+                      </span>
+                      <Textarea
+                        aria-label={
+                          action === 'custom'
+                            ? tm('customAction')
+                            : tm('motionDetail')
+                        }
+                        className="border-border bg-secondary/35 focus:border-primary/60 min-h-[72px] min-w-0 resize-y rounded-md border px-3 py-2 text-sm outline-none"
+                        onChange={(event) => {
+                          setPrompt(event.target.value);
+                          if (error) setError('');
+                        }}
+                        placeholder={
+                          action === 'custom'
+                            ? tm('customActionPlaceholder')
+                            : tm('motionPromptPlaceholder')
+                        }
+                        value={prompt}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+              {busy || motionProgressStep > 0 ? (
+                <div role="status">
+                  <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
+                    <span className="text-muted-foreground truncate">
+                      {motionPhase === 'completed'
+                        ? tg('success')
+                        : motionPhase === 'failed'
+                          ? tg('failed')
+                          : tm(`motionProgress.${motionPhase}` as never)}
+                    </span>
+                    <span className="font-mono text-[10px]">
+                      {motionProgressStep}/4
+                    </span>
+                  </div>
+                  <div className="grid h-1.5 grid-cols-4 gap-1">
+                    {[1, 2, 3, 4].map((step) => (
+                      <span
+                        className={cn(
+                          'rounded-full transition-colors',
+                          step <= motionProgressStep
+                            ? 'bg-primary'
+                            : 'bg-white/12'
+                        )}
+                        key={step}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {error ? (
+                <p className="text-destructive text-sm" role="alert">
+                  {error}
+                </p>
+              ) : null}
+              <Button
+                className="w-full"
+                disabled={busy}
+                onClick={generate}
+              >
+                {busy ? (
+                  <LoaderCircle className="size-4 animate-spin" />
+                ) : (
+                  <Film className="size-4" />
+                )}
+                {busy ? t('processing') : t('generateSpriteSheet')}
+                {busy ? null : <CreditCostMark credits={creditCost} />}
+              </Button>
             </>
           ) : null}
 
@@ -909,7 +1182,7 @@ export function CharacterWorkspace({
             </p>
           ) : null}
 
-          {status && stage !== 'base' ? (
+          {status && stage !== 'base' && stage !== 'animations' ? (
             <p className="text-muted-foreground text-xs" aria-live="polite">
               {tg(
                 (['pending', 'queued'].includes(status)
@@ -924,20 +1197,7 @@ export function CharacterWorkspace({
               )}
             </p>
           ) : null}
-          {progress.length > 0 && stage === 'animations' ? (
-            <div className="flex flex-wrap gap-1.5">
-              {progress.map((item) => (
-                <span
-                  key={item.id}
-                  className="bg-secondary rounded-md border px-2 py-1 font-mono text-[9px]"
-                >
-                  {directionLabel(item.role.split(':').at(-1) || item.role)} ·{' '}
-                  {item.status}
-                </span>
-              ))}
-            </div>
-          ) : null}
-          {error ? (
+          {error && stage !== 'animations' ? (
             <p className="text-destructive text-sm" role="alert">
               {error}
             </p>
@@ -959,11 +1219,18 @@ export function CharacterWorkspace({
       <ReferenceImagePicker
         open={pickerOpen}
         onOpenChange={setPickerOpen}
-        files={referenceFiles}
+        files={stage === 'animations' ? baseFiles : referenceFiles}
         selectedId={selectedFileId}
-        title={t('pickerTitle')}
-        description={t('pickerDescription')}
+        title={
+          stage === 'animations' ? t('variantPickerTitle') : t('pickerTitle')
+        }
+        description={
+          stage === 'animations'
+            ? t('variantPickerDescription')
+            : t('pickerDescription')
+        }
         selectLabel={t('chooseReference')}
+        labelFor={stage === 'animations' ? variantLabel : undefined}
         onSelect={(file) => {
           setSelectedFileId(file.id);
           setSelectedBatchId('');
@@ -1045,6 +1312,160 @@ function EmptyState({
           ) : null}
         </p>
       ) : null}
+    </div>
+  );
+}
+
+function MotionOptionButtons({
+  label,
+  value,
+  onValueChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <div className="contents">
+      <span className="text-muted-foreground whitespace-nowrap pt-1.5 text-sm font-medium">
+        {label}
+      </span>
+      <div
+        className="flex min-w-0 flex-wrap gap-2"
+        role="group"
+        aria-label={label}
+      >
+        {options.map((option) => {
+          const selected = value === option.value;
+          return (
+            <button
+              aria-pressed={selected}
+              className={cn(
+                'inline-flex min-h-8 items-center rounded-md border px-3 text-sm font-medium transition-colors',
+                selected
+                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
+                  : 'text-foreground/80 hover:border-primary/55 border-white/12 bg-secondary/55'
+              )}
+              key={option.value}
+              onClick={() => onValueChange(option.value)}
+              type="button"
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ActionTypeSelect({
+  label,
+  value,
+  onValueChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="shrink-0 text-sm">{label}</span>
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger className="h-11 min-w-0 flex-1">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent align="end" className="min-w-56">
+          {options.map((option) => {
+            const image = getActionTypeImage(option.value);
+            return (
+              <SelectItem key={option.value} value={option.value}>
+                {image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    alt=""
+                    className="size-8 object-contain [image-rendering:pixelated]"
+                    src={image}
+                  />
+                ) : (
+                  <Sparkles className="size-6" />
+                )}
+                {option.label}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+function AnimationSourcePreview({
+  src,
+  alt,
+  changeLabel,
+  emptyLabel,
+  onChange,
+  processing,
+  processingLabel,
+  disabled,
+}: {
+  src?: string;
+  alt: string;
+  changeLabel: string;
+  emptyLabel: string;
+  onChange: () => void;
+  processing: boolean;
+  processingLabel: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="relative">
+      <div className="border-border bg-secondary/35 relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl border p-3">
+        {src ? (
+          <div className="relative size-full overflow-hidden rounded-lg bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,rgba(255,255,255,.04)_75%)] bg-size-[16px_16px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={alt}
+              className="size-full object-contain [image-rendering:pixelated]"
+            />
+          </div>
+        ) : (
+          <button
+            className="text-muted-foreground hover:text-primary flex size-full flex-col items-center justify-center gap-2 text-sm"
+            disabled={disabled}
+            onClick={onChange}
+            type="button"
+          >
+            <ImageIcon className="text-primary/75 size-14 stroke-[1.2]" />
+            {emptyLabel}
+          </button>
+        )}
+        {processing ? (
+          <div className="bg-background/75 absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <LoaderCircle className="text-primary size-7 animate-spin" />
+            <span className="text-muted-foreground text-xs">
+              {processingLabel}
+            </span>
+          </div>
+        ) : null}
+      </div>
+      <Button
+        aria-label={changeLabel}
+        className="bg-background/90 absolute top-5 right-5 z-10 size-8"
+        disabled={disabled}
+        onClick={onChange}
+        size="icon"
+        type="button"
+        variant="outline"
+      >
+        <Images className="size-4" />
+      </Button>
     </div>
   );
 }

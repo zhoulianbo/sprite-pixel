@@ -15,10 +15,11 @@
     "character": "角色图",
     "remove": "删除图片",
     "file": "上传",
-    "existing": "已有角色"
+    "existing": "选择素材"
   },
   "options": {
     "style": {
+      "none": "无",
       "pixel-art": "像素画",
       "cartoon": "卡通风",
       "illustration": "插画风",
@@ -28,6 +29,7 @@
       "cyberpunk": "赛博朋克"
     },
     "perspective": {
+      "none": "无",
       "side": "侧视图",
       "top-down": "俯视图",
       "front": "正视图",
@@ -53,10 +55,15 @@
       "idle": "待机",
       "walk": "行走",
       "run": "奔跑",
-      "attack": "攻击",
       "jump": "跳跃",
+      "dash": "冲刺",
+      "attack": "攻击",
+      "shoot": "射击",
+      "cast": "施法",
       "hurt": "受伤",
       "death": "死亡",
+      "pickup": "拾取",
+      "wave": "挥手",
       "custom": "自定义"
     },
     "direction": {

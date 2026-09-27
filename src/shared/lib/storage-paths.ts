@@ -18,6 +18,25 @@ export function projectAssetStorageKey(
   return `projects/${projectId}/${type}/${fileId}.${extension}`;
 }
 
+export function uploadStorageKeyForRole(
+  projectId: string,
+  role: string,
+  fileId: string,
+  extension: string,
+  now = new Date()
+) {
+  if (role === 'reference' || role === 'base_reference') {
+    return projectAssetStorageKey(projectId, 'character', fileId, extension);
+  }
+  return userUploadStorageKey(fileId, extension, now);
+}
+
+export function isCompletableUploadKey(key: string, projectId: string) {
+  return (
+    key.startsWith('uploads/') || key.startsWith(`projects/${projectId}/`)
+  );
+}
+
 export function generationAssetType(taskType: string) {
   if (taskType === 'animation') return 'animation';
   if (taskType === 'icon_batch') return 'icon';

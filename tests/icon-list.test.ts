@@ -9,6 +9,8 @@ import {
   parseIconList,
 } from '../src/config/generation/icon';
 import {
+  buildIconDescriptionExpandPrompt,
+  buildIconGenerationPrompt,
   buildIconSheetDetail,
   parseIconDescriptionExpandResult,
 } from '../src/config/generation/prompts';
@@ -85,4 +87,56 @@ test('builds one fixed 3x3 sheet prompt for all selected icons', () => {
   assert.match(prompt, /Row 2, column 1: EMPTY — fully transparent/);
   assert.match(prompt, /one unified art style/);
   assert.match(prompt, /no grid lines, cell borders, labels/);
+});
+
+test('applies genre and art style only to preset icon generation', () => {
+  const detail = buildIconSheetDetail([
+    { name: '抽奖券', description: '暖黄色厚纸票券，红色包边' },
+  ]);
+  const preset = buildIconGenerationPrompt({
+    detail,
+    styleSource: 'preset',
+    style: 'pixel-art',
+    gameGenre: 'roguelike',
+    palette: '["#111111","#f6c453"]',
+  });
+  const uploadedReference = buildIconGenerationPrompt({
+    detail,
+    styleSource: 'uploaded-reference',
+    style: 'pixel-art',
+    gameGenre: 'roguelike',
+    palette: '["#111111","#f6c453"]',
+  });
+  const assetReference = buildIconGenerationPrompt({
+    detail,
+    styleSource: 'asset-reference',
+    style: 'pixel-art',
+    gameGenre: 'roguelike',
+    palette: '["#111111","#f6c453"]',
+  });
+
+  assert.match(preset, /Game genre: roguelike/);
+  assert.match(preset, /Art style: pixel-art/);
+  assert.match(preset, /Palette:/);
+  assert.doesNotMatch(uploadedReference, /Game genre:|Art style:|Palette:/);
+  assert.match(
+    uploadedReference,
+    /uploaded image as the primary visual style guide/
+  );
+  assert.doesNotMatch(assetReference, /Game genre:|Art style:|Palette:/);
+  assert.match(assetReference, /same game asset set as that reference/);
+});
+
+test('keeps reference-based description expansion free of invented presets', () => {
+  const prompt = buildIconDescriptionExpandPrompt({
+    styleSource: 'uploaded-reference',
+    style: 'pixel-art',
+    gameGenre: 'roguelike',
+    items: [{ id: 'ticket', name: '抽奖券' }],
+  });
+
+  assert.doesNotMatch(prompt, /Art style to respect|Game genre context/);
+  assert.match(prompt, /Inspect the attached reference image/);
+  assert.match(prompt, /Treat its visual language as binding/);
+  assert.match(prompt, /Do not invent ornate materials/);
 });

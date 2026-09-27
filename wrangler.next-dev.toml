@@ -1,0 +1,6 @@
+name = "sprite-pixel-next-dev"
+compatibility_date = "2026-07-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+NEXTJS_ENV = "development"

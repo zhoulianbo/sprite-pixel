@@ -108,8 +108,12 @@ const nextConfig = {
 
 export default withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));
 
-// Only bind local Cloudflare APIs during `next dev`. `next build` must not start wrangler,
-// including when the parent shell still has NODE_ENV=development.
+// During `next dev`, expose only local variables/secrets from `.dev.vars`.
+// The lightweight config has no D1 or Workflow bindings, so the app keeps using
+// DATABASE_URL and the in-process workflow runner without creating Miniflare data.
 if (process.argv.includes('dev')) {
-  initOpenNextCloudflareForDev();
+  initOpenNextCloudflareForDev({
+    configPath: './wrangler.next-dev.toml',
+    persist: false,
+  });
 }

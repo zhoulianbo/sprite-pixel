@@ -1,4 +1,15 @@
-import { and, asc, count, desc, eq, gt, isNull, or, sum } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gt,
+  isNull,
+  or,
+  sql,
+  sum,
+} from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import { credit } from '@/config/db/schema';
@@ -17,6 +28,7 @@ export type UpdateCredit = Partial<
 
 export enum CreditStatus {
   ACTIVE = 'active',
+  FROZEN = 'frozen',
   EXPIRED = 'expired',
   DELETED = 'deleted',
 }
@@ -149,6 +161,7 @@ export async function consumeCredits({
   description,
   metadata,
   tx,
+  status = CreditStatus.ACTIVE,
 }: {
   userId: string;
   credits: number; // credits to consume
@@ -156,6 +169,7 @@ export async function consumeCredits({
   description?: string;
   metadata?: string;
   tx?: any;
+  status?: CreditStatus.ACTIVE | CreditStatus.FROZEN;
 }) {
   const currentTime = new Date();
 
@@ -275,7 +289,7 @@ export async function consumeCredits({
       transactionType: CreditTransactionType.CONSUME,
       transactionScene: scene,
       userId: userId,
-      status: CreditStatus.ACTIVE,
+      status,
       description: description,
       credits: -credits,
       consumedDetail: JSON.stringify(consumedItems),
@@ -293,6 +307,59 @@ export async function consumeCredits({
 
   // use default transaction
   return await db().transaction(execute);
+}
+
+export async function settleReservedCredits(creditId: string, tx?: any) {
+  const execute = async (database: any) => {
+    const [result] = await database
+      .update(credit)
+      .set({ status: CreditStatus.ACTIVE })
+      .where(
+        and(
+          eq(credit.id, creditId),
+          eq(credit.transactionType, CreditTransactionType.CONSUME),
+          eq(credit.status, CreditStatus.FROZEN)
+        )
+      )
+      .returning();
+    return result;
+  };
+  return tx ? execute(tx) : db().transaction(execute);
+}
+
+export async function releaseReservedCredits(creditId: string, tx?: any) {
+  const execute = async (database: any) => {
+    const [reserved] = await database
+      .select()
+      .from(credit)
+      .where(eq(credit.id, creditId))
+      .limit(1);
+    if (
+      !reserved ||
+      reserved.transactionType !== CreditTransactionType.CONSUME ||
+      ![CreditStatus.ACTIVE, CreditStatus.FROZEN].includes(reserved.status)
+    ) {
+      return reserved;
+    }
+    const consumedItems = JSON.parse(reserved.consumedDetail || '[]');
+    for (const item of consumedItems) {
+      if (item?.creditId && item.creditsConsumed > 0) {
+        await database
+          .update(credit)
+          .set({
+            remainingCredits: sql`${credit.remainingCredits} + ${item.creditsConsumed}`,
+          })
+          .where(eq(credit.id, item.creditId));
+      }
+    }
+    const [released] = await database
+      .update(credit)
+      .set({ status: CreditStatus.DELETED })
+      .where(eq(credit.id, creditId))
+      .returning();
+    return released;
+  };
+  return tx ? execute(tx) : db().transaction(execute);
 }
 
 // get remaining credits

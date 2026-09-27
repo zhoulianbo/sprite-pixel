@@ -1,5 +1,5 @@
 name = "sprite-pixel"
-main = ".open-next/worker.js"
+main = "worker.ts"
 compatibility_date = "2026-07-23"
 compatibility_flags = [
   "nodejs_compat",
@@ -20,6 +20,11 @@ bucket_name = "sprite-pixel"
 [[services]]
 binding = "WORKER_SELF_REFERENCE"
 service = "sprite-pixel"
+
+[[workflows]]
+binding = "SPRITE_GENERATION_WORKFLOW"
+name = "sprite-generation-workflow"
+class_name = "SpriteGenerationWorkflow"
 
 [[durable_objects.bindings]]
 name = "NEXT_CACHE_DO_QUEUE"
@@ -70,6 +75,7 @@ NEXT_PUBLIC_APPEARANCE = "dark"
 NEXT_PUBLIC_DEFAULT_LOCALE = "en"
 NEXT_PUBLIC_LOCALE_DETECT_ENABLED = "true"
 NEXT_PUBLIC_R2_DOMAIN = "https://assets.spritepixel.com"
+SPRITE_MEDIA_PROCESSOR_URL = "https://api2.scriptmind.co"
 
 # database
 DATABASE_PROVIDER = "d1"

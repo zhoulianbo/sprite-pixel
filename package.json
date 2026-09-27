@@ -9,7 +9,7 @@
   },
   "keywords": [],
   "scripts": {
-    "dev": "node scripts/generate-content-page-slugs.mjs && next dev --turbopack",
+    "dev": "node scripts/generate-content-page-slugs.mjs && next dev --turbopack -p 8787",
     "build": "node scripts/generate-content-page-slugs.mjs && NODE_ENV=production next build",
     "build:fast": "NODE_ENV=production NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",

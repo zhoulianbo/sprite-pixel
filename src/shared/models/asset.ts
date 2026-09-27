@@ -15,6 +15,7 @@ import {
   assetRolesForFileKind,
   type ProjectFileKind,
 } from '@/shared/lib/asset-file-kind';
+import { getUuid } from '@/shared/lib/hash';
 import { getAssetPublicUrlResolver } from '@/shared/services/storage';
 
 export type AssetFile = typeof assetFile.$inferSelect;
@@ -154,11 +155,11 @@ export type OwnedAssetFile = {
   url: string;
 };
 
-export async function listOwnedProjectReadyImages(
+export async function listOwnedReadyImages(
   userId: string,
-  projectId: string,
-  kind?: ProjectFileKind
+  options: { kind?: ProjectFileKind; projectId?: string } = {}
 ): Promise<OwnedAssetFile[]> {
+  const { kind, projectId } = options;
   const roles = kind ? assetRolesForFileKind(kind) : undefined;
   const rows = await db()
     .select({
@@ -178,12 +179,13 @@ export async function listOwnedProjectReadyImages(
     .where(
       and(
         eq(project.userId, userId),
-        eq(assetFile.projectId, projectId),
+        projectId ? eq(assetFile.projectId, projectId) : undefined,
         eq(assetFile.mediaType, 'image'),
         eq(assetFile.status, 'ready'),
         eq(project.status, 'active'),
         isNull(assetFile.deletedAt),
         isNull(project.deletedAt),
+        kind === 'character' ? eq(assetItem.status, 'active') : undefined,
         roles ? inArray(assetFile.role, roles) : undefined
       )
     )
@@ -212,6 +214,14 @@ export async function listOwnedProjectReadyImages(
       url: urlFor(row.storageKey),
     })
   );
+}
+
+export async function listOwnedProjectReadyImages(
+  userId: string,
+  projectId: string,
+  kind?: ProjectFileKind
+): Promise<OwnedAssetFile[]> {
+  return listOwnedReadyImages(userId, { projectId, kind });
 }
 
 export async function listOwnedFilesByRole(
@@ -333,10 +343,30 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
       )
     )
     .orderBy(desc(animationSet.updatedAt), animationClip.sortOrder);
+  const clipIds = animations.map((animation: { clip: { id: string } }) => animation.clip.id);
+  const versionRows = clipIds.length
+    ? await db()
+        .select({
+          clipId: animationVersion.clipId,
+          id: animationVersion.id,
+        })
+        .from(animationVersion)
+        .where(inArray(animationVersion.clipId, clipIds))
+    : [];
+  const versionCountByClip = new Map<string, number>();
+  for (const row of versionRows) {
+    versionCountByClip.set(
+      row.clipId,
+      (versionCountByClip.get(row.clipId) || 0) + 1
+    );
+  }
   const urlFor = await getAssetPublicUrlResolver();
   const animationsWithFrames = await Promise.all(
     animations.map(async (animation: any) => {
-      if (!animation.version) return { ...animation, frames: [] };
+      const versionCount = versionCountByClip.get(animation.clip.id) || 0;
+      if (!animation.version) {
+        return { ...animation, versionCount, frames: [] };
+      }
       const frames = await db()
         .select({ frame: animationFrame, file: assetFile })
         .from(animationFrame)
@@ -345,6 +375,7 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
         .orderBy(animationFrame.frameIndex);
       return {
         ...animation,
+        versionCount,
         frames: frames.map(({ frame, file }: any) => ({
           ...frame,
           metadata: JSON.parse(frame.metadataJson || '{}'),
@@ -462,6 +493,7 @@ export async function updateCharacterItem(
     .update(assetItem)
     .set({
       name: input.name,
+      status: 'active',
       updatedAt: now,
     })
     .where(
@@ -469,12 +501,73 @@ export async function updateCharacterItem(
         eq(assetItem.id, itemId),
         eq(assetItem.projectId, projectId),
         eq(assetItem.type, 'character'),
-        eq(assetItem.status, 'active'),
         isNull(assetItem.deletedAt)
       )
     )
     .returning();
   return result;
+}
+
+export async function createCharacterFromUploadedFile(
+  projectId: string,
+  fileId: string,
+  name: string
+) {
+  return db().transaction(async (tx: any) => {
+    const [file] = await tx
+      .select()
+      .from(assetFile)
+      .where(
+        and(
+          eq(assetFile.id, fileId),
+          eq(assetFile.projectId, projectId),
+          eq(assetFile.status, 'ready'),
+          isNull(assetFile.deletedAt)
+        )
+      )
+      .limit(1);
+    if (!file || file.itemId) return undefined;
+    const now = new Date().toISOString();
+    const itemId = getUuid();
+    const variantId = getUuid();
+    const [item] = await tx
+      .insert(assetItem)
+      .values({
+        id: itemId,
+        projectId,
+        type: 'character',
+        name,
+        description: null,
+        settingsJson: '{}',
+        status: 'active',
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+    await tx.insert(assetVariant).values({
+      id: variantId,
+      projectId,
+      itemId,
+      name: 'Original',
+      variantType: 'base',
+      status: 'active',
+      metadataJson: '{}',
+      createdAt: now,
+      updatedAt: now,
+    });
+    const [updatedFile] = await tx
+      .update(assetFile)
+      .set({
+        itemId,
+        variantId,
+        role: 'base_reference',
+        isActiveReference: true,
+        updatedAt: now,
+      })
+      .where(eq(assetFile.id, fileId))
+      .returning();
+    return { item, file: updatedFile };
+  });
 }
 
 export async function deleteCharacterItem(projectId: string, itemId: string) {

@@ -2,6 +2,7 @@ import { Boxes, Download, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { Link } from '@/core/i18n/navigation';
+import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Button } from '@/shared/components/ui/button';
 import { listProjectItemsWithPreview } from '@/shared/models/asset';
 
@@ -32,19 +33,19 @@ export default async function IconsPage({
         </Button>
       </header>
       {icons.length ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {icons.map((icon) => (
             <article
               key={icon.id}
-              className="bg-card overflow-hidden rounded-lg border"
+              className="bg-card min-w-0 overflow-hidden rounded-lg border"
             >
-              <div className="bg-muted/40 aspect-square border-b [background-image:linear-gradient(45deg,hsl(var(--border)/.25)_25%,transparent_25%),linear-gradient(-45deg,hsl(var(--border)/.25)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,hsl(var(--border)/.25)_75%),linear-gradient(-45deg,transparent_75%,hsl(var(--border)/.25)_75%)] [background-size:16px_16px] [background-position:0_0,0_8px,8px_-8px,-8px_0] p-3">
+              <div className="bg-muted/40 aspect-square w-full border-b bg-[linear-gradient(45deg,hsl(var(--border)/.25)_25%,transparent_25%),linear-gradient(-45deg,hsl(var(--border)/.25)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,hsl(var(--border)/.25)_75%),linear-gradient(-45deg,transparent_75%,hsl(var(--border)/.25)_75%)] bg-size-[16px_16px] bg-position-[0_0,0_8px,8px_-8px,-8px_0] p-3">
                 {icon.preview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={icon.preview.url}
+                  <ZoomableImage
                     alt={icon.name}
-                    className="size-full object-contain [image-rendering:pixelated]"
+                    imageClassName="h-full w-full"
+                    src={icon.preview.url}
+                    zoomLabel={t('zoom')}
                   />
                 ) : (
                   <div className="text-muted-foreground flex size-full items-center justify-center">

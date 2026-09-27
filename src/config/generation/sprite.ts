@@ -124,15 +124,43 @@ export function aggregateGenerationStatus(
 }
 
 export const animationAutoFrameCounts = {
-  idle: 4,
-  walk: 8,
-  run: 8,
-  attack: 6,
-  jump: 6,
-  hurt: 4,
-  death: 8,
-  custom: 6,
+  idle: 14,
+  walk: 16,
+  run: 16,
+  jump: 16,
+  dash: 14,
+  attack: 18,
+  shoot: 14,
+  cast: 18,
+  hurt: 12,
+  death: 18,
+  pickup: 14,
+  wave: 14,
+  custom: 16,
 } as const;
+
+export const animationVideoDurations = {
+  idle: 2,
+  walk: 2,
+  run: 2,
+  attack: 2,
+  jump: 2,
+  dash: 2,
+  shoot: 2,
+  cast: 2,
+  hurt: 2,
+  death: 2,
+  pickup: 2,
+  wave: 2,
+  custom: 2,
+} as const;
+
+export function resolveAnimationVideoDuration(action?: string) {
+  const key = (
+    action || ''
+  ).toLowerCase() as keyof typeof animationVideoDurations;
+  return animationVideoDurations[key] ?? animationVideoDurations.custom;
+}
 
 export function resolveAnimationFrameCount(
   frames: number | 'auto' | undefined,
@@ -152,12 +180,8 @@ export function resolveAnimationGrid(
   action?: string
 ) {
   const frameCount = resolveAnimationFrameCount(frames, action);
-  let columns = Math.min(frameCount, 4);
-  let rows = Math.ceil(frameCount / columns);
-  if (rows === 1 && columns > 3) {
-    columns = Math.ceil(Math.sqrt(frameCount));
-    rows = Math.ceil(frameCount / columns);
-  }
+  const columns = Math.ceil(Math.sqrt(frameCount));
+  const rows = Math.ceil(frameCount / columns);
   return { frameCount, columns, rows };
 }
 
@@ -167,7 +191,7 @@ export function resolveAnimationSheetSize(
   action?: string
 ) {
   const cell = Number(frameSize);
-  const size = Number.isFinite(cell) && cell > 0 ? cell : 64;
+  const size = Number.isFinite(cell) && cell > 0 ? cell : 128;
   const grid = resolveAnimationGrid(frames, action);
   const width = grid.columns * size;
   const height = grid.rows * size;

@@ -16,15 +16,18 @@ import {
 } from '@/config/db/schema';
 import {
   buildAnimationPrompt,
+  buildAnimationVideoPrompt,
   buildCharacterBasePrompt,
   buildCharacterEditPrompt,
   buildIconDescriptionExpandPrompt,
+  buildIconGenerationPrompt,
   buildIconSheetDetail,
   CHARACTER_OUTPUT_ASPECT_RATIO,
   generationDefaults,
   needsIconDescriptionExpand,
   parseIconDescriptionExpandResult,
   resolveGenerationAspectRatio,
+  type IconStyleSource,
 } from '@/config/generation';
 import {
   getGenerationCredits,
@@ -36,6 +39,7 @@ import {
   aggregateGenerationStatus,
   directionMirrorOf,
   resolveAnimationSheetSize,
+  resolveAnimationVideoDuration,
   resolveDirectionSelection,
   resolveProviderAnimationSheetSize,
   SPRITE_DIRECTIONS,
@@ -53,13 +57,20 @@ import {
 import {
   createAITask,
   findAITaskById,
+  settleAITaskCredit,
   updateAITaskById,
 } from '@/shared/models/ai_task';
-import { findAssetFileById, getProjectItem } from '@/shared/models/asset';
+import {
+  findAssetFileById,
+  getProjectItem,
+  updateCharacterItem,
+} from '@/shared/models/asset';
 import { getRemainingCredits } from '@/shared/models/credit';
 import { getOwnedProject } from '@/shared/models/project';
 import { getAIService } from '@/shared/services/ai';
 import { assertPromptAllowedForGeneration } from '@/shared/services/content-safety';
+import { startGenerationWorkflow } from '@/shared/services/generation-workflow';
+import { processSpriteVideo } from '@/shared/services/sprite-media-processor';
 import {
   getAssetPublicUrlResolver,
   getStorageService,
@@ -80,11 +91,30 @@ export type SpriteGenerationRequest = {
   itemId?: string;
   variantId?: string;
   referenceFileId?: string;
+  iconStyleSource?: IconStyleSource;
   directionMode?: 'single' | '4' | '8';
   direction?: string;
   directions?: string[];
   directionReferences?: Record<string, string>;
   action?: string;
+  actionConfig?: {
+    jumpType?: 'in-place' | 'forward';
+    dashType?: 'forward' | 'backward' | 'side';
+    weapon?:
+      | 'keep-current'
+      | 'unarmed'
+      | 'sword'
+      | 'axe'
+      | 'staff'
+      | 'bow'
+      | 'dagger'
+      | 'spear';
+    attackStyle?: 'auto' | 'slash' | 'thrust' | 'heavy' | 'spin';
+    shootType?: 'bow' | 'gun' | 'magic-bolt';
+    castType?: 'quick' | 'charge' | 'staff' | 'hand';
+    severity?: 'light' | 'heavy';
+    deathType?: 'collapse' | 'fall-back' | 'fall-forward';
+  };
   frames?: number | 'auto';
   fps?: number;
   loop?: boolean;
@@ -177,7 +207,10 @@ function getModelRoute(kind: GenerationModelKind): ModelRoute {
   };
 }
 
-async function expandIconItemDescriptions(input: SpriteGenerationRequest) {
+async function expandIconItemDescriptions(
+  input: SpriteGenerationRequest,
+  project: Awaited<ReturnType<typeof getOwnedProject>>
+) {
   const items = (input.items || []).map((item) => ({ ...item }));
   const thin = items.filter(
     (item) =>
@@ -191,25 +224,53 @@ async function expandIconItemDescriptions(input: SpriteGenerationRequest) {
     if (!provider) {
       throw new Error('icon description provider is unavailable');
     }
+    const maxOutputTokens = Math.min(
+      2048,
+      Math.max(512, thin.length * 220 + 128)
+    );
+    const styleSource =
+      input.iconStyleSource ||
+      (input.referenceFileId ? 'asset-reference' : 'preset');
+    const referenceImages =
+      styleSource !== 'preset' && input.referenceFileId
+        ? [await signedInputUrl(input.referenceFileId)]
+        : [];
+    const expandPrompt = buildIconDescriptionExpandPrompt({
+      styleSource,
+      style: input.style,
+      gameGenre: project?.gameGenre,
+      items: thin.map((item) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description || '',
+      })),
+    });
     const result = await provider.generate({
       params: {
         mediaType: AIMediaType.TEXT,
         model: iconPromptExpandModel.model,
-        prompt: buildIconDescriptionExpandPrompt({
-          style: input.style,
-          items: thin.map((item) => ({
-            id: item.id,
-            name: item.name,
-            description: item.description || '',
-          })),
-        }),
+        prompt: expandPrompt,
         options: {
-          temperature: 0.6,
-          maxOutputTokens: 2048,
+          temperature: 0.3,
+          maxOutputTokens,
+          reasoningEffort: 'none',
           responseMimeType: 'application/json',
+          images: referenceImages,
         },
       },
     });
+    console.info(
+      JSON.stringify({
+        event: 'icon_description_expand_completed',
+        model: iconPromptExpandModel.model,
+        itemCount: thin.length,
+        promptCharacters: expandPrompt.length,
+        referenceImageCount: referenceImages.length,
+        maxOutputTokens,
+        usage:
+          (result.taskResult as { usage?: unknown } | undefined)?.usage || null,
+      })
+    );
     const expanded = parseIconDescriptionExpandResult(
       String(result.taskResult?.text || '')
     );
@@ -233,11 +294,7 @@ async function expandIconItemDescriptions(input: SpriteGenerationRequest) {
 
 function resolveTaskAspectRatio(input: SpriteGenerationRequest) {
   if (input.type === 'animation') {
-    return resolveProviderAnimationSheetSize(
-      input.frames,
-      input.frameSize,
-      input.action
-    ).provider.aspectRatio;
+    return 'landscape';
   }
   if (input.type === 'icon_batch') {
     return resolveGenerationAspectRatio(input.quality);
@@ -259,24 +316,40 @@ function buildPrompt(
   if (input.type === 'animation') {
     return buildAnimationPrompt(input, input.direction);
   }
-  const outputLine =
-    input.type === 'icon_batch'
-      ? `Output quality: ${input.quality || '1k'}`
-      : `Output size: ${CHARACTER_OUTPUT_ASPECT_RATIO}`;
+  if (input.type === 'icon_batch') {
+    return buildIconGenerationPrompt({
+      detail: detail || '',
+      prompt: input.prompt,
+      styleSource: input.iconStyleSource,
+      hasReference: Boolean(input.referenceFileId),
+      style: input.style,
+      gameGenre: project?.gameGenre,
+      perspective: input.perspective,
+      quality: input.quality,
+      palette: input.palette || project?.paletteJson,
+    });
+  }
+  const outputLine = `Output size: ${CHARACTER_OUTPUT_ASPECT_RATIO}`;
+  const artStyle =
+    input.style && input.style !== 'none'
+      ? input.style
+      : project?.artStyle && project.artStyle !== 'none'
+        ? project.artStyle
+        : '';
+  const perspective =
+    input.perspective && input.perspective !== 'none' ? input.perspective : '';
   const context = [
     input.prompt,
     detail,
     project?.gameGenre ? `Game genre: ${project.gameGenre}` : '',
-    `Art style: ${input.style || project?.artStyle || 'pixel-art'}`,
-    `Perspective: ${input.perspective || 'front'}`,
+    artStyle ? `Art style: ${artStyle}` : '',
+    perspective ? `Perspective: ${perspective}` : '',
     input.characterType ? `Character type: ${input.characterType}` : '',
     outputLine,
     input.palette || project?.paletteJson
       ? `Palette: ${input.palette || project?.paletteJson}`
       : '',
-    input.type === 'icon_batch'
-      ? ''
-      : 'Game-ready isolated asset, consistent silhouette, transparent background, no text, no watermark.',
+    'Game-ready isolated asset, consistent silhouette, transparent background, no text, no watermark.',
   ];
   return context.filter(Boolean).join('\n');
 }
@@ -519,7 +592,7 @@ function taskBlueprints(
     return taskMetadata.map((metadata) => ({
       role: `animation:${metadata.direction}`,
       metadata: { ...metadata, frames: sheet.frameCount, ...sheet },
-      prompt: buildAnimationPrompt(
+      prompt: buildAnimationVideoPrompt(
         input,
         typeof metadata.direction === 'string' ? metadata.direction : undefined
       ),
@@ -537,7 +610,7 @@ function taskBlueprints(
   ];
 }
 
-async function dispatchTask({
+async function createPlannedTask({
   generationId,
   userId,
   route,
@@ -545,6 +618,7 @@ async function dispatchTask({
   sortOrder,
   referenceFileId,
   aspectRatio,
+  videoDuration,
   costCredits,
 }: {
   generationId: string;
@@ -554,105 +628,240 @@ async function dispatchTask({
   sortOrder: number;
   referenceFileId?: string;
   aspectRatio?: string;
-  costCredits?: number;
+  videoDuration?: number;
+  costCredits: number;
 }) {
   const taskId = getUuid();
   const generationTaskId = getUuid();
-  const providerOptions: Record<string, unknown> = {
-    background: 'transparent',
-  };
-  if (referenceFileId)
-    providerOptions.image_input = [await signedInputUrl(referenceFileId)];
-  if (aspectRatio) providerOptions.aspectRatio = aspectRatio;
-  const persistedOptions = {
-    background: 'transparent',
+  const mediaType = blueprint.role.startsWith('animation:')
+    ? AIMediaType.VIDEO
+    : AIMediaType.IMAGE;
+  const options = {
+    customStorage: false,
     ...(referenceFileId ? { referenceFileId } : {}),
     ...(aspectRatio ? { aspectRatio } : {}),
+    ...(mediaType === AIMediaType.VIDEO
+      ? { resolution: '768p', duration: videoDuration || 2 }
+      : { background: 'transparent' }),
   };
+  const task = await createAITask(
+    {
+      id: taskId,
+      userId,
+      mediaType,
+      provider: route.provider,
+      model: route.model,
+      prompt: blueprint.prompt,
+      options: JSON.stringify(options),
+      status: AITaskStatus.PENDING,
+      taskId: null,
+      taskInfo: JSON.stringify({ status: 'queued' }),
+      taskResult: null,
+      costCredits,
+      scene: referenceFileId
+        ? mediaType === AIMediaType.VIDEO
+          ? 'image-to-video'
+          : 'image-to-image'
+        : mediaType === AIMediaType.VIDEO
+          ? 'text-to-video'
+          : 'text-to-image',
+    },
+    { reserveCredits: true }
+  );
+  try {
+    await db()
+      .insert(generationTask)
+      .values({
+        id: generationTaskId,
+        generationId,
+        aiTaskId: task.id,
+        role: blueprint.role,
+        sortOrder,
+        metadataJson: JSON.stringify({
+          ...blueprint.metadata,
+          attempt: Number(blueprint.metadata.attempt || 1),
+          referenceFileId: referenceFileId || null,
+        }),
+        createdAt: new Date().toISOString(),
+      });
+  } catch (error) {
+    await updateAITaskById(task.id, {
+      status: AITaskStatus.FAILED,
+      creditId: task.creditId,
+    });
+    throw error;
+  }
+  return { task, generationTaskId };
+}
+
+async function createMediaRetryTask({
+  generationId,
+  userId,
+  previousTask,
+  role,
+  sortOrder,
+  metadata,
+  costCredits,
+}: {
+  generationId: string;
+  userId: string;
+  previousTask: typeof aiTask.$inferSelect;
+  role: string;
+  sortOrder: number;
+  metadata: Record<string, unknown>;
+  costCredits: number;
+}) {
+  const taskInfo = parseJson<Record<string, unknown>>(
+    previousTask.taskInfo,
+    {}
+  );
+  delete taskInfo.errorCode;
+  delete taskInfo.errorMessage;
+  const task = await createAITask(
+    {
+      id: getUuid(),
+      userId,
+      mediaType: previousTask.mediaType,
+      provider: previousTask.provider,
+      model: previousTask.model,
+      prompt: previousTask.prompt,
+      options: previousTask.options,
+      status: AITaskStatus.SUCCESS,
+      taskId: previousTask.taskId || `media-retry:${previousTask.id}`,
+      taskInfo: JSON.stringify(taskInfo),
+      taskResult: previousTask.taskResult,
+      costCredits,
+      scene: 'media-postprocessing-retry',
+    },
+    { reserveCredits: true }
+  );
+  try {
+    const generationTaskId = getUuid();
+    await db()
+      .insert(generationTask)
+      .values({
+        id: generationTaskId,
+        generationId,
+        aiTaskId: task.id,
+        role,
+        sortOrder,
+        metadataJson: JSON.stringify(metadata),
+        createdAt: new Date().toISOString(),
+      });
+    return { task, generationTaskId };
+  } catch (error) {
+    await updateAITaskById(task.id, {
+      status: AITaskStatus.FAILED,
+      creditId: task.creditId,
+    });
+    throw error;
+  }
+}
+
+function compactFailure(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message
+      .replace(/https?:\/\/[^\s"']+/g, (url) => {
+        const queryIndex = url.indexOf('?');
+        return queryIndex >= 0 ? `${url.slice(0, queryIndex)}?[redacted]` : url;
+      })
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 1000) || 'UNKNOWN_ERROR'
+  );
+}
+
+function logSpriteFailure(event: string, details: Record<string, unknown>) {
+  console.error(JSON.stringify({ event, ...details }));
+}
+
+function taskInfoError(taskInfo: unknown) {
+  const info = (taskInfo || {}) as Record<string, unknown>;
+  return compactFailure(
+    info.errorMessage || info.error || info.errorCode || ''
+  );
+}
+
+function localWorkflowHandlers(generationId: string) {
+  return {
+    advance: () => advanceSpriteGenerationWorkflow(generationId),
+    fail: (failureCode: string, failureReason: string) =>
+      failSpriteGenerationWorkflow(generationId, failureCode, failureReason),
+  };
+}
+
+async function dispatchPlannedTask(task: typeof aiTask.$inferSelect) {
+  if (task.taskId) return task;
+  const options = parseJson<Record<string, unknown>>(task.options, {});
+  const referenceFileId = String(options.referenceFileId || '');
+  const providerOptions: Record<string, unknown> = {
+    customStorage: options.customStorage !== false,
+  };
+  if (referenceFileId) {
+    providerOptions.images = [await signedInputUrl(referenceFileId)];
+  }
+  if (options.aspectRatio) providerOptions.aspectRatio = options.aspectRatio;
+  if (task.mediaType === AIMediaType.VIDEO) {
+    providerOptions.resolution = options.resolution || '768p';
+    providerOptions.duration = options.duration || 2;
+  } else {
+    providerOptions.background = 'transparent';
+  }
   try {
     const aiService = await getAIService();
-    const provider = aiService.getProvider(route.provider);
-    if (!provider) throw new Error('configured provider is unavailable');
+    const provider = aiService.getProvider(task.provider);
+    if (!provider) throw new Error('PROVIDER_NOT_CONFIGURED');
     const result = await provider.generate({
       params: {
-        mediaType: AIMediaType.IMAGE,
-        model: route.model,
-        prompt: blueprint.prompt,
+        mediaType: task.mediaType as AIMediaType,
+        model: task.model,
+        prompt: task.prompt,
         options: providerOptions,
       },
     });
-    let created = await createAITask({
-      id: taskId,
-      userId,
-      mediaType: AIMediaType.IMAGE,
-      provider: route.provider,
-      model: route.model,
-      prompt: blueprint.prompt,
-      options: JSON.stringify(persistedOptions),
-      status: result.taskStatus,
-      taskId: result.taskId,
-      taskInfo: result.taskInfo ? JSON.stringify(result.taskInfo) : null,
-      taskResult: result.taskResult ? JSON.stringify(result.taskResult) : null,
-      costCredits: costCredits ?? route.credits,
-      scene: referenceFileId ? 'image-to-image' : 'text-to-image',
-    });
-    if (created.status === AITaskStatus.FAILED && created.creditId) {
-      created =
-        (await updateAITaskById(created.id, {
-          status: AITaskStatus.FAILED,
-          creditId: created.creditId,
-        })) || created;
+    if (result.taskStatus === AITaskStatus.FAILED) {
+      logSpriteFailure('sprite_provider_generate_failed', {
+        aiTaskId: task.id,
+        provider: task.provider,
+        model: task.model,
+        mediaType: task.mediaType,
+        taskId: result.taskId,
+        reason: taskInfoError(result.taskInfo) || 'PROVIDER_GENERATE_FAILED',
+      });
     }
-    await db()
-      .insert(generationTask)
-      .values({
-        id: generationTaskId,
-        generationId,
-        aiTaskId: created.id,
-        role: blueprint.role,
-        sortOrder,
-        metadataJson: JSON.stringify({
-          ...blueprint.metadata,
-          attempt: Number(blueprint.metadata.attempt || 1),
-          referenceFileId: referenceFileId || null,
-        }),
-        createdAt: new Date().toISOString(),
-      });
-    return { task: created, generationTaskId };
-  } catch {
-    const failed = await createAITask({
-      id: taskId,
-      userId,
-      mediaType: AIMediaType.IMAGE,
-      provider: route.provider,
-      model: route.model,
-      prompt: blueprint.prompt,
-      options: JSON.stringify(persistedOptions),
-      status: AITaskStatus.FAILED,
-      taskId: null,
-      taskInfo: JSON.stringify({
-        errorCode: 'PROVIDER_DISPATCH_FAILED',
-      }),
-      costCredits: 0,
-      scene: referenceFileId ? 'image-to-image' : 'text-to-image',
+    return (
+      (await updateAITaskById(task.id, {
+        status: result.taskStatus,
+        taskId: result.taskId,
+        taskInfo: result.taskInfo
+          ? JSON.stringify(result.taskInfo)
+          : task.taskInfo,
+        taskResult: result.taskResult
+          ? JSON.stringify(result.taskResult)
+          : task.taskResult,
+        creditId: task.creditId,
+      })) || task
+    );
+  } catch (error) {
+    const reason = compactFailure(error);
+    logSpriteFailure('sprite_provider_dispatch_failed', {
+      aiTaskId: task.id,
+      provider: task.provider,
+      model: task.model,
+      mediaType: task.mediaType,
+      reason,
     });
-    await db()
-      .insert(generationTask)
-      .values({
-        id: generationTaskId,
-        generationId,
-        aiTaskId: failed.id,
-        role: blueprint.role,
-        sortOrder,
-        metadataJson: JSON.stringify({
-          ...blueprint.metadata,
-          attempt: Number(blueprint.metadata.attempt || 1),
-          referenceFileId: referenceFileId || null,
-          status: 'dispatch_failed',
+    return (
+      (await updateAITaskById(task.id, {
+        status: AITaskStatus.FAILED,
+        taskInfo: JSON.stringify({
+          errorCode: 'PROVIDER_DISPATCH_FAILED',
+          errorMessage: reason,
         }),
-        createdAt: new Date().toISOString(),
-      });
-    return { task: failed, generationTaskId };
+        creditId: task.creditId,
+      })) || task
+    );
   }
 }
 
@@ -712,7 +921,7 @@ export async function startSpriteGeneration(
   }
 
   if (input.type === 'icon_batch') {
-    input.items = await expandIconItemDescriptions(input);
+    input.items = await expandIconItemDescriptions(input, project);
   }
   const route = getModelRoute(modelKind(input.type));
   const selectedItems = (input.items || []).filter(
@@ -787,11 +996,17 @@ export async function startSpriteGeneration(
         updatedAt: new Date().toISOString(),
       })
       .where(eq(generation.id, created.id));
+    if (compactFailure(error).startsWith('Insufficient credits')) {
+      throw new SpriteGenerationError('INSUFFICIENT_CREDITS', 402);
+    }
     throw error;
   }
   const { itemId, variantId, taskMetadata } = domain;
   const paramsSnapshot = {
     ...input,
+    ...(input.type === 'animation'
+      ? { videoDuration: resolveAnimationVideoDuration(input.action) }
+      : {}),
     referenceFileId: resolvedReferenceFileId,
     plannedItemId: domain.plannedItemId,
     plannedVariantId: domain.plannedVariantId,
@@ -853,20 +1068,48 @@ export async function startSpriteGeneration(
 
   const aspectRatio = resolveTaskAspectRatio(input);
   const taskCreditCosts = blueprints.map(() => route.credits);
-  const dispatched = await Promise.all(
-    blueprints.map((blueprint, sortOrder) =>
-      dispatchTask({
-        generationId: created.id,
-        userId,
-        route,
-        blueprint,
-        sortOrder,
-        referenceFileId: taskReferences.get(blueprint.role) || reference?.id,
-        aspectRatio,
-        costCredits: taskCreditCosts[sortOrder],
+  const dispatched: Array<{
+    task: typeof aiTask.$inferSelect;
+    generationTaskId: string;
+  }> = [];
+  try {
+    for (const [sortOrder, blueprint] of blueprints.entries()) {
+      dispatched.push(
+        await createPlannedTask({
+          generationId: created.id,
+          userId,
+          route,
+          blueprint,
+          sortOrder,
+          referenceFileId: taskReferences.get(blueprint.role) || reference?.id,
+          aspectRatio,
+          videoDuration:
+            input.type === 'animation'
+              ? resolveAnimationVideoDuration(input.action)
+              : undefined,
+          costCredits: taskCreditCosts[sortOrder],
+        })
+      );
+    }
+  } catch (error) {
+    for (const planned of dispatched) {
+      await updateAITaskById(planned.task.id, {
+        status: AITaskStatus.FAILED,
+        creditId: planned.task.creditId,
+      });
+    }
+    await db()
+      .update(generation)
+      .set({
+        status: 'failed',
+        failureCode: 'CREDIT_RESERVATION_FAILED',
+        failureReason: compactFailure(error),
+        completedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       })
-    )
-  );
+      .where(eq(generation.id, created.id));
+    throw error;
+  }
   const inputRows = blueprints.flatMap((blueprint, index) => {
     const fileId =
       taskReferences.get(blueprint.role) ||
@@ -894,7 +1137,28 @@ export async function startSpriteGeneration(
     .update(generation)
     .set({ status: 'processing', updatedAt: new Date().toISOString() })
     .where(eq(generation.id, created.id));
-  return getSpriteGeneration(userId, created.id, true);
+  try {
+    await startGenerationWorkflow(
+      created.id,
+      created.id,
+      localWorkflowHandlers(created.id)
+    );
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: 'sprite_workflow_start_failed',
+        generationId: created.id,
+        reason: compactFailure(error),
+      })
+    );
+    await failSpriteGenerationWorkflow(
+      created.id,
+      'WORKFLOW_START_FAILED',
+      compactFailure(error)
+    );
+    throw new SpriteGenerationError('WORKFLOW_START_FAILED', 503);
+  }
+  return getSpriteGeneration(userId, created.id, false);
 }
 
 async function findOwnedGeneration(userId: string, generationId: string) {
@@ -912,6 +1176,12 @@ function imageUrlFromTask(task: typeof aiTask.$inferSelect) {
     string | undefined;
 }
 
+function videoUrlFromTask(task: typeof aiTask.$inferSelect) {
+  const info = parseJson<any>(task.taskInfo, {});
+  return info.videos?.find((video: any) => video?.videoUrl)?.videoUrl as
+    string | undefined;
+}
+
 async function pollProviderTask(
   task: typeof aiTask.$inferSelect
 ): Promise<typeof aiTask.$inferSelect> {
@@ -926,27 +1196,48 @@ async function pollProviderTask(
   const aiService = await getAIService();
   const provider = aiService.getProvider(task.provider);
   if (!provider?.query) return task;
+  let result;
   try {
-    const result = await provider.query({
+    result = await provider.query({
       taskId: task.taskId,
       mediaType: task.mediaType,
       model: task.model,
+      options: parseJson<Record<string, unknown>>(task.options, {}),
     });
-    return (
-      (await updateAITaskById(task.id, {
-        status: result.taskStatus,
-        taskInfo: result.taskInfo
-          ? JSON.stringify(result.taskInfo)
-          : task.taskInfo,
-        taskResult: result.taskResult
-          ? JSON.stringify(result.taskResult)
-          : task.taskResult,
-        creditId: task.creditId,
-      })) || task
-    );
-  } catch {
-    return task;
+  } catch (error) {
+    const reason = compactFailure(error);
+    logSpriteFailure('sprite_provider_query_failed', {
+      aiTaskId: task.id,
+      provider: task.provider,
+      model: task.model,
+      mediaType: task.mediaType,
+      taskId: task.taskId,
+      reason,
+    });
+    throw error;
   }
+  if (result.taskStatus === AITaskStatus.FAILED) {
+    logSpriteFailure('sprite_provider_query_failed', {
+      aiTaskId: task.id,
+      provider: task.provider,
+      model: task.model,
+      mediaType: task.mediaType,
+      taskId: result.taskId || task.taskId,
+      reason: taskInfoError(result.taskInfo) || 'PROVIDER_QUERY_FAILED',
+    });
+  }
+  return (
+    (await updateAITaskById(task.id, {
+      status: result.taskStatus,
+      taskInfo: result.taskInfo
+        ? JSON.stringify(result.taskInfo)
+        : task.taskInfo,
+      taskResult: result.taskResult
+        ? JSON.stringify(result.taskResult)
+        : task.taskResult,
+      creditId: task.creditId,
+    })) || task
+  );
 }
 
 async function ensureAnimationVersion(
@@ -1111,7 +1402,7 @@ async function ensureVaultTarget(
       name: assetDisplayName(params, 'Character'),
       description: params.prompt || null,
       settingsJson: '{}',
-      status: 'active',
+      status: 'draft',
       createdAt: now,
       updatedAt: now,
     });
@@ -1432,10 +1723,100 @@ async function ensureMirroredDirectionFile(
     });
 }
 
+async function findGenerationTaskFile(generationTaskId: string) {
+  const [file] = await db()
+    .select()
+    .from(assetFile)
+    .where(
+      and(
+        eq(assetFile.generationTaskId, generationTaskId),
+        isNull(assetFile.parentFileId),
+        isNull(assetFile.deletedAt)
+      )
+    )
+    .limit(1);
+  return file;
+}
+
+async function saveProcessedAnimationOutput(
+  logical: typeof generation.$inferSelect,
+  link: typeof generationTask.$inferSelect,
+  task: typeof aiTask.$inferSelect
+) {
+  const existing = await findGenerationTaskFile(link.id);
+  if (existing) return existing;
+  const sourceVideoUrl = videoUrlFromTask(task);
+  if (!sourceVideoUrl) throw new Error('VIDEO_OUTPUT_MISSING');
+  const params = parseJson<any>(logical.paramsJson, {});
+  const linkMetadata = parseJson<Record<string, any>>(link.metadataJson, {});
+  const sheet = resolveAnimationSheetSize(
+    Number(linkMetadata.frames) || params.frames || 'auto',
+    params.frameSize,
+    params.action
+  );
+  const processed = await processSpriteVideo({
+    generationId: logical.id,
+    generationTaskId: link.id,
+    sourceVideoUrl,
+    outputPrefix: `projects/${logical.projectId}/animation`,
+    frameCount: sheet.frameCount,
+    frameSize: sheet.frameSize,
+    fps: Number(params.fps) || 12,
+    loop:
+      params.loop ??
+      ['idle', 'walk', 'run'].includes(String(params.action || 'idle')),
+    action: String(params.action || 'idle'),
+    direction: String(linkMetadata.direction || 'none'),
+  });
+  const metadata = {
+    ...linkMetadata,
+    frameCount: processed.frame_count,
+    frames: processed.frame_count,
+    columns: processed.columns,
+    rows: processed.rows,
+    frameSize: processed.frame_size,
+    fps: processed.fps,
+    manifestKey: processed.manifest.key,
+  };
+  await db()
+    .update(generationTask)
+    .set({ metadataJson: JSON.stringify(metadata) })
+    .where(eq(generationTask.id, link.id));
+  link.metadataJson = JSON.stringify(metadata);
+  const now = new Date().toISOString();
+  const [saved] = await db()
+    .insert(assetFile)
+    .values({
+      id: getUuid(),
+      projectId: logical.projectId,
+      itemId: logical.itemId,
+      variantId: logical.variantId,
+      generationId: logical.id,
+      generationTaskId: link.id,
+      mediaType: 'image',
+      role: 'spritesheet',
+      storageKey: processed.spritesheet.key,
+      originalFilename: `spritesheet-${link.sortOrder + 1}.png`,
+      mimeType: processed.spritesheet.content_type || 'image/png',
+      width: processed.spritesheet.width,
+      height: processed.spritesheet.height,
+      sizeBytes: processed.spritesheet.file_size_bytes,
+      isActiveReference: false,
+      status: 'ready',
+      metadataJson: JSON.stringify(metadata),
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning();
+  const attached = await ensureVaultTarget(logical, link, saved);
+  await ensureAnimationVersion(logical, link, attached);
+  return attached;
+}
+
 export async function getSpriteGeneration(
   userId: string,
   generationId: string,
-  refresh = true
+  refresh = false
 ) {
   const logical = await findOwnedGeneration(userId, generationId);
   if (!logical) throw new SpriteGenerationError('GENERATION_NOT_FOUND', 404);
@@ -1467,22 +1848,42 @@ export async function getSpriteGeneration(
     status: string;
     metadata: Record<string, unknown>;
     file: (typeof assetFile.$inferSelect & { url: string }) | null;
+    previewUrl: string | null;
     editorVersionId: string | null;
+    phase:
+      | 'queued'
+      | 'video_generation'
+      | 'media_processing'
+      | 'completed'
+      | 'failed';
   }> = [];
   const urlFor = await getAssetPublicUrlResolver();
   for (const link of latestByRole.values()) {
     let task = tasksById.get(link.aiTaskId) as
       typeof aiTask.$inferSelect | undefined;
     if (!task) continue;
-    if (refresh) task = await pollProviderTask(task);
+    if (refresh && task.taskId) task = await pollProviderTask(task);
     let status = task.status;
-    let file;
+    let file = await findGenerationTaskFile(link.id);
+    const previewUrl =
+      logical.taskType === 'character' && task.status === AITaskStatus.SUCCESS
+        ? imageUrlFromTask(task) || null
+        : null;
     if (task.status === AITaskStatus.SUCCESS) {
-      try {
-        file = await saveProviderOutput(logical, link, task);
+      if (file || (logical.taskType === 'character' && previewUrl)) {
         status = 'success';
-      } catch {
-        status = 'postprocessing_failed';
+      } else if (refresh) {
+        try {
+          file =
+            logical.taskType === 'animation'
+              ? await saveProcessedAnimationOutput(logical, link, task)
+              : await saveProviderOutput(logical, link, task);
+          status = 'success';
+        } catch {
+          status = 'postprocessing_failed';
+        }
+      } else {
+        status = 'processing';
       }
     }
     const metadata = parseJson<Record<string, unknown>>(link.metadataJson, {});
@@ -1506,7 +1907,17 @@ export async function getSpriteGeneration(
       status,
       metadata,
       file: file ? { ...file, url: urlFor(file.storageKey) } : null,
+      previewUrl,
       editorVersionId,
+      phase: ['failed', 'canceled', 'postprocessing_failed'].includes(status)
+        ? 'failed'
+        : file
+          ? 'completed'
+          : task.status === AITaskStatus.SUCCESS
+            ? 'media_processing'
+            : task.taskId
+              ? 'video_generation'
+              : 'queued',
     });
   }
 
@@ -1549,11 +1960,269 @@ export async function getSpriteGeneration(
   };
 }
 
+function taskFailureReason(task: typeof aiTask.$inferSelect) {
+  const info = parseJson<Record<string, unknown>>(task.taskInfo, {});
+  return compactFailure(
+    info.errorMessage || info.errorCode || `TASK_${task.status.toUpperCase()}`
+  );
+}
+
+export async function advanceSpriteGenerationWorkflow(generationId: string) {
+  const [logical] = await db()
+    .select()
+    .from(generation)
+    .where(eq(generation.id, generationId))
+    .limit(1);
+  if (!logical) throw new SpriteGenerationError('GENERATION_NOT_FOUND', 404);
+
+  const links = await db()
+    .select()
+    .from(generationTask)
+    .where(eq(generationTask.generationId, generationId))
+    .orderBy(asc(generationTask.sortOrder));
+  let latestFailure = '';
+
+  for (const link of links) {
+    let task = await findAITaskById(link.aiTaskId);
+    let outputReady = false;
+    if (!task) continue;
+    if (
+      [AITaskStatus.FAILED, AITaskStatus.CANCELED].includes(
+        task.status as AITaskStatus
+      )
+    ) {
+      latestFailure ||= taskFailureReason(task);
+      continue;
+    }
+    try {
+      if (!task.taskId) {
+        task = await dispatchPlannedTask(task);
+      } else if (
+        [AITaskStatus.PENDING, AITaskStatus.PROCESSING].includes(
+          task.status as AITaskStatus
+        )
+      ) {
+        task = await pollProviderTask(task);
+      }
+      if (task.status === AITaskStatus.FAILED) {
+        latestFailure ||= taskFailureReason(task);
+        continue;
+      }
+      if (task.status !== AITaskStatus.SUCCESS) continue;
+
+      if (logical.taskType === 'character') {
+        if (!imageUrlFromTask(task)) throw new Error('OUTPUT_MISSING');
+        outputReady = true;
+        await settleAITaskCredit(task.id);
+        continue;
+      }
+
+      let file = await findGenerationTaskFile(link.id);
+      if (!file) {
+        file =
+          logical.taskType === 'animation'
+            ? await saveProcessedAnimationOutput(logical, link, task)
+            : await saveProviderOutput(logical, link, task);
+      }
+      outputReady = Boolean(file);
+      if (file) await settleAITaskCredit(task.id);
+    } catch (error) {
+      const reason = compactFailure(error);
+      if (outputReady) {
+        console.error(
+          JSON.stringify({
+            event: 'sprite_credit_settlement_failed',
+            generationId,
+            generationTaskId: link.id,
+            aiTaskId: task.id,
+            reason,
+          })
+        );
+        throw error;
+      }
+      const retryable =
+        (Boolean(task.taskId) &&
+          [AITaskStatus.PENDING, AITaskStatus.PROCESSING].includes(
+            task.status as AITaskStatus
+          )) ||
+        /MEDIA_PROCESSOR_(BUSY|HTTP_429|HTTP_5\d\d)|fetch failed/i.test(reason);
+      if (retryable) {
+        console.warn(
+          JSON.stringify({
+            event: 'sprite_generation_task_retryable_error',
+            generationId,
+            generationTaskId: link.id,
+            aiTaskId: task.id,
+            reason,
+          })
+        );
+        throw error;
+      }
+      latestFailure ||= reason;
+      logSpriteFailure('sprite_generation_task_failed', {
+        generationId,
+        generationTaskId: link.id,
+        aiTaskId: task.id,
+        provider: task.provider,
+        model: task.model,
+        mediaType: task.mediaType,
+        stage:
+          task.status === AITaskStatus.SUCCESS
+            ? 'media_postprocessing'
+            : task.taskId
+              ? 'provider_poll'
+              : 'provider_dispatch',
+        reason,
+      });
+      await updateAITaskById(task.id, {
+        status: AITaskStatus.FAILED,
+        taskInfo: JSON.stringify({
+          ...parseJson<Record<string, unknown>>(task.taskInfo, {}),
+          errorCode:
+            task.status === AITaskStatus.SUCCESS
+              ? 'MEDIA_POSTPROCESSING_FAILED'
+              : 'PROVIDER_REQUEST_FAILED',
+          errorMessage: reason,
+        }),
+        creditId: task.creditId,
+      });
+    }
+  }
+
+  const current = await getSpriteGeneration(logical.userId, logical.id, false);
+  const terminal = ['success', 'partial', 'failed'].includes(current.status);
+  const failureReason = latestFailure || current.failureReason || '';
+  if (latestFailure && latestFailure !== logical.failureReason) {
+    logSpriteFailure('sprite_generation_failed', {
+      generationId,
+      status: current.status,
+      mediaType: logical.taskType === 'animation' ? 'video' : 'image',
+      reason: latestFailure,
+    });
+    await db()
+      .update(generation)
+      .set({
+        failureCode: 'GENERATION_TASK_FAILED',
+        failureReason: latestFailure,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(generation.id, generationId));
+  }
+  const completed = current.items.filter(
+    (item: { status: string }) => item.status === 'success'
+  ).length;
+  return {
+    generationId,
+    status: current.status,
+    terminal,
+    completed,
+    total: current.items.length,
+    retryAfterSeconds: terminal ? 0 : 5,
+    failureReason: failureReason || undefined,
+  };
+}
+
+export async function saveGeneratedCharacter(
+  userId: string,
+  projectId: string,
+  generationId: string,
+  name: string
+) {
+  const logical = await findOwnedGeneration(userId, generationId);
+  if (!logical || logical.projectId !== projectId) {
+    throw new SpriteGenerationError('GENERATION_NOT_FOUND', 404);
+  }
+  if (logical.taskType !== 'character') {
+    throw new SpriteGenerationError('INVALID_GENERATION', 400);
+  }
+
+  const [link] = await db()
+    .select()
+    .from(generationTask)
+    .where(eq(generationTask.generationId, generationId))
+    .orderBy(desc(generationTask.createdAt))
+    .limit(1);
+  const task = link ? await findAITaskById(link.aiTaskId) : null;
+  if (!link || !task || task.status !== AITaskStatus.SUCCESS) {
+    throw new SpriteGenerationError('GENERATION_NOT_READY', 409);
+  }
+  if (!imageUrlFromTask(task)) {
+    throw new SpriteGenerationError('OUTPUT_MISSING', 502);
+  }
+
+  await saveProviderOutput(logical, link, task);
+  if (!logical.itemId) {
+    throw new SpriteGenerationError('ASSET_SAVE_FAILED', 500);
+  }
+  await updateCharacterItem(projectId, logical.itemId, { name: name.trim() });
+  await settleAITaskCredit(task.id);
+  return getSpriteGeneration(userId, generationId, false);
+}
+
+export async function failSpriteGenerationWorkflow(
+  generationId: string,
+  failureCode: string,
+  failureReason: string
+) {
+  const [logical] = await db()
+    .select()
+    .from(generation)
+    .where(eq(generation.id, generationId))
+    .limit(1);
+  const links = await db()
+    .select()
+    .from(generationTask)
+    .where(eq(generationTask.generationId, generationId));
+  for (const link of links) {
+    const task = await findAITaskById(link.aiTaskId);
+    if (!task || (await findGenerationTaskFile(link.id))) continue;
+    if (
+      logical?.taskType === 'character' &&
+      task.status === AITaskStatus.SUCCESS &&
+      imageUrlFromTask(task)
+    ) {
+      continue;
+    }
+    if (
+      ![AITaskStatus.FAILED, AITaskStatus.CANCELED].includes(
+        task.status as AITaskStatus
+      )
+    ) {
+      await updateAITaskById(task.id, {
+        status: AITaskStatus.FAILED,
+        taskInfo: JSON.stringify({
+          ...parseJson<Record<string, unknown>>(task.taskInfo, {}),
+          errorCode: failureCode,
+          errorMessage: failureReason,
+        }),
+        creditId: task.creditId,
+      });
+    }
+  }
+  const now = new Date().toISOString();
+  const reason = compactFailure(failureReason);
+  logSpriteFailure('sprite_generation_failed', {
+    generationId,
+    failureCode,
+    reason,
+  });
+  await db()
+    .update(generation)
+    .set({
+      status: 'failed',
+      failureCode,
+      failureReason: reason,
+      completedAt: now,
+      updatedAt: now,
+    })
+    .where(eq(generation.id, generationId));
+}
+
 export async function retrySpriteGeneration(
   userId: string,
   generationId: string
 ) {
-  const current = await getSpriteGeneration(userId, generationId, true);
+  const current = await getSpriteGeneration(userId, generationId, false);
   const route = getModelRoute(
     modelKind(current.taskType as SpriteGenerationKind)
   );
@@ -1581,14 +2250,27 @@ export async function retrySpriteGeneration(
       ? await findAITaskById(oldLink[0].aiTaskId)
       : null;
     if (!oldTask) continue;
-    if (item.status === 'postprocessing_failed') {
-      await saveProviderOutput(current, oldLink[0], oldTask);
-      continue;
-    }
     const metadata = item.metadata as Record<string, unknown>;
     const attempt = Number(metadata.attempt || 1) + 1;
     const params = current.params as Record<string, unknown>;
-    await dispatchTask({
+    const taskInfo = parseJson<Record<string, unknown>>(oldTask.taskInfo, {});
+    if (
+      current.taskType === 'animation' &&
+      taskInfo.errorCode === 'MEDIA_POSTPROCESSING_FAILED' &&
+      videoUrlFromTask(oldTask)
+    ) {
+      await createMediaRetryTask({
+        generationId,
+        userId,
+        previousTask: oldTask,
+        role: item.role,
+        sortOrder: oldLink[0].sortOrder,
+        metadata: { ...metadata, attempt, retryStage: 'media' },
+        costCredits: retryCost,
+      });
+      continue;
+    }
+    await createPlannedTask({
       generationId,
       userId,
       route,
@@ -1598,24 +2280,41 @@ export async function retrySpriteGeneration(
         metadata: { ...metadata, attempt },
       },
       sortOrder: oldLink[0].sortOrder,
-      costCredits: retryCost,
       referenceFileId:
         String(metadata.referenceFileId || params.referenceFileId || '') ||
         undefined,
-      aspectRatio:
-        typeof params.aspectRatio === 'string'
-          ? params.aspectRatio
-          : resolveTaskAspectRatio({
-              id: generationId,
-              type: current.taskType as SpriteGenerationKind,
-              quality:
-                typeof params.quality === 'string' ? params.quality : undefined,
-              frames: params.frames as number | 'auto' | undefined,
-              frameSize: params.frameSize as string | number | undefined,
-              action:
-                typeof params.action === 'string' ? params.action : undefined,
-            }),
+      aspectRatio: resolveTaskAspectRatio({
+        id: generationId,
+        type: current.taskType as SpriteGenerationKind,
+        quality:
+          typeof params.quality === 'string' ? params.quality : undefined,
+        frames: params.frames as number | 'auto' | undefined,
+        frameSize: params.frameSize as string | number | undefined,
+        action: typeof params.action === 'string' ? params.action : undefined,
+      }),
+      videoDuration:
+        typeof params.videoDuration === 'number'
+          ? params.videoDuration
+          : resolveAnimationVideoDuration(
+              typeof params.action === 'string' ? params.action : undefined
+            ),
+      costCredits: retryCost,
     });
   }
-  return getSpriteGeneration(userId, generationId, true);
+  await db()
+    .update(generation)
+    .set({
+      status: 'processing',
+      failureCode: null,
+      failureReason: null,
+      completedAt: null,
+      updatedAt: new Date().toISOString(),
+    })
+    .where(eq(generation.id, generationId));
+  await startGenerationWorkflow(
+    generationId,
+    `${generationId}-retry-${getUuid()}`,
+    localWorkflowHandlers(generationId)
+  );
+  return getSpriteGeneration(userId, generationId, false);
 }

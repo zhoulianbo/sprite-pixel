@@ -15,10 +15,11 @@
     "character": "Character",
     "remove": "Remove image",
     "file": "Upload",
-    "existing": "Existing character"
+    "existing": "Select asset"
   },
   "options": {
     "style": {
+      "none": "None",
       "pixel-art": "Pixel Art",
       "cartoon": "Cartoon",
       "illustration": "Illustration",
@@ -28,6 +29,7 @@
       "cyberpunk": "Cyberpunk"
     },
     "perspective": {
+      "none": "None",
       "side": "Side View",
       "top-down": "Top-down",
       "front": "Front View",
@@ -53,10 +55,15 @@
       "idle": "Idle",
       "walk": "Walk",
       "run": "Run",
-      "attack": "Attack",
       "jump": "Jump",
+      "dash": "Dash",
+      "attack": "Attack",
+      "shoot": "Shoot",
+      "cast": "Cast",
       "hurt": "Hurt",
       "death": "Death",
+      "pickup": "Pickup",
+      "wave": "Wave",
       "custom": "Custom"
     },
     "direction": {

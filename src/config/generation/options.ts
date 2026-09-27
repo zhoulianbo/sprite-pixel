@@ -1,6 +1,13 @@
 export const generationOptionValues = {
-  style: ['pixel-art', 'cartoon', 'illustration', 'hand-painted', 'anime-2d'],
-  perspective: ['side', 'top-down', 'front', 'isometric'],
+  style: [
+    'none',
+    'pixel-art',
+    'cartoon',
+    'illustration',
+    'hand-painted',
+    'anime-2d',
+  ],
+  perspective: ['none', 'side', 'top-down', 'front', 'isometric'],
   quality: ['1k', '2k', '4k'],
   characterType: ['humanoid', 'monster', 'animal', 'robot', 'custom'],
   editType: ['pose', 'costume'],
@@ -8,15 +15,20 @@ export const generationOptionValues = {
     'idle',
     'walk',
     'run',
-    'attack',
     'jump',
+    'dash',
+    'attack',
+    'shoot',
+    'cast',
     'hurt',
-    'death',
     'custom',
+    'pickup',
+    'wave',
+    'death',
   ],
   direction: ['right', 'left', 'up', 'down', 'four-way', 'eight-way'],
-  frames: ['auto', '4', '6', '8', '12', '16'],
-  frameSize: ['32', '64', '128', '256'],
+  frames: ['auto', '16', '25'],
+  frameSize: ['64', '128', '256'],
 } as const;
 
 export type GenerationField = keyof typeof generationOptionValues;
@@ -51,16 +63,37 @@ export function getIconStylePreviewImage(value: string) {
   );
 }
 
+export const actionTypeImages: Partial<
+  Record<GenerationOptionValue<'actionType'>, string>
+> = {
+  idle: '/imgs/actions/idle.png',
+  walk: '/imgs/actions/walk.png',
+  run: '/imgs/actions/run.png',
+  jump: '/imgs/actions/jump.png',
+  dash: '/imgs/actions/dash.png',
+  attack: '/imgs/actions/attack.png',
+  shoot: '/imgs/actions/shoot.png',
+  cast: '/imgs/actions/cast.png',
+  hurt: '/imgs/actions/hurt.png',
+  pickup: '/imgs/actions/pickup.png',
+  wave: '/imgs/actions/wave.png',
+  death: '/imgs/actions/death.png',
+};
+
+export function getActionTypeImage(value: string) {
+  return actionTypeImages[value as GenerationOptionValue<'actionType'>];
+}
+
 export const generationDefaults = {
-  style: 'pixel-art',
-  perspective: 'front',
+  style: 'none',
+  perspective: 'none',
   quality: '1k',
   characterType: 'humanoid',
   editType: 'pose',
   actionType: 'idle',
   direction: 'right',
   frames: 'auto',
-  frameSize: '64',
+  frameSize: '128',
 } as const;
 
 export const CHARACTER_OUTPUT_ASPECT_RATIO = '1024x1024';

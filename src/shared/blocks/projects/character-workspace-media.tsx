@@ -559,19 +559,20 @@ function AnimationCanvas({
 
 export function AnimationCard({
   animation,
-  directionLabel,
+  title,
   labels,
   onOpen,
   className,
 }: {
   animation: CharacterWorkspaceAnimation;
-  directionLabel: (direction: string) => string;
+  title: string;
   labels: {
     frames: string;
     open: string;
     zoom: string;
     download: string;
     more: string;
+    versionCount: string;
   };
   onOpen: () => void;
   className?: string;
@@ -612,20 +613,28 @@ export function AnimationCard({
             </div>
           )}
         </div>
-        <div className="border-t px-3 py-2">
-          <p className="truncate text-sm font-medium">
-            {animation.set.name} · {directionLabel(animation.clip.direction)}
-          </p>
-          <p className="text-muted-foreground mt-0.5 font-mono text-[10px]">
-            {version?.frameCount || 0} {labels.frames} · {version?.fps || 0} FPS
-          </p>
+        <div className="flex items-start justify-between gap-2 border-t px-3 py-2">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">{title}</p>
+            <p className="text-muted-foreground mt-0.5 font-mono text-[10px]">
+              {version?.frameCount || 0} {labels.frames} · {version?.fps || 0}{' '}
+              FPS
+            </p>
+          </div>
+          <span
+            className="text-muted-foreground bg-secondary/80 shrink-0 rounded-md px-1.5 py-0.5 text-[10px]"
+            aria-label={labels.versionCount}
+            title={labels.versionCount}
+          >
+            {labels.versionCount}
+          </span>
         </div>
       </button>
       {sheetUrl ? (
         <AssetPreviewActions
           url={sheetUrl}
           fileId={frames[0]?.file.id}
-          alt={`${animation.set.name} · ${directionLabel(animation.clip.direction)}`}
+          alt={title}
           zoomLabel={labels.zoom}
           downloadLabel={labels.download}
           menuLabel={labels.more}
@@ -643,6 +652,7 @@ export function ReferenceImagePicker({
   title,
   description,
   selectLabel,
+  labelFor,
   onSelect,
 }: {
   open: boolean;
@@ -652,6 +662,7 @@ export function ReferenceImagePicker({
   title: string;
   description: string;
   selectLabel: string;
+  labelFor?: (file: CharacterWorkspaceFile) => string;
   onSelect: (file: CharacterWorkspaceFile) => void;
 }) {
   return (
@@ -662,7 +673,9 @@ export function ReferenceImagePicker({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3 md:grid-cols-4">
-          {files.map((file) => (
+          {files.map((file) => {
+            const label = labelFor?.(file);
+            return (
             <button
               type="button"
               key={file.id}
@@ -679,14 +692,20 @@ export function ReferenceImagePicker({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={file.url}
-                alt={selectLabel}
+                alt={label || selectLabel}
                 className="size-full object-contain [image-rendering:pixelated]"
               />
+              {label ? (
+                <span className="absolute inset-x-0 bottom-0 truncate bg-black/70 px-2 py-1 text-left text-xs text-white">
+                  {label}
+                </span>
+              ) : null}
               {selectedId === file.id ? (
-                <Check className="text-primary absolute bottom-2 left-2 size-4" />
+                <Check className="text-primary absolute top-2 left-2 size-4" />
               ) : null}
             </button>
-          ))}
+            );
+          })}
           {!files.length ? (
             <div className="text-muted-foreground col-span-full flex min-h-48 flex-col items-center justify-center gap-3 text-sm">
               <ImagePlus className="size-7" />

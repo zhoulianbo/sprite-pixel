@@ -17,10 +17,84 @@
     "generationMode": "Generation mode",
     "promptPlaceholder": "A small fire knight with a red cape...",
     "motionPromptPlaceholder": "For example: energetic motion, a slight forward lean, and natural cape follow-through...",
+    "motionUploadEmpty": "Upload a character image",
+    "projectLabel": "Project",
+    "projectSelectHint": "Choose an existing project or create a new one here.",
+    "moreActions": "Expand more",
+    "collapseActions": "Collapse more",
+    "projectOverlay": "Project: {name}",
+    "actionSettings": "Settings",
+    "customAction": "Custom",
+    "customActionPlaceholder": "Describe one complete action…",
+    "motionDetail": "Motion detail",
+    "motionFields": {
+      "jumpType": "Jump type",
+      "dashType": "Dash type",
+      "weapon": "Weapon",
+      "attackStyle": "Attack style",
+      "shootType": "Shoot type",
+      "castType": "Cast type",
+      "severity": "Severity",
+      "deathType": "Death type"
+    },
+    "motionOptions": {
+      "jumpType": { "in-place": "In-place", "forward": "Forward" },
+      "dashType": {
+        "forward": "Forward",
+        "backward": "Backward",
+        "side": "Side"
+      },
+      "weapon": {
+        "keep-current": "Keep current",
+        "unarmed": "Unarmed",
+        "sword": "Sword",
+        "axe": "Axe",
+        "staff": "Staff",
+        "bow": "Bow",
+        "dagger": "Dagger",
+        "spear": "Spear"
+      },
+      "attackStyle": {
+        "auto": "Auto",
+        "slash": "Slash",
+        "thrust": "Thrust",
+        "heavy": "Heavy",
+        "spin": "Spin"
+      },
+      "shootType": { "bow": "Bow", "gun": "Gun", "magic-bolt": "Magic bolt" },
+      "castType": {
+        "quick": "Quick cast",
+        "charge": "Charge cast",
+        "staff": "Staff cast",
+        "hand": "Hand cast"
+      },
+      "severity": { "light": "Light", "heavy": "Heavy" },
+      "deathType": {
+        "collapse": "Collapse",
+        "fall-back": "Fall back",
+        "fall-forward": "Fall forward"
+      }
+    },
+    "motionProgress": {
+      "validating": "Validating request",
+      "queued": "Queued for generation",
+      "video_generation": "Generating action video",
+      "media_processing": "Removing background and building sprite sheet",
+      "completed": "Opening animation editor",
+      "failed": "Generation failed",
+      "idle": "Ready"
+    },
     "startCreating": "Start Generating",
     "startCreatingBusy": "Generating…",
     "createCharacter": "Generate Character",
-    "generateMotion": "Generate Motion",
+    "generateMotion": "Generate Sprite Sheet",
+    "characterName": "Character name",
+    "characterNamePlaceholder": "Name this character",
+    "saveCharacter": "Save character",
+    "savingCharacter": "Saving…",
+    "saveUploadTitle": "Save this image as a character?",
+    "saveUploadDescription": "You can save it to the current project for this sprite sheet and future animations.",
+    "notNow": "Not now",
     "defaultProject": "Default Project",
     "chooseProject": "Choose project",
     "addProject": "Add Project",

@@ -7,9 +7,10 @@ import { getUuid } from '@/shared/lib/hash';
 import { imageInfo } from '@/shared/lib/sprite-tools/image-info';
 import {
   extensionFromMime,
+  isCompletableUploadKey,
   MAX_UPLOAD_BYTES,
   MAX_UPLOAD_EDGE,
-  userUploadStorageKey,
+  uploadStorageKeyForRole,
 } from '@/shared/lib/storage-paths';
 import { getProjectItem } from '@/shared/models/asset';
 import { getStorageService } from '@/shared/services/storage';
@@ -19,6 +20,7 @@ export const allowedUploadRoles = new Set([
   'reference',
   'base_reference',
   'motion_reference',
+  'animation_frame',
   'icon',
 ]);
 
@@ -79,7 +81,9 @@ export async function createSignedUserUpload(
   await assertUploadTargets(projectId, input.itemId, input.variantId);
 
   const fileId = getUuid();
-  const storageKey = userUploadStorageKey(
+  const storageKey = uploadStorageKeyForRole(
+    projectId,
+    input.role,
     fileId,
     extensionFromMime(input.contentType)
   );
@@ -132,7 +136,7 @@ export async function completeSignedUserUpload(
   if (!file || file.deletedAt || file.status !== 'uploading') {
     throw new ProjectFileUploadError('REFERENCE_NOT_FOUND', 404);
   }
-  if (!file.storageKey.startsWith('uploads/')) {
+  if (!isCompletableUploadKey(file.storageKey, projectId)) {
     throw new ProjectFileUploadError('INVALID_UPLOAD', 400);
   }
 

@@ -120,9 +120,11 @@ export interface AIProvider {
     taskId,
     mediaType,
     model,
+    options,
   }: {
     taskId: string;
     mediaType?: string;
     model?: string;
+    options?: Record<string, unknown>;
   }): Promise<AITaskResult>;
 }

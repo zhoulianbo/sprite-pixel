@@ -113,7 +113,7 @@ export function IconGeneratorBoard() {
   const [input, setInput] = useState('');
   const [items, setItems] = useState<IconListItem[]>([]);
   const [styleSource, setStyleSource] = useState<StyleSource>('preset');
-  const [style, setStyle] = useState<string>(generationDefaults.style);
+  const [style, setStyle] = useState<string>('pixel-art');
   const [referenceFile, setReferenceFile] = useState<File | null>(null);
   const [referenceFileId, setReferenceFileId] = useState('');
   const [referencePreview, setReferencePreview] = useState('');
@@ -249,6 +249,12 @@ export function IconGeneratorBoard() {
     setSheetResult({ status: 'queued' });
     try {
       const requestedItems = items.map((item) => ({ ...item, selected: true }));
+      const iconStyleSource =
+        styleSource === 'preset'
+          ? 'preset'
+          : referenceFileId
+            ? 'asset-reference'
+            : 'uploaded-reference';
       const uploadedReferenceId = await uploadReference();
       const id = crypto.randomUUID();
       const response = await fetch(`/api/projects/${project.id}/generations`, {
@@ -259,8 +265,9 @@ export function IconGeneratorBoard() {
           type: 'icon_batch',
           name: t('defaultSetName'),
           referenceFileId: uploadedReferenceId,
+          iconStyleSource,
           items: requestedItems,
-          style: styleSource === 'preset' ? style : project.artStyle,
+          style: styleSource === 'preset' ? style : undefined,
           perspective: generationDefaults.perspective,
           quality: generationDefaults.quality,
           background: 'transparent',

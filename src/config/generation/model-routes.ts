@@ -22,7 +22,7 @@ export const generationModelRoutes = {
   },
   animation: {
     provider: 'grsai',
-    model: 'gpt-image-2.5',
+    model: 'minimax-h3',
     credits: 3,
   },
   icon: {
@@ -35,7 +35,7 @@ export const generationModelRoutes = {
 
 /** Free preprocessing for thin icon names/descriptions. Does not consume credits. */
 export const iconPromptExpandModel = {
-  provider: 'gemini',
+  provider: 'grsai',
   model: 'gemini-2.5-flash',
 } as const;
 

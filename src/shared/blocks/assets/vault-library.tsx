@@ -2,6 +2,7 @@ import { ImageIcon } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
+import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Header, Main } from '@/shared/blocks/dashboard';
 import { cn } from '@/shared/lib/utils';
 import type { Crumb } from '@/shared/types/blocks/common';
@@ -22,6 +23,7 @@ export function VaultLibrary({
   emptyIcon: EmptyIcon,
   crumbs,
   items,
+  zoomLabel,
 }: {
   title: string;
   description: string;
@@ -30,6 +32,7 @@ export function VaultLibrary({
   emptyIcon: LucideIcon;
   crumbs: Crumb[];
   items: VaultLibraryItem[];
+  zoomLabel?: string;
 }) {
   return (
     <>
@@ -45,7 +48,7 @@ export function VaultLibrary({
           {items.length ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {items.map((item) => (
-                <VaultCard key={item.id} item={item} />
+                <VaultCard key={item.id} item={item} zoomLabel={zoomLabel} />
               ))}
             </div>
           ) : (
@@ -65,46 +68,72 @@ export function VaultLibrary({
   );
 }
 
-function VaultCard({ item }: { item: VaultLibraryItem }) {
-  const content = (
-    <>
-      <div className="bg-muted/35 aspect-square border-b p-4">
-        {item.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.imageUrl}
-            alt={item.name}
-            className="size-full object-contain [image-rendering:pixelated]"
-          />
-        ) : (
-          <div className="text-muted-foreground flex size-full items-center justify-center">
-            <ImageIcon className="size-8 stroke-1" />
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        <h2 className="truncate font-semibold">{item.name}</h2>
-        {item.meta ? (
-          <p className="text-muted-foreground mt-1 truncate text-xs">
-            {item.meta}
-          </p>
-        ) : null}
-      </div>
-    </>
+function VaultCard({
+  item,
+  zoomLabel,
+}: {
+  item: VaultLibraryItem;
+  zoomLabel?: string;
+}) {
+  const image = item.imageUrl ? (
+    zoomLabel ? (
+      <ZoomableImage
+        alt={item.name}
+        src={item.imageUrl}
+        zoomLabel={zoomLabel}
+      />
+    ) : (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        alt={item.name}
+        className="size-full object-contain [image-rendering:pixelated]"
+        src={item.imageUrl}
+      />
+    )
+  ) : (
+    <div className="text-muted-foreground flex size-full items-center justify-center">
+      <ImageIcon className="size-8 stroke-1" />
+    </div>
   );
 
-  return item.href ? (
-    <Link
-      href={item.href}
-      className={cn(
-        'group bg-card hover:border-primary/50 overflow-hidden rounded-xl border transition-colors'
-      )}
-    >
-      {content}
-    </Link>
-  ) : (
+  const details = (
+    <div className="p-4">
+      <h2 className="truncate font-semibold">{item.name}</h2>
+      {item.meta ? (
+        <p className="text-muted-foreground mt-1 truncate text-xs">
+          {item.meta}
+        </p>
+      ) : null}
+    </div>
+  );
+
+  if (item.href && !zoomLabel) {
+    return (
+      <Link
+        className={cn(
+          'group bg-card hover:border-primary/50 overflow-hidden rounded-xl border transition-colors'
+        )}
+        href={item.href}
+      >
+        <div className="bg-muted/35 aspect-square border-b p-4">{image}</div>
+        {details}
+      </Link>
+    );
+  }
+
+  return (
     <article className="bg-card overflow-hidden rounded-xl border">
-      {content}
+      <div className="bg-muted/35 aspect-square border-b p-4">{image}</div>
+      {item.href ? (
+        <Link
+          className="hover:bg-primary/10 hover:text-primary block transition-colors"
+          href={item.href}
+        >
+          {details}
+        </Link>
+      ) : (
+        details
+      )}
     </article>
   );
 }

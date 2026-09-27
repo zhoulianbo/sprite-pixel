@@ -82,6 +82,7 @@ export type CharacterWorkspaceAnimation = {
     frameHeight: number;
     frameCount: number;
   } | null;
+  versionCount: number;
   frames: CharacterAnimationFrame[];
 };
 
@@ -184,6 +185,17 @@ export function groupDirectionFiles(
       };
     })
     .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+}
+
+export function actionDirectionLabel(
+  action: string,
+  direction: string,
+  actionLabel: (action: string) => string,
+  directionLabel: (direction: string) => string
+) {
+  const actionText = actionLabel(action);
+  if (!direction || direction === 'none') return actionText;
+  return `${actionText} · ${directionLabel(direction)}`;
 }
 
 export function groupAnimationSets(

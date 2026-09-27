@@ -11,6 +11,7 @@ const versionSchema = z.object({
     .array(
       z.object({
         frameId: z.string().uuid(),
+        fileId: z.string().uuid().optional(),
         durationMs: z.number().int().min(1).max(60_000).nullable().optional(),
         offsetX: z.number().int().min(-4096).max(4096),
         offsetY: z.number().int().min(-4096).max(4096),

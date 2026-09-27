@@ -2,8 +2,8 @@ import {
   ContentSafetyError,
   WaffoPromptScanner,
   type PromptScanLocale,
-  type PromptScanResult,
   type PromptScanner,
+  type PromptScanResult,
   type ScanPromptInput,
 } from '@/extensions/content-safety';
 import { Configs, getAllConfigs } from '@/shared/models/config';
@@ -59,17 +59,38 @@ export async function scanGenerationPrompt(
     throw new ContentSafetyError('CONTENT_SAFETY_FAILED', 400);
   }
 
-  const scanner = options?.scanner ?? (await getPromptScanner());
   const input: ScanPromptInput = {
     prompt: trimmed,
     locale: toPromptScanLocale(options?.locale),
   };
+  let scanner = options?.scanner;
 
   try {
+    scanner ??= await getPromptScanner();
     return await scanner.scanPrompt(input);
   } catch (error) {
-    if (error instanceof ContentSafetyError) throw error;
-    throw new ContentSafetyError('CONTENT_SAFETY_FAILED', 503);
+    console.error(
+      JSON.stringify({
+        event: 'content_safety_scan_failed',
+        provider: scanner?.name || 'waffo',
+        code:
+          error instanceof ContentSafetyError
+            ? error.code
+            : 'CONTENT_SAFETY_FAILED',
+        reason:
+          error instanceof Error
+            ? error.message.replace(/\s+/g, ' ').trim().slice(0, 1000)
+            : String(error).slice(0, 1000),
+      })
+    );
+    // Fail open when Waffo is unavailable. The generation gate below only
+    // rejects an explicit `block` verdict.
+    return {
+      action: 'review',
+      reasonCode: 'service_degraded',
+      matchedCategories: [],
+      provider: scanner?.name || 'waffo',
+    };
   }
 }
 
@@ -87,14 +108,32 @@ export async function assertPromptAllowedForGeneration(
 
   const result = await scanGenerationPrompt(trimmed, options);
 
-  if (result.action === 'allow') {
-    return result;
-  }
-
   if (result.action === 'block') {
+    console.error(
+      JSON.stringify({
+        event: 'content_safety_prompt_blocked',
+        provider: result.provider,
+        action: result.action,
+        reasonCode: result.reasonCode,
+        matchedCategories: result.matchedCategories,
+        requestId: result.requestId || null,
+      })
+    );
     throw new ContentSafetyError('PROMPT_BLOCKED', 400, result);
   }
 
-  // `review` (including service_degraded) — do not generate.
-  throw new ContentSafetyError('PROMPT_REVIEW_REQUIRED', 503, result);
+  if (result.action === 'review') {
+    console.warn(
+      JSON.stringify({
+        event: 'content_safety_prompt_review_bypassed',
+        provider: result.provider,
+        action: result.action,
+        reasonCode: result.reasonCode,
+        matchedCategories: result.matchedCategories,
+        requestId: result.requestId || null,
+      })
+    );
+  }
+
+  return result;
 }

@@ -15,10 +15,11 @@
     "character": "角色圖",
     "remove": "移除圖片",
     "file": "上傳",
-    "existing": "現有角色"
+    "existing": "選擇素材"
   },
   "options": {
     "style": {
+      "none": "無",
       "pixel-art": "像素畫",
       "cartoon": "卡通",
       "illustration": "插畫",
@@ -28,6 +29,7 @@
       "cyberpunk": "賽博龐克"
     },
     "perspective": {
+      "none": "無",
       "side": "側視圖",
       "top-down": "俯視圖",
       "front": "正視圖",
@@ -46,10 +48,15 @@
       "idle": "待機",
       "walk": "行走",
       "run": "奔跑",
-      "attack": "攻擊",
       "jump": "跳躍",
+      "dash": "衝刺",
+      "attack": "攻擊",
+      "shoot": "射擊",
+      "cast": "施法",
       "hurt": "受傷",
       "death": "死亡",
+      "pickup": "拾取",
+      "wave": "揮手",
       "custom": "自訂"
     },
     "direction": {

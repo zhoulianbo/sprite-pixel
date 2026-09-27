@@ -15,10 +15,11 @@
     "character": "キャラクター",
     "remove": "画像を削除",
     "file": "アップロード",
-    "existing": "既存キャラクター"
+    "existing": "素材を選択"
   },
   "options": {
     "style": {
+      "none": "なし",
       "pixel-art": "ピクセルアート",
       "cartoon": "カートゥーン",
       "illustration": "イラスト",
@@ -28,6 +29,7 @@
       "cyberpunk": "サイバーパンク"
     },
     "perspective": {
+      "none": "なし",
       "side": "横視点",
       "top-down": "見下ろし",
       "front": "正面",
@@ -46,10 +48,15 @@
       "idle": "待機",
       "walk": "歩行",
       "run": "走行",
-      "attack": "攻撃",
       "jump": "ジャンプ",
+      "dash": "ダッシュ",
+      "attack": "攻撃",
+      "shoot": "射撃",
+      "cast": "詠唱",
       "hurt": "被ダメージ",
       "death": "死亡",
+      "pickup": "拾う",
+      "wave": "手を振る",
       "custom": "カスタム"
     },
     "direction": {

@@ -20,5 +20,5 @@ export default async function AnimationEditorPage({
   if (!user) notFound();
   const data = await getAnimationEditorData(user.id, versionId);
   if (!data) notFound();
-  return <AnimationEditor data={data} />;
+  return <AnimationEditor key={data.version.id} data={data} />;
 }

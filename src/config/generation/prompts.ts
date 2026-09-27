@@ -10,6 +10,16 @@ export type SpritePromptInput = {
   characterType?: string;
   editType?: string;
   action?: string;
+  actionConfig?: {
+    jumpType?: string;
+    dashType?: string;
+    weapon?: string;
+    attackStyle?: string;
+    shootType?: string;
+    castType?: string;
+    severity?: string;
+    deathType?: string;
+  };
   direction?: string;
   frames?: number | 'auto';
   frameSize?: number | string;
@@ -18,9 +28,17 @@ export type SpritePromptInput = {
   negativePrompt?: string;
 };
 
+export type IconStyleSource =
+  'preset' | 'uploaded-reference' | 'asset-reference';
+
 function token(value: string | null | undefined, fallback: string) {
   const raw = value?.trim();
   return raw || fallback;
+}
+
+function optionalPreset(value: string | null | undefined) {
+  const raw = value?.trim();
+  return raw && raw !== 'none' ? raw : '';
 }
 
 export function buildCharacterBasePrompt(
@@ -31,11 +49,9 @@ export function buildCharacterBasePrompt(
   project?: { artStyle?: string | null } | null
 ) {
   const concept = token(input.prompt, '');
-  const style = token(
-    input.style || project?.artStyle,
-    generationDefaults.style
-  );
-  const perspective = token(input.perspective, generationDefaults.perspective);
+  const style =
+    optionalPreset(input.style) || optionalPreset(project?.artStyle);
+  const perspective = optionalPreset(input.perspective);
   const characterType = token(
     input.characterType,
     generationDefaults.characterType
@@ -46,8 +62,8 @@ export function buildCharacterBasePrompt(
     'Character concept:',
     concept,
     '',
-    `Style: ${style}`,
-    `Perspective: ${perspective}`,
+    style ? `Style: ${style}` : '',
+    perspective ? `Perspective: ${perspective}` : '',
     `Character type: ${characterType}`,
     'Pose: neutral standing idle pose',
     '',
@@ -57,12 +73,14 @@ export function buildCharacterBasePrompt(
     '- clear silhouette',
     '- readable at small size',
     '- simple readable shapes for sprite animation',
-    '- clean pixel-art rendering',
+    '- clean game-ready rendering',
     '- transparent background',
     '- no text',
     '- no watermark',
     '- no extra objects',
-  ].join('\n');
+  ]
+    .filter((line, index, lines) => line !== '' || lines[index - 1] !== '')
+    .join('\n');
 }
 
 export function buildCharacterEditPrompt(
@@ -134,6 +152,7 @@ type AnimationActionContract = {
   label: string;
   timing: string;
   motion: string;
+  videoMotion: string;
   keyPoses: string[];
   constraints: string[];
 };
@@ -145,6 +164,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'seamless loop; the last frame flows into the first without duplicating it',
     motion:
       'Remain planted on the same spot. Use subtle breathing, weight shift, and secondary motion only.',
+    videoMotion:
+      'Stay planted in one relaxed ready stance and complete one gentle breathing cycle. Let the chest, shoulders, and body rise slightly, settle, then ease back into the starting stance. Keep the motion subtle and continuous, with only a small natural weight shift and soft secondary motion.',
     keyPoses: [
       'neutral resting pose',
       'slight inhale and gentle upward motion',
@@ -162,6 +183,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'seamless locomotion loop; the last frame flows into the first without duplicating it',
     motion:
       'Walk in place at a steady speed. Alternate left and right contact phases with natural opposing arm swings.',
+    videoMotion:
+      'Walk in place continuously at one steady pace. Use clear alternating steps, a modest stride, and a natural rise and fall of the hips and torso. Let the free arm counter-swing with the legs while any hand already holding an item keeps a secure, continuous grip. Complete one smooth cycle that connects back to the opening step without stopping.',
     keyPoses: [
       'left heel contact; right arm forward and left arm back',
       'left-leg down pose; body slightly lower',
@@ -184,6 +207,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'seamless locomotion loop; the last frame flows into the first without duplicating it',
     motion:
       'Run in place at one steady speed with a slight forward lean. Alternate left and right support phases and include clear airborne phases.',
+    videoMotion:
+      'Run in place continuously at one steady pace with a slight forward lean. Use long alternating strides, brief airborne moments, and a consistent rhythmic bounce through the hips and torso. Let the free arm counter-swing naturally with bent elbows while any hand already holding an item keeps a secure, continuous grip. Complete one energetic cycle that connects smoothly back to the opening stride without slowing down or returning to idle.',
     keyPoses: [
       'left-foot contact; right arm forward and left arm back',
       'left-leg compression; hips and torso slightly lower',
@@ -205,6 +230,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     timing: 'one-shot action with readable anticipation, impact, and recovery',
     motion:
       'Perform one decisive attack while preserving the weapon, grip, and facing direction across every frame.',
+    videoMotion:
+      'Begin in a ready combat stance, already using the weapon selected in the action options. If the option is keep-current, use only the item already carried; if it is unarmed, fight with clenched fists and add no weapon. Coil into one large, readable anticipation with the weight drawn back, then explode into exactly one fast, exaggerated strike through a wide arc in front of the body. Hold the follow-through briefly, then recover into the ready stance. Drive the reach from the hips, torso, and attacking arm while staying in place.',
     keyPoses: [
       'combat-ready starting pose',
       'clear anticipation and wind-up',
@@ -223,6 +250,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     timing: 'one-shot action from takeoff through landing',
     motion:
       'Jump once in place with clear vertical timing and a stable horizontal anchor.',
+    videoMotion:
+      'Perform exactly one jump. Start upright, compress through the knees and hips, push off clearly, rise to one readable apex, descend under control, absorb the landing, and settle back into the starting stance. Keep the body aligned and the horizontal anchor stable throughout the jump.',
     keyPoses: [
       'standing anticipation',
       'deep takeoff compression',
@@ -236,11 +265,71 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'do not add running steps',
     ],
   },
+  dash: {
+    label: 'single dash burst',
+    timing:
+      'one-shot action with sharp anticipation, acceleration, deceleration, and recovery',
+    motion:
+      'Compress into a readable anticipation, launch into one explosive dash, then stop under control.',
+    videoMotion:
+      'Perform exactly one short, explosive dash using the selected dash type. Compress into a sharp anticipation, launch with a strong whole-body lean, sustain the burst only briefly, then decelerate under control and recover to the ready stance. Keep the character framed at a stable size and do not turn the burst into a running cycle.',
+    keyPoses: [
+      'ready stance',
+      'sharp anticipation and compression',
+      'explosive launch',
+      'maximum-speed dash pose',
+      'brief continuation with strong secondary motion',
+      'deceleration',
+      'controlled stop',
+      'stable recovery',
+    ],
+    constraints: ['do not turn this into a running cycle or multiple dashes'],
+  },
+  shoot: {
+    label: 'single ranged attack',
+    timing: 'one-shot action with preparation, aim, release, and recovery',
+    motion:
+      'Prepare, aim, fire or release exactly once, follow through, and recover.',
+    videoMotion:
+      'Perform exactly one ranged attack using the selected shoot type. Move from a ready stance into a clear aim or draw, release one shot, show one brief readable recoil or follow-through, then lower the attack and recover to the ready stance. Keep both hands anatomically connected to the weapon or casting action for the entire motion.',
+    keyPoses: [
+      'ready stance',
+      'raise weapon or casting hand',
+      'aim, draw, or charge',
+      'fire or release once',
+      'peak firing pose',
+      'follow-through',
+      'settle',
+      'recovery',
+    ],
+    constraints: ['do not fire repeatedly'],
+  },
+  cast: {
+    label: 'single spell-casting action',
+    timing: 'one-shot action with preparation, release, and recovery',
+    motion:
+      'Gather energy, release one readable cast, follow through, and recover.',
+    videoMotion:
+      'Perform exactly one spell cast using the selected cast type. Gather energy with a clear preparation, build to one readable release, extend through the casting gesture, then let the energy and body motion settle before returning to the ready stance. Keep the hands, staff, and any carried equipment connected and consistent throughout.',
+    keyPoses: [
+      'ready stance',
+      'begin gathering energy',
+      'stronger charge or preparation',
+      'cast release',
+      'peak casting pose',
+      'follow-through',
+      'energy settles',
+      'recovery',
+    ],
+    constraints: ['do not perform repeated casts'],
+  },
   hurt: {
     label: 'single hurt reaction',
     timing: 'short one-shot reaction with impact and recovery',
     motion:
       'React once to an impact while keeping the character recognizable and balanced.',
+    videoMotion:
+      'React to exactly one unseen impact. Snap into a clear recoil with an intensity that matches the selected severity, reach one brief maximum compression or stagger, then regain balance and return to the ready stance. Do not add an attacker or turn the reaction into a fall or death.',
     keyPoses: [
       'normal ready pose',
       'impact recoil',
@@ -257,6 +346,8 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     timing: 'one-shot action that ends in a held final pose; it must not loop',
     motion:
       'Lose balance, fall once, and settle into a clear final pose without disappearing.',
+    videoMotion:
+      'Perform exactly one death fall using the selected death type. Begin upright, lose balance from one decisive impact, collapse or fall in the selected direction, make one clear ground contact, then settle into a readable final pose. End there without standing up, disappearing, or looping back to the opening stance.',
     keyPoses: [
       'initial hit or loss of balance',
       'first recoil',
@@ -268,6 +359,43 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'final still pose',
     ],
     constraints: ['do not stand back up', 'do not loop back to the first pose'],
+  },
+  pickup: {
+    label: 'single ground pickup interaction',
+    timing: 'one-shot interaction from reach through recovery',
+    motion: 'Bend down, reach, grasp, lift, stand back up, and settle.',
+    videoMotion:
+      'Perform exactly one ground pickup. Start in the ready stance, bend naturally through the knees and hips, reach down with one free hand, close the hand around one implied small item, lift it while standing back up, then settle into the ready stance. Do not walk away or release any item already held in the other hand.',
+    keyPoses: [
+      'ready stance',
+      'reach downward',
+      'bend',
+      'lowest pickup pose',
+      'grasp and lift',
+      'stand up',
+      'settle',
+      'ready pose',
+    ],
+    constraints: ['do not walk away or perform another action'],
+  },
+  wave: {
+    label: 'single friendly wave gesture',
+    timing: 'one-shot gesture that returns to the ready pose',
+    motion:
+      'Raise one hand, perform a clear relaxed wave, then lower it naturally.',
+    videoMotion:
+      'Perform one friendly wave with a free hand. Raise the hand clearly, make a small relaxed side-to-side wave, lower it naturally, and settle back into the ready stance. If one hand already holds an item, keep that grip unchanged and wave only with the free hand.',
+    keyPoses: [
+      'ready stance',
+      'raise hand',
+      'wave outward',
+      'wave inward',
+      'repeat a small wave',
+      'begin lowering hand',
+      'settle',
+      'ready pose',
+    ],
+    constraints: ['do not walk or turn away'],
   },
 };
 
@@ -290,10 +418,42 @@ function actionTimeline(contract: AnimationActionContract, frameCount: number) {
   ];
 }
 
+function animationOptionLines(
+  input: Pick<SpritePromptInput, 'action' | 'actionConfig'>
+) {
+  const options = input.actionConfig || {};
+  const action = (input.action || '').toLowerCase();
+  if (action === 'jump') {
+    return [`- jump type: ${options.jumpType || 'in-place'}`];
+  }
+  if (action === 'dash') {
+    return [`- dash type: ${options.dashType || 'forward'}`];
+  }
+  if (action === 'attack') {
+    return [
+      `- weapon: ${options.weapon || 'keep-current'}`,
+      `- attack style: ${options.attackStyle || 'auto'}`,
+    ];
+  }
+  if (action === 'shoot') {
+    return [`- shoot type: ${options.shootType || 'bow'}`];
+  }
+  if (action === 'cast') {
+    return [`- cast type: ${options.castType || 'quick'}`];
+  }
+  if (action === 'hurt') {
+    return [`- severity: ${options.severity || 'light'}`];
+  }
+  if (action === 'death') {
+    return [`- death type: ${options.deathType || 'collapse'}`];
+  }
+  return [];
+}
+
 export function buildAnimationPrompt(
   input: Pick<
     SpritePromptInput,
-    'prompt' | 'action' | 'direction' | 'frames' | 'frameSize'
+    'prompt' | 'action' | 'actionConfig' | 'direction' | 'frames' | 'frameSize'
   >,
   direction?: string
 ) {
@@ -332,6 +492,7 @@ export function buildAnimationPrompt(
     token(input.prompt, ''),
     '',
     `Selected action: ${action}`,
+    ...animationOptionLines(input),
     `Selected direction: ${facing}`,
     `Frame count: ${sheet.frameCount}`,
     `Logical cell size: ${sheet.frameSize}x${sheet.frameSize}`,
@@ -372,6 +533,64 @@ export function buildAnimationPrompt(
   ].join('\n');
 }
 
+export function buildAnimationVideoPrompt(
+  input: Pick<
+    SpritePromptInput,
+    'prompt' | 'action' | 'actionConfig' | 'direction' | 'frames' | 'frameSize'
+  >,
+  direction?: string
+) {
+  const facing = token(direction || input.direction, 'east');
+  const action = token(input.action, generationDefaults.actionType);
+  const contract = animationActionContract(action);
+  return [
+    'Animate the provided character as one clean 2D game-animation clip of about two seconds.',
+    'Use the reference image only as the character identity and starting design.',
+    '',
+    `Use a clear game-animation view facing ${facing}.`,
+    `Keep the character facing ${facing} for the entire clip.`,
+    'Do not rotate away from the selected direction.',
+    '',
+    'User motion notes:',
+    token(input.prompt, ''),
+    '',
+    `Selected action: ${action}`,
+    ...animationOptionLines(input),
+    `Selected direction: ${facing}`,
+    ...(contract
+      ? [
+          '',
+          'Continuous motion description:',
+          contract.videoMotion,
+          '',
+          'Action constraints:',
+          `- perform only this action: ${contract.label}`,
+          `- timing: ${contract.timing}`,
+          ...contract.constraints.map((constraint) => `- ${constraint}`),
+        ]
+      : [
+          '',
+          'Continuous motion description:',
+          'Perform the user motion notes as one coherent action with a clear beginning, middle, and end. Keep the timing readable and do not invent additional unrelated actions.',
+        ]),
+    '',
+    'Video requirements:',
+    '- preserve the exact character identity, clothing, colors, proportions, silhouette, and art style',
+    '- follow any explicit equipment option; otherwise do not add, remove, replace, or redesign equipment',
+    '- keep every hand and carried item anatomically connected with a stable grip; never let a hand or item vanish, duplicate, switch sides, detach, or morph',
+    `- keep the character facing ${facing} for the entire clip`,
+    '- keep the camera fixed and show the complete body in every frame',
+    '- keep the ground line, scale, and horizontal position stable',
+    '- animate natural opposing arm and leg motion where the action requires it',
+    '- include continuous secondary motion in hair, clothing, capes, tails, and carried items',
+    '- use one uniform plain neutral-grey background with no scenery, ground shadow, or unrelated objects',
+    '- no cuts, camera movement, zoom, text, labels, borders, or watermark',
+    ...(input.action !== 'death'
+      ? ['- finish in a pose that connects cleanly back to the first pose']
+      : []),
+  ].join('\n');
+}
+
 export function buildIconSheetDetail(
   items: Array<{ name: string; description: string }>
 ) {
@@ -403,31 +622,108 @@ export function buildIconSheetDetail(
   ].join('\n');
 }
 
-export function buildIconDescriptionExpandPrompt(input: {
+export function buildIconGenerationPrompt(input: {
+  detail: string;
+  prompt?: string;
+  styleSource?: IconStyleSource;
+  hasReference?: boolean;
   style?: string;
+  gameGenre?: string | null;
+  perspective?: string;
+  quality?: string;
+  palette?: string | null;
+}) {
+  const styleSource =
+    input.styleSource || (input.hasReference ? 'asset-reference' : 'preset');
+  const isPreset = styleSource === 'preset';
+  const style = optionalPreset(input.style);
+  const perspective = optionalPreset(input.perspective);
+  const referenceGuidance =
+    styleSource === 'uploaded-reference'
+      ? [
+          'Reference image guidance:',
+          '- use the uploaded image as the primary visual style guide, not as the item list',
+          '- match its rendering technique, palette, outlines, shading, materials, camera angle, lighting, proportions, icon framing, and visual scale',
+          '- create each listed item as a new icon; do not copy the reference subject unless that subject is explicitly listed',
+          '- do not apply an unrelated game genre, preset style, or project palette',
+        ]
+      : styleSource === 'asset-reference'
+        ? [
+            'Reference image guidance:',
+            '- use the selected existing project asset as the primary visual style guide',
+            '- make every generated icon look like it belongs to the same game asset set as that reference',
+            '- match its rendering technique, palette, outlines, shading, materials, camera angle, lighting, proportions, icon framing, and visual scale',
+            '- create each listed item as a new icon; do not copy the reference subject unless that subject is explicitly listed',
+            '- do not apply an unrelated game genre, preset style, or project palette',
+          ]
+        : [];
+
+  return [
+    input.prompt?.trim() || '',
+    input.detail,
+    '',
+    ...(isPreset
+      ? [
+          input.gameGenre?.trim()
+            ? `Game genre: ${input.gameGenre.trim()}`
+            : '',
+          style ? `Art style: ${style}` : '',
+          perspective ? `Perspective: ${perspective}` : '',
+          input.palette?.trim() ? `Palette: ${input.palette.trim()}` : '',
+        ]
+      : referenceGuidance),
+    `Output quality: ${input.quality || generationDefaults.quality}`,
+  ]
+    .filter((line, index, lines) => line !== '' || lines[index - 1] !== '')
+    .join('\n');
+}
+
+export function buildIconDescriptionExpandPrompt(input: {
+  styleSource?: IconStyleSource;
+  style?: string;
+  gameGenre?: string | null;
   items: Array<{ id: string; name: string; description?: string }>;
 }) {
-  const style = token(input.style, generationDefaults.style);
+  const styleSource = input.styleSource || 'preset';
+  const style = optionalPreset(input.style);
+  const isPreset = styleSource === 'preset';
   return [
     'Complete missing game-icon descriptions so an image model can draw each asset clearly.',
     'Keep each original item id and name. Do not add, drop, or rename items.',
     'Write one concrete visual description per item: materials, colors, shape, small distinctive details.',
     'Match the language of the item name. Keep each description under 180 characters.',
     'Do not mention UI chrome, watermarks, or extra characters. Assume a transparent background.',
-    `Art style to respect: ${style}`,
+    ...(isPreset
+      ? [
+          input.gameGenre?.trim()
+            ? `Game genre context: ${input.gameGenre.trim()}`
+            : '',
+          style ? `Art style to respect: ${style}` : '',
+        ]
+      : [
+          'Inspect the attached reference image before writing any item description.',
+          'Treat its visual language as binding: match its shape simplification, proportions, palette, outline weight, shading amount, camera angle, and icon framing.',
+          'Describe each new item as if it belongs to the same icon set. Keep details no more complex or realistic than the reference.',
+          'Do not invent ornate materials, gems, decorations, realistic textures, or rendering techniques that are absent from the reference image.',
+        ]),
     '',
     'Return JSON only, in this shape:',
     '{"items":[{"id":"...","description":"..."}]}',
     '',
     JSON.stringify({
-      style,
+      ...(isPreset && style ? { style } : {}),
+      ...(isPreset && input.gameGenre?.trim()
+        ? { gameGenre: input.gameGenre.trim() }
+        : {}),
       items: input.items.map((item) => ({
         id: item.id,
         name: item.name,
         description: item.description || '',
       })),
     }),
-  ].join('\n');
+  ]
+    .filter((line, index, lines) => line !== '' || lines[index - 1] !== '')
+    .join('\n');
 }
 
 export function parseIconDescriptionExpandResult(raw: string) {
