@@ -120,7 +120,7 @@
       "スプライトシート出力"
     ],
     "capabilities": {
-      "title": "2Dゲーム素材制作を1つのAIスプライト生成ツールで",
+      "title": "1つのAIスプライト生成ツールで、2Dゲーム素材制作のどこまでカバーできますか？",
       "description": "キャラクター、衣装差分、多方向スプライト、アニメーション、出力用スプライトシートを一つの流れで作成します。",
       "items": [
         {
@@ -149,8 +149,16 @@
         }
       ]
     },
+    "citation": {
+      "title": "スプライトシートとは？",
+      "quote": "In computer graphics, a texture atlas (also called a sprite sheet or an image sprite) is an image containing multiple smaller images, usually packed together to reduce overall file size and draw calls.",
+      "note": "Wikipedia では、スプライトシートを複数の小さな画像を1枚にまとめたものと定義しています。SpritePixel はそのフレームを生成し、2Dゲーム向けのスプライトシートとして出力します。",
+      "sourceLabel": "出典：",
+      "sourceName": "Wikipedia, Texture atlas",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Texture_atlas"
+    },
     "features": {
-      "title": "キャラクター案から出力可能なスプライトシートまで",
+      "title": "キャラクター案から出力可能なスプライトシートまで、どう進めますか？",
       "description": "AIスプライト生成ツールで、キャラクター、差分、方向、アニメーションフレーム、出力を順に進められます。",
       "items": [
         {
@@ -237,7 +245,7 @@
         }
       ]
     },
-    "workflowTitle": "AIスプライト生成ツールの使い方",
+    "workflowTitle": "AIスプライト生成ツールはどう使いますか？",
     "workflowDescription": "ベースキャラクターから差分、アニメーション、出力までを3つの手順で進めます。",
     "workflowSteps": [
       {

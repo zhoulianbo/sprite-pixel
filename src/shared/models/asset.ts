@@ -3,7 +3,6 @@ import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
 import { db } from '@/core/db';
 import {
   animationClip,
-  animationFrame,
   animationSet,
   animationVersion,
   assetFile,
@@ -11,6 +10,10 @@ import {
   assetVariant,
   project,
 } from '@/config/db/schema';
+import {
+  animationFrameFileId,
+  parseAnimationFrames,
+} from '@/shared/lib/animation-frames';
 import {
   assetRolesForFileKind,
   type ProjectFileKind,
@@ -343,7 +346,9 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
       )
     )
     .orderBy(desc(animationSet.updatedAt), animationClip.sortOrder);
-  const clipIds = animations.map((animation: { clip: { id: string } }) => animation.clip.id);
+  const clipIds = animations.map(
+    (animation: { clip: { id: string } }) => animation.clip.id
+  );
   const versionRows = clipIds.length
     ? await db()
         .select({
@@ -361,29 +366,38 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
     );
   }
   const urlFor = await getAssetPublicUrlResolver();
-  const animationsWithFrames = await Promise.all(
-    animations.map(async (animation: any) => {
-      const versionCount = versionCountByClip.get(animation.clip.id) || 0;
-      if (!animation.version) {
-        return { ...animation, versionCount, frames: [] };
-      }
-      const frames = await db()
-        .select({ frame: animationFrame, file: assetFile })
-        .from(animationFrame)
-        .innerJoin(assetFile, eq(assetFile.id, animationFrame.fileId))
-        .where(eq(animationFrame.versionId, animation.version.id))
-        .orderBy(animationFrame.frameIndex);
-      return {
-        ...animation,
-        versionCount,
-        frames: frames.map(({ frame, file }: any) => ({
-          ...frame,
-          metadata: JSON.parse(frame.metadataJson || '{}'),
-          file: { ...file, url: urlFor(file.storageKey) },
-        })),
-      };
-    })
+  const filesById = new Map<string, typeof assetFile.$inferSelect>(
+    files.map((file: typeof assetFile.$inferSelect) => [file.id, file])
   );
+  const animationsWithFrames = animations.map((animation: any) => {
+    const versionCount = versionCountByClip.get(animation.clip.id) || 0;
+    if (!animation.version) {
+      return { ...animation, versionCount, frames: [] };
+    }
+    const frames = parseAnimationFrames(animation.version.framesJson).flatMap(
+      (frame, frameIndex) => {
+        const fileId = animationFrameFileId(
+          frame,
+          animation.version.spritesheetFileId
+        );
+        const file = filesById.get(fileId);
+        if (!file) return [];
+        return [
+          {
+            id: frame.id,
+            fileId,
+            frameIndex,
+            durationMs: frame.durationMs,
+            offsetX: frame.offsetX,
+            offsetY: frame.offsetY,
+            metadata: frame.crop ? { crop: frame.crop } : {},
+            file: { ...file, url: urlFor(file.storageKey) },
+          },
+        ];
+      }
+    );
+    return { ...animation, versionCount, frames };
+  });
   return {
     item,
     variants,

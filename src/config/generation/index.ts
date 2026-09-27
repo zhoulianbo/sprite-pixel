@@ -54,6 +54,7 @@ export {
 } from './icon';
 export {
   distributeCredits,
+  generationPollIntervalMs,
   getGenerationCredits,
   getGenerationModelRoute,
   iconPromptExpandModel,

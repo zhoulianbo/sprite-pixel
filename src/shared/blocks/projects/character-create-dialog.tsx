@@ -12,7 +12,7 @@ import { Folder } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { generationDefaults, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits } from '@/config/generation/model-routes';
+import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { useProjectConsole } from '@/shared/blocks/projects/project-console-header';
 import { Button } from '@/shared/components/ui/button';
@@ -109,7 +109,10 @@ export function CharacterCreateDialog({
     );
     if (['pending', 'processing'].includes(payload.data.status)) {
       setStatus(payload.data.status);
-      window.setTimeout(() => poll(generationId).catch(handleError), 1800);
+      window.setTimeout(
+        () => poll(generationId).catch(handleError),
+        generationPollIntervalMs('character')
+      );
       return;
     }
     if (
@@ -171,7 +174,10 @@ export function CharacterCreateDialog({
       );
       if (['pending', 'processing'].includes(payload.data.status)) {
         setStatus(payload.data.status);
-        window.setTimeout(() => poll(generationId).catch(handleError), 1800);
+        window.setTimeout(
+          () => poll(generationId).catch(handleError),
+          generationPollIntervalMs('character')
+        );
       } else {
         finish(payload);
       }

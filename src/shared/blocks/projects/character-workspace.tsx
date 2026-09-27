@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 
 import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
 import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits } from '@/config/generation/model-routes';
+import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
 import {
   directionGenerateSource,
   SPRITE_DIRECTIONS,
@@ -177,6 +177,21 @@ export function CharacterWorkspace({
     // Only reset the generation input when switching stage via the header.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
+
+  useEffect(() => {
+    setStatus((current) => (current === 'success' ? '' : current));
+    setProgress((items) =>
+      items.some((item) => item.phase === 'completed') ? [] : items
+    );
+  }, [
+    action,
+    direction,
+    frames,
+    frameSize,
+    selectedFileId,
+    prompt,
+    motionActionConfig,
+  ]);
   const referenceFiles = workspace.files.filter((file) =>
     ['base_reference', 'direction_reference'].includes(file.role)
   );
@@ -259,7 +274,12 @@ export function CharacterWorkspace({
     setProgress(payload.data.items || []);
     captureResult(payload.data.items);
     if (['pending', 'processing'].includes(payload.data.status)) {
-      window.setTimeout(() => poll(id).catch(fail), 1800);
+      window.setTimeout(
+        () => poll(id).catch(fail),
+        generationPollIntervalMs(
+          stage === 'animations' ? 'animation' : 'character'
+        )
+      );
     } else {
       if (
         ['failed', 'postprocessing_failed', 'canceled'].includes(
@@ -379,7 +399,12 @@ export function CharacterWorkspace({
       setStatus(payload.data.status);
       captureResult(payload.data.items);
       if (['pending', 'processing'].includes(payload.data.status)) {
-        window.setTimeout(() => poll(id).catch(fail), 1800);
+        window.setTimeout(
+          () => poll(id).catch(fail),
+          generationPollIntervalMs(
+            stage === 'animations' ? 'animation' : 'character'
+          )
+        );
       } else {
         setBusy(false);
         router.refresh();
@@ -403,7 +428,12 @@ export function CharacterWorkspace({
       setStatus(payload.data.status);
       captureResult(payload.data.items);
       if (['pending', 'processing'].includes(payload.data.status)) {
-        window.setTimeout(() => poll(generationId).catch(fail), 1800);
+        window.setTimeout(
+          () => poll(generationId).catch(fail),
+          generationPollIntervalMs(
+            stage === 'animations' ? 'animation' : 'character'
+          )
+        );
       } else {
         setBusy(false);
         router.refresh();
@@ -1069,15 +1099,29 @@ export function CharacterWorkspace({
               <Button
                 className="w-full"
                 disabled={busy}
-                onClick={generate}
+                onClick={() => {
+                  if (!busy && motionPhase === 'completed') {
+                    router.push(stagePath('sheets'));
+                    return;
+                  }
+                  generate();
+                }}
               >
                 {busy ? (
                   <LoaderCircle className="size-4 animate-spin" />
+                ) : motionPhase === 'completed' ? (
+                  <ImageIcon className="size-4" />
                 ) : (
                   <Film className="size-4" />
                 )}
-                {busy ? t('processing') : t('generateSpriteSheet')}
-                {busy ? null : <CreditCostMark credits={creditCost} />}
+                {busy
+                  ? t('processing')
+                  : motionPhase === 'completed'
+                    ? t('viewSpriteSheet')
+                    : t('generateSpriteSheet')}
+                {busy || motionPhase === 'completed' ? null : (
+                  <CreditCostMark credits={creditCost} />
+                )}
               </Button>
             </>
           ) : null}

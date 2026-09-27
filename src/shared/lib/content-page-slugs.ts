@@ -1,11 +1,18 @@
 import { notFound } from 'next/navigation';
-
 import contentPageSlugs from '@/generated/content-page-slugs.json';
 
-const slugSet = new Set(contentPageSlugs.slugs);
+const slugs = [...new Set(contentPageSlugs.params.map(({ slug }) => slug))];
+const slugSet = new Set(slugs);
 
 export function getContentPageSlugs(): readonly string[] {
-  return contentPageSlugs.slugs;
+  return slugs;
+}
+
+export function getContentPageStaticParams() {
+  return contentPageSlugs.params.map(({ locale, slug }) => ({
+    locale,
+    slug: [slug],
+  }));
 }
 
 export function isContentPageSlug(slug: string): boolean {
@@ -13,7 +20,7 @@ export function isContentPageSlug(slug: string): boolean {
 }
 
 export function normalizeCatchAllSlug(
-  slug: string | string[] | undefined,
+  slug: string | string[] | undefined
 ): string {
   if (!slug) {
     return '';
@@ -22,7 +29,9 @@ export function normalizeCatchAllSlug(
   return typeof slug === 'string' ? slug : slug.join('/');
 }
 
-export function assertContentPageSlug(slug: string | string[] | undefined): string {
+export function assertContentPageSlug(
+  slug: string | string[] | undefined
+): string {
   const normalized = normalizeCatchAllSlug(slug);
 
   if (

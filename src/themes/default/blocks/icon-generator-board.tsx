@@ -29,7 +29,7 @@ import {
   serializeIconList,
   type IconListItem,
 } from '@/config/generation';
-import { getGenerationCredits } from '@/config/generation/model-routes';
+import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
 import type { ProjectSummary } from '@/shared/blocks/projects/project-create-dialog';
@@ -215,7 +215,10 @@ export function IconGeneratorBoard() {
     const payload = await readApiPayload(response);
     applyResult(payload.data);
     if (['pending', 'processing'].includes(payload.data.status)) {
-      window.setTimeout(() => poll(id).catch(fail), 1800);
+      window.setTimeout(
+        () => poll(id).catch(fail),
+        generationPollIntervalMs('icon')
+      );
     } else {
       setBusy(false);
     }
@@ -277,7 +280,10 @@ export function IconGeneratorBoard() {
       setGenerationId(id);
       applyResult(payload.data);
       if (['pending', 'processing'].includes(payload.data.status)) {
-        window.setTimeout(() => poll(id).catch(fail), 1800);
+        window.setTimeout(
+          () => poll(id).catch(fail),
+          generationPollIntervalMs('icon')
+        );
       } else {
         setBusy(false);
       }
@@ -295,7 +301,10 @@ export function IconGeneratorBoard() {
       });
       const payload = await readApiPayload(response);
       applyResult(payload.data);
-      window.setTimeout(() => poll(generationId).catch(fail), 1200);
+      window.setTimeout(
+        () => poll(generationId).catch(fail),
+        generationPollIntervalMs('icon')
+      );
     } catch (reason) {
       fail(reason);
     }

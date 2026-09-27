@@ -34,20 +34,6 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: '/sprite-sheet-splitter',
-        destination: '/sprite-sheet-cutter',
-        permanent: true,
-      },
-      {
-        source: '/zh/sprite-sheet-splitter',
-        destination: '/zh/sprite-sheet-cutter',
-        permanent: true,
-      },
-    ];
-  },
   async headers() {
     return [
       {
@@ -75,6 +61,22 @@ const nextConfig = {
           {
             key: 'Cross-Origin-Opener-Policy',
             value: 'same-origin-allow-popups',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
           },
         ],
       },

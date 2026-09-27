@@ -10,7 +10,6 @@ import { pickClientMessages } from '@/core/i18n/client-messages';
 import { routing } from '@/core/i18n/config';
 import { ThemeProvider } from '@/core/theme/provider';
 import { envConfigs } from '@/config';
-import { locales } from '@/config/locale';
 import { UtmCapture } from '@/shared/blocks/common/utm-capture';
 import { Toaster } from '@/shared/components/ui/sonner';
 import { AppContextProvider } from '@/shared/contexts/app';
@@ -65,7 +64,6 @@ export default async function LocaleLayout({
   const isProduction = process.env.NODE_ENV === 'production';
   const isDebug = process.env.NEXT_PUBLIC_DEBUG === 'true';
 
-  const appUrl = envConfigs.app_url || '';
   const appearance = envConfigs.appearance || 'dark';
   const htmlThemeClass = appearance === 'light' ? 'light' : 'dark';
 
@@ -131,17 +129,6 @@ export default async function LocaleLayout({
         <link rel="icon" href={envConfigs.app_favicon} />
         <link rel="alternate icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        {locales
-          ? locales.map((loc) => (
-              <link
-                key={loc}
-                rel="alternate"
-                hrefLang={loc}
-                href={`${appUrl}${loc === 'en' ? '' : `/${loc}`}`}
-              />
-            ))
-          : null}
 
         {adsMetaTags}
         {adsHeadScripts}

@@ -32,7 +32,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { useRouter } from '@/core/i18n/navigation';
 import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits } from '@/config/generation/model-routes';
+import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
@@ -1305,7 +1305,9 @@ export function Home({ section: _section }: { section: Section }) {
           pollGeneration(generationId, resolvedMode).catch((error) =>
             handleGenerationError(resolvedMode, error)
           ),
-        1800
+        generationPollIntervalMs(
+          resolvedMode === 'motion' ? 'animation' : 'character'
+        )
       );
       return;
     }
@@ -1468,7 +1470,9 @@ export function Home({ section: _section }: { section: Section }) {
                 error
               )
             ),
-          1800
+          generationPollIntervalMs(
+            heroMode === 'motion' ? 'animation' : 'character'
+          )
         );
       }
     } catch (error) {
@@ -2529,6 +2533,29 @@ export function Home({ section: _section }: { section: Section }) {
               );
             })}
           </div>
+          <figure className="border-border bg-card mt-10 max-w-[760px] rounded-lg border p-6">
+            <h3 className={cn(headingFont, 'text-2xl tracking-normal')}>
+              {t('citation.title')}
+            </h3>
+            <blockquote cite={t('citation.sourceUrl')} className="mt-4">
+              <p className="text-foreground text-sm leading-7">
+                “{t('citation.quote')}”
+              </p>
+            </blockquote>
+            <figcaption className="text-muted-foreground mt-4 text-sm leading-7">
+              {t('citation.note')} {t('citation.sourceLabel')}{' '}
+              <cite>
+                <a
+                  className="text-primary underline-offset-4 hover:underline"
+                  href={t('citation.sourceUrl')}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {t('citation.sourceName')}
+                </a>
+              </cite>
+            </figcaption>
+          </figure>
         </div>
       </section>
 

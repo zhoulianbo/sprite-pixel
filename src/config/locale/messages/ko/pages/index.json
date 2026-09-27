@@ -120,7 +120,7 @@
       "스프라이트 시트 내보내기"
     ],
     "capabilities": {
-      "title": "2D 게임 에셋 흐름을 위한 하나의 AI 스프라이트 생성기",
+      "title": "하나의 AI 스프라이트 생성기로 2D 게임 에셋 흐름을 어디까지 만들 수 있나요?",
       "description": "캐릭터, 의상 변형, 다방향 스프라이트, 애니메이션과 내보낼 수 있는 스프라이트 시트를 한곳에서 제작합니다.",
       "items": [
         {
@@ -149,8 +149,16 @@
         }
       ]
     },
+    "citation": {
+      "title": "스프라이트 시트란 무엇인가요?",
+      "quote": "In computer graphics, a texture atlas (also called a sprite sheet or an image sprite) is an image containing multiple smaller images, usually packed together to reduce overall file size and draw calls.",
+      "note": "위키백과는 스프라이트 시트를 여러 작은 이미지를 한 장으로 묶은 그림으로 정의합니다. SpritePixel은 그 프레임을 생성하고 2D 게임 프로젝트용 시트로 내보냅니다.",
+      "sourceLabel": "출처:",
+      "sourceName": "Wikipedia, Texture atlas",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Texture_atlas"
+    },
     "features": {
-      "title": "캐릭터 아이디어부터 내보낼 스프라이트 시트까지",
+      "title": "캐릭터 아이디어에서 내보낼 스프라이트 시트까지 어떻게 가나요?",
       "description": "AI 스프라이트 생성기로 캐릭터, 변형, 방향, 애니메이션 프레임과 내보내기를 순서대로 진행하세요.",
       "items": [
         {
@@ -237,7 +245,7 @@
         }
       ]
     },
-    "workflowTitle": "AI 스프라이트 생성기 사용 방법",
+    "workflowTitle": "AI 스프라이트 생성기는 어떻게 사용하나요?",
     "workflowDescription": "기본 캐릭터부터 변형, 애니메이션과 내보내기까지 세 단계로 진행합니다.",
     "workflowSteps": [
       {

@@ -67,3 +67,13 @@ export function distributeCredits(total: number, count: number) {
     (_, index) => base + (index < extra ? 1 : 0)
   );
 }
+
+export const GENERATION_POLL_INTERVAL_MS = {
+  character: 3000,
+  icon: 3000,
+  animation: 5000,
+} as const satisfies Record<GenerationModelKind, number>;
+
+export function generationPollIntervalMs(kind: GenerationModelKind) {
+  return GENERATION_POLL_INTERVAL_MS[kind];
+}

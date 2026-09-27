@@ -1,6 +1,44 @@
 {
-  "slugs": [
-    "privacy-policy",
-    "terms-of-service"
+  "params": [
+    {
+      "locale": "en",
+      "slug": "privacy-policy"
+    },
+    {
+      "locale": "en",
+      "slug": "terms-of-service"
+    },
+    {
+      "locale": "zh",
+      "slug": "privacy-policy"
+    },
+    {
+      "locale": "zh",
+      "slug": "terms-of-service"
+    },
+    {
+      "locale": "zh-Hant",
+      "slug": "privacy-policy"
+    },
+    {
+      "locale": "zh-Hant",
+      "slug": "terms-of-service"
+    },
+    {
+      "locale": "ja",
+      "slug": "privacy-policy"
+    },
+    {
+      "locale": "ja",
+      "slug": "terms-of-service"
+    },
+    {
+      "locale": "ko",
+      "slug": "privacy-policy"
+    },
+    {
+      "locale": "ko",
+      "slug": "terms-of-service"
+    }
   ]
 }

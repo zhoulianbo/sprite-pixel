@@ -208,6 +208,7 @@
     "changeReference": "Change image",
     "changeCharacter": "Change character",
     "generateSpriteSheet": "Generate sprite sheet",
+    "viewSpriteSheet": "View sprite sheet",
     "variantPickerTitle": "Choose a character variant",
     "variantPickerDescription": "Pick one of this character's variants.",
     "pickerTitle": "Choose generation input",

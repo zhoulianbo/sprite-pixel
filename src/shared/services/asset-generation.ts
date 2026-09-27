@@ -4,7 +4,6 @@ import { db } from '@/core/db';
 import {
   aiTask,
   animationClip,
-  animationFrame,
   animationSet,
   animationVersion,
   assetFile,
@@ -46,6 +45,7 @@ import {
 } from '@/config/generation/sprite';
 import { AIMediaType, AITaskStatus } from '@/extensions/ai';
 import { ContentSafetyError } from '@/extensions/content-safety';
+import { parseAnimationFrames } from '@/shared/lib/animation-frames';
 import { getUuid } from '@/shared/lib/hash';
 import { imageInfo } from '@/shared/lib/sprite-tools/image-info';
 import {
@@ -1248,7 +1248,7 @@ async function ensureAnimationVersion(
   const metadata = parseJson<Record<string, any>>(link.metadataJson, {});
   if (logical.taskType !== 'animation' || !metadata.clipId) return;
   const [alreadyCreated] = await db()
-    .select({ id: animationVersion.id })
+    .select()
     .from(animationVersion)
     .where(
       and(
@@ -1257,7 +1257,6 @@ async function ensureAnimationVersion(
       )
     )
     .limit(1);
-  if (alreadyCreated) return;
 
   const params = parseJson<any>(logical.paramsJson, {});
   const sheet = resolveAnimationSheetSize(
@@ -1274,56 +1273,67 @@ async function ensureAnimationVersion(
     saved.height && rows
       ? Math.floor(Number(saved.height) / rows)
       : Number(params.height) || frameSize;
+  const framesJson = JSON.stringify(
+    Array.from({ length: frameCount }, (_, frameIndex) => ({
+      id: getUuid(),
+      durationMs: null,
+      offsetX: 0,
+      offsetY: 0,
+      crop: {
+        x: (frameIndex % columns) * frameWidth,
+        y: Math.floor(frameIndex / columns) * frameHeight,
+        width: frameWidth,
+        height: frameHeight,
+      },
+    }))
+  );
   const [current] = await db()
     .select({ maxVersion: max(animationVersion.versionNo) })
     .from(animationVersion)
     .where(eq(animationVersion.clipId, metadata.clipId));
   const versionId = getUuid();
   const now = new Date().toISOString();
-  await db()
-    .update(animationVersion)
-    .set({ isCurrent: false })
-    .where(eq(animationVersion.clipId, metadata.clipId));
-  await db()
-    .insert(animationVersion)
-    .values({
-      id: versionId,
-      clipId: metadata.clipId,
-      versionNo: Number(current?.maxVersion || 0) + 1,
-      generationId: logical.id,
-      isCurrent: true,
-      fps: Number(params.fps) || 12,
-      frameWidth,
-      frameHeight,
-      frameCount,
-      editorJson: JSON.stringify({ columns, rows }),
-      createdAt: now,
-    });
-  await db()
-    .insert(animationFrame)
-    .values(
-      Array.from({ length: frameCount }, (_, frameIndex) => ({
-        id: getUuid(),
-        versionId,
-        fileId: saved.id,
-        frameIndex,
-        offsetX: 0,
-        offsetY: 0,
-        metadataJson: JSON.stringify({
-          crop: {
-            x: (frameIndex % columns) * frameWidth,
-            y: Math.floor(frameIndex / columns) * frameHeight,
-            width: frameWidth,
-            height: frameHeight,
-          },
-        }),
+  await db().transaction(async (tx: any) => {
+    if (alreadyCreated) {
+      await tx
+        .update(animationVersion)
+        .set({
+          isCurrent: true,
+          fps: Number(params.fps) || 12,
+          frameWidth,
+          frameHeight,
+          frameCount,
+          spritesheetFileId: saved.id,
+          framesJson,
+          editorJson: JSON.stringify({ columns, rows }),
+        })
+        .where(eq(animationVersion.id, alreadyCreated.id));
+    } else {
+      await tx
+        .update(animationVersion)
+        .set({ isCurrent: false })
+        .where(eq(animationVersion.clipId, metadata.clipId));
+      await tx.insert(animationVersion).values({
+        id: versionId,
+        clipId: metadata.clipId,
+        versionNo: Number(current?.maxVersion || 0) + 1,
+        generationId: logical.id,
+        isCurrent: true,
+        fps: Number(params.fps) || 12,
+        frameWidth,
+        frameHeight,
+        frameCount,
+        spritesheetFileId: saved.id,
+        framesJson,
+        editorJson: JSON.stringify({ columns, rows }),
         createdAt: now,
-      }))
-    );
-  await db()
-    .update(animationClip)
-    .set({ status: 'ready', updatedAt: now })
-    .where(eq(animationClip.id, metadata.clipId));
+      });
+    }
+    await tx
+      .update(animationClip)
+      .set({ status: 'ready', updatedAt: now })
+      .where(eq(animationClip.id, metadata.clipId));
+  });
 }
 
 async function insertItemIfNeeded(values: typeof assetItem.$inferInsert) {
@@ -1744,7 +1754,11 @@ async function saveProcessedAnimationOutput(
   task: typeof aiTask.$inferSelect
 ) {
   const existing = await findGenerationTaskFile(link.id);
-  if (existing) return existing;
+  if (existing) {
+    const attached = await ensureVaultTarget(logical, link, existing);
+    await ensureAnimationVersion(logical, link, attached);
+    return attached;
+  }
   const sourceVideoUrl = videoUrlFromTask(task);
   if (!sourceVideoUrl) throw new Error('VIDEO_OUTPUT_MISSING');
   const params = parseJson<any>(logical.paramsJson, {});
@@ -1813,6 +1827,30 @@ async function saveProcessedAnimationOutput(
   return attached;
 }
 
+async function findReadyAnimationVersion(
+  logical: typeof generation.$inferSelect,
+  link: typeof generationTask.$inferSelect
+) {
+  if (logical.taskType !== 'animation') return null;
+  const metadata = parseJson<Record<string, unknown>>(link.metadataJson, {});
+  const clipId = String(metadata.clipId || '');
+  if (!clipId) return null;
+  const [version] = await db()
+    .select()
+    .from(animationVersion)
+    .where(
+      and(
+        eq(animationVersion.clipId, clipId),
+        eq(animationVersion.generationId, logical.id)
+      )
+    )
+    .limit(1);
+  if (!version?.spritesheetFileId || version.frameCount < 1) return null;
+  return parseAnimationFrames(version.framesJson).length === version.frameCount
+    ? version
+    : null;
+}
+
 export async function getSpriteGeneration(
   userId: string,
   generationId: string,
@@ -1865,12 +1903,17 @@ export async function getSpriteGeneration(
     if (refresh && task.taskId) task = await pollProviderTask(task);
     let status = task.status;
     let file = await findGenerationTaskFile(link.id);
+    let readyAnimationVersion = await findReadyAnimationVersion(logical, link);
     const previewUrl =
       logical.taskType === 'character' && task.status === AITaskStatus.SUCCESS
         ? imageUrlFromTask(task) || null
         : null;
     if (task.status === AITaskStatus.SUCCESS) {
-      if (file || (logical.taskType === 'character' && previewUrl)) {
+      const outputReady =
+        logical.taskType === 'animation'
+          ? Boolean(file && readyAnimationVersion)
+          : Boolean(file || (logical.taskType === 'character' && previewUrl));
+      if (outputReady) {
         status = 'success';
       } else if (refresh) {
         try {
@@ -1878,7 +1921,14 @@ export async function getSpriteGeneration(
             logical.taskType === 'animation'
               ? await saveProcessedAnimationOutput(logical, link, task)
               : await saveProviderOutput(logical, link, task);
-          status = 'success';
+          readyAnimationVersion = await findReadyAnimationVersion(
+            logical,
+            link
+          );
+          status =
+            logical.taskType === 'animation' && !readyAnimationVersion
+              ? 'processing'
+              : 'success';
         } catch {
           status = 'postprocessing_failed';
         }
@@ -1887,20 +1937,7 @@ export async function getSpriteGeneration(
       }
     }
     const metadata = parseJson<Record<string, unknown>>(link.metadataJson, {});
-    let editorVersionId: string | null = null;
-    if (logical.taskType === 'animation' && metadata.clipId) {
-      const [currentVersion] = await db()
-        .select({ id: animationVersion.id })
-        .from(animationVersion)
-        .where(
-          and(
-            eq(animationVersion.clipId, String(metadata.clipId)),
-            eq(animationVersion.isCurrent, true)
-          )
-        )
-        .limit(1);
-      editorVersionId = currentVersion?.id || null;
-    }
+    const editorVersionId = readyAnimationVersion?.id || null;
     items.push({
       id: link.id,
       role: link.role,
@@ -1911,7 +1948,7 @@ export async function getSpriteGeneration(
       editorVersionId,
       phase: ['failed', 'canceled', 'postprocessing_failed'].includes(status)
         ? 'failed'
-        : file
+        : status === 'success'
           ? 'completed'
           : task.status === AITaskStatus.SUCCESS
             ? 'media_processing'
@@ -2018,14 +2055,25 @@ export async function advanceSpriteGenerationWorkflow(generationId: string) {
       }
 
       let file = await findGenerationTaskFile(link.id);
-      if (!file) {
+      let readyAnimationVersion = await findReadyAnimationVersion(
+        logical,
+        link
+      );
+      if (
+        !file ||
+        (logical.taskType === 'animation' && !readyAnimationVersion)
+      ) {
         file =
           logical.taskType === 'animation'
             ? await saveProcessedAnimationOutput(logical, link, task)
             : await saveProviderOutput(logical, link, task);
+        readyAnimationVersion = await findReadyAnimationVersion(logical, link);
       }
-      outputReady = Boolean(file);
-      if (file) await settleAITaskCredit(task.id);
+      outputReady =
+        logical.taskType === 'animation'
+          ? Boolean(file && readyAnimationVersion)
+          : Boolean(file);
+      if (outputReady) await settleAITaskCredit(task.id);
     } catch (error) {
       const reason = compactFailure(error);
       if (outputReady) {

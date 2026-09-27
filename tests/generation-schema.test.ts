@@ -18,7 +18,6 @@ const domainTables = [
   'animation_set',
   'animation_clip',
   'animation_version',
-  'animation_frame',
 ] as const;
 
 function sqliteJson(database: string, sql: string) {
@@ -46,7 +45,7 @@ function normalizeSql(value: string) {
     .toLowerCase();
 }
 
-test('0000 + 0001 matches the Drizzle snapshot domain contract', () => {
+test('D1 migrations match the latest Drizzle snapshot domain contract', () => {
   const root = resolve(import.meta.dirname, '..');
   const migrationDir = join(root, 'src/config/db/migrations_d1');
   const temporary = mkdtempSync(join(tmpdir(), 'generation-schema-'));
@@ -61,12 +60,16 @@ test('0000 + 0001 matches the Drizzle snapshot domain contract', () => {
           join(migrationDir, '0001_sprite_assets.sql'),
           'utf8'
         ).replaceAll('--> statement-breakpoint', ''),
+        readFileSync(
+          join(migrationDir, '0002_animation_frames_json.sql'),
+          'utf8'
+        ).replaceAll('--> statement-breakpoint', ''),
       ].join('\n')
     );
     execFileSync('sqlite3', [database, `.read ${combined}`]);
 
     const snapshot = JSON.parse(
-      readFileSync(join(migrationDir, 'meta/0001_snapshot.json'), 'utf8')
+      readFileSync(join(migrationDir, 'meta/0002_snapshot.json'), 'utf8')
     );
     const actualTables = sqliteJson(
       database,
@@ -163,6 +166,7 @@ test('0000 + 0001 matches the Drizzle snapshot domain contract', () => {
 
     assert.ok(!snapshot.tables.asset);
     assert.ok(!snapshot.tables.asset_set);
+    assert.ok(!actualTables.includes('animation_frame'));
     assert.equal(
       sqliteJson(database, 'pragma foreign_key_check').length,
       0,

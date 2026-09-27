@@ -131,7 +131,7 @@
       "Export Sprite Sheets"
     ],
     "capabilities": {
-      "title": "One AI Sprite Generator for Your 2D Game Workflow",
+      "title": "What does one AI Sprite Generator cover in a 2D game workflow?",
       "description": "SpritePixel helps you create characters, outfit variations, directional sprites, animations, and export-ready sprite sheets from one place.",
       "items": [
         {
@@ -160,8 +160,16 @@
         }
       ]
     },
+    "citation": {
+      "title": "What is a sprite sheet?",
+      "quote": "In computer graphics, a texture atlas (also called a sprite sheet or an image sprite) is an image containing multiple smaller images, usually packed together to reduce overall file size and draw calls.",
+      "note": "SpritePixel generates animation frames and exports them as this kind of sprite sheet for a 2D game project.",
+      "sourceLabel": "Source:",
+      "sourceName": "Wikipedia, Texture atlas",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Texture_atlas"
+    },
     "features": {
-      "title": "From Character Idea to Export-Ready Sprite Sheet",
+      "title": "How do you go from a character idea to an export-ready sprite sheet?",
       "description": "Follow a clear game-asset workflow with one AI Sprite Generator, from the first character prompt through variations, directions, animation frames, and export.",
       "items": [
         {
@@ -261,7 +269,7 @@
     "styleDescription": "SpritePixel remembers how your game should look — style, palette, perspective, sprite size and references are inherited across future generations.",
     "vaultTitle": "Keep every game asset in one Vault.",
     "vaultDescription": "Stop losing generated files across downloads and folders. Every approved asset is organized inside its project and ready for reuse, variation or export.",
-    "workflowTitle": "How the AI Sprite Generator Works",
+    "workflowTitle": "How does the AI Sprite Generator work?",
     "workflowDescription": "Move from a base character to variations, animation frames, and export in three straightforward steps.",
     "workflowSteps": [
       {

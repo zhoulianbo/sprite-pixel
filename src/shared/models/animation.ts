@@ -3,13 +3,17 @@ import { and, asc, desc, eq, inArray, isNull, max } from 'drizzle-orm';
 import { db } from '@/core/db';
 import {
   animationClip,
-  animationFrame,
   animationSet,
   animationVersion,
   assetFile,
   assetItem,
   project,
 } from '@/config/db/schema';
+import {
+  animationFrameFileId,
+  parseAnimationFrames,
+  type StoredAnimationFrame,
+} from '@/shared/lib/animation-frames';
 import { getUuid } from '@/shared/lib/hash';
 import { getAssetPublicUrlResolver } from '@/shared/services/storage';
 
@@ -61,29 +65,27 @@ export async function listOwnedAnimationClips(
     )
     .orderBy(desc(animationSet.updatedAt), animationClip.sortOrder);
 
-  const versionIds = rows
-    .map((row: { version?: { id?: string } | null }) => row.version?.id)
-    .filter((id: string | undefined): id is string => Boolean(id));
-  const previewByVersion = new Map<string, string>();
-  if (versionIds.length) {
-    const frames = await db()
-      .select({
-        versionId: animationFrame.versionId,
-        storageKey: assetFile.storageKey,
-      })
-      .from(animationFrame)
-      .innerJoin(assetFile, eq(assetFile.id, animationFrame.fileId))
+  const previewFileIdByVersion = new Map<string, string>();
+  for (const row of rows) {
+    if (!row.version) continue;
+    const firstFrame = parseAnimationFrames(row.version.framesJson)[0];
+    const fileId = firstFrame
+      ? animationFrameFileId(firstFrame, row.version.spritesheetFileId)
+      : row.version.spritesheetFileId || '';
+    if (fileId) previewFileIdByVersion.set(row.version.id, fileId);
+  }
+  const previewFileIds = [...new Set(previewFileIdByVersion.values())];
+  const previewByFileId = new Map<string, string>();
+  if (previewFileIds.length) {
+    const files = await db()
+      .select({ id: assetFile.id, storageKey: assetFile.storageKey })
+      .from(assetFile)
       .where(
-        and(
-          inArray(animationFrame.versionId, versionIds),
-          eq(animationFrame.frameIndex, 0)
-        )
+        and(inArray(assetFile.id, previewFileIds), isNull(assetFile.deletedAt))
       );
     const urlFor = await getAssetPublicUrlResolver();
-    for (const frame of frames) {
-      if (!previewByVersion.has(frame.versionId)) {
-        previewByVersion.set(frame.versionId, urlFor(frame.storageKey));
-      }
+    for (const file of files) {
+      previewByFileId.set(file.id, urlFor(file.storageKey));
     }
   }
 
@@ -111,7 +113,9 @@ export async function listOwnedAnimationClips(
       projectName: row.projectName,
       projectSettingsJson: row.projectSettingsJson,
       previewUrl: row.version?.id
-        ? previewByVersion.get(row.version.id) || null
+        ? previewByFileId.get(
+            previewFileIdByVersion.get(row.version.id) || ''
+          ) || null
         : null,
     })
   );
@@ -128,7 +132,11 @@ export async function getAnimationEditorData(
         fps: animationVersion.fps,
         frameWidth: animationVersion.frameWidth,
         frameHeight: animationVersion.frameHeight,
+        frameCount: animationVersion.frameCount,
         versionNo: animationVersion.versionNo,
+        spritesheetFileId: animationVersion.spritesheetFileId,
+        framesJson: animationVersion.framesJson,
+        editorJson: animationVersion.editorJson,
       },
       clip: {
         id: animationClip.id,
@@ -155,7 +163,17 @@ export async function getAnimationEditorData(
     .where(and(eq(animationVersion.id, versionId), eq(project.userId, userId)))
     .limit(1);
   if (!context) return null;
-  const [versions, frames, urlFor] = await Promise.all([
+  const storedFrames = parseAnimationFrames(context.version.framesJson);
+  const fileIds = [
+    ...new Set(
+      storedFrames
+        .map((frame) =>
+          animationFrameFileId(frame, context.version.spritesheetFileId)
+        )
+        .filter(Boolean)
+    ),
+  ];
+  const [versions, files, urlFor] = await Promise.all([
     db()
       .select({
         id: animationVersion.id,
@@ -165,31 +183,52 @@ export async function getAnimationEditorData(
       .from(animationVersion)
       .where(eq(animationVersion.clipId, context.clip.id))
       .orderBy(asc(animationVersion.versionNo)),
-    db()
-      .select({
-        id: animationFrame.id,
-        fileId: animationFrame.fileId,
-        frameIndex: animationFrame.frameIndex,
-        durationMs: animationFrame.durationMs,
-        offsetX: animationFrame.offsetX,
-        offsetY: animationFrame.offsetY,
-        metadataJson: animationFrame.metadataJson,
-        storageKey: assetFile.storageKey,
-      })
-      .from(animationFrame)
-      .innerJoin(assetFile, eq(assetFile.id, animationFrame.fileId))
-      .where(eq(animationFrame.versionId, versionId))
-      .orderBy(asc(animationFrame.frameIndex)),
+    fileIds.length
+      ? db()
+          .select()
+          .from(assetFile)
+          .where(
+            and(
+              inArray(assetFile.id, fileIds),
+              eq(assetFile.projectId, context.set.projectId),
+              isNull(assetFile.deletedAt)
+            )
+          )
+      : Promise.resolve([]),
     getAssetPublicUrlResolver(),
   ]);
+  const filesById = new Map(files.map((file: any) => [file.id, file]));
   return {
     ...context,
+    version: {
+      id: context.version.id,
+      fps: context.version.fps,
+      frameWidth: context.version.frameWidth,
+      frameHeight: context.version.frameHeight,
+      versionNo: context.version.versionNo,
+    },
     versions,
-    frames: frames.map((frame: any) => ({
-      ...frame,
-      metadata: JSON.parse(frame.metadataJson || '{}'),
-      file: { url: urlFor(frame.storageKey) },
-    })),
+    frames: storedFrames.flatMap((frame, frameIndex) => {
+      const fileId = animationFrameFileId(
+        frame,
+        context.version.spritesheetFileId
+      );
+      const file = filesById.get(fileId) as
+        typeof assetFile.$inferSelect | undefined;
+      if (!file) return [];
+      return [
+        {
+          id: frame.id,
+          fileId,
+          frameIndex,
+          durationMs: frame.durationMs,
+          offsetX: frame.offsetX,
+          offsetY: frame.offsetY,
+          metadata: frame.crop ? { crop: frame.crop } : {},
+          file: { id: file.id, url: urlFor(file.storageKey) },
+        },
+      ];
+    }),
   };
 }
 
@@ -228,24 +267,59 @@ export async function saveAnimationVersion(
     .where(and(eq(animationClip.id, clipId), eq(project.userId, userId)))
     .limit(1);
   if (!owned) return null;
-  const sourceFrames = input.frames.length
+  const sourceFrames = parseAnimationFrames(owned.parent.framesJson);
+  const sourceById = new Map<string, StoredAnimationFrame>(
+    sourceFrames.map((frame) => [frame.id, frame])
+  );
+  if (
+    new Set(input.frames.map((frame) => frame.frameId)).size !==
+      input.frames.length ||
+    input.frames.some((frame) => !sourceById.has(frame.frameId))
+  ) {
+    return null;
+  }
+  const nextFrames = input.frames.map((frame) => {
+    const source = sourceById.get(frame.frameId)!;
+    const sourceFileId = animationFrameFileId(
+      source,
+      owned.parent.spritesheetFileId
+    );
+    const fileId = frame.fileId || sourceFileId;
+    return {
+      id: getUuid(),
+      ...(fileId && fileId !== owned.parent.spritesheetFileId
+        ? { fileId }
+        : {}),
+      durationMs: frame.durationMs ?? source.durationMs,
+      offsetX: frame.fileId ? 0 : frame.offsetX,
+      offsetY: frame.fileId ? 0 : frame.offsetY,
+      ...(frame.fileId || !source.crop ? {} : { crop: source.crop }),
+    } satisfies StoredAnimationFrame;
+  });
+  const referencedFileIds = [
+    ...new Set(
+      nextFrames
+        .map((frame) =>
+          animationFrameFileId(frame, owned.parent.spritesheetFileId)
+        )
+        .filter(Boolean)
+    ),
+  ];
+  const referencedFiles = referencedFileIds.length
     ? await db()
-        .select()
-        .from(animationFrame)
+        .select({ id: assetFile.id })
+        .from(assetFile)
         .where(
           and(
-            eq(animationFrame.versionId, input.parentVersionId),
-            inArray(
-              animationFrame.id,
-              input.frames.map((frame) => frame.frameId)
-            )
+            inArray(assetFile.id, referencedFileIds),
+            eq(assetFile.projectId, owned.set.projectId),
+            eq(assetFile.itemId, owned.set.itemId),
+            eq(assetFile.status, 'ready'),
+            isNull(assetFile.deletedAt)
           )
         )
     : [];
-  const sourceById = new Map(
-    sourceFrames.map((frame: any) => [frame.id, frame])
-  );
-  if (sourceFrames.length !== input.frames.length) return null;
+  if (referencedFiles.length !== referencedFileIds.length) return null;
 
   const [maximum] = await db()
     .select({ value: max(animationVersion.versionNo) })
@@ -269,29 +343,11 @@ export async function saveAnimationVersion(
       frameWidth: owned.parent.frameWidth,
       frameHeight: owned.parent.frameHeight,
       frameCount: input.frames.length,
+      spritesheetFileId: owned.parent.spritesheetFileId,
+      framesJson: JSON.stringify(nextFrames),
       editorJson: owned.parent.editorJson,
       createdAt: now,
     });
-    if (input.frames.length) {
-      await tx.insert(animationFrame).values(
-        input.frames.map((frame, frameIndex) => {
-          const source = sourceById.get(
-            frame.frameId
-          ) as typeof animationFrame.$inferSelect;
-          return {
-            id: getUuid(),
-            versionId,
-            fileId: frame.fileId || source.fileId,
-            frameIndex,
-            durationMs: frame.durationMs ?? source.durationMs,
-            offsetX: frame.fileId ? 0 : frame.offsetX,
-            offsetY: frame.fileId ? 0 : frame.offsetY,
-            metadataJson: frame.fileId ? '{}' : source.metadataJson,
-            createdAt: now,
-          };
-        })
-      );
-    }
     await tx
       .update(animationSet)
       .set({ loop: input.loop, updatedAt: now })

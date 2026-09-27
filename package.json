@@ -16,6 +16,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "verify:content-pages": "node scripts/verify-content-page-build.mjs",
     "db:generate": "tsx scripts/with-env.ts npx drizzle-kit generate --config=src/core/db/config.ts",
     "db:migrate": "tsx scripts/with-env.ts npx drizzle-kit migrate --config=src/core/db/config.ts",
     "db:push": "tsx scripts/with-env.ts npx drizzle-kit push --config=src/core/db/config.ts",
@@ -26,8 +27,8 @@
     "rbac:assign": "tsx scripts/with-env.ts npx tsx scripts/assign-role.ts",
     "postinstall": "fumadocs-mdx",
     "cf:preview": "node scripts/generate-content-page-slugs.mjs && opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "cf:deploy": "node scripts/generate-content-page-slugs.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "cf:upload": "node scripts/generate-content-page-slugs.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf:deploy": "node scripts/generate-content-page-slugs.mjs && opennextjs-cloudflare build && opennextjs-cloudflare deploy --cacheChunkSize 25",
+    "cf:upload": "node scripts/generate-content-page-slugs.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload --cacheChunkSize 25",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv src/shared/types/cloudflare.d.ts"
   },
   "dependencies": {

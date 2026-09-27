@@ -975,7 +975,7 @@ MVP **不单独创建 `/batch-game-icon-generator`**。
 免费工具不要求先创建 Project。
 
 - Sprite Sheet Maker（精灵图表制作工具） → `/sprite-sheet-maker`。
-- Sprite Sheet Splitter（精灵图表拆分工具） → `/sprite-sheet-splitter`。
+- Sprite Sheet Cutter（精灵图表切割工具） → `/sprite-sheet-cutter`。
 
 #### Examples（案例）
 
@@ -2360,7 +2360,7 @@ URL：`/sprite-sheet-maker`
 
 ## 8.5 Sprite Sheet Splitter（精灵图表拆分工具）
 
-URL：`/sprite-sheet-splitter`
+URL：`/sprite-sheet-cutter`
 
 P1。
 
@@ -2483,7 +2483,7 @@ MVP：
 
 ```text
 /sprite-sheet-maker
-/sprite-sheet-splitter
+/sprite-sheet-cutter
 /gif-to-sprite-sheet
 /sprite-sheet-to-gif
 /pixel-art-resizer

@@ -24,23 +24,10 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const base = await getMetadata({
+  return getMetadata({
     metadataKey: 'workspace.icons.metadata',
     canonicalUrl: PATH,
   })({ params });
-  return {
-    ...base,
-    alternates: {
-      canonical: pageUrl(locale),
-      languages: {
-        ...Object.fromEntries(
-          locales.map((language) => [language, pageUrl(language)])
-        ),
-        'x-default': pageUrl(defaultLocale),
-      },
-    },
-  };
 }
 
 export default async function IconGeneratorPage({

@@ -10,6 +10,7 @@ import {
 } from '../src/config/generation';
 import {
   distributeCredits,
+  generationPollIntervalMs,
   getGenerationCredits,
 } from '../src/config/generation/model-routes';
 import {
@@ -23,6 +24,10 @@ import {
   toggleLinkedDirections,
   uniqueDirectionSources,
 } from '../src/config/generation/sprite';
+import {
+  animationFrameFileId,
+  parseAnimationFrames,
+} from '../src/shared/lib/animation-frames';
 import {
   findActiveBaseFile,
   groupDirectionFiles,
@@ -173,6 +178,35 @@ test('animation sheet size is frame size times the grid', () => {
     resolveAnimationSheetSize('auto', '256', 'idle').aspectRatio,
     '1024x1024'
   );
+});
+
+test('animation frame JSON preserves order and supports file overrides', () => {
+  const frames = parseAnimationFrames(
+    JSON.stringify([
+      {
+        id: 'frame-1',
+        durationMs: null,
+        offsetX: 0,
+        offsetY: 0,
+        crop: { x: 0, y: 0, width: 128, height: 128 },
+      },
+      {
+        id: 'frame-2',
+        fileId: 'edited-frame',
+        durationMs: 120,
+        offsetX: 2,
+        offsetY: -1,
+      },
+    ])
+  );
+
+  assert.deepEqual(
+    frames.map((frame) => frame.id),
+    ['frame-1', 'frame-2']
+  );
+  assert.equal(animationFrameFileId(frames[0], 'sheet-file'), 'sheet-file');
+  assert.equal(animationFrameFileId(frames[1], 'sheet-file'), 'edited-frame');
+  assert.deepEqual(parseAnimationFrames('{invalid'), []);
 });
 
 test('provider animation size is scaled from frame count and frame size', () => {
@@ -435,6 +469,9 @@ test('SpritePixel credit costs bill batches as a flat fee', () => {
   assert.equal(getGenerationCredits('animation', { taskCount: 4 }), 12);
   assert.equal(getGenerationCredits('icon', { taskCount: 9 }), 3);
   assert.equal(getGenerationCredits('icon', { taskCount: 2, retry: true }), 2);
+  assert.equal(generationPollIntervalMs('character'), 3000);
+  assert.equal(generationPollIntervalMs('icon'), 3000);
+  assert.equal(generationPollIntervalMs('animation'), 5000);
   assert.deepEqual(distributeCredits(3, 9), [1, 1, 1, 0, 0, 0, 0, 0, 0]);
   assert.deepEqual(distributeCredits(3, 1), [3]);
 });

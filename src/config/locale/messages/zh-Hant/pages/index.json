@@ -120,7 +120,7 @@
       "匯出 Sprite Sheet"
     ],
     "capabilities": {
-      "title": "一個 AI 精靈圖產生器，完成整套 2D 遊戲素材流程",
+      "title": "一個 AI 精靈圖產生器如何完成整套 2D 遊戲素材流程？",
       "description": "SpritePixel 將角色、服裝變化、多方向精靈、動畫與可匯出的 Sprite Sheet 放在同一套工作流程中。",
       "items": [
         {
@@ -149,8 +149,16 @@
         }
       ]
     },
+    "citation": {
+      "title": "什麼是 Sprite Sheet？",
+      "quote": "In computer graphics, a texture atlas (also called a sprite sheet or an image sprite) is an image containing multiple smaller images, usually packed together to reduce overall file size and draw calls.",
+      "note": "維基百科將 Sprite Sheet 定義為把多張小圖打包進同一張圖片。SpritePixel 產生這些動畫影格，並匯出為 2D 遊戲專案可用的 Sprite Sheet。",
+      "sourceLabel": "來源：",
+      "sourceName": "維基百科，Texture atlas",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Texture_atlas"
+    },
     "features": {
-      "title": "從角色構想到可匯出的 Sprite Sheet",
+      "title": "如何從角色構想做到可匯出的 Sprite Sheet？",
       "description": "用 AI 精靈圖產生器依序完成角色、變化、多方向、動畫影格與匯出。",
       "items": [
         {
@@ -233,7 +241,7 @@
         }
       ]
     },
-    "workflowTitle": "AI 精靈圖產生器如何運作",
+    "workflowTitle": "AI 精靈圖產生器如何運作？",
     "workflowDescription": "用三個清楚步驟，從基礎角色前進到變化、動畫影格與匯出。",
     "workflowSteps": [
       {

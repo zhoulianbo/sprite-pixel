@@ -208,6 +208,7 @@
     "changeReference": "이미지 변경",
     "changeCharacter": "캐릭터 변경",
     "generateSpriteSheet": "스프라이트 시트 생성",
+    "viewSpriteSheet": "스프라이트 시트 보기",
     "variantPickerTitle": "캐릭터 변형 선택",
     "variantPickerDescription": "이 캐릭터의 변형 중에서 선택하세요.",
     "pickerTitle": "생성 입력 선택",

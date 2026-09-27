@@ -6,7 +6,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { Link } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
-import { defaultLocale, locales } from '@/config/locale';
+import { defaultLocale } from '@/config/locale';
 import { MoreTools } from '@/shared/blocks/common/more-tools';
 import { ToolCta } from '@/shared/blocks/common/tool-cta';
 import { getMetadata } from '@/shared/lib/seo';
@@ -162,23 +162,11 @@ export function toolMetadata(tool: Tool) {
   return async (props: {
     params: Promise<{ locale: string }>;
   }): Promise<Metadata> => {
-    const { locale } = await props.params;
     const base = await getMetadata({
       metadataKey: `tools.sprites.${tool}.metadata`,
       canonicalUrl: toolPath(tool),
     })(props);
-    return {
-      ...base,
-      alternates: {
-        canonical: pageUrl(tool, locale),
-        languages: {
-          ...Object.fromEntries(
-            locales.map((language) => [language, pageUrl(tool, language)])
-          ),
-          'x-default': pageUrl(tool, defaultLocale),
-        },
-      },
-    };
+    return base;
   };
 }
 export async function SpriteToolLanding({

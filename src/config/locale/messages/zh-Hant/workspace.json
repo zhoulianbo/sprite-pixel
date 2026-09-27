@@ -208,6 +208,7 @@
     "changeReference": "更換圖片",
     "changeCharacter": "更換角色",
     "generateSpriteSheet": "產生精靈圖",
+    "viewSpriteSheet": "查看精靈圖",
     "variantPickerTitle": "選擇角色變化",
     "variantPickerDescription": "從目前角色的變化中選擇一張。",
     "pickerTitle": "選擇產生輸入",
@@ -256,7 +257,7 @@
   "icons": {
     "metadata": {
       "title": "AI 遊戲圖示產生器－批次建立圖示、物品與道具 | SpritePixel",
-      "description": "在一張透明 3×3 圖表上，一次產生最多 9 個風格一致的遊戲圖示、物品、武器、技能與道具。",
+      "description": "用 AI 一次產生最多 9 個風格一致的遊戲圖示、物品、武器、技能與道具，並放在同一張透明 3×3 圖表上。",
       "keywords": "AI 遊戲圖示產生器, 遊戲圖示產生器, AI 遊戲圖示, 遊戲道具產生器, RPG 圖示產生器, 像素圖示產生器"
     },
     "eyebrow": "提示詞或參考圖 → 可用於遊戲的圖示",

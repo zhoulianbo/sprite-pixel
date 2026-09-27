@@ -127,7 +127,7 @@
       "导出精灵图表"
     ],
     "capabilities": {
-      "title": "一个 AI 精灵图生成器，覆盖完整 2D 游戏资产流程",
+      "title": "一个 AI 精灵图生成器如何覆盖完整的 2D 游戏资产流程？",
       "description": "SpritePixel 帮助你在一个工作流中创建角色、换装变体、多方向精灵图与动画，并导出可直接使用的精灵图表。",
       "items": [
         {
@@ -156,8 +156,16 @@
         }
       ]
     },
+    "citation": {
+      "title": "什么是精灵图表？",
+      "quote": "In computer graphics, a texture atlas (also called a sprite sheet or an image sprite) is an image containing multiple smaller images, usually packed together to reduce overall file size and draw calls.",
+      "note": "维基百科将精灵图表定义为把多张小图打包进同一张图片。SpritePixel 生成这些动画帧，并导出为 2D 游戏项目可用的精灵图表。",
+      "sourceLabel": "来源：",
+      "sourceName": "维基百科，Texture atlas",
+      "sourceUrl": "https://en.wikipedia.org/wiki/Texture_atlas"
+    },
     "features": {
-      "title": "从角色创意到可导出的精灵图表",
+      "title": "如何从角色创意做到可导出的精灵图表？",
       "description": "通过清晰的游戏资产工作流，从第一条角色提示词开始，完成换装、多方向、动画帧与最终导出。",
       "items": [
         {
@@ -257,7 +265,7 @@
     "styleDescription": "SpritePixel 会记住游戏的视觉规则，后续生成会自动继承风格、色板、视角、精灵图尺寸和参考图。",
     "vaultTitle": "把一个游戏项目的所有资产集中保存在同一个资产仓库中。",
     "vaultDescription": "不再让生成文件散落在下载目录中，确认后的资产统一归档到项目内，可继续复用、生成变体或导出。",
-    "workflowTitle": "AI 精灵图生成器如何工作",
+    "workflowTitle": "AI 精灵图生成器如何工作？",
     "workflowDescription": "只需三个清晰步骤，即可从基础角色完成变体、动画帧与导出。",
     "workflowSteps": [
       {

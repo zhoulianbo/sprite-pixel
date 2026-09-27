@@ -157,7 +157,7 @@
   "maker": {
     "metadata": {
       "title": "免費 Sprite Sheet 製作工具－圖片與 GIF 轉 PNG | SpritePixel",
-      "description": "免費線上 Sprite Sheet 製作工具，可將 PNG、JPG、WebP 或 GIF 排列成圖表，支援影格對齊、動畫預覽、PNG 與 JSON 匯出。",
+      "description": "免費線上 Sprite Sheet 製作工具，可將 PNG、JPG、WebP 或 GIF 排列成圖表，支援影格對齊、動畫預覽、PNG 與 JSON 匯出。免註冊，在瀏覽器中處理。",
       "keywords": "Sprite Sheet 製作工具, 免費 Sprite Sheet Maker, GIF 轉 Sprite Sheet, 合併圖片, PNG JSON 匯出"
     },
     "eyebrow": "圖片與 GIF → 可用於遊戲的圖表",
@@ -276,7 +276,7 @@
   "splitter": {
     "metadata": {
       "title": "免費 Sprite Sheet 分割工具－擷取 PNG 影格 | SpritePixel",
-      "description": "使用免費 Sprite Sheet 分割工具調整網格、尺寸、偏移與間距，預覽所選動畫並下載 PNG 或 ZIP。",
+      "description": "使用免費 Sprite Sheet 分割工具調整網格、尺寸、偏移與間距，預覽所選動畫並下載 PNG 或 ZIP。免註冊，在瀏覽器中處理。",
       "keywords": "Sprite Sheet 分割工具, 免費 Sprite Sheet Cutter, 切割 Sprite Sheet, 擷取精靈影格, PNG 影格 ZIP"
     },
     "eyebrow": "Sprite Sheet → 獨立 PNG 影格",

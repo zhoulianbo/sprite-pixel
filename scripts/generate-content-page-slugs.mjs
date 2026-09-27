@@ -21,46 +21,65 @@ function readLocales() {
   return JSON.parse(match[1].replace(/'/g, '"'));
 }
 
-function slugFromMdxFilename(filename, locales) {
+function contentPageFromMdxFilename(filename, locales) {
   const baseName = filename.replace(/\.mdx$/, '');
   const localesByLength = [...locales].sort((a, b) => b.length - a.length);
 
   for (const locale of localesByLength) {
     const suffix = `.${locale}`;
     if (baseName.endsWith(suffix)) {
-      return baseName.slice(0, -suffix.length);
+      return {
+        locale,
+        slug: baseName.slice(0, -suffix.length),
+      };
     }
   }
 
-  return baseName;
+  return { locale: locales[0], slug: baseName };
 }
 
-function collectMdxSlugs(locales) {
+function collectContentPages(locales) {
   if (!fs.existsSync(pagesDir)) {
-    return [];
+    return { slugs: [], params: [] };
   }
 
   const slugs = new Set();
+  const params = new Map();
   for (const file of fs.readdirSync(pagesDir)) {
     if (!file.endsWith('.mdx')) {
       continue;
     }
-    const slug = slugFromMdxFilename(file, locales);
-    if (!slug) {
+    const page = contentPageFromMdxFilename(file, locales);
+    if (!page.slug) {
       continue;
     }
-    slugs.add(slug);
+    slugs.add(page.slug);
+    params.set(`${page.locale}:${page.slug}`, {
+      locale: page.locale,
+      slug: page.slug,
+    });
   }
 
-  return [...slugs].sort();
+  const localeOrder = new Map(locales.map((locale, index) => [locale, index]));
+  return {
+    slugs: [...slugs].sort(),
+    params: [...params.values()].sort(
+      (a, b) =>
+        (localeOrder.get(a.locale) ?? locales.length) -
+          (localeOrder.get(b.locale) ?? locales.length) ||
+        a.slug.localeCompare(b.slug)
+    ),
+  };
 }
 
 const locales = readLocales();
-const slugs = collectMdxSlugs(locales);
+const contentPages = collectContentPages(locales);
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(
   outFile,
-  `${JSON.stringify({ slugs }, null, 2)}\n`,
-  'utf8',
+  `${JSON.stringify({ params: contentPages.params }, null, 2)}\n`,
+  'utf8'
 );
-console.log(`Generated ${outFile} (${slugs.length} slugs).`);
+console.log(
+  `Generated ${outFile} (${contentPages.slugs.length} slugs, ${contentPages.params.length} localized pages).`
+);

@@ -520,6 +520,11 @@ export const animationVersion = table(
     frameCount: integer('frame_count').notNull().default(0),
     editorJson: text('editor_json').notNull().default('{}'),
     createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    spritesheetFileId: text('spritesheet_file_id').references(
+      () => assetFile.id,
+      { onDelete: 'restrict' }
+    ),
+    framesJson: text('frames_json').notNull().default('[]'),
   },
   (t) => [
     uniqueIndex('idx_animation_version_clip_no').on(t.clipId, t.versionNo),
@@ -527,32 +532,7 @@ export const animationVersion = table(
       .on(t.clipId)
       .where(sql`${t.isCurrent} = true`),
     index('idx_animation_version_generation').on(t.generationId),
-  ]
-);
-
-export const animationFrame = table(
-  'animation_frame',
-  {
-    id: text('id').primaryKey(),
-    versionId: text('version_id')
-      .notNull()
-      .references(() => animationVersion.id, { onDelete: 'cascade' }),
-    fileId: text('file_id')
-      .notNull()
-      .references(() => assetFile.id, { onDelete: 'restrict' }),
-    frameIndex: integer('frame_index').notNull(),
-    durationMs: integer('duration_ms'),
-    offsetX: integer('offset_x').notNull().default(0),
-    offsetY: integer('offset_y').notNull().default(0),
-    metadataJson: text('metadata_json').notNull().default('{}'),
-    createdAt: text('created_at').default(sqliteNowIso).notNull(),
-  },
-  (t) => [
-    uniqueIndex('idx_animation_frame_version_index').on(
-      t.versionId,
-      t.frameIndex
-    ),
-    index('idx_animation_frame_file').on(t.fileId),
+    index('idx_animation_version_spritesheet_file').on(t.spritesheetFileId),
   ]
 );
 

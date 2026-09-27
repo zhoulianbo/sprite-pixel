@@ -672,7 +672,7 @@ export function FrameStrip({
       >
         <div
           ref={listRef}
-          className="flex max-h-[360px] flex-col gap-1 p-0.5 lg:max-h-none"
+          className="flex max-h-[300px] flex-col gap-1 p-0.5 lg:max-h-none"
         >
           {frames.map((frame, index) => (
             <FrameTile

@@ -208,6 +208,7 @@
     "changeReference": "更换图片",
     "changeCharacter": "更换角色",
     "generateSpriteSheet": "生成精灵图",
+    "viewSpriteSheet": "查看精灵图",
     "variantPickerTitle": "选择角色变体",
     "variantPickerDescription": "从当前角色的变体中选择一张。",
     "pickerTitle": "选择生成输入",
@@ -256,7 +257,7 @@
   "icons": {
     "metadata": {
       "title": "AI 游戏图标生成器 – 批量制作图标、道具与物品 | SpritePixel",
-      "description": "用 AI 将最多 9 个风格一致的游戏图标、道具、武器和技能素材生成在一张透明 3×3 图片上。",
+      "description": "用 AI 将最多 9 个风格一致的游戏图标、物品、道具、武器和技能素材一起生成在一张透明 3×3 图片上。",
       "keywords": "AI 游戏图标生成器, 游戏图标生成器, AI 游戏图标, 游戏道具生成器, AI 游戏物品生成器, AI 游戏素材生成器, RPG 图标生成器, 像素风图标生成器"
     },
     "eyebrow": "描述或参考图 → 可直接使用的游戏图标",

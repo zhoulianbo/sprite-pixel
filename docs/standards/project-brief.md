@@ -57,7 +57,7 @@ Dashboard 侧边栏（登录后工作台）：
 
 以上路径是页头与页脚的导航契约；链接存在不代表对应页面已经完成，页面实现与可用性必须单独验证。MVP 不建 /batch-game-icon-generator，避免与图标生成页重复。中英文导航内容语义一致，通过现有 i18n Link 保留语言。
 
-2026-09-07：按用户本轮要求，Maker 与原列 P1 的 Splitter 已实现浏览器本地免费工具及中英文落地页，包含 GIF 输入、PNG/JSON/ZIP 导出与工具间素材交接。公开路由为 `/sprite-sheet-cutter`（旧 `/sprite-sheet-splitter` 301 跳转）。实现和本地验收见 [Free Tools 验收记录](../free-tools-qa.md)，不代表已部署；其他阶段目标不因此视为完成。
+2026-09-07：按用户本轮要求，Maker 与原列 P1 的 Splitter 已实现浏览器本地免费工具及中英文落地页，包含 GIF 输入、PNG/JSON/ZIP 导出与工具间素材交接。公开路由为 `/sprite-sheet-cutter`。不再保留 `/sprite-sheet-splitter`，也不做 301。实现和本地验收见 [Free Tools 验收记录](../free-tools-qa.md)，不代表已部署；其他阶段目标不因此视为完成。
 
 ## 技术基线与完成判据
 

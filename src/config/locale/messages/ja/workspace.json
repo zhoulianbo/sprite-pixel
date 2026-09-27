@@ -208,6 +208,7 @@
     "changeReference": "画像を変更",
     "changeCharacter": "キャラクターを変更",
     "generateSpriteSheet": "スプライトシートを生成",
+    "viewSpriteSheet": "スプライトシートを見る",
     "variantPickerTitle": "キャラクター差分を選択",
     "variantPickerDescription": "このキャラクターの差分から1枚選びます。",
     "pickerTitle": "生成入力を選択",

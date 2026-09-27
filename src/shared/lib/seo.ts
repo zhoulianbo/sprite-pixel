@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { envConfigs } from '@/config';
-import { defaultLocale } from '@/config/locale';
+import { defaultLocale, locales } from '@/config/locale';
 
 export const noIndexRobots: Metadata['robots'] = {
   index: false,
@@ -99,6 +99,7 @@ export function getMetadata(
         defaultMetadata.keywords,
       alternates: {
         canonical: canonicalUrl,
+        languages: languageAlternates(options.canonicalUrl || '/'),
       },
 
       openGraph: {
@@ -145,7 +146,27 @@ async function getTranslatedMetadata(metadataKey: string, locale: string) {
   };
 }
 
-async function getCanonicalUrl(canonicalUrl: string, locale: string) {
+export function hreflangCode(locale: string) {
+  return locale === 'zh' ? 'zh-Hans' : locale;
+}
+
+export function languageAlternates(canonicalPath: string) {
+  const pathname = canonicalPath.startsWith('http')
+    ? new URL(canonicalPath).pathname
+    : canonicalPath;
+
+  return {
+    ...Object.fromEntries(
+      locales.map((language) => [
+        hreflangCode(language),
+        getCanonicalUrl(pathname || '/', language),
+      ])
+    ),
+    'x-default': getCanonicalUrl(pathname || '/', defaultLocale),
+  };
+}
+
+function getCanonicalUrl(canonicalUrl: string, locale: string) {
   if (!canonicalUrl) {
     canonicalUrl = '/';
   }
