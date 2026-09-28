@@ -141,7 +141,6 @@ type ModelRoute = {
   provider: string;
   model: string;
   credits: number;
-  retryCredits?: number;
 };
 type TaskBlueprint = {
   role: string;
@@ -201,9 +200,6 @@ function getModelRoute(kind: GenerationModelKind): ModelRoute {
     provider,
     model,
     credits: configuredCredits,
-    retryCredits:
-      Number('retryCredits' in configured ? configured.retryCredits : 0) ||
-      undefined,
   };
 }
 

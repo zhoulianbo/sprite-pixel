@@ -586,6 +586,28 @@
       "circle": "Circle"
     }
   },
+  "checkIn": {
+    "button": "Daily check-in",
+    "checked": "Checked in today",
+    "title": "Claim your daily reward",
+    "description": "Tap the gift under today to claim your check-in reward.",
+    "claimAria": "Claim today's check-in reward",
+    "weekCount": "{count, plural, =1 {1 day checked in this week} other {# days checked in this week}}",
+    "weekLabel": "This week",
+    "todayReward": "Today's reward",
+    "streakLabel": "Streak",
+    "streakValue": "{count, plural, =1 {1 day} other {# days}}",
+    "failed": "Check-in could not be completed. Try again.",
+    "successTitle": "You received {credits} credits",
+    "successConfirm": "Got it",
+    "paywallTitle": "Upgrade to claim daily rewards",
+    "paywallDescription": "Daily check-in is included with Indie and Pro. Upgrade to claim a credit each day."
+  },
+  "paywall": {
+    "projectsTitle": "You've reached your project limit",
+    "projectsDescription": "This plan includes {limit, plural, =1 {1 project} other {# projects}}. Upgrade to create more.",
+    "viewDetails": "View details"
+  },
   "errors": {
     "GENERIC": "The request could not be completed. Try again.",
     "UNAUTHORIZED": "Sign in to continue.",
@@ -620,6 +642,7 @@
     "GENERATION_FAILED": "Generation failed. Try again.",
     "GENERATION_QUERY_FAILED": "The generation status could not be loaded. Try again.",
     "GENERATION_RETRY_FAILED": "The retry could not be started. Try again.",
-    "GENERATION_ID_CONFLICT": "This generation already exists. Start a new one."
+    "GENERATION_ID_CONFLICT": "This generation already exists. Start a new one.",
+    "PROJECT_LIMIT": "This plan has reached its project limit. Upgrade to create more."
   }
 }

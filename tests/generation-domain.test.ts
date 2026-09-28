@@ -473,10 +473,10 @@ test('generation API payload hides provider and model names', () => {
 });
 
 test('SpritePixel credit costs bill batches as a flat fee', () => {
-  assert.equal(getGenerationCredits('character'), 2);
+  assert.equal(getGenerationCredits('character'), 1);
   assert.equal(getGenerationCredits('animation', { taskCount: 4 }), 12);
-  assert.equal(getGenerationCredits('icon', { taskCount: 9 }), 3);
-  assert.equal(getGenerationCredits('icon', { taskCount: 2, retry: true }), 2);
+  assert.equal(getGenerationCredits('icon', { taskCount: 9 }), 2);
+  assert.equal(getGenerationCredits('icon', { taskCount: 9, retry: true }), 2);
   assert.equal(generationPollIntervalMs('character'), 3000);
   assert.equal(generationPollIntervalMs('icon'), 3000);
   assert.equal(generationPollIntervalMs('animation'), 5000);

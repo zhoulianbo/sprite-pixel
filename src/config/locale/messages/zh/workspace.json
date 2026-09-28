@@ -586,6 +586,28 @@
       "circle": "圆形"
     }
   },
+  "checkIn": {
+    "button": "每日签到",
+    "checked": "今日已签到",
+    "title": "领取每日奖励",
+    "description": "点今天日期下的礼物，即可领取签到奖励",
+    "claimAria": "领取今日签到奖励",
+    "weekCount": "本周已签到 {count} 天",
+    "weekLabel": "本周签到",
+    "todayReward": "今日奖励",
+    "streakLabel": "连续签到",
+    "streakValue": "连签 {count} 天",
+    "failed": "签到未能完成，请重试。",
+    "successTitle": "恭喜获得 {credits} 积分",
+    "successConfirm": "知道了",
+    "paywallTitle": "升级后领取每日奖励",
+    "paywallDescription": "每日签到只对独立版和专业版开放。升级后每天可以领取签到积分。"
+  },
+  "paywall": {
+    "projectsTitle": "已达到项目数量上限",
+    "projectsDescription": "当前方案最多创建 {limit} 个项目。升级后可以继续创建。",
+    "viewDetails": "查看详情"
+  },
   "errors": {
     "GENERIC": "请求未能完成，请重试。",
     "UNAUTHORIZED": "请先登录后再继续。",
@@ -620,6 +642,7 @@
     "GENERATION_FAILED": "生成失败，请重试。",
     "GENERATION_QUERY_FAILED": "查询生成进度失败，请重试。",
     "GENERATION_RETRY_FAILED": "重试失败，请稍后再试。",
-    "GENERATION_ID_CONFLICT": "生成任务冲突，请重新发起。"
+    "GENERATION_ID_CONFLICT": "生成任务冲突，请重新发起。",
+    "PROJECT_LIMIT": "当前方案的项目数量已达上限，升级后可以继续创建。"
   }
 }

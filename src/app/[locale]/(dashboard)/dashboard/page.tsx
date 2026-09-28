@@ -1,16 +1,20 @@
 import { Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
+import { hasPlanEntitlement } from '@/config/plans';
 import { gameGenreValues } from '@/config/project';
+import { DailyCheckIn } from '@/shared/blocks/check-in/daily-check-in';
 import { Header, Main } from '@/shared/blocks/dashboard';
 import { ProjectCard } from '@/shared/blocks/projects/project-card';
 import { ProjectCreateDialog } from '@/shared/blocks/projects/project-create-dialog';
 import { Button } from '@/shared/components/ui/button';
+import { getDailyCheckInStatus } from '@/shared/models/check-in';
 import {
   ensureDefaultProject,
   isSystemDefaultProject,
   listProjects,
 } from '@/shared/models/project';
+import { getCurrentSubscription } from '@/shared/models/subscription';
 import { getUserInfo } from '@/shared/models/user';
 
 function genreLabel(
@@ -46,7 +50,7 @@ export default async function DashboardPage({
   if (!user) {
     return (
       <>
-        <Header />
+        <Header accessory={<DailyCheckIn initialStatus={null} />} />
         <Main>
           <div className="mx-auto flex min-h-[50vh] max-w-lg items-center justify-center text-center">
             <p className="text-muted-foreground">{t('projects.empty')}</p>
@@ -56,11 +60,21 @@ export default async function DashboardPage({
     );
   }
   await ensureDefaultProject(user.id);
-  const projects = await listProjects(user.id);
+  const [projects, subscription, checkIn] = await Promise.all([
+    listProjects(user.id),
+    getCurrentSubscription(user.id),
+    getDailyCheckInStatus(user.id),
+  ]);
+  const canCheckIn = hasPlanEntitlement(
+    subscription?.productId,
+    'dailyFreeCredits'
+  );
 
   return (
     <>
-      <Header />
+      <Header
+        accessory={<DailyCheckIn initialStatus={canCheckIn ? checkIn : null} />}
+      />
       <Main>
         <div className="w-full space-y-8">
           <header className="flex flex-col justify-between gap-5 border-b pb-7 sm:flex-row sm:items-end">
@@ -70,6 +84,8 @@ export default async function DashboardPage({
               </h1>
             </div>
             <ProjectCreateDialog
+              activeProjectCount={projects.length}
+              planProductId={subscription?.productId ?? null}
               trigger={
                 <Button className="h-10">
                   <Sparkles className="size-4" />

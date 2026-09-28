@@ -372,12 +372,11 @@
         "credits_guide": {
           "badge": "Credit usage",
           "title": "Credit cost for common outputs",
-          "description": "2 Credits generate one standard 1K image. A batch of up to 9 game icons costs 3 Credits.",
+          "description": "1 Credit generates one standard 1K image. A batch of up to 9 game icons costs 2 Credits.",
           "rows": [
-            { "action": "Standard image generation", "cost": "2" },
+            { "action": "Standard image generation", "cost": "1" },
             { "action": "One action sprite sheet", "cost": "3" },
-            { "action": "Batch game icons", "cost": "3" },
-            { "action": "Single icon regeneration", "cost": "1" },
+            { "action": "Batch game icons", "cost": "2" },
             { "action": "Background removal / auto slice", "cost": "Free" },
             { "action": "Resize / sprite sheet packing", "cost": "Free" },
             { "action": "ZIP / PNG / JSON export", "cost": "Free" }

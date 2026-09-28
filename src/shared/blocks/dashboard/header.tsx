@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 import { Link } from '@/core/i18n/navigation';
 import {
@@ -25,12 +25,14 @@ export function Header({
   buttons,
   show_locale,
   show_theme,
+  accessory,
 }: {
   title?: string;
   crumbs?: Crumb[];
   buttons?: ButtonType[];
   show_locale?: boolean;
   show_theme?: boolean;
+  accessory?: ReactNode;
 }) {
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -63,6 +65,7 @@ export function Header({
           </Breadcrumb>
         )}
         <div className="ml-auto flex items-center gap-4">
+          {accessory}
           {buttons && buttons.length > 0 && (
             <div className="flex items-center gap-4">
               {buttons.map((button, idx) => (

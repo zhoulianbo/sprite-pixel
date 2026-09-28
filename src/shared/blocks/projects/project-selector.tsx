@@ -11,8 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
-import { cn } from '@/shared/lib/utils';
 import { useAppContext } from '@/shared/contexts/app';
+import { cn } from '@/shared/lib/utils';
 
 import { ProjectCreateDialog, ProjectSummary } from './project-create-dialog';
 
@@ -20,6 +20,7 @@ type ProjectListCache = {
   userId: string;
   projects: ProjectSummary[];
   currentProjectId?: string;
+  planProductId: string | null;
 };
 
 let projectListCache: ProjectListCache | null = null;
@@ -41,6 +42,7 @@ export async function prefetchProjectList(userId: string) {
         userId,
         projects: payload.data.projects,
         currentProjectId: payload.data.currentProject?.id,
+        planProductId: payload.data.planProductId ?? null,
       });
     })
     .finally(() => {
@@ -85,6 +87,9 @@ export function ProjectSelector({
     if (!user) return 'ready';
     return cached ? 'ready' : 'loading';
   });
+  const [planProductId, setPlanProductId] = useState<string | null>(
+    cached?.planProductId ?? null
+  );
   const [createOpen, setCreateOpen] = useState(false);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -102,6 +107,7 @@ export function ProjectSelector({
 
     const apply = (list: ProjectListCache) => {
       setProjects(list.projects);
+      setPlanProductId(list.planProductId);
       const current = list.projects.find(
         (project) => project.id === (value || list.currentProjectId)
       );
@@ -126,6 +132,7 @@ export function ProjectSelector({
   useEffect(() => {
     if (user && projectListCache?.userId === user.id) {
       setProjects(projectListCache.projects);
+      setPlanProductId(projectListCache.planProductId);
     }
     if (value && value !== selectedId) setSelectedId(value);
   }, [selectedId, user, value]);
@@ -225,6 +232,8 @@ export function ProjectSelector({
       </DropdownMenu>
       <ProjectCreateDialog
         trigger={null}
+        activeProjectCount={projects.length}
+        planProductId={planProductId}
         open={createOpen}
         onOpenChange={setCreateOpen}
         onCreated={(project) => {
@@ -235,6 +244,7 @@ export function ProjectSelector({
                 userId: user.id,
                 projects: next,
                 currentProjectId: project.id,
+                planProductId,
               });
             }
             return next;

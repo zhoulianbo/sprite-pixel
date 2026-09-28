@@ -88,6 +88,40 @@ pre {
       opacity: 0;
     }
   }
+  --animate-check-in-nudge: check-in-nudge 4s ease-in-out infinite;
+  @keyframes check-in-nudge {
+    0%,
+    78%,
+    100% {
+      transform: rotate(0deg);
+    }
+    82% {
+      transform: rotate(-12deg);
+    }
+    86% {
+      transform: rotate(10deg);
+    }
+    90% {
+      transform: rotate(-6deg);
+    }
+    94% {
+      transform: rotate(3deg);
+    }
+  }
+  --animate-check-in-glow: check-in-glow 2.4s ease-in-out infinite;
+  @keyframes check-in-glow {
+    0%,
+    100% {
+      box-shadow:
+        0 0 0 0 color-mix(in oklab, var(--primary) 0%, transparent),
+        0 0 10px color-mix(in oklab, var(--primary) 35%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 0 4px color-mix(in oklab, var(--primary) 22%, transparent),
+        0 0 22px color-mix(in oklab, var(--primary) 75%, transparent);
+    }
+  }
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
   @keyframes marquee {

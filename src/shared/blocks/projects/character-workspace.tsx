@@ -757,11 +757,11 @@ export function CharacterWorkspace({
           ) : null}
 
           {stage === 'animations' ? (
-            <div className="space-y-5">
-              {animationSets.map((group) => (
-                <section key={group.set.id}>
-                  <div className={characterAssetGridClass}>
-                    {group.clips.map((animation) => {
+            animationSets.length ? (
+              <section>
+                <div className="grid grid-cols-3 gap-3 max-[760px]:grid-cols-1 2xl:grid-cols-5">
+                  {animationSets.flatMap((group) =>
+                    group.clips.map((animation) => {
                       const title = actionDirectionLabel(
                         animation.set.action,
                         animation.clip.direction,
@@ -792,18 +792,17 @@ export function CharacterWorkspace({
                           }}
                         />
                       );
-                    })}
-                  </div>
-                </section>
-              ))}
-              {!animationSets.length ? (
-                <EmptyState
-                  label={t('emptyAnimations')}
-                  hint={t('emptyAnimationsHint')}
-                  pointToAside
-                />
-              ) : null}
-            </div>
+                    })
+                  )}
+                </div>
+              </section>
+            ) : (
+              <EmptyState
+                label={t('emptyAnimations')}
+                hint={t('emptyAnimationsHint')}
+                pointToAside
+              />
+            )
           ) : null}
 
           {stage === 'sheets' ? (

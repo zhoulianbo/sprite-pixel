@@ -1047,3 +1047,24 @@ export const footerLink = table(
     index('idx_footer_link_locale_status').on(table.locale, table.status),
   ]
 );
+
+export const dailyCheckIn = table(
+  'daily_check_in',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    checkInDate: text('check_in_date').notNull(),
+    credits: integer('credits').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .default(sqliteNowMs)
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex('idx_daily_check_in_user_date').on(
+      table.userId,
+      table.checkInDate
+    ),
+  ]
+);

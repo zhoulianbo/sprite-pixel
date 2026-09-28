@@ -4,21 +4,20 @@ export type GenerationModelRoute = {
   provider: string;
   model: string;
   credits: number;
-  retryCredits?: number;
 };
 
 /**
  * Product model routing and per-task credit costs.
  * Provider credentials remain in the server-side settings store.
  *
- * 2 Credits = one standard 1K image.
- * Icon batches are billed as a flat 3 Credits; a single icon retry costs 1.
+ * 1 Credit = one standard 1K image.
+ * An icon batch, including a full-sheet retry, is a flat 2 Credits.
  */
 export const generationModelRoutes = {
   character: {
     provider: 'grsai',
     model: 'gpt-image-2.5',
-    credits: 2,
+    credits: 1,
   },
   animation: {
     provider: 'grsai',
@@ -28,8 +27,7 @@ export const generationModelRoutes = {
   icon: {
     provider: 'grsai',
     model: 'gpt-image-2.5',
-    credits: 3,
-    retryCredits: 1,
+    credits: 2,
   },
 } as const satisfies Record<GenerationModelKind, GenerationModelRoute>;
 
@@ -49,11 +47,7 @@ export function getGenerationCredits(
 ) {
   const count = Math.max(1, options?.taskCount ?? 1);
   if (kind === 'icon') {
-    const route = generationModelRoutes.icon;
-    if (options?.retry) {
-      return route.retryCredits * count;
-    }
-    return route.credits;
+    return generationModelRoutes.icon.credits;
   }
   return generationModelRoutes[kind].credits * count;
 }

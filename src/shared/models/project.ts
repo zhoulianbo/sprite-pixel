@@ -3,8 +3,10 @@ import { and, count, desc, eq, isNull } from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import { assetItem, project } from '@/config/db/schema';
+import { canCreateProject } from '@/config/plans';
 import { getUuid } from '@/shared/lib/hash';
 import { getDefaultProjectId } from '@/shared/lib/project-id';
+import { getCurrentSubscription } from '@/shared/models/subscription';
 
 export const LAST_PROJECT_COOKIE = 'sv_last_project';
 
@@ -90,7 +92,36 @@ export async function getOwnedProject(userId: string, projectId: string) {
   return result as Project | undefined;
 }
 
+export class ProjectLimitError extends Error {
+  readonly code = 'PROJECT_LIMIT';
+
+  constructor() {
+    super('PROJECT_LIMIT');
+    this.name = 'ProjectLimitError';
+  }
+}
+
+export async function countActiveProjects(userId: string) {
+  const [result] = await db()
+    .select({ count: count() })
+    .from(project)
+    .where(
+      and(
+        eq(project.userId, userId),
+        eq(project.status, 'active'),
+        isNull(project.deletedAt)
+      )
+    );
+  return result?.count || 0;
+}
+
 export async function createProject(userId: string, input: NewProjectInput) {
+  const subscription = await getCurrentSubscription(userId);
+  const activeCount = await countActiveProjects(userId);
+  if (!canCreateProject(subscription?.productId, activeCount)) {
+    throw new ProjectLimitError();
+  }
+
   const now = new Date().toISOString();
   const [result] = await db()
     .insert(project)

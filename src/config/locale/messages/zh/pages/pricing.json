@@ -368,12 +368,11 @@
         "credits_guide": {
           "badge": "积分消耗",
           "title": "常见输出的积分成本",
-          "description": "2 积分可生成一张标准 1K 图片。一次批量生成最多 9 个游戏图标消耗 3 积分。",
+          "description": "1 积分可生成一张标准 1K 图片。一次批量生成最多 9 个游戏图标消耗 2 积分。",
           "rows": [
-            { "action": "标准图片生成", "cost": "2" },
+            { "action": "标准图片生成", "cost": "1" },
             { "action": "一张动作精灵图表生成", "cost": "3" },
-            { "action": "批量游戏图标生成", "cost": "3" },
-            { "action": "单个图标重新生成", "cost": "1" },
+            { "action": "批量游戏图标生成", "cost": "2" },
             { "action": "去背景 / 自动切图", "cost": "免费" },
             { "action": "调整尺寸 / 精灵图表拼接", "cost": "免费" },
             { "action": "ZIP / PNG / JSON 导出", "cost": "免费" }

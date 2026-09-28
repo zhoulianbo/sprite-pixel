@@ -5,8 +5,10 @@ import {
   createProject,
   ensureDefaultProject,
   listProjects,
+  ProjectLimitError,
   resolveCurrentProject,
 } from '@/shared/models/project';
+import { getCurrentSubscription } from '@/shared/models/subscription';
 import { getUserInfo } from '@/shared/models/user';
 
 const createProjectSchema = z.object({
@@ -26,11 +28,19 @@ export async function GET() {
   }
 
   await ensureDefaultProject(user.id);
-  const [projects, currentProject] = await Promise.all([
+  const [projects, currentProject, subscription] = await Promise.all([
     listProjects(user.id),
     resolveCurrentProject(user.id),
+    getCurrentSubscription(user.id),
   ]);
-  return Response.json({ code: 0, data: { projects, currentProject } });
+  return Response.json({
+    code: 0,
+    data: {
+      projects,
+      currentProject,
+      planProductId: subscription?.productId ?? null,
+    },
+  });
 }
 
 export async function POST(request: Request) {
@@ -50,6 +60,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const created = await createProject(user.id, parsed.data);
-  return Response.json({ code: 0, data: created }, { status: 201 });
+  try {
+    const created = await createProject(user.id, parsed.data);
+    return Response.json({ code: 0, data: created }, { status: 201 });
+  } catch (error) {
+    if (
+      error instanceof ProjectLimitError ||
+      (error instanceof Error && error.message === 'PROJECT_LIMIT')
+    ) {
+      return Response.json(
+        { code: -1, message: 'PROJECT_LIMIT' },
+        { status: 403 }
+      );
+    }
+    throw error;
+  }
 }

@@ -586,6 +586,28 @@
       "circle": "円"
     }
   },
+  "checkIn": {
+    "button": "デイリーチェックイン",
+    "checked": "本日チェックイン済み",
+    "title": "デイリー報酬を受け取る",
+    "description": "今日の日付の下にあるギフトをタップして報酬を受け取れます。",
+    "claimAria": "本日のチェックイン報酬を受け取る",
+    "weekCount": "今週は {count} 日チェックイン済み",
+    "weekLabel": "今週",
+    "todayReward": "本日の報酬",
+    "streakLabel": "連続チェックイン",
+    "streakValue": "{count} 日連続",
+    "failed": "チェックインを完了できませんでした。もう一度お試しください。",
+    "successTitle": "{credits} クレジットを獲得しました",
+    "successConfirm": "了解",
+    "paywallTitle": "アップグレードしてデイリー報酬を受け取る",
+    "paywallDescription": "デイリーチェックインはインディーとプロのサブスクリプションで利用できます。アップグレードすると、毎日クレジットを受け取れます。"
+  },
+  "paywall": {
+    "projectsTitle": "プロジェクト数の上限に達しました",
+    "projectsDescription": "現在のプランではプロジェクトを {limit} 件まで作成できます。続けるにはアップグレードしてください。",
+    "viewDetails": "詳細を見る"
+  },
   "errors": {
     "GENERIC": "処理を完了できませんでした。",
     "UNAUTHORIZED": "ログインして続けてください。",
@@ -620,6 +642,7 @@
     "GENERATION_FAILED": "生成に失敗しました。",
     "GENERATION_QUERY_FAILED": "生成状態を取得できませんでした。",
     "GENERATION_RETRY_FAILED": "再試行を開始できませんでした。",
-    "GENERATION_ID_CONFLICT": "同じ生成がすでに存在します。新しく開始してください。"
+    "GENERATION_ID_CONFLICT": "同じ生成がすでに存在します。新しく開始してください。",
+    "PROJECT_LIMIT": "現在のプランではプロジェクト数の上限に達しています。続けるにはアップグレードしてください。"
   }
 }

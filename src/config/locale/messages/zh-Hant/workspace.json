@@ -586,6 +586,28 @@
       "circle": "圓形"
     }
   },
+  "checkIn": {
+    "button": "每日簽到",
+    "checked": "今日已簽到",
+    "title": "領取每日獎勵",
+    "description": "點今天日期下的禮物，即可領取簽到獎勵",
+    "claimAria": "領取今日簽到獎勵",
+    "weekCount": "本週已簽到 {count} 天",
+    "weekLabel": "本週簽到",
+    "todayReward": "今日獎勵",
+    "streakLabel": "連續簽到",
+    "streakValue": "連簽 {count} 天",
+    "failed": "簽到未能完成，請重試。",
+    "successTitle": "恭喜獲得 {credits} 積分",
+    "successConfirm": "知道了",
+    "paywallTitle": "升級後領取每日獎勵",
+    "paywallDescription": "每日簽到只對獨立版和專業版開放。升級後每天可以領取簽到積分。"
+  },
+  "paywall": {
+    "projectsTitle": "已達到專案數量上限",
+    "projectsDescription": "目前方案最多建立 {limit} 個專案。升級後可以繼續建立。",
+    "viewDetails": "查看詳情"
+  },
   "errors": {
     "GENERIC": "無法完成要求，請再試一次。",
     "UNAUTHORIZED": "請登入後繼續。",
@@ -620,6 +642,7 @@
     "GENERATION_FAILED": "產生失敗，請再試一次。",
     "GENERATION_QUERY_FAILED": "無法取得產生狀態，請再試一次。",
     "GENERATION_RETRY_FAILED": "無法開始重試，請再試一次。",
-    "GENERATION_ID_CONFLICT": "這次產生已存在，請開始新的產生。"
+    "GENERATION_ID_CONFLICT": "這次產生已存在，請開始新的產生。",
+    "PROJECT_LIMIT": "目前方案的專案數量已達上限，升級後可以繼續建立。"
   }
 }

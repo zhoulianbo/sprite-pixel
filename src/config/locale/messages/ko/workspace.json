@@ -586,6 +586,28 @@
       "circle": "원"
     }
   },
+  "checkIn": {
+    "button": "매일 출석",
+    "checked": "오늘 출석 완료",
+    "title": "매일 보상 받기",
+    "description": "오늘 날짜 아래의 선물을 눌러 출석 보상을 받으세요.",
+    "claimAria": "오늘 출석 보상 받기",
+    "weekCount": "이번 주 {count}일 출석",
+    "weekLabel": "이번 주",
+    "todayReward": "오늘 보상",
+    "streakLabel": "연속 출석",
+    "streakValue": "{count}일 연속",
+    "failed": "출석을 완료하지 못했습니다. 다시 시도해 주세요.",
+    "successTitle": "{credits} 크레딧을 받았습니다",
+    "successConfirm": "확인",
+    "paywallTitle": "업그레이드 후 매일 보상 받기",
+    "paywallDescription": "매일 출석은 인디와 프로 구독에서 이용할 수 있습니다. 업그레이드하면 매일 크레딧을 받을 수 있습니다."
+  },
+  "paywall": {
+    "projectsTitle": "프로젝트 수 한도에 도달했습니다",
+    "projectsDescription": "현재 요금제는 프로젝트를 {limit}개까지 만들 수 있습니다. 계속하려면 업그레이드하세요.",
+    "viewDetails": "자세히 보기"
+  },
   "errors": {
     "GENERIC": "요청을 완료할 수 없습니다.",
     "UNAUTHORIZED": "로그인한 뒤 계속하세요.",
@@ -620,6 +642,7 @@
     "GENERATION_FAILED": "생성에 실패했습니다.",
     "GENERATION_QUERY_FAILED": "생성 상태를 불러올 수 없습니다.",
     "GENERATION_RETRY_FAILED": "재시도를 시작할 수 없습니다.",
-    "GENERATION_ID_CONFLICT": "같은 생성이 이미 존재합니다. 새로 시작하세요."
+    "GENERATION_ID_CONFLICT": "같은 생성이 이미 존재합니다. 새로 시작하세요.",
+    "PROJECT_LIMIT": "현재 요금제의 프로젝트 한도에 도달했습니다. 계속하려면 업그레이드하세요."
   }
 }

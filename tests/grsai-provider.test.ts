@@ -16,13 +16,12 @@ afterEach(() => {
 
 test('SpritePixel model routing lives in code and admin exposes only Grsai credentials', async () => {
   assert.deepEqual(generationModelRoutes, {
-    character: { provider: 'grsai', model: 'gpt-image-2.5', credits: 2 },
+    character: { provider: 'grsai', model: 'gpt-image-2.5', credits: 1 },
     animation: { provider: 'grsai', model: 'minimax-h3', credits: 3 },
     icon: {
       provider: 'grsai',
       model: 'gpt-image-2.5',
-      credits: 3,
-      retryCredits: 1,
+      credits: 2,
     },
   });
 

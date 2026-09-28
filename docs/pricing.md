@@ -1,5 +1,5 @@
 ## 积分锚点
-**2 Credit = 1 次标准 1K 图片生成** 定死，然后所有价格围绕这个单位设计。
+**1 Credit = 1 次标准 1K 图片生成** 定死，然后所有价格围绕这个单位设计。
 
 先说成本基准：`gpt-image-2` 当前图像输出价格是 **$15 / 100万 image tokens**；1024×1024 的 Medium 质量约消耗 1056 个输出 token，即仅输出成本约 **$0.01584/张**。如果包含文本输入、参考图输入等，我建议内部按 **$0.022 / Credit** 做保守成本预算。High 质量的 1024×1024 约 4160 个输出 token，成本接近 Medium 的 4 倍，所以不能也按 1 Credit 计算。
 
@@ -60,10 +60,9 @@
 
 | 操作                       | Credits |
 | ------------------------ | ------: |
-| 标准图片生成         |   **2** |
+| 标准图片生成         |   **1** |
 | 一张动作 Sprite Sheet 生成     |   **3** |
-| 批量 Game Icons 生成         |   **3** |
-| 单个 Icon 重新生成             |   **2** |
+| 批量 Game Icons 生成         |   **2** |
 | 去背景 / 自动切图               |  **免费** |
 | Resize / Sprite Sheet 拼接 |  **免费** |
 | ZIP / PNG / JSON 导出      |  **免费** |
@@ -150,7 +149,7 @@ Pro       Private by default
 
 核心文案可以直接写：
 
-> 1 Credit generates one standard 1K image. A batch of up to 9 game icons generated in one sheet still costs only 1 Credit.
+> 1 Credit generates one standard 1K image. A batch of up to 9 game icons generated in one sheet costs 2 Credits.
 
 下面放刚才那张积分消耗表。
 
