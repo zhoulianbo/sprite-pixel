@@ -303,6 +303,15 @@ test('character and animation prompts follow the production templates', () => {
   assert.match(videoPrompt, /secondary motion in hair, clothing, capes/);
   assert.match(
     videoPrompt,
+    /widest and tallest extent of the entire motion[\s\S]*full reach and swing arc/
+  );
+  assert.match(videoPrompt, /at least 12% empty background/);
+  assert.match(
+    videoPrompt,
+    /never crop, clip, or let any character or equipment pixel touch or leave the frame edges/
+  );
+  assert.match(
+    videoPrompt,
     /do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow/
   );
   assert.match(

@@ -142,7 +142,7 @@
     "selectionHelp": "点击选择单帧，Shift + 点击连续选择。",
     "horizontalShort": "横向",
     "verticalShort": "纵向",
-    "transparentBackground": "透明背景",
+    "transparentBackground": "透明画布",
     "spacingAndOffsets": "间距与偏移",
     "timingSettings": "动画时序",
     "exportTitle": "导出素材",

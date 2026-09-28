@@ -134,7 +134,6 @@ type EditorData = {
 
 type DocumentSnapshot = {
   frames: EditorFrame[];
-  fps: number;
   loop: boolean;
 };
 
@@ -653,7 +652,6 @@ export function AnimationEditor({ data }: { data: EditorData }) {
 
   const documentSnapshot = (): DocumentSnapshot => ({
     frames: frames.map((frame) => ({ ...frame })),
-    fps,
     loop,
   });
 
@@ -666,7 +664,6 @@ export function AnimationEditor({ data }: { data: EditorData }) {
   const commitDocument = (next: Partial<DocumentSnapshot>) => {
     pushHistory({ kind: 'document', value: documentSnapshot() });
     if (next.frames) setFrames(next.frames);
-    if (next.fps !== undefined) setFps(next.fps);
     if (next.loop !== undefined) setLoop(next.loop);
   };
 
@@ -683,7 +680,6 @@ export function AnimationEditor({ data }: { data: EditorData }) {
   const restore = (entry: HistoryEntry) => {
     if (entry.kind === 'document') {
       setFrames(entry.value.frames);
-      setFps(entry.value.fps);
       setLoop(entry.value.loop);
       if (!entry.value.frames.some((frame) => frame.id === selectedId)) {
         setSelectedId(entry.value.frames[0]?.id || '');
@@ -1186,7 +1182,7 @@ export function AnimationEditor({ data }: { data: EditorData }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           parentVersionId: data.version.id,
-          fps,
+          fps: Number(data.version.fps) || 12,
           loop,
           frames: payloadFrames,
         }),
@@ -1585,11 +1581,11 @@ export function AnimationEditor({ data }: { data: EditorData }) {
                 className="border-input bg-background h-8 w-14 rounded-md border px-2 font-mono text-sm"
                 max={60}
                 min={1}
-                onChange={(event) =>
-                  commitDocument({
-                    fps: Math.min(60, Math.max(1, Number(event.target.value))),
-                  })
-                }
+                onChange={(event) => {
+                  const next = Number(event.target.value);
+                  if (!Number.isFinite(next)) return;
+                  setFps(Math.min(60, Math.max(1, next)));
+                }}
                 type="number"
                 value={fps}
               />
