@@ -32,14 +32,14 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-heading',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
-  preload: true,
+  preload: false,
 });
 
 export const generateMetadata = getMetadata();

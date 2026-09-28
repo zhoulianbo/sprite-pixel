@@ -301,6 +301,14 @@ test('character and animation prompts follow the production templates', () => {
   );
   assert.match(videoPrompt, /stable grip/);
   assert.match(videoPrompt, /secondary motion in hair, clothing, capes/);
+  assert.match(
+    videoPrompt,
+    /do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow/
+  );
+  assert.match(
+    videoPrompt,
+    /area beneath the feet exactly the same flat background color/
+  );
   assert.doesNotMatch(videoPrompt, /Target key-frame count/);
   assert.doesNotMatch(videoPrompt, /Ordered pose plan/);
   assert.doesNotMatch(videoPrompt, /key pose \d/);

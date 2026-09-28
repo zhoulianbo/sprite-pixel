@@ -1732,9 +1732,21 @@ export function Home({ section: _section }: { section: Section }) {
     <main className="bg-background text-foreground overflow-hidden">
       <section
         id="hero"
-        className="border-border bg-vault-navy relative isolate flex min-h-screen items-center overflow-hidden border-b bg-cover bg-center pt-32 pb-[72px] max-[760px]:min-h-[760px] max-[760px]:pt-28 max-[760px]:pb-[60px]"
-        style={{ backgroundImage: "url('/imgs/bg/index.webp')" }}
+        className="border-border bg-vault-navy relative isolate flex min-h-screen items-center overflow-hidden border-b pt-32 pb-[72px] max-[760px]:min-h-[760px] max-[760px]:pt-28 max-[760px]:pb-[60px]"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 size-full object-cover"
+          decoding="async"
+          fetchPriority="low"
+          height={941}
+          sizes="100vw"
+          src="/imgs/bg/index-mobile.webp"
+          srcSet="/imgs/bg/index-mobile.webp 828w, /imgs/bg/index.webp 1672w"
+          width={1672}
+        />
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[#050911]/65"
@@ -2085,7 +2097,9 @@ export function Home({ section: _section }: { section: Section }) {
                                   aria-hidden="true"
                                   className="size-9 shrink-0 object-contain [image-rendering:pixelated]"
                                   height={36}
+                                  sizes="36px"
                                   src={image}
+                                  unoptimized
                                   width={36}
                                 />
                               ) : (

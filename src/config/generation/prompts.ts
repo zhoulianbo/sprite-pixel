@@ -580,10 +580,12 @@ export function buildAnimationVideoPrompt(
     '- keep every hand and carried item anatomically connected with a stable grip; never let a hand or item vanish, duplicate, switch sides, detach, or morph',
     `- keep the character facing ${facing} for the entire clip`,
     '- keep the camera fixed and show the complete body in every frame',
-    '- keep the ground line, scale, and horizontal position stable',
+    '- keep the invisible alignment baseline, scale, and horizontal position stable',
     '- animate natural opposing arm and leg motion where the action requires it',
     '- include continuous secondary motion in hair, clothing, capes, tails, and carried items',
-    '- use one uniform plain neutral-grey background with no scenery, ground shadow, or unrelated objects',
+    '- use one perfectly uniform plain neutral-grey background with no scenery, floor, ground plane, or unrelated objects',
+    '- do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow beneath or around the character',
+    '- keep the area beneath the feet exactly the same flat background color as the rest of the frame, with a clean silhouette suitable for background removal',
     '- no cuts, camera movement, zoom, text, labels, borders, or watermark',
     ...(input.action !== 'death'
       ? ['- finish in a pose that connects cleanly back to the first pose']

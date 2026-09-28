@@ -12,12 +12,20 @@ export function BrandLogo({ brand }: { brand: BrandType }) {
     >
       {brand.logo && (
         <Image
-          src={brand.logo.src}
+          src={
+            brand.logo.src === '/logo.png'
+              ? '/imgs/brand/logo.webp'
+              : brand.logo.src
+          }
           alt={brand.title ? '' : brand.logo.alt || ''}
-          width={brand.logo.width || 80}
-          height={brand.logo.height || 80}
+          width={64}
+          height={64}
+          sizes="32px"
           className="h-8 w-auto rounded-none"
-          unoptimized={brand.logo.src.startsWith('http')}
+          unoptimized={
+            brand.logo.src.startsWith('http') ||
+            brand.logo.src === '/logo.png'
+          }
         />
       )}
       {brand.title && (

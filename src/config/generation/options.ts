@@ -66,18 +66,18 @@ export function getIconStylePreviewImage(value: string) {
 export const actionTypeImages: Partial<
   Record<GenerationOptionValue<'actionType'>, string>
 > = {
-  idle: '/imgs/actions/idle.png',
-  walk: '/imgs/actions/walk.png',
-  run: '/imgs/actions/run.png',
-  jump: '/imgs/actions/jump.png',
-  dash: '/imgs/actions/dash.png',
-  attack: '/imgs/actions/attack.png',
-  shoot: '/imgs/actions/shoot.png',
-  cast: '/imgs/actions/cast.png',
-  hurt: '/imgs/actions/hurt.png',
-  pickup: '/imgs/actions/pickup.png',
-  wave: '/imgs/actions/wave.png',
-  death: '/imgs/actions/death.png',
+  idle: '/imgs/actions/idle.webp',
+  walk: '/imgs/actions/walk.webp',
+  run: '/imgs/actions/run.webp',
+  jump: '/imgs/actions/jump.webp',
+  dash: '/imgs/actions/dash.webp',
+  attack: '/imgs/actions/attack.webp',
+  shoot: '/imgs/actions/shoot.webp',
+  cast: '/imgs/actions/cast.webp',
+  hurt: '/imgs/actions/hurt.webp',
+  pickup: '/imgs/actions/pickup.webp',
+  wave: '/imgs/actions/wave.webp',
+  death: '/imgs/actions/death.webp',
 };
 
 export function getActionTypeImage(value: string) {

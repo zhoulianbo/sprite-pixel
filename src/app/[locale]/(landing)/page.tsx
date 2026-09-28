@@ -31,17 +31,6 @@ export default async function LandingPage({
   const organizationId = `${origin}/#organization`;
   const websiteId = `${pageUrl}#website`;
   const logoUrl = `${origin}${envConfigs.app_logo.startsWith('/') ? envConfigs.app_logo : `/${envConfigs.app_logo}`}`;
-  const workflowSteps = messages.raw('workflowSteps');
-  const steps = Array.isArray(workflowSteps)
-    ? workflowSteps.flatMap((step) => {
-        if (!step || typeof step !== 'object') return [];
-        const title = 'title' in step ? String(step.title) : '';
-        const description =
-          'description' in step ? String(step.description) : '';
-        if (!title || !description) return [];
-        return [{ title, description }];
-      })
-    : [];
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -92,19 +81,6 @@ export default async function LandingPage({
           url: `${origin}${locale === defaultLocale ? '' : `/${locale}`}/pricing`,
         },
         provider: { '@id': organizationId },
-      },
-      {
-        '@type': 'HowTo',
-        '@id': `${pageUrl}#howto`,
-        name: messages('workflowTitle'),
-        description: messages('workflowDescription'),
-        inLanguage: hreflangCode(locale),
-        step: steps.map((step, index) => ({
-          '@type': 'HowToStep',
-          position: index + 1,
-          name: step.title,
-          text: step.description,
-        })),
       },
     ],
   };
