@@ -299,16 +299,21 @@ test('character and animation prompts follow the production templates', () => {
     videoPrompt,
     /Run in place continuously at one steady pace[\s\S]*brief airborne moments/
   );
-  assert.match(videoPrompt, /stable grip/);
+  assert.match(videoPrompt, /authoritative source[\s\S]*complete appearance/);
+  assert.match(videoPrompt, /if a hand is empty there, keep it empty/);
+  assert.doesNotMatch(
+    videoPrompt,
+    /stable grip|weapon tips|swing arc|carried item/i
+  );
   assert.match(videoPrompt, /secondary motion in hair, clothing, capes/);
   assert.match(
     videoPrompt,
-    /widest and tallest extent of the entire motion[\s\S]*full reach and swing arc/
+    /widest and tallest extent of the entire motion[\s\S]*explicitly selected element/
   );
   assert.match(videoPrompt, /at least 12% empty background/);
   assert.match(
     videoPrompt,
-    /never crop, clip, or let any character or equipment pixel touch or leave the frame edges/
+    /never crop, clip, or let any visible pixel touch or leave the frame edges/
   );
   assert.match(
     videoPrompt,
@@ -360,7 +365,90 @@ test('video action prompts use continuous motion instead of frame choreography',
     direction: 'east',
   });
   assert.match(attackPrompt, /exactly one fast, exaggerated strike/);
-  assert.match(attackPrompt, /use only the item already carried/);
+  assert.match(attackPrompt, /use only a held item[\s\S]*reference image/);
+  assert.match(
+    attackPrompt,
+    /if neither hand holds an item[\s\S]*perform the attack unarmed/
+  );
+});
+
+test('video prompts preserve reference inventory and isolate action-specific additions', () => {
+  const unarmedAttack = buildAnimationVideoPrompt({
+    action: 'attack',
+    actionConfig: { weapon: 'unarmed' },
+  });
+  assert.match(unarmedAttack, /explicitly unarmed[\s\S]*both hands empty/);
+
+  const spearAttack = buildAnimationVideoPrompt({
+    action: 'attack',
+    actionConfig: { weapon: 'spear' },
+  });
+  assert.match(
+    spearAttack,
+    /use exactly one spear because it is explicitly selected/
+  );
+
+  const bowShot = buildAnimationVideoPrompt({
+    action: 'shoot',
+    actionConfig: { shootType: 'bow' },
+  });
+  assert.match(
+    bowShot,
+    /use exactly one bow because it is explicitly selected/
+  );
+  assert.match(bowShot, /release exactly one projectile/);
+
+  const magicShot = buildAnimationVideoPrompt({
+    action: 'shoot',
+    actionConfig: { shootType: 'magic-bolt' },
+  });
+  assert.match(magicShot, /cast the single selected magic bolt from the hand/);
+  assert.match(magicShot, /do not add a bow, gun, staff/);
+
+  const handCast = buildAnimationVideoPrompt({
+    action: 'cast',
+    actionConfig: { castType: 'hand' },
+  });
+  assert.match(handCast, /cast with an empty hand/);
+
+  const staffCast = buildAnimationVideoPrompt({
+    action: 'cast',
+    actionConfig: { castType: 'staff' },
+  });
+  assert.match(staffCast, /use exactly one staff/);
+
+  const pickup = buildAnimationVideoPrompt({ action: 'pickup' });
+  assert.match(pickup, /exactly one small, plain pickup object/);
+  assert.match(pickup, /without duplicating, vanishing, or morphing/);
+});
+
+test('every built-in video action has safeguards for its common failure mode', () => {
+  const safeguards: Record<string, RegExp> = {
+    idle: /do not add waving, walking, attacking, or dramatic effects/,
+    walk: /without drifting, sliding, teleporting/,
+    run: /without drifting, sliding, teleporting/,
+    jump: /do not add landing dust, impact flashes, motion trails/,
+    dash: /do not add afterimages, duplicates, speed lines, smoke, dust/,
+    attack: /do not add an opponent, target, projectile, slash trail/,
+    shoot: /release exactly one projectile[\s\S]*do not add a target/,
+    cast: /one compact spell effect[\s\S]*do not summon a creature/,
+    hurt: /keep the impact source unseen[\s\S]*do not add an attacker/,
+    death:
+      /keep the complete fallen body visible[\s\S]*do not sink, dissolve, or disappear/,
+    pickup: /pick up only the single permitted object/,
+    wave: /do not turn it into a salute, dance, walk, or spell cast/,
+  };
+
+  for (const [action, expected] of Object.entries(safeguards)) {
+    const prompt = buildAnimationVideoPrompt({ action });
+    assert.match(prompt, expected, `${action} prompt is missing its safeguard`);
+  }
+
+  const runPrompt = buildAnimationVideoPrompt({ action: 'run' });
+  assert.doesNotMatch(
+    runPrompt,
+    /weapon|equipment|carried item|stable grip|swing arc/i
+  );
 });
 
 test('none character presets leave style and perspective to the prompt', () => {

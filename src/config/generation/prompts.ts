@@ -184,7 +184,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     motion:
       'Walk in place at a steady speed. Alternate left and right contact phases with natural opposing arm swings.',
     videoMotion:
-      'Walk in place continuously at one steady pace. Use clear alternating steps, a modest stride, and a natural rise and fall of the hips and torso. Let the free arm counter-swing with the legs while any hand already holding an item keeps a secure, continuous grip. Complete one smooth cycle that connects back to the opening step without stopping.',
+      'Walk in place continuously at one steady pace. Use clear alternating steps, a modest stride, and a natural rise and fall of the hips and torso. Let both arms counter-swing naturally with the legs. Complete one smooth cycle that connects back to the opening step without stopping.',
     keyPoses: [
       'left heel contact; right arm forward and left arm back',
       'left-leg down pose; body slightly lower',
@@ -208,7 +208,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     motion:
       'Run in place at one steady speed with a slight forward lean. Alternate left and right support phases and include clear airborne phases.',
     videoMotion:
-      'Run in place continuously at one steady pace with a slight forward lean. Use long alternating strides, brief airborne moments, and a consistent rhythmic bounce through the hips and torso. Let the free arm counter-swing naturally with bent elbows while any hand already holding an item keeps a secure, continuous grip. Complete one energetic cycle that connects smoothly back to the opening stride without slowing down or returning to idle.',
+      'Run in place continuously at one steady pace with a slight forward lean. Use long alternating strides, brief airborne moments, and a consistent rhythmic bounce through the hips and torso. Let both arms counter-swing naturally with bent elbows. Complete one energetic cycle that connects smoothly back to the opening stride without slowing down or returning to idle.',
     keyPoses: [
       'left-foot contact; right arm forward and left arm back',
       'left-leg compression; hips and torso slightly lower',
@@ -229,9 +229,9 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     label: 'single attack action',
     timing: 'one-shot action with readable anticipation, impact, and recovery',
     motion:
-      'Perform one decisive attack while preserving the weapon, grip, and facing direction across every frame.',
+      'Perform one decisive attack while preserving the selected attack setup and facing direction across every frame.',
     videoMotion:
-      'Begin in a ready combat stance, already using the weapon selected in the action options. If the option is keep-current, use only the item already carried; if it is unarmed, fight with clenched fists and add no weapon. Coil into one large, readable anticipation with the weight drawn back, then explode into exactly one fast, exaggerated strike through a wide arc in front of the body. Hold the follow-through briefly, then recover into the ready stance. Drive the reach from the hips, torso, and attacking arm while staying in place.',
+      'Begin in a ready combat stance using only the explicitly selected attack setup. Coil into one large, readable anticipation with the weight drawn back, then explode into exactly one fast, exaggerated strike through a wide arc in front of the body. Hold the follow-through briefly, then recover into the ready stance. Drive the reach from the hips, torso, and attacking arm while staying in place.',
     keyPoses: [
       'combat-ready starting pose',
       'clear anticipation and wind-up',
@@ -241,7 +241,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
       'balanced recovery pose',
     ],
     constraints: [
-      'keep hands attached to the same weapon or attack source',
+      'keep the selected attack source and hand state consistent',
       'do not add a second attack or unrelated locomotion',
     ],
   },
@@ -291,10 +291,10 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     motion:
       'Prepare, aim, fire or release exactly once, follow through, and recover.',
     videoMotion:
-      'Perform exactly one ranged attack using the selected shoot type. Move from a ready stance into a clear aim or draw, release one shot, show one brief readable recoil or follow-through, then lower the attack and recover to the ready stance. Keep both hands anatomically connected to the weapon or casting action for the entire motion.',
+      'Perform exactly one ranged attack using the selected shoot type. Move from a ready stance into a clear aim or draw, release one shot, show one brief readable recoil or follow-through, then lower the attack and recover to the ready stance. Keep the selected firing method and hand positions anatomically consistent for the entire motion.',
     keyPoses: [
       'ready stance',
-      'raise weapon or casting hand',
+      'raise the selected firing source or casting hand',
       'aim, draw, or charge',
       'fire or release once',
       'peak firing pose',
@@ -310,7 +310,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     motion:
       'Gather energy, release one readable cast, follow through, and recover.',
     videoMotion:
-      'Perform exactly one spell cast using the selected cast type. Gather energy with a clear preparation, build to one readable release, extend through the casting gesture, then let the energy and body motion settle before returning to the ready stance. Keep the hands, staff, and any carried equipment connected and consistent throughout.',
+      'Perform exactly one spell cast using the selected cast type. Gather energy with a clear preparation, build to one readable release, extend through the casting gesture, then let the energy and body motion settle before returning to the ready stance. Keep the casting hand positions and reference-visible details consistent throughout.',
     keyPoses: [
       'ready stance',
       'begin gathering energy',
@@ -365,7 +365,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     timing: 'one-shot interaction from reach through recovery',
     motion: 'Bend down, reach, grasp, lift, stand back up, and settle.',
     videoMotion:
-      'Perform exactly one ground pickup. Start in the ready stance, bend naturally through the knees and hips, reach down with one free hand, close the hand around one implied small item, lift it while standing back up, then settle into the ready stance. Do not walk away or release any item already held in the other hand.',
+      'Perform exactly one ground pickup. Start in the ready stance, bend naturally through the knees and hips, reach down with one hand, close that hand around the single pickup object, lift it while standing back up, then settle into the ready stance. Do not walk away or perform another interaction.',
     keyPoses: [
       'ready stance',
       'reach downward',
@@ -384,7 +384,7 @@ const animationActionContracts: Record<string, AnimationActionContract> = {
     motion:
       'Raise one hand, perform a clear relaxed wave, then lower it naturally.',
     videoMotion:
-      'Perform one friendly wave with a free hand. Raise the hand clearly, make a small relaxed side-to-side wave, lower it naturally, and settle back into the ready stance. If one hand already holds an item, keep that grip unchanged and wave only with the free hand.',
+      'Perform one friendly wave with one hand. Raise that hand clearly, make a small relaxed side-to-side wave, lower it naturally, and settle back into the ready stance. Keep the other hand in a natural pose that matches the reference.',
     keyPoses: [
       'ready stance',
       'raise hand',
@@ -533,6 +533,138 @@ export function buildAnimationPrompt(
   ].join('\n');
 }
 
+function animationVideoInventoryLines(
+  input: Pick<SpritePromptInput, 'action' | 'actionConfig'>
+) {
+  const action = (input.action || '').toLowerCase();
+  const options = input.actionConfig || {};
+
+  if (action === 'attack') {
+    const weapon = options.weapon || 'keep-current';
+    if (weapon === 'unarmed') {
+      return [
+        '- the selected attack is explicitly unarmed; keep both hands empty throughout and do not add any weapon, shield, tool, or prop',
+      ];
+    }
+    if (weapon === 'keep-current') {
+      return [
+        '- for keep-current, use only a held item that is visibly present in the reference image',
+        '- if neither hand holds an item in the reference image, perform the attack unarmed with both hands empty; never invent a weapon',
+      ];
+    }
+    return [
+      `- use exactly one ${weapon} because it is explicitly selected; do not introduce any additional held object`,
+    ];
+  }
+
+  if (action === 'shoot') {
+    const shootType = options.shootType || 'bow';
+    if (shootType === 'magic-bolt') {
+      return [
+        '- cast the single selected magic bolt from the hand; do not add a bow, gun, staff, or other held object unless it is already visible in the reference',
+      ];
+    }
+    return [
+      `- use exactly one ${shootType} because it is explicitly selected; do not introduce any other new held object`,
+    ];
+  }
+
+  if (action === 'cast') {
+    const castType = options.castType || 'quick';
+    if (castType === 'staff') {
+      return [
+        '- use exactly one staff because a staff cast is explicitly selected; do not introduce any other new held object',
+      ];
+    }
+    if (castType === 'hand') {
+      return [
+        '- cast with an empty hand; do not add a staff, wand, weapon, tool, or other held object',
+      ];
+    }
+    return [
+      '- preserve the exact held-object state from the reference; if no casting implement is visible, cast with empty hands and do not invent one',
+    ];
+  }
+
+  if (action === 'pickup') {
+    return [
+      '- preserve every reference-visible object and introduce exactly one small, plain pickup object as the only new object',
+      '- keep the pickup object visible from the opening pose until it is grasped, then keep it attached to the same hand without duplicating, vanishing, or morphing',
+    ];
+  }
+
+  if (!animationActionContract(action)) {
+    return [
+      '- match the exact held-object state shown in the reference; add a new held object only when the user motion notes explicitly require it',
+    ];
+  }
+
+  return [
+    '- match the exact held-object state shown in the reference image; if a hand is empty there, keep it empty in every frame',
+    '- do not add any new held object, prop, accessory, or visual effect, and do not turn costume details into handheld items',
+  ];
+}
+
+function animationVideoActionSafetyLines(
+  input: Pick<SpritePromptInput, 'action' | 'actionConfig'>
+) {
+  const action = (input.action || '').toLowerCase();
+  const options = input.actionConfig || {};
+
+  switch (action) {
+    case 'idle':
+      return ['- do not add waving, walking, attacking, or dramatic effects'];
+    case 'walk':
+    case 'run':
+      return [
+        '- remain in place without drifting, sliding, teleporting, or turning the locomotion cycle into forward camera travel',
+      ];
+    case 'jump':
+      return [
+        options.jumpType === 'forward'
+          ? '- express the selected forward jump through body lean and limb motion while keeping the character centered for sprite extraction'
+          : '- rise and land on the same centered spot without horizontal drift',
+        '- do not add landing dust, impact flashes, motion trails, or ground effects',
+      ];
+    case 'dash':
+      return [
+        `- express the selected ${options.dashType || 'forward'} dash through the pose while keeping the character centered for sprite extraction`,
+        '- keep one solid character only; do not add afterimages, duplicates, speed lines, smoke, dust, or motion trails',
+      ];
+    case 'attack':
+      return [
+        '- do not add an opponent, target, projectile, slash trail, impact burst, blood, or debris unless the user motion notes explicitly request it',
+      ];
+    case 'shoot':
+      return [
+        '- release exactly one projectile and keep it inside the frame; do not add a target, opponent, repeated shots, extra ammunition, blood, or debris',
+      ];
+    case 'cast':
+      return [
+        '- use one compact spell effect that remains inside the frame; do not summon a creature, target, scenery, or extra prop',
+      ];
+    case 'hurt':
+      return [
+        '- keep the impact source unseen; do not add an attacker, projectile, weapon, blood, wound, debris, or impact flash',
+      ];
+    case 'death':
+      return [
+        '- keep the cause of death unseen; do not add an attacker, projectile, weapon, blood, wound, debris, or impact flash',
+        '- keep the complete fallen body visible and still in the final pose; do not sink, dissolve, or disappear',
+      ];
+    case 'pickup':
+      return [
+        '- pick up only the single permitted object; do not spawn, collect, drop, or exchange any additional object',
+      ];
+    case 'wave':
+      return [
+        '- keep the gesture to one hand and do not turn it into a salute, dance, walk, or spell cast',
+      ];
+    default:
+      return [];
+  }
+}
+
 export function buildAnimationVideoPrompt(
   input: Pick<
     SpritePromptInput,
@@ -545,7 +677,8 @@ export function buildAnimationVideoPrompt(
   const contract = animationActionContract(action);
   return [
     'Animate the provided character as one clean 2D game-animation clip of about two seconds.',
-    'Use the reference image only as the character identity and starting design.',
+    "Treat the reference image as the authoritative source for the character's complete appearance, clothing, accessories, and whether each hand is empty—not merely as an identity reference.",
+    'Change only the pose and viewing direction required by the selected action; do not redesign the character or infer new belongings from the action archetype.',
     '',
     `Use a clear game-animation view facing ${facing}.`,
     `Keep the character facing ${facing} for the entire clip.`,
@@ -567,6 +700,7 @@ export function buildAnimationVideoPrompt(
           `- perform only this action: ${contract.label}`,
           `- timing: ${contract.timing}`,
           ...contract.constraints.map((constraint) => `- ${constraint}`),
+          ...animationVideoActionSafetyLines(input),
         ]
       : [
           '',
@@ -576,16 +710,15 @@ export function buildAnimationVideoPrompt(
     '',
     'Video requirements:',
     '- preserve the exact character identity, clothing, colors, proportions, silhouette, and art style',
-    '- follow any explicit equipment option; otherwise do not add, remove, replace, or redesign equipment',
-    '- keep every hand and carried item anatomically connected with a stable grip; never let a hand or item vanish, duplicate, switch sides, detach, or morph',
+    ...animationVideoInventoryLines(input),
     `- keep the character facing ${facing} for the entire clip`,
-    '- compose the camera for the widest and tallest extent of the entire motion before animating, including the full reach and swing arc of all equipment and effects',
-    '- keep the camera fixed and keep the complete character, limbs, clothing, equipment, weapon tips, and effects fully visible in every frame',
+    '- compose the camera for the widest and tallest extent of the entire motion before animating, including every reference-visible or explicitly selected element',
+    '- keep the camera fixed and keep the complete character and every permitted element fully visible in every frame',
     '- reserve at least 12% empty background between the maximum motion envelope and every frame edge; scale the character down uniformly when needed',
-    '- never crop, clip, or let any character or equipment pixel touch or leave the frame edges at any moment',
+    '- never crop, clip, or let any visible pixel touch or leave the frame edges at any moment',
     '- keep the invisible alignment baseline, scale, and horizontal position stable',
     '- animate natural opposing arm and leg motion where the action requires it',
-    '- include continuous secondary motion in hair, clothing, capes, tails, and carried items',
+    '- include continuous secondary motion in hair, clothing, capes, tails, and reference-visible accessories',
     '- use one perfectly uniform plain neutral-grey background with no scenery, floor, ground plane, or unrelated objects',
     '- do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow beneath or around the character',
     '- keep the area beneath the feet exactly the same flat background color as the rest of the frame, with a clean silhouette suitable for background removal',
