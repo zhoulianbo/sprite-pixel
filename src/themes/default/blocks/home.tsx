@@ -9,11 +9,11 @@ import {
   IconBox,
   IconBrandGithub,
   IconCheck,
+  IconChevronDown,
+  IconChevronUp,
   IconDeviceGamepad2,
   IconDownload,
   IconFlask,
-  IconChevronDown,
-  IconChevronUp,
   IconFolder,
   IconLoader2,
   IconMovie,
@@ -31,8 +31,17 @@ import {
 import { useLocale, useTranslations } from 'next-intl';
 
 import { useRouter } from '@/core/i18n/navigation';
-import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
+import {
+  animationDirectionDefault,
+  animationDirectionValues,
+  generationDefaults,
+  getActionTypeImage,
+  mapGenerationOptions,
+} from '@/config/generation';
+import {
+  generationPollIntervalMs,
+  getGenerationCredits,
+} from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
@@ -198,7 +207,7 @@ function HeroOptionButtons({
 }) {
   return (
     <div className="contents">
-      <span className="text-muted-foreground whitespace-nowrap pt-1.5 text-sm font-medium">
+      <span className="text-muted-foreground pt-1.5 text-sm font-medium whitespace-nowrap">
         {label}
       </span>
       <div
@@ -215,7 +224,7 @@ function HeroOptionButtons({
                 'inline-flex min-h-8 items-center rounded-md border px-3 text-sm font-medium transition-colors',
                 selected
                   ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
-                  : 'text-foreground/80 hover:border-primary/55 border-white/12 bg-secondary/55'
+                  : 'text-foreground/80 hover:border-primary/55 bg-secondary/55 border-white/12'
               )}
               key={option.value}
               onClick={() => onValueChange(option.value)}
@@ -1158,6 +1167,9 @@ export function Home({ section: _section }: { section: Section }) {
   const [motionFrames, setMotionFrames] = useState<string>(
     generationDefaults.frames
   );
+  const [motionDirection, setMotionDirection] = useState<string>(
+    animationDirectionDefault
+  );
   const [motionFrameSize, setMotionFrameSize] = useState<string>(
     generationDefaults.frameSize
   );
@@ -1228,6 +1240,7 @@ export function Home({ section: _section }: { section: Section }) {
       if (pending.mode === 'motion') {
         setMotionPrompt(pending.prompt || '');
         setMotionType(pending.action || generationDefaults.actionType);
+        setMotionDirection(pending.direction || animationDirectionDefault);
         setMotionFrames(pending.frames || generationDefaults.frames);
         setMotionFrameSize(pending.frameSize || generationDefaults.frameSize);
       } else {
@@ -1434,9 +1447,14 @@ export function Home({ section: _section }: { section: Section }) {
               itemId,
               referenceFileId,
               action: motionType,
-              actionConfig: motionActionConfig,
+              ...(motionType === 'custom'
+                ? {}
+                : { actionConfig: motionActionConfig }),
               directionMode: 'single',
-              direction: 'east',
+              ...(motionType === 'custom' ||
+              motionDirection === animationDirectionDefault
+                ? {}
+                : { direction: motionDirection }),
               frames: motionFrames === 'auto' ? 'auto' : Number(motionFrames),
               fps: 12,
               frameSize: motionFrameSize,
@@ -1727,6 +1745,10 @@ export function Home({ section: _section }: { section: Section }) {
       value,
       label: t(`motionOptions.${group}.${value}` as never),
     }));
+  const motionDirectionOptions = animationDirectionValues.map((value) => ({
+    value,
+    label: tGeneration(`options.animationDirection.${value}` as never),
+  }));
 
   return (
     <main className="bg-background text-foreground overflow-hidden">
@@ -2023,20 +2045,35 @@ export function Home({ section: _section }: { section: Section }) {
                           </button>
                         </>
                       ) : (
-                        <button
-                          className="text-muted-foreground hover:text-primary flex flex-col items-center gap-2 text-xs"
-                          onClick={() => {
-                            if (requireSignedIn())
-                              motionFileInputRef.current?.click();
-                          }}
-                          type="button"
-                        >
-                          <IconUpload
-                            aria-hidden="true"
-                            className="size-9 stroke-[1.3]"
-                          />
-                          {t('motionUploadEmpty')}
-                        </button>
+                        <>
+                          <button
+                            className="text-muted-foreground hover:text-primary flex flex-col items-center gap-2 text-center text-sm"
+                            onClick={() => {
+                              if (requireSignedIn())
+                                motionFileInputRef.current?.click();
+                            }}
+                            type="button"
+                          >
+                            <IconUpload
+                              aria-hidden="true"
+                              className="size-9 stroke-[1.3]"
+                            />
+                            {t('motionUploadEmpty')}
+                          </button>
+                          <p className="text-muted-foreground absolute inset-x-3 bottom-3 text-center text-sm">
+                            {t('motionCharacterMissing')}{' '}
+                            <button
+                              className="text-primary hover:bg-primary/10 rounded-md px-1 py-0.5 font-medium"
+                              onClick={() => {
+                                setHeroMode('character');
+                                setValidationAttempted(false);
+                              }}
+                              type="button"
+                            >
+                              {t('motionCreateCharacter')}
+                            </button>
+                          </p>
+                        </>
                       )}
                     </div>
                   </aside>
@@ -2245,7 +2282,7 @@ export function Home({ section: _section }: { section: Section }) {
                         ) : null}
                         {motionDetailTypes.includes(motionType) ? (
                           <div className="contents">
-                            <span className="text-muted-foreground whitespace-nowrap pt-2 text-sm font-medium">
+                            <span className="text-muted-foreground pt-2 text-sm font-medium whitespace-nowrap">
                               {motionType === 'custom'
                                 ? t('customAction')
                                 : t('motionDetail')}
@@ -2275,6 +2312,14 @@ export function Home({ section: _section }: { section: Section }) {
 
                     <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-4">
                       <div className="flex flex-wrap gap-2">
+                        {motionType === 'custom' ? null : (
+                          <HeroOptionSelect
+                            label={tGeneration('fields.direction')}
+                            onValueChange={setMotionDirection}
+                            options={motionDirectionOptions}
+                            value={motionDirection}
+                          />
+                        )}
                         <HeroOptionSelect
                           label={tGeneration('fields.frames')}
                           onValueChange={setMotionFrames}
@@ -2300,9 +2345,7 @@ export function Home({ section: _section }: { section: Section }) {
                         motionPhase === 'failed' ? (
                           <div
                             className="max-w-[360px] min-w-0 flex-1"
-                            role={
-                              motionPhase === 'failed' ? 'alert' : 'status'
-                            }
+                            role={motionPhase === 'failed' ? 'alert' : 'status'}
                           >
                             <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
                               <span

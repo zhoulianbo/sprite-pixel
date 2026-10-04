@@ -67,6 +67,13 @@
       "four-way": "4方向",
       "eight-way": "8方向"
     },
+    "animationDirection": {
+      "original": "元の向き",
+      "east": "右",
+      "west": "左",
+      "north": "上",
+      "south": "下"
+    },
     "frames": { "auto": "自動" }
   }
 }

@@ -450,6 +450,48 @@ function animationOptionLines(
   return [];
 }
 
+function animationDirectionInstructions(action: string, direction?: string) {
+  const selectedDirection = token(direction, 'none');
+  const followsReference = ['none', 'source'].includes(selectedDirection);
+  const custom = action === 'custom';
+
+  if (custom && followsReference) {
+    return {
+      label:
+        'defined by the custom action specification; preserve the reference facing when unspecified',
+      setup: [],
+      requirement: [
+        '- follow the viewing direction described in the custom action specification; if it does not specify one, preserve the reference character facing',
+      ],
+    };
+  }
+
+  if (followsReference) {
+    return {
+      label: 'follow the reference character',
+      setup: [
+        "Preserve the reference character's original viewing direction for the entire animation.",
+        'Do not rotate the character to another direction.',
+      ],
+      requirement: [
+        "- keep the reference character's original viewing direction in every frame",
+      ],
+    };
+  }
+
+  return {
+    label: selectedDirection,
+    setup: [
+      `Use a clear game-animation view facing ${selectedDirection}.`,
+      `Keep the character facing ${selectedDirection} for the entire clip.`,
+      'Do not rotate away from the selected direction.',
+    ],
+    requirement: [
+      `- keep the character facing ${selectedDirection} for the entire clip`,
+    ],
+  };
+}
+
 export function buildAnimationPrompt(
   input: Pick<
     SpritePromptInput,
@@ -462,10 +504,14 @@ export function buildAnimationPrompt(
     input.frameSize,
     input.action
   );
-  const facing = token(direction || input.direction, 'east');
   const leftover = sheet.columns * sheet.rows - sheet.frameCount;
   const action = token(input.action, generationDefaults.actionType);
   const contract = animationActionContract(action);
+  const directionInstructions = animationDirectionInstructions(
+    action,
+    direction || input.direction
+  );
+  const custom = action === 'custom';
   return [
     'Generate one sprite sheet PNG of the provided character.',
     'Do not generate a video, a GIF, or a single still pose.',
@@ -474,8 +520,14 @@ export function buildAnimationPrompt(
     'Instruction priority:',
     '1. Sheet layout and selected options below are mandatory.',
     '2. Preserve the identity and visual design of the reference character.',
-    '3. User motion notes are secondary style or intensity notes.',
-    '4. If user motion notes conflict with the selected action, direction, frame count, or timing contract, ignore only the conflicting part.',
+    ...(custom
+      ? [
+          '3. The custom action specification defines the complete action, viewing direction, timing, intensity, and ending pose.',
+        ]
+      : [
+          '3. User motion notes are secondary style or intensity notes.',
+          '4. If user motion notes conflict with the selected action, direction, frame count, or timing contract, ignore only the conflicting part.',
+        ]),
     '',
     'Sheet layout:',
     `- ${sheet.columns} columns x ${sheet.rows} rows`,
@@ -488,12 +540,14 @@ export function buildAnimationPrompt(
         ]
       : []),
     '',
-    'User motion notes (secondary):',
+    custom
+      ? 'Custom action specification (authoritative):'
+      : 'User motion notes (secondary):',
     token(input.prompt, ''),
     '',
     `Selected action: ${action}`,
     ...animationOptionLines(input),
-    `Selected direction: ${facing}`,
+    `Selected direction: ${directionInstructions.label}`,
     `Frame count: ${sheet.frameCount}`,
     `Logical cell size: ${sheet.frameSize}x${sheet.frameSize}`,
     `Output size: ${sheet.provider.width}x${sheet.provider.height}`,
@@ -519,7 +573,7 @@ export function buildAnimationPrompt(
     'Requirements:',
     '- preserve the character identity',
     '- preserve clothing, colors, silhouette, and art style',
-    `- every frame faces ${facing}; do not rotate toward another direction`,
+    ...directionInstructions.requirement,
     '- one complete character per cell, with consistent anatomy and limb count',
     '- keep the same scale, camera, ground line, center pivot, and horizontal position',
     '- keep limbs separated and readable; no fused, duplicated, missing, or broken limbs',
@@ -672,24 +726,28 @@ export function buildAnimationVideoPrompt(
   >,
   direction?: string
 ) {
-  const facing = token(direction || input.direction, 'east');
   const action = token(input.action, generationDefaults.actionType);
   const contract = animationActionContract(action);
+  const directionInstructions = animationDirectionInstructions(
+    action,
+    direction || input.direction
+  );
+  const custom = action === 'custom';
   return [
     'Animate the provided character as one clean 2D game-animation clip of about two seconds.',
     "Treat the reference image as the authoritative source for the character's complete appearance, clothing, accessories, and whether each hand is empty—not merely as an identity reference.",
     'Change only the pose and viewing direction required by the selected action; do not redesign the character or infer new belongings from the action archetype.',
     '',
-    `Use a clear game-animation view facing ${facing}.`,
-    `Keep the character facing ${facing} for the entire clip.`,
-    'Do not rotate away from the selected direction.',
+    ...directionInstructions.setup,
     '',
-    'User motion notes:',
+    custom
+      ? 'Custom action specification (authoritative):'
+      : 'User motion notes:',
     token(input.prompt, ''),
     '',
     `Selected action: ${action}`,
     ...animationOptionLines(input),
-    `Selected direction: ${facing}`,
+    `Selected direction: ${directionInstructions.label}`,
     ...(contract
       ? [
           '',
@@ -711,7 +769,7 @@ export function buildAnimationVideoPrompt(
     'Video requirements:',
     '- preserve the exact character identity, clothing, colors, proportions, silhouette, and art style',
     ...animationVideoInventoryLines(input),
-    `- keep the character facing ${facing} for the entire clip`,
+    ...directionInstructions.requirement,
     '- compose the camera for the widest and tallest extent of the entire motion before animating, including every reference-visible or explicitly selected element',
     '- keep the camera fixed and keep the complete character and every permitted element fully visible in every frame',
     '- reserve at least 12% empty background between the maximum motion envelope and every frame edge; scale the character down uniformly when needed',
@@ -723,7 +781,7 @@ export function buildAnimationVideoPrompt(
     '- do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow beneath or around the character',
     '- keep the area beneath the feet exactly the same flat background color as the rest of the frame, with a clean silhouette suitable for background removal',
     '- no cuts, camera movement, zoom, text, labels, borders, or watermark',
-    ...(input.action !== 'death'
+    ...(!['death', 'custom'].includes(input.action || '')
       ? ['- finish in a pose that connects cleanly back to the first pose']
       : []),
   ].join('\n');

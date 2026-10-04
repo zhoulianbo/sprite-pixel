@@ -1,5 +1,7 @@
 export {
   actionTypeImages,
+  animationDirectionDefault,
+  animationDirectionValues,
   CHARACTER_OUTPUT_ASPECT_RATIO,
   generationDefaults,
   generationOptionValues,

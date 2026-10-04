@@ -372,6 +372,35 @@ test('video action prompts use continuous motion instead of frame choreography',
   );
 });
 
+test('animation direction can follow the reference or be fully prompt-defined', () => {
+  const followReference = buildAnimationVideoPrompt({
+    action: 'walk',
+    direction: 'none',
+  });
+  assert.match(
+    followReference,
+    /Selected direction: follow the reference character/
+  );
+  assert.match(
+    followReference,
+    /Preserve the reference character's original viewing direction/
+  );
+  assert.doesNotMatch(followReference, /facing east/);
+
+  const custom = buildAnimationVideoPrompt({
+    action: 'custom',
+    prompt:
+      'Face left, crouch, leap forward with a sword swing, then land in a defensive pose.',
+  });
+  assert.match(custom, /Custom action specification \(authoritative\):/);
+  assert.match(
+    custom,
+    /viewing direction described in the custom action specification/
+  );
+  assert.doesNotMatch(custom, /finish in a pose that connects cleanly/);
+  assert.doesNotMatch(custom, /facing east/);
+});
+
 test('video prompts preserve reference inventory and isolate action-specific additions', () => {
   const unarmedAttack = buildAnimationVideoPrompt({
     action: 'attack',

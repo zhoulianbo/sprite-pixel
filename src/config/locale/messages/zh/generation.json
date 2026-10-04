@@ -6,7 +6,7 @@
     "characterType": "角色类型",
     "editType": "类型",
     "actionType": "动作类型",
-    "direction": "朝向",
+    "direction": "方向",
     "frames": "动画帧数",
     "frameSize": "单帧尺寸"
   },
@@ -73,6 +73,13 @@
       "down": "向下",
       "four-way": "四方向",
       "eight-way": "八方向"
+    },
+    "animationDirection": {
+      "original": "原方向",
+      "east": "向右",
+      "west": "向左",
+      "north": "向上",
+      "south": "向下"
     },
     "frames": {
       "auto": "智能"

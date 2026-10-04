@@ -36,6 +36,16 @@ export type GenerationField = keyof typeof generationOptionValues;
 export type GenerationOptionValue<Field extends GenerationField> =
   (typeof generationOptionValues)[Field][number];
 
+export const animationDirectionValues = [
+  'original',
+  'east',
+  'west',
+  'north',
+  'south',
+] as const;
+
+export const animationDirectionDefault = animationDirectionValues[0];
+
 export const iconStyleValues = [
   'pixel-art',
   'hand-painted',

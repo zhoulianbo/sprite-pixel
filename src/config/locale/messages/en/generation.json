@@ -74,6 +74,13 @@
       "four-way": "Four-way",
       "eight-way": "Eight-way"
     },
+    "animationDirection": {
+      "original": "Original",
+      "east": "Right",
+      "west": "Left",
+      "north": "Up",
+      "south": "Down"
+    },
     "frames": {
       "auto": "Auto"
     }
