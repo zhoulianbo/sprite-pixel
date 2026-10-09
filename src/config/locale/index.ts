@@ -54,6 +54,7 @@ export const localeMessagesPaths = [
   'admin/settings',
   'admin/apikeys',
   'admin/ai-tasks',
+  'admin/assets',
   'admin/chats',
   'ai/chat',
   'activity/sidebar',

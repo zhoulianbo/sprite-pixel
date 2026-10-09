@@ -73,6 +73,28 @@
       "title": "业务",
       "items": [
         {
+          "title": "资产管理",
+          "icon": "Images",
+          "is_expand": true,
+          "children": [
+            {
+              "title": "角色",
+              "url": "/admin/assets/characters",
+              "icon": "UserRound"
+            },
+            {
+              "title": "动画",
+              "url": "/admin/assets/animations",
+              "icon": "Film"
+            },
+            {
+              "title": "ICON",
+              "url": "/admin/assets/icons",
+              "icon": "LayoutGrid"
+            }
+          ]
+        },
+        {
           "title": "AI任务",
           "url": "/admin/ai-tasks",
           "icon": "Brain"

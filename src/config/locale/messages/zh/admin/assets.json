@@ -1,0 +1,45 @@
+{
+  "crumbs": {
+    "admin": "管理后台"
+  },
+  "fields": {
+    "preview": "预览",
+    "name": "名称",
+    "user": "用户",
+    "project": "项目",
+    "description": "描述",
+    "character": "角色",
+    "action": "动作",
+    "direction": "方向",
+    "frames": "帧数",
+    "createdAt": "生成时间"
+  },
+  "search": {
+    "email": "用户邮箱",
+    "emailPlaceholder": "输入完整邮箱"
+  },
+  "characters": {
+    "title": "角色资产",
+    "description": "查看用户已生成或保存完成的角色资产。",
+    "empty": "暂无已完成的角色资产。",
+    "previewLabel": "{name} 的角色预览",
+    "zoomLabel": "放大查看 {name}"
+  },
+  "animations": {
+    "title": "动画资产",
+    "description": "查看用户已生成完成的动画及实时动画效果。",
+    "empty": "暂无已完成的动画。",
+    "noPreview": "暂无预览",
+    "previewLabel": "{name} 的动画预览",
+    "zoomLabel": "放大查看 {name} 的动画效果",
+    "originalDirection": "原方向",
+    "frameSummary": "{count} 帧 · {fps} 帧/秒"
+  },
+  "icons": {
+    "title": "ICON 资产",
+    "description": "查看用户已生成完成的 ICON 组合。",
+    "empty": "暂无已完成的 ICON 资产。",
+    "previewLabel": "{name} 的 ICON 预览",
+    "zoomLabel": "放大查看 {name}"
+  }
+}
