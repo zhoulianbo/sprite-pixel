@@ -61,12 +61,15 @@ export default async function AdminAnimationsPage({
         title: t('fields.preview'),
         callback: (item: (typeof animations)[number]) => (
           <AdminAnimationPreview
+            imageTabLabel={t('animations.imageTab')}
+            animationTabLabel={t('animations.animationTab')}
+            loadingLabel={t('animations.loading')}
+            errorLabel={t('animations.loadError')}
+            retryLabel={t('animations.retry')}
             emptyLabel={t('animations.noPreview')}
-            fps={item.fps}
-            frames={item.frames}
-            height={item.frameHeight}
+            clipId={item.id}
+            previewUrl={item.previewUrl}
             label={t('animations.previewLabel', { name: item.name })}
-            width={item.frameWidth}
             zoomLabel={t('animations.zoomLabel', { name: item.name })}
           />
         ),

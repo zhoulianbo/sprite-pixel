@@ -1,7 +1,7 @@
-import { ImageIcon } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { ImageIcon, type LucideIcon } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
+import { AnimationThumbnail } from '@/shared/blocks/assets/animation-thumbnail';
 import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Header, Main } from '@/shared/blocks/dashboard';
 import { cn } from '@/shared/lib/utils';
@@ -13,6 +13,7 @@ export type VaultLibraryItem = {
   meta?: string;
   href?: string;
   imageUrl?: string | null;
+  animationVersionId?: string | null;
 };
 
 export function VaultLibrary({
@@ -106,6 +107,29 @@ function VaultCard({
       ) : null}
     </div>
   );
+
+  if (item.animationVersionId) {
+    return (
+      <article className="group bg-card hover:border-primary/50 overflow-hidden rounded-xl border transition-colors">
+        <div className="bg-muted/35 aspect-square border-b">
+          <AnimationThumbnail
+            key={item.animationVersionId}
+            versionId={item.animationVersionId}
+            imageUrl={item.imageUrl}
+            label={item.name}
+            href={item.href}
+          />
+        </div>
+        {item.href ? (
+          <Link href={item.href} prefetch={false} className="block">
+            {details}
+          </Link>
+        ) : (
+          details
+        )}
+      </article>
+    );
+  }
 
   if (item.href && !zoomLabel) {
     return (

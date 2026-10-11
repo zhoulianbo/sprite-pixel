@@ -22,7 +22,7 @@ const common = {
     .enum(['humanoid', 'monster', 'animal', 'robot', 'custom'])
     .optional(),
   frameSize: z
-    .union([z.enum(['64', '128', '256']), z.number().int()])
+    .union([z.enum(['64', '128', '256', '512']), z.number().int()])
     .optional(),
   width: z.number().int().min(16).max(512).optional(),
   height: z.number().int().min(16).max(512).optional(),

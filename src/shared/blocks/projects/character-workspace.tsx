@@ -212,12 +212,12 @@ export function CharacterWorkspace({
   const sheetFiles = useMemo(() => {
     const ids = new Set<string>();
     return workspace.animations.flatMap((animation) => {
-      const frame = animation.frames[0];
-      if (!frame || ids.has(frame.file.id)) return [];
-      ids.add(frame.file.id);
+      const sheet = animation.preview;
+      if (!sheet || ids.has(sheet.id)) return [];
+      ids.add(sheet.id);
       return [
         {
-          id: frame.file.id,
+          id: sheet.id,
           variantId: animation.set.variantId,
           generationId: null,
           role: 'spritesheet',
@@ -227,7 +227,7 @@ export function CharacterWorkspace({
             direction: animation.clip.direction,
             versionId: animation.version?.id,
           }),
-          url: frame.file.url,
+          url: sheet.url,
           createdAt: animation.set.createdAt,
         },
       ];

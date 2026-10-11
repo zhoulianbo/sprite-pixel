@@ -644,5 +644,13 @@
     "GENERATION_RETRY_FAILED": "재시도를 시작할 수 없습니다.",
     "GENERATION_ID_CONFLICT": "같은 생성이 이미 존재합니다. 새로 시작하세요.",
     "PROJECT_LIMIT": "현재 요금제의 프로젝트 한도에 도달했습니다. 계속하려면 업그레이드하세요."
+  },
+  "animationPreview": {
+    "play": "애니메이션 재생",
+    "pause": "재생 중지",
+    "loading": "애니메이션 불러오는 중…",
+    "error": "애니메이션을 불러오지 못했습니다. 다시 시도해 주세요.",
+    "empty": "재생할 프레임이 없습니다.",
+    "retry": "애니메이션 다시 불러오기"
   }
 }

@@ -28,7 +28,7 @@ export const generationOptionValues = {
   ],
   direction: ['right', 'left', 'up', 'down', 'four-way', 'eight-way'],
   frames: ['auto', '16', '25'],
-  frameSize: ['64', '128', '256'],
+  frameSize: ['64', '128', '256', '512'],
 } as const;
 
 export type GenerationField = keyof typeof generationOptionValues;

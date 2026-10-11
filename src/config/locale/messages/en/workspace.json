@@ -644,5 +644,13 @@
     "GENERATION_RETRY_FAILED": "The retry could not be started. Try again.",
     "GENERATION_ID_CONFLICT": "This generation already exists. Start a new one.",
     "PROJECT_LIMIT": "This plan has reached its project limit. Upgrade to create more."
+  },
+  "animationPreview": {
+    "play": "Play animation",
+    "pause": "Stop playback",
+    "loading": "Loading animation…",
+    "error": "Unable to load the animation. Please retry.",
+    "empty": "No animation frames available.",
+    "retry": "Retry animation"
   }
 }

@@ -28,11 +28,8 @@ type AdminAnimationRow = {
   projectName: string;
   owner: typeof user.$inferSelect;
   fps: number;
-  frameWidth: number;
-  frameHeight: number;
   frameCount: number;
-  framesJson: string;
-  spritesheetFileId: string | null;
+  storageKey: string | null;
 };
 
 function assetRole(kind: AdminAssetKind) {
@@ -154,11 +151,8 @@ export async function getAdminAnimations({
       projectName: project.name,
       owner: user,
       fps: animationVersion.fps,
-      frameWidth: animationVersion.frameWidth,
-      frameHeight: animationVersion.frameHeight,
       frameCount: animationVersion.frameCount,
-      framesJson: animationVersion.framesJson,
-      spritesheetFileId: animationVersion.spritesheetFileId,
+      storageKey: assetFile.storageKey,
     })
     .from(animationClip)
     .innerJoin(animationSet, eq(animationSet.id, animationClip.animationSetId))
@@ -166,26 +160,71 @@ export async function getAdminAnimations({
     .innerJoin(assetItem, eq(assetItem.id, animationSet.itemId))
     .innerJoin(project, eq(project.id, animationSet.projectId))
     .innerJoin(user, eq(user.id, project.userId))
+    .leftJoin(
+      assetFile,
+      and(
+        eq(assetFile.id, animationVersion.spritesheetFileId),
+        isNull(assetFile.deletedAt)
+      )
+    )
     .where(animationConditions(email))
     .orderBy(desc(animationVersion.createdAt))
     .limit(limit)
     .offset((page - 1) * limit)) as AdminAnimationRow[];
 
+  const urlFor = await getAssetPublicUrlResolver();
+  return rows.map(({ storageKey, ...row }) => ({
+    ...row,
+    previewUrl: storageKey ? urlFor(storageKey) : null,
+  }));
+}
+
+export async function getAdminAnimationPreview(clipId: string) {
+  const [version] = (await db()
+    .select({
+      fps: animationVersion.fps,
+      frameWidth: animationVersion.frameWidth,
+      frameHeight: animationVersion.frameHeight,
+      framesJson: animationVersion.framesJson,
+      spritesheetFileId: animationVersion.spritesheetFileId,
+    })
+    .from(animationClip)
+    .innerJoin(animationSet, eq(animationSet.id, animationClip.animationSetId))
+    .innerJoin(animationVersion, eq(animationVersion.clipId, animationClip.id))
+    .innerJoin(assetItem, eq(assetItem.id, animationSet.itemId))
+    .where(and(animationConditions(), eq(animationClip.id, clipId)))
+    .limit(1)) as {
+    fps: number;
+    frameWidth: number;
+    frameHeight: number;
+    framesJson: string;
+    spritesheetFileId: string | null;
+  }[];
+  if (!version) return null;
+
+  const frames = parseAnimationFrames(version.framesJson);
   const fileIds = [
     ...new Set(
-      rows.flatMap((row) =>
-        parseAnimationFrames(row.framesJson)
-          .map((frame) => animationFrameFileId(frame, row.spritesheetFileId))
-          .filter(Boolean)
-      )
+      frames
+        .map((frame) => animationFrameFileId(frame, version.spritesheetFileId))
+        .filter(Boolean)
     ),
   ];
-  const files = fileIds.length
-    ? await db()
-        .select({ id: assetFile.id, storageKey: assetFile.storageKey })
-        .from(assetFile)
-        .where(and(inArray(assetFile.id, fileIds), isNull(assetFile.deletedAt)))
-    : [];
+  const files: { id: string; storageKey: string }[] = [];
+  // D1 allows at most 100 bound parameters per query.
+  const fileBatchSize = 100;
+  for (let offset = 0; offset < fileIds.length; offset += fileBatchSize) {
+    const batch = await db()
+      .select({ id: assetFile.id, storageKey: assetFile.storageKey })
+      .from(assetFile)
+      .where(
+        and(
+          inArray(assetFile.id, fileIds.slice(offset, offset + fileBatchSize)),
+          isNull(assetFile.deletedAt)
+        )
+      );
+    files.push(...batch);
+  }
   const urlFor = await getAssetPublicUrlResolver();
   const urlByFileId = new Map<string, string>(
     files.map((file: { id: string; storageKey: string }): [string, string] => [
@@ -194,10 +233,12 @@ export async function getAdminAnimations({
     ])
   );
 
-  return rows.map(({ framesJson, spritesheetFileId, ...row }) => ({
-    ...row,
-    frames: parseAnimationFrames(framesJson).flatMap((frame) => {
-      const fileId = animationFrameFileId(frame, spritesheetFileId);
+  return {
+    fps: version.fps,
+    frameWidth: version.frameWidth,
+    frameHeight: version.frameHeight,
+    frames: frames.flatMap((frame) => {
+      const fileId = animationFrameFileId(frame, version.spritesheetFileId);
       const url = urlByFileId.get(fileId);
       return url
         ? [
@@ -211,5 +252,9 @@ export async function getAdminAnimations({
           ]
         : [];
     }),
-  }));
+  };
 }
+
+export type AdminAnimationPreviewData = NonNullable<
+  Awaited<ReturnType<typeof getAdminAnimationPreview>>
+>;

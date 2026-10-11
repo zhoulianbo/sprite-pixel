@@ -42,6 +42,7 @@ export default async function AssetAnimationsPage() {
             ? `/editor/animations/${clip.versionId}`
             : `/dashboard/projects/${clip.projectId}/characters/${clip.itemId}`,
           imageUrl: clip.previewUrl,
+          animationVersionId: clip.versionId,
         };
       })}
     />

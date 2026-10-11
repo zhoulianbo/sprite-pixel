@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowDownLeft,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import { DIRECTION_PAD_ORDER } from '@/config/generation/sprite';
+import { AnimationThumbnail } from '@/shared/blocks/assets/animation-thumbnail';
 import { AssetPreviewActions } from '@/shared/blocks/common/asset-preview-actions';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -31,7 +31,6 @@ import {
 import { DropdownMenuItem } from '@/shared/components/ui/dropdown-menu';
 import {
   isMirroredAsset,
-  type CharacterAnimationFrame,
   type CharacterWorkspaceAnimation,
   type CharacterWorkspaceFile,
 } from '@/shared/lib/character-workspace';
@@ -476,87 +475,6 @@ export function DirectionSelectPad({
   );
 }
 
-async function loadImage(url: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-    image.src = url;
-  });
-}
-
-function AnimationCanvas({
-  frames,
-  width,
-  height,
-  fps,
-  playing,
-}: {
-  frames: CharacterAnimationFrame[];
-  width: number;
-  height: number;
-  fps: number;
-  playing: boolean;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!playing || frames.length < 2) {
-      setIndex(0);
-      return;
-    }
-    const timer = window.setInterval(
-      () => setIndex((current) => (current + 1) % frames.length),
-      1000 / Math.max(1, fps)
-    );
-    return () => window.clearInterval(timer);
-  }, [fps, frames.length, playing]);
-
-  useEffect(() => {
-    const frame = frames[index] || frames[0];
-    const canvas = canvasRef.current;
-    if (!frame || !canvas) return;
-    let cancelled = false;
-    loadImage(frame.file.url).then((image) => {
-      if (cancelled) return;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-      canvas.width = width;
-      canvas.height = height;
-      context.imageSmoothingEnabled = false;
-      context.clearRect(0, 0, width, height);
-      const crop = frame.metadata.crop || {
-        x: 0,
-        y: 0,
-        width: image.width,
-        height: image.height,
-      };
-      context.drawImage(
-        image,
-        crop.x,
-        crop.y,
-        crop.width,
-        crop.height,
-        frame.offsetX,
-        frame.offsetY,
-        crop.width,
-        crop.height
-      );
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [frames, height, index, width]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="size-full object-contain [image-rendering:pixelated]"
-    />
-  );
-}
-
 export function AnimationCard({
   animation,
   title,
@@ -577,42 +495,31 @@ export function AnimationCard({
   onOpen: () => void;
   className?: string;
 }) {
-  const [playing, setPlaying] = useState(false);
-  const { version, frames } = animation;
-  const sheetUrl = frames[0]?.file.url;
+  const { version, preview } = animation;
+  const sheetUrl = preview?.url;
   return (
     <article
-      onMouseEnter={() => setPlaying(true)}
-      onMouseLeave={() => setPlaying(false)}
       className={cn(
         'group bg-card hover:border-primary/45 relative overflow-hidden rounded-lg border text-left transition-colors',
         className
       )}
     >
+      <div className="bg-secondary/45 aspect-square">
+        <AnimationThumbnail
+          key={version?.id || animation.clip.id}
+          versionId={version?.id}
+          imageUrl={sheetUrl}
+          label={title}
+          onOpen={version ? onOpen : undefined}
+        />
+      </div>
       <button
         type="button"
         onClick={onOpen}
-        onFocus={() => setPlaying(true)}
-        onBlur={() => setPlaying(false)}
         disabled={!version}
         className="focus-visible:ring-ring block w-full text-left focus-visible:ring-2 focus-visible:outline-none disabled:opacity-60"
         aria-label={labels.open}
       >
-        <div className="bg-secondary/45 aspect-square p-4">
-          {version && frames.length ? (
-            <AnimationCanvas
-              frames={frames}
-              width={version.frameWidth}
-              height={version.frameHeight}
-              fps={version.fps}
-              playing={playing}
-            />
-          ) : (
-            <div className="text-muted-foreground flex size-full items-center justify-center">
-              <Film className="size-6" />
-            </div>
-          )}
-        </div>
         <div className="flex items-start justify-between gap-2 border-t px-3 py-2">
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{title}</p>
@@ -633,7 +540,8 @@ export function AnimationCard({
       {sheetUrl ? (
         <AssetPreviewActions
           url={sheetUrl}
-          fileId={frames[0]?.file.id}
+          fileId={preview?.id}
+          className="right-12"
           alt={title}
           zoomLabel={labels.zoom}
           downloadLabel={labels.download}

@@ -27,13 +27,18 @@
   },
   "animations": {
     "title": "Animations",
-    "description": "Review completed user animations with live frame playback.",
+    "description": "Review completed user animations. Open a sprite sheet to preview playback.",
     "empty": "No completed animations found.",
     "noPreview": "No preview",
     "previewLabel": "Animation preview for {name}",
     "zoomLabel": "View a larger animation preview of {name}",
     "originalDirection": "Original",
-    "frameSummary": "{count} frames · {fps} fps"
+    "frameSummary": "{count} frames · {fps} fps",
+    "imageTab": "Image",
+    "animationTab": "Animation",
+    "loading": "Loading animation…",
+    "loadError": "Unable to load the animation. Please try again.",
+    "retry": "Retry"
   },
   "icons": {
     "title": "Icons",

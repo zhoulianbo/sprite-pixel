@@ -83,7 +83,7 @@ export type CharacterWorkspaceAnimation = {
     frameCount: number;
   } | null;
   versionCount: number;
-  frames: CharacterAnimationFrame[];
+  preview: { id: string; url: string } | null;
 };
 
 export function parseAssetMetadata(value: string) {

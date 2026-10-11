@@ -644,5 +644,13 @@
     "GENERATION_RETRY_FAILED": "無法開始重試，請再試一次。",
     "GENERATION_ID_CONFLICT": "這次產生已存在，請開始新的產生。",
     "PROJECT_LIMIT": "目前方案的專案數量已達上限，升級後可以繼續建立。"
+  },
+  "animationPreview": {
+    "play": "播放動畫",
+    "pause": "停止播放",
+    "loading": "正在載入動畫…",
+    "error": "動畫載入失敗，請重試。",
+    "empty": "暫無可播放的動畫影格。",
+    "retry": "重新載入動畫"
   }
 }

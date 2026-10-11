@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, isNull, ne } from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import {
@@ -10,10 +10,6 @@ import {
   assetVariant,
   project,
 } from '@/config/db/schema';
-import {
-  animationFrameFileId,
-  parseAnimationFrames,
-} from '@/shared/lib/animation-frames';
 import {
   assetRolesForFileKind,
   type ProjectFileKind,
@@ -72,20 +68,25 @@ async function attachItemPreviews<T extends { id: string; projectId: string }>(
   if (!items.length) {
     return items.map((item) => ({ ...item, preview: null }));
   }
-  const files = await db()
-    .select()
-    .from(assetFile)
-    .where(
-      and(
-        inArray(
-          assetFile.itemId,
-          items.map((item) => item.id)
-        ),
-        eq(assetFile.status, 'ready'),
-        isNull(assetFile.deletedAt)
+  const files: AssetFile[] = [];
+  // Reserve one D1 parameter for the ready status filter.
+  for (let offset = 0; offset < items.length; offset += 99) {
+    const batch = await db()
+      .select()
+      .from(assetFile)
+      .where(
+        and(
+          inArray(
+            assetFile.itemId,
+            items.slice(offset, offset + 99).map((item) => item.id)
+          ),
+          eq(assetFile.status, 'ready'),
+          isNull(assetFile.deletedAt)
+        )
       )
-    )
-    .orderBy(desc(assetFile.isActiveReference), desc(assetFile.createdAt));
+      .orderBy(desc(assetFile.isActiveReference), desc(assetFile.createdAt));
+    files.push(...batch);
+  }
   const previewByItem = new Map<string, (typeof files)[number]>();
   for (const file of files) {
     if (file.itemId && !previewByItem.has(file.itemId)) {
@@ -319,6 +320,7 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
       and(
         eq(assetFile.projectId, projectId),
         eq(assetFile.itemId, itemId),
+        ne(assetFile.role, 'animation_frame'),
         isNull(assetFile.deletedAt)
       )
     )
@@ -327,7 +329,14 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
     .select({
       set: animationSet,
       clip: animationClip,
-      version: animationVersion,
+      version: {
+        id: animationVersion.id,
+        fps: animationVersion.fps,
+        frameWidth: animationVersion.frameWidth,
+        frameHeight: animationVersion.frameHeight,
+        frameCount: animationVersion.frameCount,
+        spritesheetFileId: animationVersion.spritesheetFileId,
+      },
     })
     .from(animationSet)
     .innerJoin(animationClip, eq(animationClip.animationSetId, animationSet.id))
@@ -346,57 +355,36 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
       )
     )
     .orderBy(desc(animationSet.updatedAt), animationClip.sortOrder);
-  const clipIds = animations.map(
-    (animation: { clip: { id: string } }) => animation.clip.id
-  );
-  const versionRows = clipIds.length
-    ? await db()
-        .select({
-          clipId: animationVersion.clipId,
-          id: animationVersion.id,
-        })
-        .from(animationVersion)
-        .where(inArray(animationVersion.clipId, clipIds))
-    : [];
-  const versionCountByClip = new Map<string, number>();
-  for (const row of versionRows) {
-    versionCountByClip.set(
+  const versionRows = await db()
+    .select({ clipId: animationVersion.clipId, count: count() })
+    .from(animationVersion)
+    .innerJoin(animationClip, eq(animationClip.id, animationVersion.clipId))
+    .innerJoin(animationSet, eq(animationSet.id, animationClip.animationSetId))
+    .where(
+      and(
+        eq(animationSet.projectId, projectId),
+        eq(animationSet.itemId, itemId),
+        isNull(animationSet.deletedAt)
+      )
+    )
+    .groupBy(animationVersion.clipId);
+  const versionCountByClip = new Map<string, number>(
+    versionRows.map((row: { clipId: string; count: number }) => [
       row.clipId,
-      (versionCountByClip.get(row.clipId) || 0) + 1
-    );
-  }
+      row.count,
+    ])
+  );
   const urlFor = await getAssetPublicUrlResolver();
   const filesById = new Map<string, typeof assetFile.$inferSelect>(
     files.map((file: typeof assetFile.$inferSelect) => [file.id, file])
   );
-  const animationsWithFrames = animations.map((animation: any) => {
-    const versionCount = versionCountByClip.get(animation.clip.id) || 0;
-    if (!animation.version) {
-      return { ...animation, versionCount, frames: [] };
-    }
-    const frames = parseAnimationFrames(animation.version.framesJson).flatMap(
-      (frame, frameIndex) => {
-        const fileId = animationFrameFileId(
-          frame,
-          animation.version.spritesheetFileId
-        );
-        const file = filesById.get(fileId);
-        if (!file) return [];
-        return [
-          {
-            id: frame.id,
-            fileId,
-            frameIndex,
-            durationMs: frame.durationMs,
-            offsetX: frame.offsetX,
-            offsetY: frame.offsetY,
-            metadata: frame.crop ? { crop: frame.crop } : {},
-            file: { ...file, url: urlFor(file.storageKey) },
-          },
-        ];
-      }
-    );
-    return { ...animation, versionCount, frames };
+  const animationsWithPreview = animations.map((animation: any) => {
+    const sheet = filesById.get(animation.version?.spritesheetFileId || '');
+    return {
+      ...animation,
+      versionCount: versionCountByClip.get(animation.clip.id) || 0,
+      preview: sheet ? { id: sheet.id, url: urlFor(sheet.storageKey) } : null,
+    };
   });
   return {
     item,
@@ -405,7 +393,7 @@ export async function getItemWorkspace(projectId: string, itemId: string) {
       ...file,
       url: urlFor(file.storageKey),
     })),
-    animations: animationsWithFrames,
+    animations: animationsWithPreview,
   };
 }
 

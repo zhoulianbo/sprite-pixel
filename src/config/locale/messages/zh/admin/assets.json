@@ -27,13 +27,18 @@
   },
   "animations": {
     "title": "动画资产",
-    "description": "查看用户已生成完成的动画及实时动画效果。",
+    "description": "查看用户已生成完成的精灵图，点击预览可切换查看动画。",
     "empty": "暂无已完成的动画。",
     "noPreview": "暂无预览",
     "previewLabel": "{name} 的动画预览",
     "zoomLabel": "放大查看 {name} 的动画效果",
     "originalDirection": "原方向",
-    "frameSummary": "{count} 帧 · {fps} 帧/秒"
+    "frameSummary": "{count} 帧 · {fps} 帧/秒",
+    "imageTab": "图片",
+    "animationTab": "动画",
+    "loading": "正在加载动画…",
+    "loadError": "动画加载失败，请重试。",
+    "retry": "重试"
   },
   "icons": {
     "title": "ICON 资产",

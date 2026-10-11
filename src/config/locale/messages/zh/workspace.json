@@ -644,5 +644,13 @@
     "GENERATION_RETRY_FAILED": "重试失败，请稍后再试。",
     "GENERATION_ID_CONFLICT": "生成任务冲突，请重新发起。",
     "PROJECT_LIMIT": "当前方案的项目数量已达上限，升级后可以继续创建。"
+  },
+  "animationPreview": {
+    "play": "播放动画",
+    "pause": "停止播放",
+    "loading": "正在加载动画…",
+    "error": "动画加载失败，请重试。",
+    "empty": "暂无可播放的动画帧。",
+    "retry": "重新加载动画"
   }
 }
