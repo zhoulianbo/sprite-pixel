@@ -7,6 +7,8 @@ import {
   animationVersion,
   assetFile,
   assetItem,
+  galleryItem,
+  generation,
   project,
   user,
 } from '@/config/db/schema';
@@ -30,6 +32,8 @@ type AdminAnimationRow = {
   fps: number;
   frameCount: number;
   storageKey: string | null;
+  allowGallery: boolean | null;
+  galleryStatus: string | null;
 };
 
 function assetRole(kind: AdminAssetKind) {
@@ -89,11 +93,22 @@ export async function getAdminAssets({
       storageKey: assetFile.storageKey,
       width: assetFile.width,
       height: assetFile.height,
+      sourceType: assetItem.sourceType,
+      allowGallery: generation.allowGallery,
+      galleryStatus: galleryItem.status,
     })
     .from(assetFile)
     .innerJoin(assetItem, eq(assetItem.id, assetFile.itemId))
     .innerJoin(project, eq(project.id, assetItem.projectId))
     .innerJoin(user, eq(user.id, project.userId))
+    .leftJoin(generation, eq(generation.id, assetFile.generationId))
+    .leftJoin(
+      galleryItem,
+      and(
+        eq(galleryItem.type, 'character'),
+        eq(galleryItem.itemId, assetItem.id)
+      )
+    )
     .where(assetConditions(kind, email))
     .orderBy(desc(assetItem.createdAt))
     .limit(limit)
@@ -102,6 +117,9 @@ export async function getAdminAssets({
   const urlFor = await getAssetPublicUrlResolver();
   return rows.map(({ storageKey, ...row }: (typeof rows)[number]) => ({
     ...row,
+    galleryEligible:
+      row.sourceType === 'generated' && Boolean(row.allowGallery),
+    galleryPublished: row.galleryStatus === 'published',
     previewUrl: urlFor(storageKey),
   }));
 }
@@ -153,6 +171,8 @@ export async function getAdminAnimations({
       fps: animationVersion.fps,
       frameCount: animationVersion.frameCount,
       storageKey: assetFile.storageKey,
+      allowGallery: generation.allowGallery,
+      galleryStatus: galleryItem.status,
     })
     .from(animationClip)
     .innerJoin(animationSet, eq(animationSet.id, animationClip.animationSetId))
@@ -160,6 +180,14 @@ export async function getAdminAnimations({
     .innerJoin(assetItem, eq(assetItem.id, animationSet.itemId))
     .innerJoin(project, eq(project.id, animationSet.projectId))
     .innerJoin(user, eq(user.id, project.userId))
+    .leftJoin(generation, eq(generation.id, animationVersion.generationId))
+    .leftJoin(
+      galleryItem,
+      and(
+        eq(galleryItem.type, 'animation'),
+        eq(galleryItem.animationClipId, animationClip.id)
+      )
+    )
     .leftJoin(
       assetFile,
       and(
@@ -175,6 +203,8 @@ export async function getAdminAnimations({
   const urlFor = await getAssetPublicUrlResolver();
   return rows.map(({ storageKey, ...row }) => ({
     ...row,
+    galleryEligible: Boolean(row.allowGallery),
+    galleryPublished: row.galleryStatus === 'published',
     previewUrl: storageKey ? urlFor(storageKey) : null,
   }));
 }

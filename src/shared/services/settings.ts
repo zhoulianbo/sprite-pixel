@@ -1,3 +1,8 @@
+import {
+  generationModelRoutes,
+  generationProviderOptions,
+  iconPromptExpandModel,
+} from '@/config/generation/model-routes';
 import { Tab } from '@/shared/types/blocks/common';
 
 export interface Setting {
@@ -61,6 +66,12 @@ export async function getSettingTabs(tab: string) {
       title: 'AI',
       url: '/admin/settings/ai',
       is_active: tab === 'ai',
+    },
+    {
+      name: 'models',
+      title: '模型使用',
+      url: '/admin/settings/models',
+      is_active: tab === 'models',
     },
     {
       name: 'analytics',
@@ -244,6 +255,34 @@ export async function getSettingGroups() {
       title: 'Grsai',
       description: `配置 <a href="https://grsai.ai" class="text-primary" target="_blank">Grsai</a> AI 服务`,
       tab: 'ai',
+    },
+    {
+      name: 'generation_character',
+      title: '角色生成',
+      description:
+        '切换角色图使用的平台和模型。平台密钥仍在 AI 页配置，留空时使用代码里的默认值。',
+      tab: 'models',
+    },
+    {
+      name: 'generation_animation',
+      title: '动画生成',
+      description:
+        '每个动作方向消耗这里的积分，多个方向会相乘。平台密钥仍在 AI 页配置。',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon',
+      title: '图标生成',
+      description:
+        '一批图标固定消耗这里的积分，重试也按这一次计算。平台密钥仍在 AI 页配置。',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon_expand',
+      title: '描述扩写',
+      description:
+        '图标名称或描述过短时，用这里的平台和模型补全描述。不消耗积分，留空时使用代码里的默认值。',
+      tab: 'models',
     },
     {
       name: 'adsense',
@@ -1024,6 +1063,109 @@ export async function getSettings() {
       group: 'tawk',
       tab: 'customer_service',
     },
+    {
+      name: 'generation_character_provider',
+      title: '平台',
+      type: 'select',
+      value: generationModelRoutes.character.provider,
+      options: [...generationProviderOptions],
+      group: 'generation_character',
+      tab: 'models',
+    },
+    {
+      name: 'generation_character_model',
+      title: '模型',
+      type: 'text',
+      placeholder: generationModelRoutes.character.model,
+      value: generationModelRoutes.character.model,
+      group: 'generation_character',
+      tab: 'models',
+      tip: '填写该平台上的模型 ID',
+    },
+    {
+      name: 'generation_character_credits',
+      title: '每次消耗积分',
+      type: 'number',
+      placeholder: String(generationModelRoutes.character.credits),
+      value: generationModelRoutes.character.credits,
+      group: 'generation_character',
+      tab: 'models',
+    },
+    {
+      name: 'generation_animation_provider',
+      title: '平台',
+      type: 'select',
+      value: generationModelRoutes.animation.provider,
+      options: [...generationProviderOptions],
+      group: 'generation_animation',
+      tab: 'models',
+    },
+    {
+      name: 'generation_animation_model',
+      title: '模型',
+      type: 'text',
+      placeholder: generationModelRoutes.animation.model,
+      value: generationModelRoutes.animation.model,
+      group: 'generation_animation',
+      tab: 'models',
+      tip: '填写该平台上的模型 ID',
+    },
+    {
+      name: 'generation_animation_credits',
+      title: '每个方向消耗积分',
+      type: 'number',
+      placeholder: String(generationModelRoutes.animation.credits),
+      value: generationModelRoutes.animation.credits,
+      group: 'generation_animation',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon_provider',
+      title: '平台',
+      type: 'select',
+      value: generationModelRoutes.icon.provider,
+      options: [...generationProviderOptions],
+      group: 'generation_icon',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon_model',
+      title: '模型',
+      type: 'text',
+      placeholder: generationModelRoutes.icon.model,
+      value: generationModelRoutes.icon.model,
+      group: 'generation_icon',
+      tab: 'models',
+      tip: '填写该平台上的模型 ID',
+    },
+    {
+      name: 'generation_icon_credits',
+      title: '每批消耗积分',
+      type: 'number',
+      placeholder: String(generationModelRoutes.icon.credits),
+      value: generationModelRoutes.icon.credits,
+      group: 'generation_icon',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon_expand_provider',
+      title: '平台',
+      type: 'select',
+      value: iconPromptExpandModel.provider,
+      options: [...generationProviderOptions],
+      group: 'generation_icon_expand',
+      tab: 'models',
+    },
+    {
+      name: 'generation_icon_expand_model',
+      title: '模型',
+      type: 'text',
+      placeholder: iconPromptExpandModel.model,
+      value: iconPromptExpandModel.model,
+      tip: '填写该平台上的模型 ID',
+      group: 'generation_icon_expand',
+      tab: 'models',
+    },
   ];
 
   return settings;
@@ -1050,6 +1192,9 @@ export const publicSettingNames = [
   'promotekit_enabled',
   'crisp_enabled',
   'tawk_enabled',
+  'generation_character_credits',
+  'generation_animation_credits',
+  'generation_icon_credits',
 ];
 
 export async function getAllSettingNames() {

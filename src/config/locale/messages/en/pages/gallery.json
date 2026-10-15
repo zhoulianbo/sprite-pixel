@@ -6,5 +6,27 @@
   "title": "Sprite and Animation Gallery",
   "description": "Browse generated character sprites, animations and matching game assets.",
   "emptyTitle": "No gallery items yet",
-  "emptyDescription": "Gallery content is empty for now. Published items will appear here later."
+  "emptyDescription": "No published items match the current filters.",
+  "tabs": { "characters": "Characters", "animations": "Animations" },
+  "filters": {
+    "search": "Search by name",
+    "searchPlaceholder": "Search gallery…",
+    "allTypes": "All types",
+    "allSizes": "All sizes",
+    "apply": "Apply"
+  },
+  "sort": {
+    "latest": "Latest",
+    "likes": "Most liked",
+    "downloads": "Most downloaded"
+  },
+  "results": "{count} published items",
+  "pagination": { "previous": "Previous", "next": "Next" },
+  "item": {
+    "character": "Character",
+    "animation": "Animation",
+    "like": "Like",
+    "download": "Download",
+    "noPreview": "No preview"
+  }
 }

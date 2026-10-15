@@ -16,8 +16,13 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
-import { generationDefaults, getActionTypeImage, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
+import {
+  generationDefaults,
+  generationOptionValues,
+  getActionTypeImage,
+  mapGenerationOptions,
+} from '@/config/generation';
+import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import {
   directionGenerateSource,
   SPRITE_DIRECTIONS,
@@ -25,6 +30,7 @@ import {
   uniqueDirectionSources,
 } from '@/config/generation/sprite';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import { CharacterCreateDialog } from '@/shared/blocks/projects/character-create-dialog';
 import {
   CharacterImageDeleteDialog,
@@ -467,28 +473,18 @@ export function CharacterWorkspace({
 
   const directionSources = uniqueDirectionSources(selectedDirections);
   const taskCount = stage === 'directions' ? directionSources.length : 1;
-  const creditCost = getGenerationCredits(
-    stage === 'animations' ? 'animation' : 'character',
-    { taskCount }
-  );
+  const creditKind = stage === 'animations' ? 'animation' : 'character';
+  const creditCost = useGenerationCredits(creditKind, { taskCount });
   const retryCount = progress.filter((item) =>
     ['failed', 'canceled', 'postprocessing_failed'].includes(item.status)
   ).length;
-  const retryCredits = getGenerationCredits(
-    stage === 'animations' ? 'animation' : 'character',
-    { taskCount: Math.max(retryCount, 1), retry: true }
-  );
-  const motionSettingsType = [
-    'jump',
-    'dash',
-    'attack',
-    'shoot',
-    'cast',
-    'hurt',
-    'death',
-    'custom',
-  ].includes(action);
-  const motionDetailTypes = ['dash', 'attack', 'shoot', 'cast', 'custom'];
+  const retryCredits = useGenerationCredits(creditKind, {
+    taskCount: Math.max(retryCount, 1),
+    retry: true,
+  });
+  const motionDetailTypes: readonly string[] =
+    generationOptionValues.actionType;
+  const motionSettingsType = motionDetailTypes.includes(action);
   const motionPhase =
     progress.find((item) => item.phase)?.phase ||
     (status === 'validating'
@@ -1033,8 +1029,8 @@ export function CharacterWorkspace({
                     />
                   ) : null}
                   {motionDetailTypes.includes(action) ? (
-                    <div className="contents">
-                      <span className="text-muted-foreground whitespace-nowrap pt-2 text-sm font-medium">
+                    <div className="col-span-2 flex min-w-0 flex-col gap-2">
+                      <span className="text-muted-foreground text-sm font-medium">
                         {action === 'custom'
                           ? tm('customAction')
                           : tm('motionDetail')}

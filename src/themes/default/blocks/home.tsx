@@ -35,15 +35,14 @@ import {
   animationDirectionDefault,
   animationDirectionValues,
   generationDefaults,
+  generationOptionValues,
   getActionTypeImage,
   mapGenerationOptions,
 } from '@/config/generation';
-import {
-  generationPollIntervalMs,
-  getGenerationCredits,
-} from '@/config/generation/model-routes';
+import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
 import type { ProjectSummary } from '@/shared/blocks/projects/project-create-dialog';
 import {
@@ -1094,6 +1093,8 @@ export function Home({ section: _section }: { section: Section }) {
   const tProduct = useTranslations('workspace');
   const notifyApiError = useProductApiFeedback();
   const { user, isCheckSign } = useAppContext();
+  const characterCredits = useGenerationCredits('character');
+  const animationCredits = useGenerationCredits('animation', { taskCount: 1 });
   const translateGeneration = (key: string) => tGeneration(key as never);
   const inspirations = t.raw('inspirations') as string[];
   const valueBarItems = t.raw('valueBar') as string[];
@@ -1722,17 +1723,9 @@ export function Home({ section: _section }: { section: Section }) {
       : selectedProject,
     t('defaultProject')
   );
-  const motionSettingsType = [
-    'jump',
-    'dash',
-    'attack',
-    'shoot',
-    'cast',
-    'hurt',
-    'death',
-    'custom',
-  ].includes(motionType);
-  const motionDetailTypes = ['dash', 'attack', 'shoot', 'cast', 'custom'];
+  const motionDetailTypes: readonly string[] =
+    generationOptionValues.actionType;
+  const motionSettingsType = motionDetailTypes.includes(motionType);
   const motionBusy = ['validating', 'pending', 'processing'].includes(
     motionGenerationStatus
   );
@@ -1937,7 +1930,7 @@ export function Home({ section: _section }: { section: Section }) {
                   promptLabel={t('characterDescription')}
                   submitLabel={t('startCreating')}
                   busyLabel={t('startCreatingBusy')}
-                  credits={getGenerationCredits('character')}
+                  credits={characterCredits}
                   uploadId="homepage-character-reference"
                   uploadLabel={tGeneration('upload.reference')}
                   validationMessage={validationMessage}
@@ -2406,11 +2399,7 @@ export function Home({ section: _section }: { section: Section }) {
                             ? t('startCreatingBusy')
                             : t('startCreating')}
                           {motionBusy ? null : (
-                            <CreditCostMark
-                              credits={getGenerationCredits('animation', {
-                                taskCount: 1,
-                              })}
-                            />
+                            <CreditCostMark credits={animationCredits} />
                           )}
                         </button>
                       </div>

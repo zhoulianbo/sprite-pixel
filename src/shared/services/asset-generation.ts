@@ -30,8 +30,8 @@ import {
 } from '@/config/generation';
 import {
   getGenerationCredits,
-  getGenerationModelRoute,
-  iconPromptExpandModel,
+  resolveGenerationModelRoute,
+  resolveIconPromptExpandModel,
   type GenerationModelKind,
 } from '@/config/generation/model-routes';
 import {
@@ -65,8 +65,10 @@ import {
   getProjectItem,
   updateCharacterItem,
 } from '@/shared/models/asset';
+import { getAllConfigs } from '@/shared/models/config';
 import { getRemainingCredits } from '@/shared/models/credit';
 import { getOwnedProject } from '@/shared/models/project';
+import { getCurrentSubscription } from '@/shared/models/subscription';
 import { getAIService } from '@/shared/services/ai';
 import { assertPromptAllowedForGeneration } from '@/shared/services/content-safety';
 import { startGenerationWorkflow } from '@/shared/services/generation-workflow';
@@ -183,8 +185,8 @@ function modelKind(type: SpriteGenerationKind): GenerationModelKind {
   return 'character';
 }
 
-function getModelRoute(kind: GenerationModelKind): ModelRoute {
-  const configured = getGenerationModelRoute(kind);
+async function getModelRoute(kind: GenerationModelKind): Promise<ModelRoute> {
+  const configured = resolveGenerationModelRoute(kind, await getAllConfigs());
   const provider = configured.provider.trim();
   const model = configured.model.trim();
   const configuredCredits = Number(configured.credits);
@@ -215,8 +217,10 @@ async function expandIconItemDescriptions(
   );
   if (!thin.length) return items;
   try {
-    const aiService = await getAIService();
-    const provider = aiService.getProvider(iconPromptExpandModel.provider);
+    const configs = await getAllConfigs();
+    const expandModel = resolveIconPromptExpandModel(configs);
+    const aiService = await getAIService(configs);
+    const provider = aiService.getProvider(expandModel.provider);
     if (!provider) {
       throw new Error('icon description provider is unavailable');
     }
@@ -244,7 +248,7 @@ async function expandIconItemDescriptions(
     const result = await provider.generate({
       params: {
         mediaType: AIMediaType.TEXT,
-        model: iconPromptExpandModel.model,
+        model: expandModel.model,
         prompt: expandPrompt,
         options: {
           temperature: 0.3,
@@ -258,7 +262,7 @@ async function expandIconItemDescriptions(
     console.info(
       JSON.stringify({
         event: 'icon_description_expand_completed',
-        model: iconPromptExpandModel.model,
+        model: expandModel.model,
         itemCount: thin.length,
         promptCharacters: expandPrompt.length,
         referenceImageCount: referenceImages.length,
@@ -871,6 +875,7 @@ export async function startSpriteGeneration(
 
   const project = await getOwnedProject(userId, projectId);
   if (!project) throw new SpriteGenerationError('PROJECT_NOT_FOUND', 404);
+  const allowGallery = !(await getCurrentSubscription(userId));
   const resolvedReferenceFileId = await resolveReferenceFileId(
     projectId,
     input
@@ -919,7 +924,7 @@ export async function startSpriteGeneration(
   if (input.type === 'icon_batch') {
     input.items = await expandIconItemDescriptions(input, project);
   }
-  const route = getModelRoute(modelKind(input.type));
+  const route = await getModelRoute(modelKind(input.type));
   const selectedItems = (input.items || []).filter(
     (entry) => entry.selected !== false
   );
@@ -944,6 +949,7 @@ export async function startSpriteGeneration(
     throw new SpriteGenerationError('INVALID_TASK_COUNT');
   const creditsCost = getGenerationCredits(modelKind(input.type), {
     taskCount,
+    route,
   });
   if ((await getRemainingCredits(userId)) < creditsCost) {
     throw new SpriteGenerationError('INSUFFICIENT_CREDITS', 402);
@@ -960,6 +966,7 @@ export async function startSpriteGeneration(
       variantId: null,
       taskType: input.type,
       prompt: input.prompt || null,
+      allowGallery,
       negativePrompt: input.negativePrompt || project.negativePrompt,
       paramsJson: '{}',
       status: 'pending',
@@ -1405,6 +1412,7 @@ async function ensureVaultTarget(
       id: itemId,
       projectId,
       type: 'character',
+      sourceType: 'generated',
       name: assetDisplayName(params, 'Character'),
       description: params.prompt || null,
       settingsJson: '{}',
@@ -1469,6 +1477,7 @@ async function ensureVaultTarget(
       id: setId,
       projectId,
       type: 'icon',
+      sourceType: 'generated',
       name: params.name?.trim() || 'Icon Set',
       description: sheetItems
         .map((item: any) => String(item.name || '').trim())
@@ -1499,6 +1508,7 @@ async function ensureVaultTarget(
         id: itemId,
         projectId,
         type: 'character',
+        sourceType: 'uploaded',
         name: assetDisplayName(params, 'Imported Character'),
         description: params.prompt || null,
         settingsJson: '{}',
@@ -2267,7 +2277,7 @@ export async function retrySpriteGeneration(
   generationId: string
 ) {
   const current = await getSpriteGeneration(userId, generationId, false);
-  const route = getModelRoute(
+  const route = await getModelRoute(
     modelKind(current.taskType as SpriteGenerationKind)
   );
   const retryable = current.items.filter(
@@ -2281,7 +2291,7 @@ export async function retrySpriteGeneration(
   if (!retryable.length) return current;
   const retryCost = getGenerationCredits(
     modelKind(current.taskType as SpriteGenerationKind),
-    { retry: true }
+    { retry: true, route }
   );
 
   for (const item of retryable) {

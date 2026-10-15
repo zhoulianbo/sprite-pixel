@@ -1,24 +1,83 @@
-import { Images } from 'lucide-react';
+import { Images, Search } from 'lucide-react';
 
-export type GalleryItem = {
-  id: string;
-  title: string;
-  imageUrl?: string | null;
+import { Link } from '@/core/i18n/navigation';
+import { cn } from '@/shared/lib/utils';
+
+import { GalleryCard, type PublicGalleryItem } from './gallery-card';
+
+type GalleryFilters = {
+  type: 'character' | 'animation';
+  query: string;
+  category: string;
+  size: string;
+  sort: 'latest' | 'likes' | 'downloads';
 };
 
+function galleryHref(filters: GalleryFilters, next: Partial<GalleryFilters>) {
+  const values = { ...filters, ...next };
+  const search = new URLSearchParams();
+  search.set('type', values.type);
+  if (values.query) search.set('q', values.query);
+  if (values.category) search.set('category', values.category);
+  if (values.size) search.set('size', values.size);
+  if (values.sort !== 'latest') search.set('sort', values.sort);
+  return `/gallery?${search.toString()}`;
+}
+
 export function Gallery({
+  locale,
   title,
   description,
   emptyTitle,
   emptyDescription,
   items,
+  total,
+  page,
+  limit,
+  filters,
+  categories,
+  sizes,
+  labels,
 }: {
+  locale: string;
   title: string;
   description: string;
   emptyTitle: string;
   emptyDescription: string;
-  items: GalleryItem[];
+  items: PublicGalleryItem[];
+  total: number;
+  page: number;
+  limit: number;
+  filters: GalleryFilters;
+  categories: Array<{ value: string; label: string }>;
+  sizes: string[];
+  labels: {
+    characters: string;
+    animations: string;
+    search: string;
+    searchPlaceholder: string;
+    allTypes: string;
+    allSizes: string;
+    sortLatest: string;
+    sortLikes: string;
+    sortDownloads: string;
+    apply: string;
+    results: string;
+    previous: string;
+    next: string;
+    animation: string;
+    character: string;
+    like: string;
+    download: string;
+    noPreview: string;
+  };
 }) {
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const pageHref = (nextPage: number) => {
+    const href = galleryHref(filters, {});
+    return `${href}${href.includes('?') ? '&' : '?'}page=${nextPage}`;
+  };
+
   return (
     <main className="bg-background text-foreground min-h-screen">
       <section className="border-border bg-vault-navy relative border-b pt-28 pb-16 sm:pt-32 sm:pb-24">
@@ -37,33 +96,105 @@ export function Gallery({
               {description}
             </p>
           </header>
+
+          <div className="mb-6 flex border-b border-white/10" role="tablist">
+            {(
+              [
+                ['character', labels.characters],
+                ['animation', labels.animations],
+              ] as const
+            ).map(([value, label]) => (
+              <Link
+                aria-selected={filters.type === value}
+                className={cn(
+                  'relative px-5 py-3 text-sm font-semibold transition-colors',
+                  filters.type === value
+                    ? 'text-primary after:bg-primary after:absolute after:inset-x-0 after:bottom-0 after:h-0.5'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+                href={galleryHref(filters, {
+                  type: value,
+                  category: '',
+                  size: '',
+                })}
+                key={value}
+                role="tab"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+
+          <form
+            className="border-border bg-card/45 mb-7 grid gap-3 rounded-xl border p-3 sm:grid-cols-2 lg:grid-cols-[minmax(220px,1fr)_180px_150px_170px_auto]"
+            method="get"
+          >
+            <input name="type" type="hidden" value={filters.type} />
+            <label className="relative min-w-0">
+              <span className="sr-only">{labels.search}</span>
+              <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+              <input
+                className="border-border bg-background focus:border-primary/60 h-10 w-full rounded-lg border pr-3 pl-9 text-sm outline-none"
+                defaultValue={filters.query}
+                name="q"
+                placeholder={labels.searchPlaceholder}
+              />
+            </label>
+            <select
+              aria-label={labels.allTypes}
+              className="border-border bg-background h-10 rounded-lg border px-3 text-sm"
+              defaultValue={filters.category}
+              name="category"
+            >
+              <option value="">{labels.allTypes}</option>
+              {categories.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label={labels.allSizes}
+              className="border-border bg-background h-10 rounded-lg border px-3 text-sm"
+              defaultValue={filters.size}
+              name="size"
+            >
+              <option value="">{labels.allSizes}</option>
+              {sizes.map((size) => (
+                <option key={size} value={size}>
+                  {size.replace('x', '×')}
+                </option>
+              ))}
+            </select>
+            <select
+              className="border-border bg-background h-10 rounded-lg border px-3 text-sm"
+              defaultValue={filters.sort}
+              name="sort"
+            >
+              <option value="latest">{labels.sortLatest}</option>
+              <option value="likes">{labels.sortLikes}</option>
+              <option value="downloads">{labels.sortDownloads}</option>
+            </select>
+            <button
+              className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 rounded-lg px-5 text-sm font-semibold"
+              type="submit"
+            >
+              {labels.apply}
+            </button>
+          </form>
+
+          <p className="text-muted-foreground mb-4 text-sm">
+            {labels.results.replace('{count}', String(total))}
+          </p>
           {items.length ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (
-                <article
+                <GalleryCard
+                  item={item}
                   key={item.id}
-                  className="border-border bg-card overflow-hidden rounded-xl border"
-                >
-                  <div className="bg-muted/35 aspect-[4/3] p-4">
-                    {item.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className="size-full object-contain [image-rendering:pixelated]"
-                      />
-                    ) : (
-                      <div className="text-muted-foreground flex size-full items-center justify-center">
-                        <Images className="size-8 stroke-1" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h2 className="font-heading text-lg font-semibold">
-                      {item.title}
-                    </h2>
-                  </div>
-                </article>
+                  labels={labels}
+                  locale={locale}
+                />
               ))}
             </div>
           ) : (
@@ -77,6 +208,33 @@ export function Gallery({
               </p>
             </div>
           )}
+
+          {totalPages > 1 ? (
+            <nav
+              aria-label="Pagination"
+              className="mt-8 flex items-center justify-center gap-4"
+            >
+              {page > 1 ? (
+                <Link
+                  className="border-border hover:border-primary rounded-lg border px-4 py-2 text-sm"
+                  href={pageHref(page - 1)}
+                >
+                  {labels.previous}
+                </Link>
+              ) : null}
+              <span className="text-muted-foreground text-sm">
+                {page} / {totalPages}
+              </span>
+              {page < totalPages ? (
+                <Link
+                  className="border-border hover:border-primary rounded-lg border px-4 py-2 text-sm"
+                  href={pageHref(page + 1)}
+                >
+                  {labels.next}
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
         </div>
       </section>
     </main>

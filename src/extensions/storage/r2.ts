@@ -264,13 +264,17 @@ export class R2Provider implements StorageProvider {
         method: 'PUT',
         headers: {
           'Content-Type': options.contentType,
+          ...(options.createOnly ? { 'If-None-Match': '*' } : {}),
         },
       }),
-      { aws: { signQuery: true } }
+      { aws: { signQuery: true, allHeaders: true } }
     );
     return {
       uploadUrl: signed.url,
-      headers: { 'Content-Type': options.contentType },
+      headers: {
+        'Content-Type': options.contentType,
+        ...(options.createOnly ? { 'If-None-Match': '*' } : {}),
+      },
     };
   }
 

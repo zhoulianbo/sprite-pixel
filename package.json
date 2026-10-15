@@ -107,6 +107,7 @@
     "next-mdx-remote": "^6.0.0",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.9.17",
+    "onnxruntime-web": "1.24.3",
     "overtype": "^1.2.6",
     "postgres": "^3.4.7",
     "react": "19.2.1",

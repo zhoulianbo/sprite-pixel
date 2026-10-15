@@ -45,6 +45,8 @@ export interface StorageDownloadResult {
 }
 
 export interface StorageSignedUploadOptions {
+  /** Prevent a reusable presigned PUT from replacing a validated source. */
+  createOnly?: boolean;
   key: string;
   contentType: string;
   expiresIn?: number;

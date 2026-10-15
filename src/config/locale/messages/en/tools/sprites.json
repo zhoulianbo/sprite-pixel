@@ -152,7 +152,90 @@
     "promiseForever": "Free forever",
     "promiseNoAccount": "No registration",
     "promiseLocal": "Local processing",
-    "promiseFormats": "Multiple download formats"
+    "promiseFormats": "Multiple download formats",
+    "freeTools": {
+      "videoPrivacy": "Free, no account needed. Videos upload to temporary R2 storage for server processing. Download results before leaving this page.",
+      "localPrivacy": "Private by design: images and GIF frames are processed on your device, never uploaded.",
+      "modelNotice": "First use downloads a 170.4 MiB IS-Net model. Keep this tab open while it initializes. Your browser can cache it for both background tools.",
+      "chooseVideo": "Choose a local video",
+      "videoLimits": "MP4, WebM or MOV · maximum 5 MiB",
+      "frameCount": "Output frame count",
+      "frameSize": "Size of each frame",
+      "fps": "Animation FPS",
+      "loop": "Optimize for a loop",
+      "loopHelp": "Loop optimization selects a segment with more similar endpoints. It cannot guarantee a seamless loop.",
+      "fpsHelp": "FPS sets the initial playback speed. The server derives its candidate sampling rate from this value; it is not an exact sampling FPS control.",
+      "processing": "Processing…",
+      "cancel": "Cancel",
+      "extract": "Extract frames",
+      "extractAgain": "Extract again",
+      "serverProcessing": "Checking the video and preparing your sprite sheet…",
+      "uploadProgress": "Uploading video: {progress}%",
+      "before": "Before",
+      "after": "After",
+      "notProcessed": "Not processed yet",
+      "compare": "Compare before and after",
+      "pause": "Pause",
+      "play": "Play",
+      "frame": "Current frame",
+      "chooseGif": "Drop a GIF or choose a file",
+      "chooseImages": "Drop images or choose files",
+      "gifLimits": "GIF · maximum 10 MiB · up to 256 frames / 32 million decoded pixels",
+      "imageLimits": "PNG, JPEG, static WebP · 10 MiB per image · up to 20 images",
+      "removeBackground": "Remove background",
+      "clear": "Clear files",
+      "files": "Files and processing results",
+      "downloadPng": "Download PNG",
+      "downloadZip": "Download ZIP ({count})",
+      "downloadSheet": "Download sprite sheet",
+      "downloadGif": "Download transparent GIF",
+      "retry": "Retry",
+      "gifAlpha": "GIF uses one transparent color, so soft edges may look different. PNG sheets and frames retain full alpha transparency.",
+      "replaceConfirm": "Replace this GIF and its current results? Download anything you want to keep first.",
+      "batchProgress": "{done} / {total} processed",
+      "modelBytes": "{loaded} / {total} MiB · {progress}%",
+      "exampleTitle": "A game asset, before and after",
+      "exampleText": "Drag the divider to compare the original game artwork with the actual IS-Net output. These examples demonstrate segmentation; thin details can still need manual cleanup.",
+      "model": {
+        "preparing": "Preparing the local model…",
+        "cached": "Checking the cached model…",
+        "downloading": "Downloading IS-Net…",
+        "initializing": "Initializing the model on your device…",
+        "removing": "Removing the background locally…",
+        "exporting": "Preparing your download…",
+        "decoding": "Reading image frames…",
+        "cacheUnavailable": "Your browser could not save the model cache. Processing can continue, but another visit may download the model again."
+      },
+      "status": {
+        "waiting": "Waiting",
+        "processing": "Processing",
+        "success": "Ready",
+        "failed": "Failed"
+      },
+      "errors": {
+        "FILE_TOO_LARGE": "This file exceeds the size limit shown above, or is empty.",
+        "INVALID_VIDEO": "Choose a valid MP4, WebM or MOV video.",
+        "INVALID_PARAMETERS": "Use 2–32 frames, an available frame size, and an integer FPS between 1 and 60.",
+        "UPLOAD_EXPIRED": "The upload session expired. Click Extract again to upload the selected video again.",
+        "UPLOAD_FAILED": "The video upload could not be verified. Please try again.",
+        "PROCESSING_FAILED": "Processing failed. Your previous result is still available; please retry.",
+        "RESULT_FAILED": "The sheet was created but could not be loaded. Retry to retrieve the result.",
+        "RATE_LIMIT": "Too many requests. Wait a few minutes and try again.",
+        "MEDIA_PROCESSOR_BUSY": "The processor is busy. Please try again shortly.",
+        "MEDIA_PROCESSOR_NOT_CONFIGURED": "The video processor is temporarily unavailable.",
+        "MODEL_DOWNLOAD_FAILED": "The model could not be downloaded. Check your connection and retry.",
+        "MODEL_INVALID": "The model download is incomplete or failed verification. Retry the download.",
+        "MODEL_FAILED": "The local model could not process this image. Try a smaller image or a device with more available memory.",
+        "BROWSER_UNSUPPORTED": "This browser does not support local processing. Try a current Chrome, Edge, Firefox or Safari browser.",
+        "BATCH_LIMIT": "Select one GIF or no more than 20 still images in total.",
+        "INVALID_IMAGE": "Unable to read this image. Use PNG, JPEG, static WebP, or a GIF in the GIF tool.",
+        "fileLimit": "The input exceeds the supported file size.",
+        "frameLimit": "This GIF has too many frames. Use a shorter animation.",
+        "pixelLimit": "These frames exceed the decoded pixel budget. Use a smaller image or shorter GIF.",
+        "invalidImage": "The image could not be decoded. Choose another file.",
+        "MODEL_INITIALIZATION_FAILED": "The local model could not initialize. Close other heavy tabs and retry, or use a browser with WebAssembly and OffscreenCanvas support."
+      }
+    }
   },
   "maker": {
     "metadata": {
@@ -389,6 +472,494 @@
       "workflow": "A SHORT PATH FROM ART TO ASSET",
       "source": "SOURCE / SPRITE SHEET",
       "result": "SELECT → EXTRACT → DOWNLOAD",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  },
+  "gif": {
+    "metadata": {
+      "title": "Free GIF to Sprite Sheet Converter | SpritePixel",
+      "description": "Convert GIF to sprite sheet assets without sending your artwork anywhere. Reconstruct full animation frames, adjust a regular grid, inspect the timing, and download a PNG with coordinates for your game. This free converter runs entirely in your browser.",
+      "keywords": "gif to sprite sheet"
+    },
+    "eyebrow": "FREE GAME ASSET TOOLS",
+    "title": "Free GIF to Sprite Sheet Converter",
+    "intro": "Convert GIF to sprite sheet assets without sending your artwork anywhere. Reconstruct full animation frames, adjust a regular grid, inspect the timing, and download a PNG with coordinates for your game. This free converter runs entirely in your browser.",
+    "stepsTitle": "How to use gif to sprite sheet",
+    "steps": [
+      {
+        "title": "Choose your animation",
+        "text": "Start your GIF to sprite sheet conversion with one local GIF. The decoder reconstructs complete frames rather than treating partial updates as separate pictures. Files stay in this tab, and no account, project, or AI generation credits are required. Choose a shorter clip if the decoded frame budget is exceeded."
+      },
+      {
+        "title": "Arrange the recovered frames",
+        "text": "Check the original order, then adjust columns, outer margin, spacing, and alignment. Your GIF to sprite sheet layout updates in the preview. Keep the source dimensions or enable transparent-edge cropping deliberately; zoom only changes the view and never increases the exported resolution."
+      },
+      {
+        "title": "Preview and export",
+        "text": "Play the animation using its original frame delays or choose a uniform FPS. Download your GIF to sprite sheet result as PNG, or include JSON Hash, JSON Array, CSS, XML, and an animated GIF in a ZIP. Import coordinates or configure a regular grid in your game engine."
+      }
+    ],
+    "featuresTitle": "Gif To Sprite Sheet features",
+    "features": [
+      {
+        "title": "Complete frames, including transparent patches",
+        "text": "A GIF often stores only the rectangle that changed since the previous moment. This GIF to sprite sheet converter composes those patches with their disposal instructions before packing them. That keeps moving characters complete and prevents old pixels from becoming accidental trails between frames."
+      },
+      {
+        "title": "A grid you can adjust immediately",
+        "text": "Choose a compact grid, horizontal strip, or vertical strip. The GIF to sprite sheet workspace keeps individual source dimensions and aligns smaller frames inside equal cells. Outer margin and frame spacing remain separate settings, so the output can match the texture layout expected by your importer."
+      },
+      {
+        "title": "Timing that follows the source",
+        "text": "Variable frame delays remain available after GIF to sprite sheet conversion. Switch to animation view, pause, or step through the action to check its rhythm. Use uniform FPS only when you intend to change playback speed; a PNG alone cannot tell an engine how long each frame should last."
+      }
+    ],
+    "useCasesTitle": "Made for your game workflow",
+    "useCases": [
+      {
+        "title": "Character loops for a game prototype",
+        "text": "Use GIF to sprite sheet conversion to bring an existing walk, idle, or attack animation into a small game. Inspect the contact point under the feet and leave space around weapons or accessories. Packing cannot repair a character that changes size or position inside the original animation."
+      },
+      {
+        "title": "Effects and animated interface elements",
+        "text": "Convert your own spell effects, reward animations, or animated item indicators into reusable frame grids. Preview the first and final frames together before using a looping effect. The converter reorganizes existing artwork; it does not generate missing poses or create new motion from a still image."
+      }
+    ],
+    "guideTitle": "Settings, formats, and practical limits",
+    "guide": [
+      {
+        "title": "Input and memory limits",
+        "text": "The GIF to sprite sheet tool accepts one GIF up to 50 MiB, with at most 256 frames and 32 million decoded frame pixels. Source images and output sheets also follow the existing dimension limits. A small compressed GIF can still need considerable memory after every frame is decoded."
+      },
+      {
+        "title": "Alpha and background color",
+        "text": "Original transparency is preserved in the PNG. Empty space between cells stays transparent unless you choose a solid export background. Opaque pixels already present in the GIF remain opaque. Use the separate GIF Background Remover first when you need to cut a character out of its background."
+      },
+      {
+        "title": "Coordinates for your importer",
+        "text": "Export JSON Hash or JSON Array when your engine accepts atlas coordinates, or match the rows, columns, gaps, and margins manually. Keep the PNG and metadata from the same export together. Repacking changes coordinates, so older JSON should not be paired with a newer sheet."
+      }
+    ],
+    "faqTitle": "Gif To Sprite Sheet FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Answers to check before processing and downloading your assets.",
+    "faq": [
+      {
+        "title": "Is GIF to sprite sheet conversion free?",
+        "text": "Yes. Decoding, layout, preview, and export are free without registration. Your GIF stays in your browser. The optional AI asset generator is a separate product and is not required to download a completed sheet."
+      },
+      {
+        "title": "Will the result keep the original animation speed?",
+        "text": "Keep Use frame timing enabled to retain per-frame delays. Disable it to apply one FPS to the entire sequence. JSON can store durations, while PNG contains only pixels; your engine still needs the appropriate timing settings."
+      },
+      {
+        "title": "Can I remove a GIF background here?",
+        "text": "This page preserves source pixels and packs them. To remove a background, open GIF Background Remover, process the frames locally, and download a transparent sheet or PNG sequence. The two tools serve different steps in the same asset workflow."
+      },
+      {
+        "title": "Why are there empty cells at the end?",
+        "text": "A regular rectangular grid may have more cells than the frame count. Extra cells remain transparent. Reduce the column count or choose a strip to change the arrangement, and use the metadata to identify actual frames rather than treating padding as animation."
+      },
+      {
+        "title": "Can I recover the work after refreshing?",
+        "text": "The workspace is held in the current tab and is cleared when the page refreshes. Download the sheet and any metadata before leaving. Model files used by the separate background tools may be cached, but your GIF and editing session are not saved."
+      }
+    ],
+    "relatedTitle": "Keep working with your sprites",
+    "relatedText": "Already have a packed image? Use Sprite Sheet Cutter to extract individual PNG frames, then continue in Maker if you need a new layout.",
+    "relatedLabel": "Open Sprite Sheet Maker",
+    "ctaTitle": "Ready to prepare your next game asset?",
+    "ctaText": "Choose your source in the workspace above, inspect the result, and download the files you need.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP FLOW",
+      "features": "SHEET FEATURES",
+      "useCases": "GAME USES",
+      "guide": "EXPORT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "QUESTIONS & ANSWERS"
+    },
+    "design": {
+      "tag": "MAKE",
+      "baseline": "Y = BASELINE",
+      "hero": "Convert GIF to sprite sheet assets without sending your artwork anywhere. Reconstruct full animation frames, adjust a regular grid, inspect the timing, and download a PNG with coordinates for your game. This free converter runs entirely in your browser.",
+      "proof": "Try it with a real sprite",
+      "workflow": "CHOOSE → PROCESS → DOWNLOAD",
+      "source": "SOURCE / FRAME SEQUENCE",
+      "result": "ARRANGE → PREVIEW → EXPORT",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  },
+  "video": {
+    "metadata": {
+      "title": "Free Video to Sprite Sheet Converter | SpritePixel",
+      "description": "Turn video to sprite sheet assets from a local game clip. Choose the frame count, cell size, loop optimization, and animation FPS, then inspect the transparent result. Videos upload to R2 for server processing; repeated extraction reuses the same uploaded video.",
+      "keywords": "video to sprite sheet"
+    },
+    "eyebrow": "FREE GAME ASSET TOOLS",
+    "title": "Free Video to Sprite Sheet Converter",
+    "intro": "Turn video to sprite sheet assets from a local game clip. Choose the frame count, cell size, loop optimization, and animation FPS, then inspect the transparent result. Videos upload to R2 for server processing; repeated extraction reuses the same uploaded video.",
+    "stepsTitle": "How to use video to sprite sheet",
+    "steps": [
+      {
+        "title": "Select a short local video",
+        "text": "Choose an MP4, WebM, or MOV up to 5 MiB for video to sprite sheet conversion. Upload begins only after you click Extract frames. The tool does not require an account or a project, and it does not spend generation credits. Use your own game footage or artwork."
+      },
+      {
+        "title": "Choose the extraction settings",
+        "text": "Set 2–32 output frames and a cell size of 64, 128, 256, or 512 pixels. The video to sprite sheet tool also accepts animation FPS and optional loop optimization. Defaults are 16 frames, 256-pixel cells, 12 FPS, and loop optimization off."
+      },
+      {
+        "title": "Inspect, adjust, and download",
+        "text": "The video to sprite sheet result opens in a grid workspace with individual frame selection and animation preview. Download the full sheet or selected frames. If the sequence is unsatisfactory, change extraction settings and submit again; the original video does not need another upload during the active session."
+      }
+    ],
+    "featuresTitle": "Video To Sprite Sheet features",
+    "features": [
+      {
+        "title": "One upload, several useful versions",
+        "text": "Try different frame counts without repeatedly transferring the same file. Video to sprite sheet extraction reuses the uploaded source while each parameter combination has its own processing identity. A failed attempt leaves the previous result available, so you can keep a working version while refining the next one."
+      },
+      {
+        "title": "Background removal and consistent cells",
+        "text": "The video to sprite sheet pipeline extracts candidate frames, selects the requested sequence, removes backgrounds, and normalizes artwork into equal square cells. This suits character-focused clips with clear subjects. It is not a lossless screenshot exporter, and complex scenes may need manual cleanup after segmentation."
+      },
+      {
+        "title": "Review the sheet and the motion",
+        "text": "Check the full grid for clipping, then play the selected frames at the returned FPS. Your video to sprite sheet result uses the actual output rows and columns rather than a guessed layout. Changing preview speed is local and does not trigger another server request."
+      }
+    ],
+    "useCasesTitle": "Made for your game workflow",
+    "useCases": [
+      {
+        "title": "Turn a character clip into prototype assets",
+        "text": "Use video to sprite sheet conversion to test a short character action in a 2D prototype. Compare a smaller frame count for snappy motion with a larger count for finer sampling. Keep the subject visible throughout the clip; selection cannot reconstruct a pose hidden behind another object."
+      },
+      {
+        "title": "Prepare effects and gameplay experiments",
+        "text": "Create frame sequences from your own effect previews or isolated game objects. Test the output against a contrasting background to spot erased details or leftover pixels. The automatic background model works best with an identifiable foreground; full gameplay scenes are harder to separate cleanly."
+      }
+    ],
+    "guideTitle": "Settings, formats, and practical limits",
+    "guide": [
+      {
+        "title": "Output count versus sampling",
+        "text": "The frame count controls the requested number of output cells. Animation FPS sets initial playback speed and also influences the server’s internal candidate sampling. Video to sprite sheet conversion does not expose a precise timestamp editor, and it does not promise one original video frame for every output cell."
+      },
+      {
+        "title": "Cell dimensions and loop optimization",
+        "text": "Larger cells preserve more detail but increase texture size. Loop optimization looks for a segment with similar endpoints instead of simply taking the full clip. It can improve a repeated action, but it cannot guarantee a seamless loop or create missing transition poses."
+      },
+      {
+        "title": "Uploads, privacy, and session lifetime",
+        "text": "Unlike the local image tools, video to sprite sheet processing uploads your video and returns files stored in R2. Download results before leaving the page. Expired upload credentials require another upload; refreshing does not restore the local editing workspace or selected file."
+      },
+      {
+        "title": "Busy services and failed attempts",
+        "text": "Upload progress reports actual transferred bytes. Server processing has a waiting state rather than an invented percentage. If the processor is busy or a request fails, keep the previous result and retry later. Requests are rate limited to protect the free service."
+      }
+    ],
+    "faqTitle": "Video To Sprite Sheet FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Answers to check before processing and downloading your assets.",
+    "faq": [
+      {
+        "title": "Is video to sprite sheet conversion free without login?",
+        "text": "Yes. The tool accepts local videos without an account, project, or generation credits. It still uses server resources, so file limits and request rate limits apply. AI generation remains a separate optional workflow."
+      },
+      {
+        "title": "Does changing settings upload my video again?",
+        "text": "Not during the active upload session. Frame count, cell size, FPS, and loop optimization reuse the same stored source. Choosing a different file or using an expired upload session requires a new upload."
+      },
+      {
+        "title": "Does this keep the original video background?",
+        "text": "No. The current pipeline includes background removal and normalization into square cells. Preview the result before using it in your game, especially for translucent effects, thin objects, or clips with several overlapping subjects."
+      },
+      {
+        "title": "Can I download individual PNG frames?",
+        "text": "Yes. Select cells in the result workspace and download one PNG or a ZIP. You can also download the complete sprite sheet. Check frame selection before exporting so unused transparent grid cells are not treated as part of the action."
+      },
+      {
+        "title": "What does animation FPS change?",
+        "text": "It supplies the initial result playback speed and is passed to the processor, which derives a bounded candidate sampling rate from it. The preview FPS can subsequently be adjusted locally. Submitting new extraction settings is a separate explicit action."
+      }
+    ],
+    "relatedTitle": "Keep working with your sprites",
+    "relatedText": "Already have a packed image? Use Sprite Sheet Cutter to extract individual PNG frames, then continue in Maker if you need a new layout.",
+    "relatedLabel": "Open Sprite Sheet Maker",
+    "ctaTitle": "Ready to prepare your next game asset?",
+    "ctaText": "Choose your source in the workspace above, inspect the result, and download the files you need.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP FLOW",
+      "features": "SHEET FEATURES",
+      "useCases": "GAME USES",
+      "guide": "EXPORT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "QUESTIONS & ANSWERS"
+    },
+    "design": {
+      "tag": "MAKE",
+      "baseline": "Y = BASELINE",
+      "hero": "Turn video to sprite sheet assets from a local game clip. Choose the frame count, cell size, loop optimization, and animation FPS, then inspect the transparent result. Videos upload to R2 for server processing; repeated extraction reuses the same uploaded video.",
+      "proof": "Try it with a real sprite",
+      "workflow": "CHOOSE → PROCESS → DOWNLOAD",
+      "source": "SOURCE / FRAME SEQUENCE",
+      "result": "ARRANGE → PREVIEW → EXPORT",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  },
+  "background": {
+    "metadata": {
+      "title": "Free Transparent Background Maker | SpritePixel",
+      "description": "Use this transparent background maker to cut game characters, props, and item artwork out of their backgrounds. Process up to 20 images locally, compare before and after, and download transparent PNGs. Your images never leave your device; only the model needs an initial download.",
+      "keywords": "transparent background maker"
+    },
+    "eyebrow": "FREE GAME ASSET TOOLS",
+    "title": "Free Transparent Background Maker",
+    "intro": "Use this transparent background maker to cut game characters, props, and item artwork out of their backgrounds. Process up to 20 images locally, compare before and after, and download transparent PNGs. Your images never leave your device; only the model needs an initial download.",
+    "stepsTitle": "How to use transparent background maker",
+    "steps": [
+      {
+        "title": "Choose one image or a small batch",
+        "text": "Add PNG, JPEG, or static WebP files to the transparent background maker. Each image can be up to 10 MiB, with a maximum of 20 images in the workspace. Start with a clear subject and enough contrast around its edges. No account or project is required."
+      },
+      {
+        "title": "Download the model once, then process",
+        "text": "On first use, the transparent background maker downloads the IS-Net model and displays real download progress. Inference then runs in a browser worker, one image at a time. Cached weights can be reused on later visits and by the GIF tool; your artwork is not part of that cache."
+      },
+      {
+        "title": "Compare and save the useful results",
+        "text": "Select a result and drag the before-and-after divider to inspect the silhouette. The transparent background maker provides individual PNG downloads and a ZIP of completed files. A failed image can be retried separately without repeating successful work. Download everything you need before closing the tab."
+      }
+    ],
+    "featuresTitle": "Transparent Background Maker features",
+    "features": [
+      {
+        "title": "Local inference for unreleased game artwork",
+        "text": "This transparent background maker keeps source images and output pixels inside your browser. No image-upload request is needed for segmentation. Model and runtime files are downloaded from our storage, so first use needs an internet connection; local processing does not mean that all page resources are available offline."
+      },
+      {
+        "title": "Batch cleanup without losing individual control",
+        "text": "The transparent background maker processes up to 20 files sequentially to limit memory pressure. Each item shows its own state and can be inspected after completion. Download one finished prop while other files continue, or collect the successful PNGs in a ZIP when the batch is ready."
+      },
+      {
+        "title": "Before-and-after checks at original dimensions",
+        "text": "The transparent background maker restores the predicted mask to the source dimensions and retains existing alpha transparency. Compare the original against a checkerboard result to find missing outlines, holes, or unwanted shadows. Automatic segmentation is a starting point; very fine details may still require an image editor."
+      }
+    ],
+    "useCasesTitle": "Made for your game workflow",
+    "useCases": [
+      {
+        "title": "Prepare character portraits and inventory items",
+        "text": "Use a transparent background maker for your own character portraits, potion bottles, weapons, and collectible artwork. Transparent PNGs can sit over different interface panels without a rectangular backdrop. Inspect narrow handles, antennae, and small decorative elements before adding the asset to a production inventory."
+      },
+      {
+        "title": "Clean sprites and pixel-art studies",
+        "text": "Try the tool as a sprite background remover or pixel art background remover when the foreground is clearly separated. A sprite sheet background remover must distinguish every desired object from the backdrop, so crowded sheets can be harder than individual sprites. Check outlines at normal game scale as well as enlarged."
+      }
+    ],
+    "guideTitle": "Settings, formats, and practical limits",
+    "guide": [
+      {
+        "title": "Supported images and output format",
+        "text": "The transparent background maker accepts PNG, JPEG, and static WebP. The output is a PNG at the original image dimensions, even for a JPEG input. Animated WebP and GIF are not batch still-image formats here; use GIF Background Remover when each animation frame needs its own mask."
+      },
+      {
+        "title": "Transparent pixels are not a background color",
+        "text": "A transparent PNG contains an alpha channel. The checkerboard is only a preview and is not baked into your download. When checking a pixel art transparent background, view it against both light and dark surfaces so leftover edge colors are easier to notice."
+      },
+      {
+        "title": "First download and browser cache",
+        "text": "The IS-Net model is about 170.4 MiB. Progress shows transferred bytes, followed by a separate initialization stage. If browser storage is unavailable or cleared, another visit may need another download. The transparent background maker does not save your source images or processing session across refreshes."
+      },
+      {
+        "title": "Memory and difficult edges",
+        "text": "A file-size limit is not a promise that every device can process every image. Large decoded images and model initialization both use memory. Use smaller images if necessary. Smoke, glass, disconnected effects, and subjects blending into the background are harder cases; compare results before replacing your originals."
+      }
+    ],
+    "faqTitle": "Transparent Background Maker FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Answers to check before processing and downloading your assets.",
+    "faq": [
+      {
+        "title": "Is this transparent background maker free?",
+        "text": "Yes. You can remove backgrounds, compare results, and download PNGs or a ZIP without signing in or spending credits. The separate AI generation workspace is optional and is not needed to use this tool."
+      },
+      {
+        "title": "Are my images uploaded to your server?",
+        "text": "No. The browser downloads model resources and runs image segmentation locally. Source images and processed PNGs stay on your device. The separate video conversion tool uses uploads and server processing, so its privacy behavior is different."
+      },
+      {
+        "title": "Can I process 20 images together?",
+        "text": "Yes, with a maximum of 10 MiB per image. They are processed sequentially, with a status for each file. Successful images remain downloadable if another image fails; retry the failed item instead of starting the entire batch again."
+      },
+      {
+        "title": "Will pixel-art edges remain perfectly crisp?",
+        "text": "The model predicts a foreground mask and can soften or remove small details. Check the result at your game’s actual display size. This tool does not guarantee pixel-perfect segmentation or replace manual cleanup of individual pixels."
+      },
+      {
+        "title": "Can I download a JPG with transparency?",
+        "text": "JPEG does not support an alpha channel. Download the PNG result to preserve the transparent background. Keep the original if you plan to compare the mask or retry with a different source crop later."
+      }
+    ],
+    "relatedTitle": "Keep working with your sprites",
+    "relatedText": "Already have a packed image? Use Sprite Sheet Cutter to extract individual PNG frames, then continue in Maker if you need a new layout.",
+    "relatedLabel": "Open Sprite Sheet Maker",
+    "ctaTitle": "Ready to prepare your next game asset?",
+    "ctaText": "Choose your source in the workspace above, inspect the result, and download the files you need.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP FLOW",
+      "features": "SHEET FEATURES",
+      "useCases": "GAME USES",
+      "guide": "EXPORT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "QUESTIONS & ANSWERS"
+    },
+    "design": {
+      "tag": "MAKE",
+      "baseline": "Y = BASELINE",
+      "hero": "Use this transparent background maker to cut game characters, props, and item artwork out of their backgrounds. Process up to 20 images locally, compare before and after, and download transparent PNGs. Your images never leave your device; only the model needs an initial download.",
+      "proof": "Try it with a real sprite",
+      "workflow": "CHOOSE → PROCESS → DOWNLOAD",
+      "source": "SOURCE / FRAME SEQUENCE",
+      "result": "ARRANGE → PREVIEW → EXPORT",
+      "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
+      "motion": "CHECK THE LOOP",
+      "selected": "KEEP THE ACTION YOU NEED",
+      "detail": "BUILT FOR THE WORK BETWEEN FRAMES",
+      "next": "YOUR NEXT CHARACTER STARTS HERE"
+    }
+  },
+  "gifBackground": {
+    "metadata": {
+      "title": "Free GIF Background Remover | SpritePixel",
+      "description": "Use a GIF background remover that processes every frame in your browser. Compare the original motion with the cutout, then download a transparent GIF, sprite sheet, or PNG sequence. Your animation is never uploaded; the shared IS-Net model runs locally on your device.",
+      "keywords": "gif background remover"
+    },
+    "eyebrow": "FREE GAME ASSET TOOLS",
+    "title": "Free GIF Background Remover",
+    "intro": "Use a GIF background remover that processes every frame in your browser. Compare the original motion with the cutout, then download a transparent GIF, sprite sheet, or PNG sequence. Your animation is never uploaded; the shared IS-Net model runs locally on your device.",
+    "stepsTitle": "How to use gif background remover",
+    "steps": [
+      {
+        "title": "Open a short game animation",
+        "text": "Choose one GIF up to 10 MiB in the GIF background remover. The decoder first rebuilds complete frames, including partial updates and disposal rules. A maximum of 256 frames and 32 million decoded pixels keeps the workload bounded. Short character loops are a practical starting point."
+      },
+      {
+        "title": "Prepare the model and remove each background",
+        "text": "The GIF background remover downloads IS-Net on first use and shows the transferred bytes. After initialization, it processes frames sequentially while preserving their original dimensions and timing. A cached model can be shared with Transparent Background Maker, but your animation itself is not saved in that cache."
+      },
+      {
+        "title": "Compare motion and choose an export",
+        "text": "Play the synchronized before-and-after preview, or pause on a difficult frame. Once every frame succeeds, the GIF background remover can export a transparent GIF, PNG sprite sheet, or ZIP of PNG frames. Retry a failed frame without silently omitting it from the final animation."
+      }
+    ],
+    "featuresTitle": "Gif Background Remover features",
+    "features": [
+      {
+        "title": "Private processing for animated game assets",
+        "text": "This GIF background remover runs image segmentation in a browser worker. It downloads the model and runtime resources but does not send your GIF or frame pixels to an image API. Keep the tab open during processing, especially on devices where initializing the model takes longer."
+      },
+      {
+        "title": "One canvas size across the whole action",
+        "text": "The GIF background remover preserves the source canvas instead of independently cropping every silhouette. Stable dimensions help avoid artificial jumps when a sword swings outward or a character leans. Original GIF frame delays stay attached to the sequence; background removal does not invent new transition frames."
+      },
+      {
+        "title": "Synchronized before and after",
+        "text": "Use the GIF background remover comparison to inspect the same moment in both versions. Pause, step through the timeline, and drag the divider across the character. Look for disappearing effects and changing outlines: an image model evaluates frames individually, so temporal consistency is not guaranteed."
+      }
+    ],
+    "useCasesTitle": "Made for your game workflow",
+    "useCases": [
+      {
+        "title": "Character loops for prototypes",
+        "text": "Use a GIF background remover on your own idle, walk, or attack animations before placing them over a new game scene. Transparent frames are useful for prototype motion tests and animation editors. Check feet, weapons, and accessories throughout the entire action rather than judging only the first frame."
+      },
+      {
+        "title": "Effects, animated items, and UI previews",
+        "text": "Try the tool on an isolated animated object, collectible, or effect preview. Clearly separated foregrounds are easier than smoke or glowing particles blended into a scene. The PNG sequence is useful when you want to retouch individual masks before packing the final game asset."
+      }
+    ],
+    "guideTitle": "Settings, formats, and practical limits",
+    "guide": [
+      {
+        "title": "GIF transparency versus PNG alpha",
+        "text": "A GIF background remover can export a transparent GIF, but GIF supports a single transparent palette entry rather than smooth alpha levels. Soft edges may become harder after encoding. Choose a PNG sprite sheet or PNG frames when your game needs partially transparent pixels and more faithful edge blending."
+      },
+      {
+        "title": "Frame timing and sheet layout",
+        "text": "Transparent GIF export keeps the recovered per-frame delays, within GIF timing precision. The sheet uses a regular grid, while the ZIP contains ordered PNG frames. A PNG alone does not store playback timing. Use GIF to Sprite Sheet if you need additional layout controls and metadata exports."
+      },
+      {
+        "title": "Download, initialization, and cancellation",
+        "text": "The shared model is about 170.4 MiB. The GIF background remover shows download progress separately from model initialization and frame processing. Cancel stops the active browser worker. Completed results remain in the current session, so you can retry the remaining work without accepting an incomplete animation."
+      },
+      {
+        "title": "Limits and visual cleanup",
+        "text": "Compressed GIF size does not describe decoded memory use. Large dimensions or many frames can exceed the pixel budget even below 10 MiB. Shorten or resize the animation when necessary. Automatic masks can flicker between frames; inspect outlines and translucent effects before replacing the source artwork."
+      }
+    ],
+    "faqTitle": "Gif Background Remover FAQ",
+    "faqEyebrow": "BEFORE YOU EXPORT",
+    "faqText": "Answers to check before processing and downloading your assets.",
+    "faq": [
+      {
+        "title": "Is this GIF background remover free without an account?",
+        "text": "Yes. Local background removal, comparison, and all three export formats are free. There is no project requirement or generation-credit charge. The first model download needs a connection, and processing speed depends on your device."
+      },
+      {
+        "title": "Does my GIF leave the browser?",
+        "text": "No. The tool downloads its model resources and processes the decoded animation locally. Your source GIF and transparent frames are not uploaded. Do not confuse this with the video converter, which explicitly uses server processing."
+      },
+      {
+        "title": "Can I export a sprite sheet instead of a GIF?",
+        "text": "Yes. Download a transparent PNG sheet or a ZIP of ordered PNG frames after all frames finish. These formats preserve full alpha transparency and avoid GIF palette limitations. The original frame dimensions remain consistent throughout the sequence."
+      },
+      {
+        "title": "Why does a glow look different in the GIF download?",
+        "text": "GIF cannot represent smooth partial transparency, and its palette is limited. A soft glow may have a harder boundary after encoding. Compare the PNG output as well; even there, model segmentation may need manual correction around translucent effects."
+      },
+      {
+        "title": "What happens if one frame fails?",
+        "text": "The failed frame is marked and can be retried. Full animation exports stay disabled until every frame has a result, so an error cannot quietly remove a pose from your animation. Successful frames remain available in the current tab."
+      }
+    ],
+    "relatedTitle": "Keep working with your sprites",
+    "relatedText": "Already have a packed image? Use Sprite Sheet Cutter to extract individual PNG frames, then continue in Maker if you need a new layout.",
+    "relatedLabel": "Open Sprite Sheet Maker",
+    "ctaTitle": "Ready to prepare your next game asset?",
+    "ctaText": "Choose your source in the workspace above, inspect the result, and download the files you need.",
+    "ctaLabel": "Open the workspace",
+    "badges": {
+      "steps": "3-STEP FLOW",
+      "features": "SHEET FEATURES",
+      "useCases": "GAME USES",
+      "guide": "EXPORT GUIDE",
+      "tools": "MORE TOOLS",
+      "faq": "QUESTIONS & ANSWERS"
+    },
+    "design": {
+      "tag": "MAKE",
+      "baseline": "Y = BASELINE",
+      "hero": "Use a GIF background remover that processes every frame in your browser. Compare the original motion with the cutout, then download a transparent GIF, sprite sheet, or PNG sequence. Your animation is never uploaded; the shared IS-Net model runs locally on your device.",
+      "proof": "Try it with a real sprite",
+      "workflow": "CHOOSE → PROCESS → DOWNLOAD",
+      "source": "SOURCE / FRAME SEQUENCE",
+      "result": "ARRANGE → PREVIEW → EXPORT",
       "alignment": "CONSISTENT CELLS / ORIGINAL PIXELS",
       "motion": "CHECK THE LOOP",
       "selected": "KEEP THE ACTION YOU NEED",

@@ -12,8 +12,9 @@ import { Folder } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { generationDefaults, mapGenerationOptions } from '@/config/generation';
-import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
+import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import { useProjectConsole } from '@/shared/blocks/projects/project-console-header';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -53,6 +54,7 @@ export function CharacterCreateDialog({
   const th = useTranslations('pages.index.messages');
   const notifyApiError = useProductApiFeedback();
   const { projectName } = useProjectConsole();
+  const characterCredits = useGenerationCredits('character');
   const promptId = useId();
   const uploadId = useId();
   const [open, setOpen] = useState(false);
@@ -338,9 +340,7 @@ export function CharacterCreateDialog({
                   )}
                   {busy ? th('startCreatingBusy') : th('startCreating')}
                   {busy ? null : (
-                    <CreditCostMark
-                      credits={getGenerationCredits('character')}
-                    />
+                    <CreditCostMark credits={characterCredits} />
                   )}
                 </button>
               </div>

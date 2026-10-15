@@ -12,6 +12,8 @@ import {
   distributeCredits,
   generationPollIntervalMs,
   getGenerationCredits,
+  resolveGenerationModelRoute,
+  resolveIconPromptExpandModel,
 } from '../src/config/generation/model-routes';
 import {
   aggregateGenerationStatus,
@@ -603,6 +605,34 @@ test('SpritePixel credit costs bill batches as a flat fee', () => {
   assert.equal(getGenerationCredits('animation', { taskCount: 4 }), 12);
   assert.equal(getGenerationCredits('icon', { taskCount: 9 }), 2);
   assert.equal(getGenerationCredits('icon', { taskCount: 9, retry: true }), 2);
+  assert.deepEqual(
+    resolveGenerationModelRoute('animation', {
+      generation_animation_provider: 'fal',
+      generation_animation_model: 'fal-video',
+      generation_animation_credits: '5',
+    }),
+    { provider: 'fal', model: 'fal-video', credits: 5 }
+  );
+  assert.deepEqual(
+    resolveGenerationModelRoute('character', {
+      generation_character_provider: 'unknown',
+      generation_character_credits: '0',
+    }),
+    { provider: 'grsai', model: 'gpt-image-2.5', credits: 1 }
+  );
+  assert.equal(
+    getGenerationCredits('animation', {
+      taskCount: 4,
+      route: resolveGenerationModelRoute('animation', {
+        generation_animation_credits: '5',
+      }),
+    }),
+    20
+  );
+  assert.deepEqual(resolveIconPromptExpandModel({}), {
+    provider: 'grsai',
+    model: 'gemini-2.5-flash',
+  });
   assert.equal(generationPollIntervalMs('character'), 3000);
   assert.equal(generationPollIntervalMs('icon'), 3000);
   assert.equal(generationPollIntervalMs('animation'), 5000);

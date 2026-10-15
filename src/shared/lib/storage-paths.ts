@@ -32,9 +32,7 @@ export function uploadStorageKeyForRole(
 }
 
 export function isCompletableUploadKey(key: string, projectId: string) {
-  return (
-    key.startsWith('uploads/') || key.startsWith(`projects/${projectId}/`)
-  );
+  return key.startsWith('uploads/') || key.startsWith(`projects/${projectId}/`);
 }
 
 export function generationAssetType(taskType: string) {
@@ -44,7 +42,11 @@ export function generationAssetType(taskType: string) {
 }
 
 export function isRootStorageKey(key: string) {
-  return key.startsWith('projects/') || key.startsWith('uploads/');
+  return (
+    key.startsWith('projects/') ||
+    key.startsWith('uploads/') ||
+    key.startsWith('models/')
+  );
 }
 
 export function isProviderReachableUrl(url: string) {

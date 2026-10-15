@@ -74,6 +74,22 @@
       "cutter": {
         "title": "Sprite Sheet Cutter",
         "text": "Cut a sprite sheet into individual PNG frames with a visible, editable grid."
+      },
+      "gif": {
+        "title": "GIF to Sprite Sheet",
+        "text": "Arrange GIF frames into a local PNG atlas."
+      },
+      "video": {
+        "title": "Video to Sprite Sheet",
+        "text": "Extract, cut out, and preview frames from a short video."
+      },
+      "background": {
+        "title": "Transparent Background Maker",
+        "text": "Remove image backgrounds locally, up to 20 at a time."
+      },
+      "gifBackground": {
+        "title": "GIF Background Remover",
+        "text": "Remove GIF backgrounds locally and export transparent frames."
       }
     }
   }

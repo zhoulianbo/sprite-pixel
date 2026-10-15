@@ -41,6 +41,10 @@
 | Tools → AI Game Icon Generator     | /ai-game-icon-generator |
 | Tools → Sprite Sheet Maker         | /sprite-sheet-maker     |
 | Tools → Sprite Sheet Cutter        | /sprite-sheet-cutter    |
+| Tools → GIF to Sprite Sheet        | /gif-to-sprite-sheet    |
+| Tools → Video to Sprite Sheet      | /video-to-sprite-sheet  |
+| Tools → Transparent Background Maker | /transparent-background-maker |
+| Tools → GIF Background Remover     | /gif-background-remover |
 | Gallery                            | /gallery                |
 | Pricing                            | /pricing                |
 | Footer → AI Sprite Generator       | /#hero                  |
@@ -64,3 +68,5 @@ Dashboard 侧边栏（登录后工作台）：
 以代码库实际依赖为准：Next.js App Router、TypeScript、Tailwind CSS 4、shadcn/Radix、next-intl、Better Auth、Drizzle、Cloudflare/D1/R2 集成。V1.2 中 PostgreSQL/Supabase/Auth.js 是推荐选项，不构成替换现有架构的指令。用户可见文案走 `src/config/locale/messages/{en,zh}`，不在组件内维护中英文字典；选项 ID 与默认值放 `src/config`。
 
 交付必须区分代码实现、演示、浏览器验证、构建验证、数据库迁移和线上部署。生成链路完成需覆盖提交、处理中、成功、失败/退款、刷新恢复；UI 演示不证明这些业务能力。只运行与改动相关的验证，并准确记录未通过或未执行项。
+
+2026-10-14：四个新增免费工具页先提供英文与简体中文；其他语言回退英文并 noindex。Tools 菜单共七项、每行两列；AI Game Icon Generator 沿用积分规则。GIF/图片工具在浏览器处理；视频工具匿名直传 R2 并调用现有 Python 抽帧，不消费生成积分。实现与验证层级见 [四工具验收记录](../free-tools-expansion-qa.md)。

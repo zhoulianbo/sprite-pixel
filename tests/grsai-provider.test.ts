@@ -6,7 +6,11 @@ import {
   iconPromptExpandModel,
 } from '../src/config/generation/model-routes';
 import { AIMediaType, AITaskStatus, GrsaiProvider } from '../src/extensions/ai';
-import { getSettingGroups, getSettings } from '../src/shared/services/settings';
+import {
+  getSettingGroups,
+  getSettings,
+  getSettingTabs,
+} from '../src/shared/services/settings';
 
 const originalFetch = globalThis.fetch;
 
@@ -14,7 +18,7 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
-test('SpritePixel model routing lives in code and admin exposes only Grsai credentials', async () => {
+test('SpritePixel model routing defaults stay in code and admin can switch them', async () => {
   assert.deepEqual(generationModelRoutes, {
     character: { provider: 'grsai', model: 'gpt-image-2.5', credits: 1 },
     animation: { provider: 'grsai', model: 'minimax-h3', credits: 3 },
@@ -30,15 +34,44 @@ test('SpritePixel model routing lives in code and admin exposes only Grsai crede
     model: 'gemini-2.5-flash',
   });
 
+  const tabs = await getSettingTabs('models');
+  const tabNames = tabs.map((item) => item.name);
+  assert.deepEqual(
+    tabNames.slice(tabNames.indexOf('ai'), tabNames.indexOf('analytics') + 1),
+    ['ai', 'models', 'analytics']
+  );
+  assert.equal(tabs.find((item) => item.name === 'models')?.title, '模型使用');
+
   const groups = await getSettingGroups();
   const settings = await getSettings();
-  assert.equal(
-    groups.some((group) => group.name === 'sprite_models'),
-    false
+  assert.deepEqual(
+    groups
+      .filter((group) => group.tab === 'models')
+      .map((group) => group.name),
+    [
+      'generation_character',
+      'generation_animation',
+      'generation_icon',
+      'generation_icon_expand',
+    ]
   );
-  assert.equal(
-    settings.some((setting) => setting.name.startsWith('sprite_')),
-    false
+  assert.deepEqual(
+    settings
+      .filter((setting) => setting.tab === 'models')
+      .map((setting) => setting.name),
+    [
+      'generation_character_provider',
+      'generation_character_model',
+      'generation_character_credits',
+      'generation_animation_provider',
+      'generation_animation_model',
+      'generation_animation_credits',
+      'generation_icon_provider',
+      'generation_icon_model',
+      'generation_icon_credits',
+      'generation_icon_expand_provider',
+      'generation_icon_expand_model',
+    ]
   );
   assert.deepEqual(
     settings

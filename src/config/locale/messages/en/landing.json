@@ -26,19 +26,50 @@
               "title": "AI Game Icon Generator",
               "url": "/ai-game-icon-generator",
               "icon": "Layers",
-              "description": "Generate matching game icon sets in batches"
+              "description": "Generate matching game icon sets in batches",
+              "badge": "Credits"
             },
             {
               "title": "Sprite Sheet Maker",
               "url": "/sprite-sheet-maker",
               "icon": "Grid2X2",
-              "description": "Explore browser-based sprite sheet packing"
+              "description": "Explore browser-based sprite sheet packing",
+              "badge": "Free"
             },
             {
               "title": "Sprite Sheet Cutter",
               "url": "/sprite-sheet-cutter",
               "icon": "Scissors",
-              "description": "Cut sprite sheets into individual frames"
+              "description": "Cut sprite sheets into individual frames",
+              "badge": "Free"
+            },
+            {
+              "title": "GIF to Sprite Sheet",
+              "url": "/gif-to-sprite-sheet",
+              "icon": "Film",
+              "description": "Convert GIF to sprite sheet assets without sending your artwork anywhere",
+              "badge": "Free"
+            },
+            {
+              "title": "Video to Sprite Sheet",
+              "url": "/video-to-sprite-sheet",
+              "icon": "Video",
+              "description": "Turn video to sprite sheet assets from a local game clip",
+              "badge": "Free"
+            },
+            {
+              "title": "Transparent Background Maker",
+              "url": "/transparent-background-maker",
+              "icon": "ImageMinus",
+              "description": "Use this transparent background maker to cut game characters, props, and item artwork out of their backgrounds",
+              "badge": "Free"
+            },
+            {
+              "title": "GIF Background Remover",
+              "url": "/gif-background-remover",
+              "icon": "Eraser",
+              "description": "Use a GIF background remover that processes every frame in your browser",
+              "badge": "Free"
             }
           ]
         },
@@ -102,6 +133,22 @@
             {
               "title": "Sprite Sheet Cutter",
               "url": "/sprite-sheet-cutter"
+            },
+            {
+              "title": "GIF to Sprite Sheet",
+              "url": "/gif-to-sprite-sheet"
+            },
+            {
+              "title": "Video to Sprite Sheet",
+              "url": "/video-to-sprite-sheet"
+            },
+            {
+              "title": "Transparent Background Maker",
+              "url": "/transparent-background-maker"
+            },
+            {
+              "title": "GIF Background Remover",
+              "url": "/gif-background-remover"
             }
           ]
         },

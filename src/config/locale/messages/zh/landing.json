@@ -26,19 +26,50 @@
               "title": "AI 游戏图标生成器",
               "url": "/ai-game-icon-generator",
               "icon": "Layers",
-              "description": "批量制作风格一致的游戏图标"
+              "description": "批量制作风格一致的游戏图标",
+              "badge": "消耗积分"
             },
             {
               "title": "精灵图表制作工具",
               "url": "/sprite-sheet-maker",
               "icon": "Grid2X2",
-              "description": "了解浏览器端动画帧打包工具"
+              "description": "了解浏览器端动画帧打包工具",
+              "badge": "免费"
             },
             {
               "title": "精灵图切割工具",
               "url": "/sprite-sheet-cutter",
               "icon": "Scissors",
-              "description": "将精灵图表切割为独立动画帧"
+              "description": "将精灵图表切割为独立动画帧",
+              "badge": "免费"
+            },
+            {
+              "title": "GIF 转精灵图",
+              "url": "/gif-to-sprite-sheet",
+              "icon": "Film",
+              "description": "使用 GIF 转精灵图工具，将已有动画整理成适合游戏使用的 PNG 图集",
+              "badge": "免费"
+            },
+            {
+              "title": "视频转精灵图",
+              "url": "/video-to-sprite-sheet",
+              "icon": "Video",
+              "description": "使用视频转精灵图工具，从本地游戏片段提取动作素材",
+              "badge": "免费"
+            },
+            {
+              "title": "透明背景制作",
+              "url": "/transparent-background-maker",
+              "icon": "ImageMinus",
+              "description": "使用透明背景制作工具，从背景中分离游戏角色、道具和物品插画",
+              "badge": "免费"
+            },
+            {
+              "title": "GIF 去背景",
+              "url": "/gif-background-remover",
+              "icon": "Eraser",
+              "description": "GIF 去背景在浏览器中逐帧处理动画",
+              "badge": "免费"
             }
           ]
         },
@@ -102,6 +133,22 @@
             {
               "title": "精灵图切割工具",
               "url": "/sprite-sheet-cutter"
+            },
+            {
+              "title": "GIF 转精灵图",
+              "url": "/gif-to-sprite-sheet"
+            },
+            {
+              "title": "视频转精灵图",
+              "url": "/video-to-sprite-sheet"
+            },
+            {
+              "title": "透明背景制作",
+              "url": "/transparent-background-maker"
+            },
+            {
+              "title": "GIF 去背景",
+              "url": "/gif-background-remover"
             }
           ]
         },

@@ -108,8 +108,8 @@ export function Header({ header }: { header: HeaderType }) {
                     >
                       {item.title}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="border-border w-[calc(100vw-2rem)] rounded-lg p-2 group-data-[viewport=false]/navigation-menu:translate-x-0 md:w-[340px]">
-                      <ul className="space-y-1">
+                    <NavigationMenuContent className="border-border w-[calc(100vw-2rem)] rounded-lg p-2 group-data-[viewport=false]/navigation-menu:translate-x-0 md:w-[620px]">
+                      <ul className="grid max-h-[min(640px,75vh)] grid-cols-2 gap-1 overflow-y-auto">
                         {item.children.map((child) => (
                           <li key={child.title}>
                             <NavigationMenuLink
@@ -132,8 +132,13 @@ export function Header({ header }: { header: HeaderType }) {
                                   />
                                 )}
                                 <span className="min-w-0">
-                                  <span className="block truncate font-medium text-current">
+                                  <span className="block font-medium text-current">
                                     {child.title}
+                                    {child.badge && (
+                                      <span className="text-primary ml-2 text-xs">
+                                        {child.badge}
+                                      </span>
+                                    )}
                                   </span>
                                   {child.description && (
                                     <span className="text-muted-foreground mt-1 block truncate text-xs leading-relaxed">
@@ -213,7 +218,7 @@ export function Header({ header }: { header: HeaderType }) {
                       >
                         {item.title}
                       </AccordionTrigger>
-                      <AccordionContent className="pb-2">
+                      <AccordionContent className="grid grid-cols-2 gap-1 pb-2">
                         {item.children.map((child) => (
                           <Link
                             key={child.title}
@@ -223,7 +228,10 @@ export function Header({ header }: { header: HeaderType }) {
                             aria-current={
                               isActive(child) ? 'location' : undefined
                             }
-                            className={cn(mobileLinkClass, 'pl-6')}
+                            className={cn(
+                              mobileLinkClass,
+                              'min-w-0 px-2 text-sm'
+                            )}
                           >
                             {child.icon && (
                               <SmartIcon
@@ -231,7 +239,14 @@ export function Header({ header }: { header: HeaderType }) {
                                 className="text-primary size-4"
                               />
                             )}
-                            {child.title}
+                            <span className="min-w-0">
+                              {child.title}
+                              {child.badge && (
+                                <span className="text-primary mt-1 block text-xs">
+                                  {child.badge}
+                                </span>
+                              )}
+                            </span>
                           </Link>
                         ))}
                       </AccordionContent>

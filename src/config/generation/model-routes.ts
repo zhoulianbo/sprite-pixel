@@ -37,19 +37,107 @@ export const iconPromptExpandModel = {
   model: 'gemini-2.5-flash',
 } as const;
 
+export const generationProviderOptions = [
+  { title: 'Grsai', value: 'grsai' },
+  { title: 'Kie', value: 'kie' },
+  { title: 'Replicate', value: 'replicate' },
+  { title: 'Fal', value: 'fal' },
+  { title: 'Gemini', value: 'gemini' },
+] as const;
+
+export const generationModelSettingKeys = {
+  character: {
+    provider: 'generation_character_provider',
+    model: 'generation_character_model',
+    credits: 'generation_character_credits',
+  },
+  animation: {
+    provider: 'generation_animation_provider',
+    model: 'generation_animation_model',
+    credits: 'generation_animation_credits',
+  },
+  icon: {
+    provider: 'generation_icon_provider',
+    model: 'generation_icon_model',
+    credits: 'generation_icon_credits',
+  },
+} as const satisfies Record<
+  GenerationModelKind,
+  { provider: string; model: string; credits: string }
+>;
+
+export const iconPromptExpandSettingKeys = {
+  provider: 'generation_icon_expand_provider',
+  model: 'generation_icon_expand_model',
+} as const;
+
+const generationProviderValues = new Set<string>(
+  generationProviderOptions.map((option) => option.value)
+);
+
+function configuredProvider(value: string | undefined, fallback: string) {
+  const provider = value?.trim();
+  if (!provider || !generationProviderValues.has(provider)) return fallback;
+  return provider;
+}
+
+function configuredModel(value: string | undefined, fallback: string) {
+  return value?.trim() || fallback;
+}
+
+function configuredCredits(value: string | undefined, fallback: number) {
+  if (!value?.trim()) return fallback;
+  const credits = Number(value);
+  if (!Number.isSafeInteger(credits) || credits <= 0) return fallback;
+  return credits;
+}
+
+export function resolveGenerationModelRoute(
+  kind: GenerationModelKind,
+  configs?: Record<string, string | undefined> | null
+): GenerationModelRoute {
+  const fallback = generationModelRoutes[kind];
+  const keys = generationModelSettingKeys[kind];
+  return {
+    provider: configuredProvider(configs?.[keys.provider], fallback.provider),
+    model: configuredModel(configs?.[keys.model], fallback.model),
+    credits: configuredCredits(configs?.[keys.credits], fallback.credits),
+  };
+}
+
+export function resolveIconPromptExpandModel(
+  configs?: Record<string, string | undefined> | null
+) {
+  return {
+    provider: configuredProvider(
+      configs?.[iconPromptExpandSettingKeys.provider],
+      iconPromptExpandModel.provider
+    ),
+    model: configuredModel(
+      configs?.[iconPromptExpandSettingKeys.model],
+      iconPromptExpandModel.model
+    ),
+  };
+}
+
 export function getGenerationModelRoute(kind: GenerationModelKind) {
   return generationModelRoutes[kind];
 }
 
 export function getGenerationCredits(
   kind: GenerationModelKind,
-  options?: { taskCount?: number; retry?: boolean }
+  options?: {
+    taskCount?: number;
+    retry?: boolean;
+    route?: Pick<GenerationModelRoute, 'credits'>;
+  }
 ) {
+  const credits = options?.route?.credits ?? generationModelRoutes[kind].credits;
   const count = Math.max(1, options?.taskCount ?? 1);
   if (kind === 'icon') {
-    return generationModelRoutes.icon.credits;
+    return credits;
   }
-  return generationModelRoutes[kind].credits * count;
+  return credits * count;
 }
 
 export function distributeCredits(total: number, count: number) {

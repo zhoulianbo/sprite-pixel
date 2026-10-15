@@ -74,6 +74,22 @@
       "cutter": {
         "title": "精灵图切割工具",
         "text": "用可见、可编辑的网格，把精灵图表切割成独立 PNG 帧。"
+      },
+      "gif": {
+        "title": "GIF 转精灵图",
+        "text": "在本地把 GIF 帧整理成 PNG 图集。"
+      },
+      "video": {
+        "title": "视频转精灵图",
+        "text": "从短视频抽帧、去背景并预览动作。"
+      },
+      "background": {
+        "title": "透明背景制作",
+        "text": "在本地去背景，一次最多处理 20 张图片。"
+      },
+      "gifBackground": {
+        "title": "GIF 去背景",
+        "text": "本地移除 GIF 背景，导出透明动画和帧。"
       }
     }
   }

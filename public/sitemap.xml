@@ -401,4 +401,52 @@
     <xhtml:link rel="alternate" hreflang="ko" href="https://spritepixel.com/ko/terms-of-service"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/terms-of-service"/>
   </url>
+  <url>
+    <loc>https://spritepixel.com/gif-to-sprite-sheet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gif-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/gif-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gif-to-sprite-sheet"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/gif-to-sprite-sheet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gif-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/gif-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gif-to-sprite-sheet"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/video-to-sprite-sheet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/video-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/video-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/video-to-sprite-sheet"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/video-to-sprite-sheet</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/video-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/video-to-sprite-sheet"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/video-to-sprite-sheet"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/transparent-background-maker</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/transparent-background-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/transparent-background-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/transparent-background-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/transparent-background-maker</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/transparent-background-maker"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/transparent-background-maker"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/transparent-background-maker"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/gif-background-remover</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gif-background-remover"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/gif-background-remover"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gif-background-remover"/>
+  </url>
+  <url>
+    <loc>https://spritepixel.com/zh/gif-background-remover</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://spritepixel.com/gif-background-remover"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://spritepixel.com/zh/gif-background-remover"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://spritepixel.com/gif-background-remover"/>
+  </url>
 </urlset>

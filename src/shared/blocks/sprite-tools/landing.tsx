@@ -7,12 +7,22 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/core/i18n/navigation';
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
+import { FREE_TOOL_PATHS, type FreeTool } from '@/config/tools/free-tools';
 import { MoreTools } from '@/shared/blocks/common/more-tools';
 import { ToolCta } from '@/shared/blocks/common/tool-cta';
 import { getMetadata } from '@/shared/lib/seo';
 import { toolPath, type Tool } from '@/shared/lib/sprite-tools/core';
 
+import { BackgroundExample } from './background-example';
+import { BackgroundWorkbench } from './background-workbench';
+import { VideoWorkbench } from './video-workbench';
 import { SpriteWorkbench } from './workbench';
+
+type LandingTool = Tool | FreeTool;
+const pathFor = (tool: LandingTool) =>
+  tool in FREE_TOOL_PATHS
+    ? FREE_TOOL_PATHS[tool as FreeTool]
+    : toolPath(tool as Tool);
 
 type Item = { title: string; text: string };
 type Copy = {
@@ -155,17 +165,35 @@ function CardGrid({
     </div>
   );
 }
-function pageUrl(tool: Tool, locale: string) {
-  return `${envConfigs.app_url.replace(/\/$/, '')}${locale === defaultLocale ? '' : `/${locale}`}${toolPath(tool)}`;
+function pageUrl(tool: LandingTool, locale: string) {
+  return `${envConfigs.app_url.replace(/\/$/, '')}${locale === defaultLocale ? '' : `/${locale}`}${pathFor(tool)}`;
 }
-export function toolMetadata(tool: Tool) {
+export function toolMetadata(tool: LandingTool) {
   return async (props: {
     params: Promise<{ locale: string }>;
   }): Promise<Metadata> => {
     const base = await getMetadata({
       metadataKey: `tools.sprites.${tool}.metadata`,
-      canonicalUrl: toolPath(tool),
+      canonicalUrl: pathFor(tool),
     })(props);
+    if (tool in FREE_TOOL_PATHS) {
+      const { locale } = await props.params;
+      const origin = envConfigs.app_url.replace(/\/$/, '');
+      return {
+        ...base,
+        robots: !['en', 'zh'].includes(locale)
+          ? { index: false, follow: true }
+          : base.robots,
+        alternates: {
+          canonical: `${origin}${locale === 'zh' ? '/zh' : ''}${pathFor(tool)}`,
+          languages: {
+            en: `${origin}${pathFor(tool)}`,
+            'zh-Hans': `${origin}/zh${pathFor(tool)}`,
+            'x-default': `${origin}${pathFor(tool)}`,
+          },
+        },
+      };
+    }
     return base;
   };
 }
@@ -173,7 +201,7 @@ export async function SpriteToolLanding({
   tool,
   locale,
 }: {
-  tool: Tool;
+  tool: LandingTool;
   locale: string;
 }) {
   setRequestLocale(locale);
@@ -181,9 +209,13 @@ export async function SpriteToolLanding({
   const copy = t.raw(tool) as Copy;
   const relatedTool = tool === 'maker' ? 'splitter' : 'maker';
   const featureImages =
-    tool === 'maker' ? MAKER_FEATURE_IMAGES : SPLITTER_FEATURE_IMAGES;
+    tool === 'maker' || tool === 'gif'
+      ? MAKER_FEATURE_IMAGES
+      : SPLITTER_FEATURE_IMAGES;
   const useCaseImages =
-    tool === 'maker' ? MAKER_USE_CASE_IMAGES : SPLITTER_USE_CASE_IMAGES;
+    tool === 'maker' || tool === 'gif'
+      ? MAKER_USE_CASE_IMAGES
+      : SPLITTER_USE_CASE_IMAGES;
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -247,7 +279,19 @@ export async function SpriteToolLanding({
               {copy.design.hero}
             </p>
           </div>
-          <SpriteWorkbench tool={tool} />
+          {tool === 'video' ? (
+            <VideoWorkbench />
+          ) : tool === 'background' || tool === 'gifBackground' ? (
+            <BackgroundWorkbench gif={tool === 'gifBackground'} />
+          ) : (
+            <SpriteWorkbench
+              tool={tool === 'gif' ? 'maker' : tool}
+              inputMode={tool === 'gif' ? 'gif' : 'images'}
+            />
+          )}
+          {(tool === 'background' || tool === 'gifBackground') && (
+            <BackgroundExample gif={tool === 'gifBackground'} />
+          )}
         </div>
       </section>
       <section className={sectionPad}>
@@ -312,7 +356,11 @@ export async function SpriteToolLanding({
                 >
                   <div className="bg-vault-navy relative h-full min-h-[320px] sm:min-h-[380px]">
                     <Image
-                      src={featureImages[index]}
+                      src={
+                        tool === 'background' || tool === 'gifBackground'
+                          ? `/imgs/features/background-removal/${index === 0 ? 'before' : 'after'}.png`
+                          : featureImages[index]
+                      }
                       alt=""
                       fill
                       sizes="(min-width: 768px) 50vw, 100vw"
@@ -375,7 +423,7 @@ export async function SpriteToolLanding({
             tag={copy.badges.guide}
             title={copy.guideTitle}
           />
-          <CardGrid columns={tool === 'maker' ? '3' : '2'}>
+          <CardGrid columns={copy.guide.length === 3 ? '3' : '2'}>
             {copy.guide.map((item) => (
               <BoardCard key={item.title}>
                 <h3 className="text-[21px] font-medium">{item.title}</h3>
@@ -389,7 +437,7 @@ export async function SpriteToolLanding({
       </section>
       <MoreTools
         locale={locale}
-        exclude={tool === 'maker' ? 'maker' : 'cutter'}
+        exclude={tool === 'splitter' ? 'cutter' : tool}
         index="05"
         tag={copy.badges.tools}
         className={sectionPad}

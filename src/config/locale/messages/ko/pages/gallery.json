@@ -6,5 +6,27 @@
   "title": "스프라이트와 애니메이션 갤러리",
   "description": "생성된 캐릭터 스프라이트, 애니메이션, 일관된 게임 에셋을 둘러보세요.",
   "emptyTitle": "아직 갤러리 항목이 없습니다",
-  "emptyDescription": "갤러리 데이터는 나중에 연결됩니다. 지금은 표시할 내용이 없습니다."
+  "emptyDescription": "현재 필터와 일치하는 공개 작품이 없습니다.",
+  "tabs": { "characters": "캐릭터", "animations": "애니메이션" },
+  "filters": {
+    "search": "이름으로 검색",
+    "searchPlaceholder": "갤러리 검색…",
+    "allTypes": "모든 유형",
+    "allSizes": "모든 크기",
+    "apply": "적용"
+  },
+  "sort": {
+    "latest": "최신순",
+    "likes": "좋아요순",
+    "downloads": "다운로드순"
+  },
+  "results": "공개 작품 {count}개",
+  "pagination": { "previous": "이전", "next": "다음" },
+  "item": {
+    "character": "캐릭터",
+    "animation": "애니메이션",
+    "like": "좋아요",
+    "download": "다운로드",
+    "noPreview": "미리보기 없음"
+  }
 }

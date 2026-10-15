@@ -29,7 +29,7 @@ import {
   serializeIconList,
   type IconListItem,
 } from '@/config/generation';
-import { getGenerationCredits, generationPollIntervalMs } from '@/config/generation/model-routes';
+import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
 import type { ProjectSummary } from '@/shared/blocks/projects/project-create-dialog';
@@ -37,6 +37,7 @@ import { ProjectSelector } from '@/shared/blocks/projects/project-selector';
 import { Button } from '@/shared/components/ui/button';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAppContext } from '@/shared/contexts/app';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import {
   readApiPayload,
   useProductApiFeedback,
@@ -153,8 +154,8 @@ export function IconGeneratorBoard() {
       ? 1
       : 0;
   const hasSuccessfulSheet = Boolean(sheetResult?.fileUrl);
-  const generateCredits = getGenerationCredits('icon');
-  const retryCredits = getGenerationCredits('icon', {
+  const generateCredits = useGenerationCredits('icon');
+  const retryCredits = useGenerationCredits('icon', {
     taskCount: Math.max(retryCount, 1),
     retry: true,
   });

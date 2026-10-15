@@ -12,7 +12,19 @@
     "action": "动作",
     "direction": "方向",
     "frames": "帧数",
+    "source": "来源",
+    "gallery": "画廊",
     "createdAt": "生成时间"
+  },
+  "source": {
+    "generated": "AI 生成",
+    "uploaded": "手动上传"
+  },
+  "gallery": {
+    "publish": "开放到画廊",
+    "unpublish": "从画廊移除",
+    "private": "私有，不可开放",
+    "error": "更新失败"
   },
   "search": {
     "email": "用户邮箱",

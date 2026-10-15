@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "http://localhost:3000",
+          "http://localhost:8787",
+          "https://spritepixel.com"
+        ],
+        "methods": ["GET", "PUT", "HEAD"],
+        "headers": ["Content-Type", "Content-Disposition", "If-None-Match"]
+      },
+      "exposeHeaders": ["ETag"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

@@ -6,5 +6,27 @@
   "title": "精靈圖與動畫作品展示",
   "description": "瀏覽已產生的角色精靈、動畫與配套遊戲素材。",
   "emptyTitle": "尚無作品",
-  "emptyDescription": "畫廊資料稍後接入，目前暫無展示內容。"
+  "emptyDescription": "目前篩選條件下沒有已公開的作品。",
+  "tabs": { "characters": "角色圖", "animations": "動畫" },
+  "filters": {
+    "search": "依名稱搜尋",
+    "searchPlaceholder": "搜尋畫廊作品……",
+    "allTypes": "全部類型",
+    "allSizes": "全部尺寸",
+    "apply": "篩選"
+  },
+  "sort": {
+    "latest": "最新發布",
+    "likes": "最多讚",
+    "downloads": "最多下載"
+  },
+  "results": "共 {count} 個已公開作品",
+  "pagination": { "previous": "上一頁", "next": "下一頁" },
+  "item": {
+    "character": "角色圖",
+    "animation": "動畫",
+    "like": "按讚",
+    "download": "下載",
+    "noPreview": "暫無預覽"
+  }
 }

@@ -170,6 +170,7 @@ export const assetItem = table(
       { onDelete: 'set null' }
     ),
     type: text('type').notNull(),
+    sourceType: text('source_type').notNull().default('generated'),
     name: text('name').notNull(),
     description: text('description'),
     favorite: integer('favorite', { mode: 'boolean' }).notNull().default(false),
@@ -239,6 +240,9 @@ export const generation = table(
     }),
     taskType: text('task_type').notNull(),
     prompt: text('prompt'),
+    allowGallery: integer('allow_gallery', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     negativePrompt: text('negative_prompt'),
     paramsJson: text('params_json').notNull().default('{}'),
     status: text('status').notNull().default('pending'),
@@ -533,6 +537,84 @@ export const animationVersion = table(
       .where(sql`${t.isCurrent} = true`),
     index('idx_animation_version_generation').on(t.generationId),
     index('idx_animation_version_spritesheet_file').on(t.spritesheetFileId),
+  ]
+);
+
+export const galleryItem = table(
+  'gallery_item',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+    itemId: text('item_id').references(() => assetItem.id, {
+      onDelete: 'cascade',
+    }),
+    animationClipId: text('animation_clip_id').references(
+      () => animationClip.id,
+      { onDelete: 'cascade' }
+    ),
+    animationVersionId: text('animation_version_id').references(
+      () => animationVersion.id,
+      { onDelete: 'cascade' }
+    ),
+    previewFileId: text('preview_file_id').references(() => assetFile.id, {
+      onDelete: 'set null',
+    }),
+    type: text('type').notNull(),
+    name: text('name').notNull(),
+    category: text('category').notNull().default(''),
+    width: integer('width'),
+    height: integer('height'),
+    sizeBytes: integer('size_bytes'),
+    prompt: text('prompt'),
+    downloadCount: integer('download_count').notNull().default(0),
+    likeCount: integer('like_count').notNull().default(0),
+    status: text('status').notNull().default('published'),
+    sourceCreatedAt: text('source_created_at').notNull(),
+    publishedAt: text('published_at').default(sqliteNowIso).notNull(),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+    updatedAt: text('updated_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_gallery_character_source')
+      .on(t.itemId)
+      .where(sql`${t.type} = 'character'`),
+    uniqueIndex('idx_gallery_animation_source')
+      .on(t.animationClipId)
+      .where(sql`${t.type} = 'animation'`),
+    index('idx_gallery_status_type_created').on(
+      t.status,
+      t.type,
+      t.sourceCreatedAt
+    ),
+    index('idx_gallery_status_type_likes').on(t.status, t.type, t.likeCount),
+    index('idx_gallery_status_type_downloads').on(
+      t.status,
+      t.type,
+      t.downloadCount
+    ),
+  ]
+);
+
+export const galleryLike = table(
+  'gallery_like',
+  {
+    id: text('id').primaryKey(),
+    galleryItemId: text('gallery_item_id')
+      .notNull()
+      .references(() => galleryItem.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    createdAt: text('created_at').default(sqliteNowIso).notNull(),
+  },
+  (t) => [
+    uniqueIndex('idx_gallery_like_item_user').on(t.galleryItemId, t.userId),
+    index('idx_gallery_like_user').on(t.userId),
   ]
 );
 

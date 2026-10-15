@@ -2,12 +2,18 @@ import { Grid2X2, Layers, Scissors, WandSparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 import { Link } from '@/core/i18n/navigation';
+import { FREE_TOOL_PATHS } from '@/config/tools/free-tools';
 
 const TOOLS = [
   { id: 'sprites', href: '/', Icon: WandSparkles },
   { id: 'icons', href: '/ai-game-icon-generator', Icon: Layers },
   { id: 'maker', href: '/sprite-sheet-maker', Icon: Grid2X2 },
   { id: 'cutter', href: '/sprite-sheet-cutter', Icon: Scissors },
+  ...Object.entries(FREE_TOOL_PATHS).map(([id, href]) => ({
+    id,
+    href,
+    Icon: Layers,
+  })),
 ] as const;
 
 const shell =

@@ -6,5 +6,27 @@
   "title": "スプライトとアニメーションのギャラリー",
   "description": "生成されたキャラクタースプライト、アニメーション、関連ゲーム素材を閲覧できます。",
   "emptyTitle": "ギャラリー項目はまだありません",
-  "emptyDescription": "ギャラリーのデータは後から接続されます。現在表示できる内容はありません。"
+  "emptyDescription": "現在の条件に一致する公開作品はありません。",
+  "tabs": { "characters": "キャラクター", "animations": "アニメーション" },
+  "filters": {
+    "search": "名前で検索",
+    "searchPlaceholder": "ギャラリーを検索…",
+    "allTypes": "すべてのタイプ",
+    "allSizes": "すべてのサイズ",
+    "apply": "適用"
+  },
+  "sort": {
+    "latest": "新着順",
+    "likes": "いいね順",
+    "downloads": "ダウンロード順"
+  },
+  "results": "公開作品 {count} 件",
+  "pagination": { "previous": "前へ", "next": "次へ" },
+  "item": {
+    "character": "キャラクター",
+    "animation": "アニメーション",
+    "like": "いいね",
+    "download": "ダウンロード",
+    "noPreview": "プレビューなし"
+  }
 }

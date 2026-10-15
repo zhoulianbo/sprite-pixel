@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { PERMISSIONS, requirePermission } from '@/core/rbac';
 import { AdminAnimationPreview } from '@/shared/blocks/admin/animation-preview';
+import { GalleryPublishButton } from '@/shared/blocks/admin/gallery-publish-button';
 import { Header, Main, MainHeader } from '@/shared/blocks/dashboard';
 import { TableCard } from '@/shared/blocks/table';
 import {
@@ -103,6 +104,22 @@ export default async function AdminAnimationsPage({
             count: item.frameCount,
             fps: item.fps,
           }),
+      },
+      {
+        name: 'gallery',
+        title: t('fields.gallery'),
+        callback: (item: (typeof animations)[number]) => (
+          <GalleryPublishButton
+            kind="animation"
+            sourceId={item.id}
+            eligible={item.galleryEligible}
+            published={item.galleryPublished}
+            publishLabel={t('gallery.publish')}
+            unpublishLabel={t('gallery.unpublish')}
+            privateLabel={t('gallery.private')}
+            errorLabel={t('gallery.error')}
+          />
+        ),
       },
       { name: 'createdAt', title: t('fields.createdAt'), type: 'time' },
     ],

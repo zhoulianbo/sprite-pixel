@@ -12,7 +12,19 @@
     "action": "Action",
     "direction": "Direction",
     "frames": "Frames",
+    "source": "Source",
+    "gallery": "Gallery",
     "createdAt": "Created At"
+  },
+  "source": {
+    "generated": "AI generated",
+    "uploaded": "Uploaded"
+  },
+  "gallery": {
+    "publish": "Publish",
+    "unpublish": "Remove",
+    "private": "Private · unavailable",
+    "error": "Update failed"
   },
   "search": {
     "email": "User Email",

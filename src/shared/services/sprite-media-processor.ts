@@ -22,7 +22,7 @@ type MediaProcessorEnv = {
   SPRITE_MEDIA_PROCESSOR_SECRET?: string;
 };
 
-function processorConfig() {
+export function processorConfig() {
   let env: MediaProcessorEnv = {};
   try {
     env =

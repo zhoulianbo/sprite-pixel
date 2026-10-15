@@ -104,20 +104,24 @@ export function AnimationThumbnail({
   label,
   href,
   onOpen,
+  previewEndpoint,
+  autoPlay = false,
 }: {
   versionId?: string | null;
   imageUrl?: string | null;
   label: string;
   href?: string;
   onOpen?: () => void;
+  previewEndpoint?: string;
+  autoPlay?: boolean;
 }) {
   const t = useTranslations('workspace.animationPreview');
   const container = useRef<HTMLDivElement>(null);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(autoPlay);
   const [preview, setPreview] = useState<AnimationPreview | null>(null);
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const onFrameError = useCallback(() => setFailed(true), []);
 
@@ -138,14 +142,19 @@ export function AnimationThumbnail({
   }, []);
 
   useEffect(() => {
-    if (!playing || !versionId || preview) return;
+    if (!playing || !visible || (!versionId && !previewEndpoint) || preview)
+      return;
     const controller = new AbortController();
     setFailed(false);
     async function load() {
       try {
         const response = await fetch(
-          `/api/animations/versions/${encodeURIComponent(versionId!)}/preview`,
-          { signal: controller.signal, cache: 'no-store' }
+          previewEndpoint ||
+            `/api/animations/versions/${encodeURIComponent(versionId!)}/preview`,
+          {
+            signal: controller.signal,
+            cache: previewEndpoint ? 'force-cache' : 'no-store',
+          }
         );
         if (!response.ok) throw new Error('Animation preview failed');
         const result = await response.json();
@@ -163,7 +172,7 @@ export function AnimationThumbnail({
     }
     void load();
     return () => controller.abort();
-  }, [attempt, playing, preview, versionId]);
+  }, [attempt, playing, preview, previewEndpoint, versionId, visible]);
 
   const image =
     playing && visible && preview?.frames.length && !failed ? (
@@ -220,7 +229,7 @@ export function AnimationThumbnail({
           {image}
         </button>
       )}
-      {versionId ? (
+      {versionId || previewEndpoint ? (
         <Button
           type="button"
           size="icon-sm"

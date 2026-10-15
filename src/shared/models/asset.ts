@@ -538,6 +538,7 @@ export async function createCharacterFromUploadedFile(
         id: itemId,
         projectId,
         type: 'character',
+        sourceType: 'uploaded',
         name,
         description: null,
         settingsJson: '{}',

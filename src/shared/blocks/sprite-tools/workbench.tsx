@@ -362,10 +362,26 @@ function RangeField({
     </label>
   );
 }
-export function SpriteWorkbench({ tool }: { tool: Tool }) {
+export type SheetInput = {
+  sheet: Frame;
+  slice: SliceOptions;
+  fps: number;
+  frameCount: number;
+};
+export function SpriteWorkbench({
+  tool,
+  inputMode = 'images',
+  input,
+  remoteSource = false,
+}: {
+  tool: Tool;
+  inputMode?: 'images' | 'gif';
+  input?: SheetInput;
+  remoteSource?: boolean;
+}) {
   const t = useTranslations('tools.sprites.ui');
   const maker = tool === 'maker';
-  const [mode, setMode] = useState<'images' | 'gif'>('images');
+  const mode = inputMode;
   const [formats, setFormats] = useState<Record<AtlasFormat, boolean>>({
     jsonHash: true,
     jsonArray: false,
@@ -385,14 +401,16 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
     const appeared = !hadAssets.current && hasAssets;
     hadAssets.current = hasAssets;
     if (!appeared) return;
-    const node = document.getElementById('workbench');
+    const node = document.getElementById(
+      remoteSource ? 'video-result' : 'workbench'
+    );
     if (!node) return;
     const header = document.querySelector('header');
     const offset = (header?.getBoundingClientRect().height ?? 72) + 16;
     const top = node.getBoundingClientRect().top;
     if (top >= offset && top < window.innerHeight * 0.8) return;
     window.scrollBy({ top: top - offset, behavior: 'instant' });
-  }, [hasAssets]);
+  }, [hasAssets, remoteSource]);
   const [options, setOptions] = useState<MakerOptions>(defaultMaker);
   const [slice, setSlice] = useState<SliceOptions>(defaultSlice);
   const [extracted, setExtracted] = useState<Frame[]>([]);
@@ -447,7 +465,13 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
   );
   useEffect(() => {
     mounted.current = true;
-    const handoff = takeHandoff(tool);
+    const handoff = input
+      ? { target: tool, frames: [], sheet: input.sheet, slice: input.slice }
+      : takeHandoff(tool);
+    if (input) {
+      setFps(input.fps);
+      setOriginalTiming(false);
+    }
     if (handoff) {
       if (maker) {
         setFrames(handoff.frames);
@@ -458,8 +482,7 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
             columns: suggestMakerGridColumns(handoff.frames.length),
           }));
         }
-      }
-      else if (handoff.sheet && handoff.slice) {
+      } else if (handoff.sheet && handoff.slice) {
         originals.current = {
           frames: handoff.frames,
           signature: JSON.stringify(
@@ -475,7 +498,7 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
       operation.current?.abort();
       computation.current?.abort();
     };
-  }, [tool, maker]);
+  }, [tool, maker, input]);
   const run = async (task: (signal: AbortSignal) => Promise<void>) => {
     if (operation.current) return;
     const controller = new AbortController();
@@ -570,7 +593,9 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
               : undefined;
           const value = await extractFrames(
             sheet,
-            grid.rects,
+            input && JSON.stringify(slice) === JSON.stringify(input.slice)
+              ? grid.rects.slice(0, input.frameCount)
+              : grid.rects,
             controller.signal,
             onProgress,
             original
@@ -626,7 +651,7 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
       controller.abort();
       window.clearTimeout(timer);
     };
-  }, [maker, packSource, options, sheet, slice, frames.length, message]);
+  }, [maker, packSource, options, sheet, slice, frames.length, message, input]);
   const grid = useMemo(() => {
     try {
       return sheet ? sliceGrid(sheet, slice) : undefined;
@@ -697,16 +722,8 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
     key: K,
     value: SliceOptions[K]
   ) => setSlice((current) => ({ ...current, [key]: value }));
-  const changeMode = (value: 'images' | 'gif') => {
-    if (value === mode || locked) return;
-    if (frames.length && !window.confirm(t('replaceConfirm'))) return;
-    setMode(value);
-    setFrames([]);
-    setError('');
-    setOriginalTiming(true);
-  };
   const importFiles = (files: File[]) => {
-    if (locked || !files.length) return;
+    if (locked || remoteSource || !files.length) return;
     if ((!maker || mode === 'gif') && files.length !== 1) {
       setError(t('errors.singleFile'));
       return;
@@ -760,8 +777,7 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
               columns: suggestMakerGridColumns(nextFrames.length),
             }));
           }
-        }
-        else {
+        } else {
           originals.current = undefined;
           setSheet(result[0]);
           setSlice(resolveSpriteSheetSlice(result[0]).options);
@@ -966,35 +982,46 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
       aria-label={t('inputMode')}
     >
       {(['images', 'gif'] as const).map((value) => (
-        <Button
+        <Link
           key={value}
-          disabled={locked}
+          href={
+            value === 'gif' ? '/gif-to-sprite-sheet' : '/sprite-sheet-maker'
+          }
           className={cn(
-            'min-h-11 rounded-lg border px-5',
+            'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-5 text-sm',
             mode === value
-              ? 'border-primary bg-primary/10 text-primary hover:bg-primary/20'
-              : 'text-muted-foreground hover:bg-secondary border-transparent bg-transparent'
+              ? 'border-primary bg-primary/10 text-primary'
+              : 'text-muted-foreground hover:bg-secondary border-transparent'
           )}
-          variant="ghost"
-          aria-pressed={mode === value}
-          onClick={() => changeMode(value)}
+          aria-current={mode === value ? 'page' : undefined}
+          onClick={(event) => {
+            if (
+              locked ||
+              mode === value ||
+              (frames.length && !window.confirm(t('replaceConfirm')))
+            )
+              event.preventDefault();
+          }}
         >
           {value === 'images' ? <Images size={16} /> : <Film size={16} />}
           {t(value === 'images' ? 'imagesToSheet' : 'gifToSheet')}
-        </Button>
+        </Link>
       ))}
     </div>
   );
   const promises = [
     { icon: Infinity, label: t('promiseForever') },
     { icon: UserRoundCheck, label: t('promiseNoAccount') },
-    { icon: HardDrive, label: t('promiseLocal') },
+    {
+      icon: HardDrive,
+      label: t(remoteSource ? 'freeTools.videoPrivacy' : 'promiseLocal'),
+    },
     { icon: FileArchive, label: t('promiseFormats') },
   ];
   if (!hasAssets)
     return (
       <section
-        id="workbench"
+        id={remoteSource ? 'video-result' : 'workbench'}
         aria-label={t(maker ? 'makerLabel' : 'splitterLabel')}
         className="mx-auto max-w-[1100px] scroll-mt-24"
       >
@@ -1078,10 +1105,11 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
     );
   return (
     <section
-      id="workbench"
+      id={remoteSource ? 'video-result' : 'workbench'}
       aria-label={t(maker ? 'makerLabel' : 'splitterLabel')}
       className="border-border bg-card scroll-mt-24 border text-left shadow-[0_28px_80px_-40px_var(--color-background)]"
     >
+      {maker && <div className="p-2">{modeTabs}</div>}
       {fileInputElement}
       <div className="grid min-w-0 lg:h-[min(700px,calc(100svh-120px))] lg:min-h-[560px] lg:grid-cols-[220px_minmax(0,1fr)_240px]">
         <aside
@@ -1092,7 +1120,7 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
             <button
               type="button"
               {...dropHandlers}
-              disabled={locked}
+              disabled={locked || remoteSource}
               onClick={() => fileInput.current?.click()}
               className={cn(
                 'focus-visible:outline-ring flex min-h-16 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2',
@@ -1590,6 +1618,15 @@ export function SpriteWorkbench({ tool }: { tool: Tool }) {
             )}
             {!maker && (
               <>
+                {remoteSource && sheet && (
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() => download(sheet.blob, 'sprite-sheet.png')}
+                  >
+                    {t('freeTools.downloadSheet')}
+                  </Button>
+                )}
                 <label className="flex items-center justify-between gap-2 text-xs">
                   <span>{t('includeGif')}</span>
                   <input

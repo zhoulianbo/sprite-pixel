@@ -16,6 +16,7 @@ type MinIntervalOptions = {
 };
 
 type SlidingWindowOptions = {
+  ipOnly?: boolean;
   /**
    * Sliding window length in milliseconds.
    */
@@ -68,11 +69,13 @@ function getSlidingWindowStore(): SlidingWindowStore {
 
 function buildKey(
   request: Request,
-  opts: { keyPrefix?: string; extraKey?: string }
+  opts: { keyPrefix?: string; extraKey?: string; ipOnly?: boolean }
 ): string {
   const url = new URL(request.url);
-  const ip = getClientIpFromRequest(request);
-  const cookie = request.headers.get('cookie') || '';
+  const ip = opts.ipOnly
+    ? request.headers.get('cf-connecting-ip') || getClientIpFromRequest(request)
+    : getClientIpFromRequest(request);
+  const cookie = opts.ipOnly ? '' : request.headers.get('cookie') || '';
   const cookieHash = cookie ? md5(cookie) : 'no-cookie';
   const prefix = opts.keyPrefix || 'rate-limit';
   const extra = opts.extraKey ? `|${opts.extraKey}` : '';
