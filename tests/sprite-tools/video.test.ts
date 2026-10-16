@@ -7,6 +7,7 @@ import {
   verifyVideoCredential,
   videoMime,
   videoOptionsSchema,
+  videoSheetKey,
   videoTaskId,
   videoUploadSchema,
 } from '../../src/shared/lib/sprite-tools/video-contract';
@@ -60,6 +61,7 @@ test('anonymous upload credentials reject tampering, expiration and foreign path
 });
 test('each processing parameter changes task identity but retries are stable', async () => {
   const original = await videoTaskId(id, VIDEO_DEFAULTS);
+  assert.match(original, /^[a-f0-9]{16}$/);
   assert.equal(await videoTaskId(id, { ...VIDEO_DEFAULTS }), original);
   for (const options of [
     { ...VIDEO_DEFAULTS, frame_count: 17 },
@@ -71,6 +73,10 @@ test('each processing parameter changes task identity but retries are stable', a
   assert.notEqual(
     await videoTaskId('another-upload', VIDEO_DEFAULTS),
     original
+  );
+  assert.equal(
+    await videoSheetKey(credential.key, VIDEO_DEFAULTS),
+    `uploads/2026-10/${original}.png`
   );
 });
 test('video boundaries reject coercion, oversized uploads, arbitrary URLs and out-of-contract controls', () => {

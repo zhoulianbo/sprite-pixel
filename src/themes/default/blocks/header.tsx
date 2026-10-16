@@ -17,6 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/shared/components/ui/accordion';
+import { Badge } from '@/shared/components/ui/badge';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -132,19 +133,21 @@ export function Header({ header }: { header: HeaderType }) {
                                   />
                                 )}
                                 <span className="min-w-0">
-                                  <span className="block font-medium text-current">
-                                    {child.title}
-                                    {child.badge && (
-                                      <span className="text-primary ml-2 text-xs">
+                                  <span className="flex min-w-0 items-center gap-1.5">
+                                    <span className="font-medium whitespace-normal text-current [[lang=ko]_&]:break-keep">
+                                      {child.title}
+                                    </span>
+                                    {child.badge ? (
+                                      <Badge className="border-primary/30 bg-primary/10 text-primary h-4 shrink-0 px-1 py-0 text-[10px] leading-none">
                                         {child.badge}
-                                      </span>
-                                    )}
+                                      </Badge>
+                                    ) : null}
                                   </span>
-                                  {child.description && (
-                                    <span className="text-muted-foreground mt-1 block truncate text-xs leading-relaxed">
+                                  {child.description ? (
+                                    <span className="text-muted-foreground mt-1 line-clamp-2 block overflow-hidden text-xs leading-relaxed">
                                       {child.description}
                                     </span>
-                                  )}
+                                  ) : null}
                                 </span>
                               </Link>
                             </NavigationMenuLink>
@@ -236,16 +239,18 @@ export function Header({ header }: { header: HeaderType }) {
                             {child.icon && (
                               <SmartIcon
                                 name={child.icon as string}
-                                className="text-primary size-4"
+                                className="text-primary size-4 shrink-0"
                               />
                             )}
-                            <span className="min-w-0">
-                              {child.title}
-                              {child.badge && (
-                                <span className="text-primary mt-1 block text-xs">
+                            <span className="flex min-w-0 items-center gap-1.5">
+                              <span className="whitespace-normal [[lang=ko]_&]:break-keep">
+                                {child.title}
+                              </span>
+                              {child.badge ? (
+                                <Badge className="border-primary/30 bg-primary/10 text-primary h-4 shrink-0 px-1 py-0 text-[10px] leading-none">
                                   {child.badge}
-                                </span>
-                              )}
+                                </Badge>
+                              ) : null}
                             </span>
                           </Link>
                         ))}

@@ -1,5 +1,6 @@
 import * as ort from 'onnxruntime-web/wasm';
 
+import { BACKGROUND_MODEL_CACHE } from '../../../config/tools/background-model';
 import type { BackgroundResources } from './background-client';
 
 const scope = self as unknown as {
@@ -8,7 +9,7 @@ const scope = self as unknown as {
 };
 let session: ort.InferenceSession | undefined;
 let initializing: Promise<void> | undefined;
-const CACHE = 'sprite-background-model-v1';
+const CACHE = BACKGROUND_MODEL_CACHE;
 function progress(phase: string, loaded = 0, total = 0) {
   scope.postMessage({ type: 'progress', phase, loaded, total });
 }
@@ -83,9 +84,13 @@ async function initialize(resources: BackgroundResources) {
         await cache.put(
           resources.modelUrl,
           new Response(buffer, {
-            headers: { 'Content-Type': 'application/octet-stream' },
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              'Content-Length': String(buffer.byteLength),
+            },
           })
         );
+        progress('cached');
       } catch {
         progress('cacheUnavailable');
       }
@@ -97,8 +102,17 @@ async function initialize(resources: BackgroundResources) {
     graphOptimizationLevel: 'all',
   });
 }
-async function remove(blob: Blob) {
+async function remove(
+  blob: Blob,
+  options: { threshold: number; hardEdge: boolean }
+) {
   if (!session) throw new Error('MODEL_FAILED');
+  const threshold = Math.min(
+    0.9,
+    Math.max(0.1, Number(options.threshold) || 0.5)
+  );
+  const hardEdge = options.hardEdge !== false;
+  const softness = hardEdge ? 0 : 0.08;
   const bitmap = await createImageBitmap(blob);
   const input = new OffscreenCanvas(1024, 1024);
   const context = input.getContext('2d', { willReadFrequently: true });
@@ -132,9 +146,20 @@ async function remove(blob: Blob) {
     const maskCanvas = new OffscreenCanvas(width, height);
     const maskContext = maskCanvas.getContext('2d')!;
     const pixels = maskContext.createImageData(width, height);
+    const span = high > low ? high - low : 1;
     for (let i = 0; i < width * height; i++) {
+      const value = high > low ? (mask[i] - low) / span : 0;
       const alpha =
-        high > low ? Math.round(((mask[i] - low) / (high - low)) * 255) : 0;
+        softness <= 0
+          ? value >= threshold
+            ? 255
+            : 0
+          : Math.round(
+              Math.min(
+                1,
+                Math.max(0, (value - (threshold - softness)) / (softness * 2))
+              ) * 255
+            );
       pixels.data.set([255, 255, 255, alpha], i * 4);
     }
     maskContext.putImageData(pixels, 0, 0);
@@ -142,6 +167,7 @@ async function remove(blob: Blob) {
     const resultContext = result.getContext('2d')!;
     resultContext.drawImage(bitmap, 0, 0);
     resultContext.globalCompositeOperation = 'destination-in';
+    resultContext.imageSmoothingEnabled = !hardEdge;
     resultContext.drawImage(maskCanvas, 0, 0, bitmap.width, bitmap.height);
     const png = await result.convertToBlob({ type: 'image/png' });
     maskCanvas.width = 0;
@@ -166,7 +192,10 @@ scope.onmessage = async ({ data }) => {
       }
       scope.postMessage({ type: 'ready' });
     } else if (data.type === 'remove') {
-      const blob = await remove(data.blob);
+      const blob = await remove(data.blob, {
+        threshold: data.threshold,
+        hardEdge: data.hardEdge,
+      });
       scope.postMessage({ type: 'result', blob });
     }
   } catch (error) {

@@ -5,6 +5,7 @@ export type BackgroundResources = {
   sha256: string;
 };
 export type ModelProgress = { phase: string; loaded: number; total: number };
+export type CutoutOptions = { threshold: number; hardEdge: boolean };
 
 export class BackgroundClient {
   private worker?: Worker;
@@ -49,7 +50,7 @@ export class BackgroundClient {
       this.worker!.postMessage(data);
     });
   }
-  async remove(blob: Blob, signal: AbortSignal) {
+  async remove(blob: Blob, signal: AbortSignal, options: CutoutOptions) {
     signal.throwIfAborted();
     const abort = () => this.dispose();
     signal.addEventListener('abort', abort, { once: true });
@@ -88,7 +89,12 @@ export class BackgroundClient {
       }
       signal.throwIfAborted();
       this.onProgress({ phase: 'removing', loaded: 0, total: 0 });
-      const result = await this.send({ type: 'remove', blob });
+      const result = await this.send({
+        type: 'remove',
+        blob,
+        threshold: options.threshold,
+        hardEdge: options.hardEdge,
+      });
       signal.throwIfAborted();
       if (!result) throw new Error('MODEL_FAILED');
       return result;

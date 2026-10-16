@@ -79,7 +79,18 @@ export default async function AdminCharactersPage({
             ? t('source.uploaded')
             : t('source.generated'),
       },
-      { name: 'description', title: t('fields.description'), placeholder: '-' },
+      {
+        name: 'description',
+        title: t('fields.description'),
+        className: 'whitespace-normal align-top',
+        placeholder: '-',
+        callback: (item: (typeof assets)[number]) =>
+          item.description?.trim() ? (
+            <div className="max-h-24 max-w-xs overflow-y-auto text-sm break-words whitespace-pre-wrap">
+              {item.description}
+            </div>
+          ) : null,
+      },
       {
         name: 'gallery',
         title: t('fields.gallery'),

@@ -74,6 +74,22 @@
       "cutter": {
         "title": "Sprite Sheet 分割工具",
         "text": "用可見、可調整的網格，把 Sprite Sheet 分割成獨立 PNG 影格。"
+      },
+      "gif": {
+        "title": "GIF 轉精靈圖",
+        "text": "在本機拆解 GIF，排列並輸出 PNG 圖集"
+      },
+      "video": {
+        "title": "影片轉精靈圖",
+        "text": "從短片抽格、去背，再預覽角色動作"
+      },
+      "background": {
+        "title": "圖片去背",
+        "text": "圖片留在裝置上，一次處理最多 20 張"
+      },
+      "gifBackground": {
+        "title": "GIF 去背",
+        "text": "在本機逐格去背，下載透明動畫與影格"
       }
     }
   }

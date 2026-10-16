@@ -17,13 +17,43 @@
               "title": "스프라이트 시트 제작 도구",
               "url": "/sprite-sheet-maker",
               "icon": "Grid2X2",
-              "description": "브라우저에서 스프라이트 시트 제작"
+              "description": "브라우저에서 스프라이트 시트 제작",
+              "badge": "무료"
             },
             {
               "title": "스프라이트 시트 분할 도구",
               "url": "/sprite-sheet-cutter",
               "icon": "Scissors",
-              "description": "시트를 개별 프레임으로 분할"
+              "description": "시트를 개별 프레임으로 분할",
+              "badge": "무료"
+            },
+            {
+              "title": "GIF 스프라이트 시트 변환",
+              "url": "/gif-to-sprite-sheet",
+              "icon": "Film",
+              "description": "GIF 프레임을 기기에서 PNG 아틀라스로 배치",
+              "badge": "무료"
+            },
+            {
+              "title": "동영상 스프라이트 시트 변환",
+              "url": "/video-to-sprite-sheet",
+              "icon": "Video",
+              "description": "짧은 영상에서 프레임 추출과 배경 제거 후 미리보기",
+              "badge": "무료"
+            },
+            {
+              "title": "이미지 배경 제거",
+              "url": "/transparent-background-maker",
+              "icon": "ImageMinus",
+              "description": "업로드 없이 기기에서 최대 20장 일괄 처리",
+              "badge": "무료"
+            },
+            {
+              "title": "GIF 배경 제거",
+              "url": "/gif-background-remover",
+              "icon": "Eraser",
+              "description": "모든 프레임을 로컬 처리하고 투명 애니메이션 저장",
+              "badge": "무료"
             }
           ]
         },
@@ -64,6 +94,22 @@
             {
               "title": "스프라이트 시트 분할 도구",
               "url": "/sprite-sheet-cutter"
+            },
+            {
+              "title": "GIF 스프라이트 시트 변환",
+              "url": "/gif-to-sprite-sheet"
+            },
+            {
+              "title": "동영상 스프라이트 시트 변환",
+              "url": "/video-to-sprite-sheet"
+            },
+            {
+              "title": "이미지 배경 제거",
+              "url": "/transparent-background-maker"
+            },
+            {
+              "title": "GIF 배경 제거",
+              "url": "/gif-background-remover"
             }
           ]
         },

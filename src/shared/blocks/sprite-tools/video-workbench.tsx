@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Clock, Download, Film, Infinity, UserRoundCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import {
@@ -23,6 +24,7 @@ import {
   videoMime,
   videoOptionsSchema,
 } from '@/shared/lib/sprite-tools/video-contract';
+import { cn } from '@/shared/lib/utils';
 import type { SpriteMediaResult } from '@/shared/services/sprite-media-processor';
 
 import { useBlobUrl } from './previews';
@@ -46,14 +48,18 @@ async function api(path: string, body: unknown, signal: AbortSignal) {
 }
 export function VideoWorkbench() {
   const t = useTranslations('tools.sprites.ui.freeTools');
+  const ui = useTranslations('tools.sprites.ui');
   const [file, setFile] = useState<File>();
   const [options, setOptions] = useState<VideoOptions>(VIDEO_DEFAULTS);
   const [result, setResult] = useState<SheetInput>();
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<number>();
   const [error, setError] = useState('');
+  const [dragging, setDragging] = useState(false);
+  const [workspace, setWorkspace] = useState(false);
   const uploaded = useRef<{ file: File; token: string } | undefined>(undefined);
   const operation = useRef<AbortController | undefined>(undefined);
+  const picker = useRef<HTMLInputElement>(null);
   const videoUrl = useBlobUrl(file);
   useEffect(() => () => operation.current?.abort(), []);
   function choose(next?: File) {
@@ -73,6 +79,7 @@ export function VideoWorkbench() {
       setError(t('errors.INVALID_PARAMETERS'));
       return;
     }
+    setWorkspace(true);
     const controller = new AbortController();
     operation.current = controller;
     const { signal } = controller;
@@ -132,9 +139,14 @@ export function VideoWorkbench() {
         { token: uploaded.current!.token, options },
         signal
       );
-      const response = await fetch(data.spritesheet.url, {
+      const response = await fetch('/api/tools/video-to-sprite-sheet/sheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: uploaded.current!.token,
+          options,
+        }),
         signal,
-        mode: 'cors',
       });
       if (!response.ok) throw new Error('RESULT_FAILED');
       const [sheet] = await readImages(
@@ -180,42 +192,20 @@ export function VideoWorkbench() {
       if (operation.current === controller) operation.current = undefined;
     }
   }
-  return (
-    <div id="workbench" className="scroll-mt-24 space-y-5">
-      <div className="bg-card rounded-xl border p-5 sm:p-6">
-        <p className="text-muted-foreground mb-4 text-sm">
-          {t('videoPrivacy')}
-        </p>
-        <label className="bg-background flex min-h-28 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-5 text-center">
-          <span>{file ? file.name : t('chooseVideo')}</span>
-          <span className="text-muted-foreground text-sm">
-            {t('videoLimits')}
-          </span>
-          <input
-            aria-label={t('chooseVideo')}
-            type="file"
-            accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
-            disabled={busy}
-            onChange={(e) => {
-              choose(e.target.files?.[0]);
-              e.target.value = '';
-            }}
-            className="max-w-full text-sm"
-          />
-        </label>
-        {videoUrl && (
-          <video
-            src={videoUrl}
-            controls
-            preload="metadata"
-            className="mx-auto mt-4 max-h-52 max-w-full rounded-lg"
-          />
-        )}
+  const controls = (compact: boolean) => (
+    <div className={compact ? 'space-y-2' : 'mt-5'}>
+      <div className="flex flex-wrap items-end gap-3">
         <fieldset
           disabled={busy}
-          className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          className={
+            compact
+              ? 'flex min-w-0 flex-1 flex-wrap items-end gap-3'
+              : 'grid min-w-[min(100%,36rem)] flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'
+          }
         >
-          <label className="space-y-2 text-sm">
+          <label
+            className={compact ? 'w-24 space-y-1 text-xs' : 'space-y-2 text-sm'}
+          >
             <span>{t('frameCount')}</span>
             <input
               type="number"
@@ -228,10 +218,16 @@ export function VideoWorkbench() {
               onChange={(e) =>
                 setOptions({ ...options, frame_count: e.target.valueAsNumber })
               }
-              className="bg-background h-10 w-full rounded-md border px-3"
+              className={
+                compact
+                  ? 'bg-background h-8 w-full rounded-md border px-2 text-sm'
+                  : 'bg-background h-10 w-full rounded-md border px-3'
+              }
             />
           </label>
-          <div className="space-y-2 text-sm">
+          <div
+            className={compact ? 'w-36 space-y-1 text-xs' : 'space-y-2 text-sm'}
+          >
             <label htmlFor="video-frame-size">{t('frameSize')}</label>
             <Select
               value={String(options.frame_size)}
@@ -240,7 +236,11 @@ export function VideoWorkbench() {
               }
               disabled={busy}
             >
-              <SelectTrigger id="video-frame-size" className="w-full">
+              <SelectTrigger
+                id="video-frame-size"
+                size={compact ? 'sm' : 'default'}
+                className="w-full"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -252,7 +252,10 @@ export function VideoWorkbench() {
               </SelectContent>
             </Select>
           </div>
-          <label className="space-y-2 text-sm">
+          <label
+            className={compact ? 'w-24 space-y-1 text-xs' : 'space-y-2 text-sm'}
+            title={t('fpsHelp')}
+          >
             <span>{t('fps')}</span>
             <input
               type="number"
@@ -263,10 +266,21 @@ export function VideoWorkbench() {
               onChange={(e) =>
                 setOptions({ ...options, fps: e.target.valueAsNumber })
               }
-              className="bg-background h-10 w-full rounded-md border px-3"
+              className={
+                compact
+                  ? 'bg-background h-8 w-full rounded-md border px-2 text-sm'
+                  : 'bg-background h-10 w-full rounded-md border px-3'
+              }
             />
           </label>
-          <label className="flex min-h-11 items-center gap-3 text-sm">
+          <label
+            className={
+              compact
+                ? 'flex h-8 items-center gap-2 self-end text-xs'
+                : 'flex h-10 items-center gap-3 self-end text-sm'
+            }
+            title={t('loopHelp')}
+          >
             <input
               type="checkbox"
               checked={options.loop}
@@ -278,12 +292,7 @@ export function VideoWorkbench() {
             {t('loop')}
           </label>
         </fieldset>
-        <p className="text-muted-foreground mt-3 text-sm">{t('loopHelp')}</p>
-        <p className="text-muted-foreground mt-2 text-sm">{t('fpsHelp')}</p>
-        <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Button disabled={!file || busy} onClick={process}>
-            {busy ? t('processing') : result ? t('extractAgain') : t('extract')}
-          </Button>
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
           {busy && (
             <Button
               variant="outline"
@@ -297,31 +306,190 @@ export function VideoWorkbench() {
               {t('cancel')}
             </Button>
           )}
+          <Button disabled={!file || busy} onClick={process}>
+            {busy ? t('processing') : result ? t('extractAgain') : t('extract')}
+          </Button>
         </div>
-        {busy && (
-          <div role="status" className="mt-4 text-sm">
-            {progress === undefined
-              ? t('serverProcessing')
-              : t('uploadProgress', { progress })}
-            {progress !== undefined && (
-              <progress value={progress} max={100} className="mt-2 w-full" />
-            )}
-          </div>
-        )}
-        {error && (
-          <p role="alert" className="text-destructive mt-4 text-sm">
-            {error}
-          </p>
-        )}
       </div>
-      {result && (
-        <SpriteWorkbench
-          key={result.sheet.id}
-          tool="splitter"
-          input={result}
-          remoteSource
+      {busy && (
+        <div role="status" className="text-sm">
+          {progress === undefined
+            ? t('serverProcessing')
+            : t('uploadProgress', { progress })}
+          {progress !== undefined && (
+            <progress value={progress} max={100} className="mt-2 w-full" />
+          )}
+        </div>
+      )}
+      {error && (
+        <p role="alert" className="text-destructive text-sm">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+  const sourceSlot = (
+    <div
+      className={cn(
+        'rounded-lg border-2 border-dashed p-2',
+        dragging
+          ? 'border-accent-foreground/30! bg-accent-foreground/15'
+          : 'border-accent-foreground/30! bg-accent/40'
+      )}
+      onDragOver={(event) => {
+        event.preventDefault();
+        if (!busy) setDragging(true);
+      }}
+      onDragLeave={(event) => {
+        if (
+          !(event.relatedTarget instanceof Node) ||
+          !event.currentTarget.contains(event.relatedTarget)
+        )
+          setDragging(false);
+      }}
+      onDrop={(event) => {
+        event.preventDefault();
+        setDragging(false);
+        if (!busy) choose(event.dataTransfer.files?.[0]);
+      }}
+    >
+      {videoUrl && (
+        <video
+          src={videoUrl}
+          controls
+          preload="metadata"
+          className="bg-background block h-28 w-full object-contain"
         />
       )}
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => picker.current?.click()}
+        className="text-accent-foreground focus-visible:outline-ring mt-2 w-full text-sm focus-visible:outline-2"
+      >
+        {ui('replaceSource')}
+      </button>
+    </div>
+  );
+  const promises = [
+    { icon: Infinity, label: t('promiseFree') },
+    { icon: UserRoundCheck, label: t('promiseNoLogin') },
+    { icon: Clock, label: t('promiseServer') },
+    { icon: Download, label: t('promiseDownload') },
+  ];
+  return (
+    <div id="workbench" className="scroll-mt-24 space-y-5">
+      <input
+        ref={picker}
+        aria-label={t('chooseVideo')}
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+        disabled={busy}
+        onChange={(e) => {
+          choose(e.target.files?.[0]);
+          e.target.value = '';
+        }}
+        className="sr-only"
+      />
+      {workspace ? (
+        <SpriteWorkbench
+          key={
+            busy
+              ? 'extracting'
+              : (result?.sheet.id ?? `${file?.name}-${file?.lastModified}`)
+          }
+          tool="splitter"
+          input={busy ? undefined : result}
+          remoteSource
+          sourceSlot={sourceSlot}
+          toolbar={controls(true)}
+          notice={
+            busy
+              ? progress === undefined
+                ? t('serverProcessing')
+                : t('uploadProgress', { progress })
+              : undefined
+          }
+        />
+      ) : (
+        <section className="mx-auto max-w-[1100px]">
+          <div className="border-border bg-card/90 relative border p-4 shadow-[0_40px_120px_-64px_#35c2ff55] sm:p-7">
+            <span
+              className="bg-primary absolute -top-px -left-px h-6 w-px"
+              aria-hidden="true"
+            />
+            <span
+              className="bg-primary absolute -top-px -left-px h-px w-6"
+              aria-hidden="true"
+            />
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => picker.current?.click()}
+              onDragOver={(event) => {
+                event.preventDefault();
+                if (!busy) setDragging(true);
+              }}
+              onDragLeave={(event) => {
+                if (
+                  !(event.relatedTarget instanceof Node) ||
+                  !event.currentTarget.contains(event.relatedTarget)
+                )
+                  setDragging(false);
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                setDragging(false);
+                if (!busy) choose(event.dataTransfer.files?.[0]);
+              }}
+              className={cn(
+                'group focus-visible:outline-ring flex w-full flex-col items-center justify-center rounded-xl border border-dashed px-5 py-9 text-center transition-[background-color,border-color,transform] duration-200 focus-visible:outline-2 active:translate-y-px',
+                dragging
+                  ? 'border-primary bg-primary/10'
+                  : 'border-muted-foreground/40 bg-vault-navy/50 hover:border-primary/70 hover:bg-primary/5'
+              )}
+            >
+              <span className="border-primary/20 bg-primary/5 text-primary group-hover:bg-primary/10 mb-5 flex h-16 w-16 items-center justify-center rounded-lg border transition-colors">
+                <Film size={29} strokeWidth={1.5} />
+              </span>
+              <span className="text-base font-medium sm:text-lg">
+                {file ? file.name : t('chooseVideo')}
+              </span>
+              <span className="text-muted-foreground mt-6 font-mono text-[11px]">
+                {t('videoLimits')}
+              </span>
+            </button>
+            {videoUrl && (
+              <video
+                src={videoUrl}
+                controls
+                preload="metadata"
+                className="mx-auto mt-4 max-h-52 max-w-full"
+              />
+            )}
+            {controls(false)}
+          </div>
+        </section>
+      )}
+      <ul
+        aria-label={ui('promisesLabel')}
+        className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
+      >
+        {promises.map(({ icon: Icon, label }) => (
+          <li
+            key={label}
+            className="text-muted-foreground flex items-center gap-1.5 text-sm"
+          >
+            <Icon
+              size={14}
+              strokeWidth={1.5}
+              className="shrink-0"
+              aria-hidden="true"
+            />
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

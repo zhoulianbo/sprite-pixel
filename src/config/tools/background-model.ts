@@ -17,3 +17,5 @@ export const BACKGROUND_MODEL = {
     },
   },
 } as const;
+
+export const BACKGROUND_MODEL_CACHE = 'sprite-background-model-v1';

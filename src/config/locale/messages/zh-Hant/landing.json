@@ -17,13 +17,43 @@
               "title": "Sprite Sheet 製作工具",
               "url": "/sprite-sheet-maker",
               "icon": "Grid2X2",
-              "description": "在瀏覽器中整理並輸出 Sprite Sheet"
+              "description": "在瀏覽器中整理並輸出 Sprite Sheet",
+              "badge": "免費"
             },
             {
               "title": "Sprite Sheet 分割工具",
               "url": "/sprite-sheet-cutter",
               "icon": "Scissors",
-              "description": "將 Sprite Sheet 分割為獨立影格"
+              "description": "將 Sprite Sheet 分割為獨立影格",
+              "badge": "免費"
+            },
+            {
+              "title": "GIF 轉精靈圖",
+              "url": "/gif-to-sprite-sheet",
+              "icon": "Film",
+              "description": "在本機拆解 GIF，排列並輸出 PNG 圖集",
+              "badge": "免費"
+            },
+            {
+              "title": "影片轉精靈圖",
+              "url": "/video-to-sprite-sheet",
+              "icon": "Video",
+              "description": "從短片抽格、去背，再預覽角色動作",
+              "badge": "免費"
+            },
+            {
+              "title": "圖片去背",
+              "url": "/transparent-background-maker",
+              "icon": "ImageMinus",
+              "description": "圖片留在裝置上，一次處理最多 20 張",
+              "badge": "免費"
+            },
+            {
+              "title": "GIF 去背",
+              "url": "/gif-background-remover",
+              "icon": "Eraser",
+              "description": "在本機逐格去背，下載透明動畫與影格",
+              "badge": "免費"
             }
           ]
         },
@@ -55,7 +85,23 @@
           "title": "免費工具",
           "children": [
             { "title": "Sprite Sheet 製作工具", "url": "/sprite-sheet-maker" },
-            { "title": "Sprite Sheet 分割工具", "url": "/sprite-sheet-cutter" }
+            { "title": "Sprite Sheet 分割工具", "url": "/sprite-sheet-cutter" },
+            {
+              "title": "GIF 轉精靈圖",
+              "url": "/gif-to-sprite-sheet"
+            },
+            {
+              "title": "影片轉精靈圖",
+              "url": "/video-to-sprite-sheet"
+            },
+            {
+              "title": "圖片去背",
+              "url": "/transparent-background-maker"
+            },
+            {
+              "title": "GIF 去背",
+              "url": "/gif-background-remover"
+            }
           ]
         },
         {

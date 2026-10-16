@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import type { Metadata } from 'next';
 import Image from 'next/image';
 import { ArrowUpRight, Plus } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -13,8 +12,8 @@ import { ToolCta } from '@/shared/blocks/common/tool-cta';
 import { getMetadata } from '@/shared/lib/seo';
 import { toolPath, type Tool } from '@/shared/lib/sprite-tools/core';
 
-import { BackgroundExample } from './background-example';
 import { BackgroundWorkbench } from './background-workbench';
+import { FeatureCompare } from './feature-compare';
 import { VideoWorkbench } from './video-workbench';
 import { SpriteWorkbench } from './workbench';
 
@@ -95,6 +94,7 @@ const SPLITTER_FEATURE_IMAGES = [
   '/imgs/features/sprite-sheet-cutter/select-needed-frames.webp',
   '/imgs/features/sprite-sheet-cutter/preview-selected-motion.webp',
 ] as const;
+const BACKGROUND_EXAMPLES = ['character', 'effect', 'building'] as const;
 const SPLITTER_USE_CASE_IMAGES = [
   {
     src: '/imgs/features/sprite-sheet-cutter/separate-character-action.webp',
@@ -169,33 +169,10 @@ function pageUrl(tool: LandingTool, locale: string) {
   return `${envConfigs.app_url.replace(/\/$/, '')}${locale === defaultLocale ? '' : `/${locale}`}${pathFor(tool)}`;
 }
 export function toolMetadata(tool: LandingTool) {
-  return async (props: {
-    params: Promise<{ locale: string }>;
-  }): Promise<Metadata> => {
-    const base = await getMetadata({
-      metadataKey: `tools.sprites.${tool}.metadata`,
-      canonicalUrl: pathFor(tool),
-    })(props);
-    if (tool in FREE_TOOL_PATHS) {
-      const { locale } = await props.params;
-      const origin = envConfigs.app_url.replace(/\/$/, '');
-      return {
-        ...base,
-        robots: !['en', 'zh'].includes(locale)
-          ? { index: false, follow: true }
-          : base.robots,
-        alternates: {
-          canonical: `${origin}${locale === 'zh' ? '/zh' : ''}${pathFor(tool)}`,
-          languages: {
-            en: `${origin}${pathFor(tool)}`,
-            'zh-Hans': `${origin}/zh${pathFor(tool)}`,
-            'x-default': `${origin}${pathFor(tool)}`,
-          },
-        },
-      };
-    }
-    return base;
-  };
+  return getMetadata({
+    metadataKey: `tools.sprites.${tool}.metadata`,
+    canonicalUrl: pathFor(tool),
+  });
 }
 export async function SpriteToolLanding({
   tool,
@@ -289,9 +266,6 @@ export async function SpriteToolLanding({
               inputMode={tool === 'gif' ? 'gif' : 'images'}
             />
           )}
-          {(tool === 'background' || tool === 'gifBackground') && (
-            <BackgroundExample gif={tool === 'gifBackground'} />
-          )}
         </div>
       </section>
       <section className={sectionPad}>
@@ -343,48 +317,58 @@ export async function SpriteToolLanding({
             title={copy.featuresTitle}
             description={copy.intro}
           />
-          <div className="grid gap-[18px]">
-            {copy.features.map((item, index) => (
-              <article
-                key={item.title}
-                className="border-border bg-card overflow-hidden rounded-xl border md:grid md:grid-cols-2 md:items-stretch"
-              >
-                <div
-                  className={
-                    index % 2 ? 'md:order-2' : 'border-border md:border-r'
-                  }
+          {tool === 'background' || tool === 'gifBackground' ? (
+            <FeatureCompare
+              items={copy.features.map((item, index) => ({
+                title: item.title,
+                text: item.text,
+                before: `/imgs/features/background-removal/${BACKGROUND_EXAMPLES[index]}-before.png`,
+                after: `/imgs/features/background-removal/${BACKGROUND_EXAMPLES[index]}-after.png`,
+              }))}
+              transparentLabel={t('ui.transparent')}
+              originalLabel={t('ui.freeTools.original')}
+              compareLabel={t('ui.freeTools.compare')}
+            />
+          ) : (
+            <div className="grid gap-[18px]">
+              {copy.features.map((item, index) => (
+                <article
+                  key={item.title}
+                  className="border-border bg-card overflow-hidden rounded-xl border md:grid md:grid-cols-2 md:items-stretch"
                 >
-                  <div className="bg-vault-navy relative h-full min-h-[320px] sm:min-h-[380px]">
-                    <Image
-                      src={
-                        tool === 'background' || tool === 'gifBackground'
-                          ? `/imgs/features/background-removal/${index === 0 ? 'before' : 'after'}.png`
-                          : featureImages[index]
-                      }
-                      alt=""
-                      fill
-                      sizes="(min-width: 768px) 50vw, 100vw"
-                      aria-hidden="true"
-                      className="object-contain [image-rendering:pixelated]"
-                    />
+                  <div
+                    className={
+                      index % 2 ? 'md:order-2' : 'border-border md:border-r'
+                    }
+                  >
+                    <div className="bg-vault-navy relative h-full min-h-[320px] sm:min-h-[380px]">
+                      <Image
+                        src={featureImages[index]}
+                        alt=""
+                        fill
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        aria-hidden="true"
+                        className="object-contain [image-rendering:pixelated]"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div
-                  className={`flex flex-col justify-center p-7 sm:p-10 ${index % 2 ? 'border-border md:order-1 md:border-r' : ''}`}
-                >
-                  <p className="text-primary font-mono text-[11px] font-bold tracking-[0.12em] uppercase">
-                    0{index + 1}
-                  </p>
-                  <h3 className="mt-[22px] max-w-md text-[26px] leading-tight font-medium">
-                    {item.title}
-                  </h3>
-                  <p className="text-muted-foreground mt-2.5 text-sm leading-[1.7]">
-                    {item.text}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+                  <div
+                    className={`flex flex-col justify-center p-7 sm:p-10 ${index % 2 ? 'border-border md:order-1 md:border-r' : ''}`}
+                  >
+                    <p className="text-primary font-mono text-[11px] font-bold tracking-[0.12em] uppercase">
+                      0{index + 1}
+                    </p>
+                    <h3 className="mt-[22px] max-w-md text-[26px] leading-tight font-medium">
+                      {item.title}
+                    </h3>
+                    <p className="text-muted-foreground mt-2.5 text-sm leading-[1.7]">
+                      {item.text}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
       <section className={sectionPad}>

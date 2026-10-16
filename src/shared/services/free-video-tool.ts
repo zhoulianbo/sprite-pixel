@@ -3,6 +3,7 @@ import { enforceSlidingWindowRateLimit } from '@/shared/lib/rate-limit';
 import {
   verifyVideoCredential,
   videoMime,
+  videoSheetKey,
   videoTaskId,
   type VideoCredential,
 } from '@/shared/lib/sprite-tools/video-contract';
@@ -29,6 +30,7 @@ export function toolError(error: unknown) {
     UPLOAD_FAILED: 400,
     MEDIA_PROCESSOR_BUSY: 429,
     MEDIA_PROCESSOR_NOT_CONFIGURED: 503,
+    RESULT_FAILED: 404,
   };
   const message = code in known ? code : 'PROCESSING_FAILED';
   return Response.json(
@@ -95,4 +97,14 @@ export async function processFreeVideo(token: string, options: VideoOptions) {
     action: 'idle',
     direction: 'none',
   });
+}
+export async function readFreeVideoSheet(token: string, options: VideoOptions) {
+  const credential = await verifyVideoCredential(
+    token,
+    processorConfig().secret
+  );
+  const key = await videoSheetKey(credential.key, options);
+  const file = await (await getStorageService()).downloadFile({ key });
+  if (!file.success || !file.body) throw new Error('RESULT_FAILED');
+  return file.body;
 }

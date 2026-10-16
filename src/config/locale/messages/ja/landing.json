@@ -17,13 +17,43 @@
               "title": "スプライトシート作成ツール",
               "url": "/sprite-sheet-maker",
               "icon": "Grid2X2",
-              "description": "ブラウザーでスプライトシートを作成"
+              "description": "ブラウザーでスプライトシートを作成",
+              "badge": "無料"
             },
             {
               "title": "スプライトシート分割ツール",
               "url": "/sprite-sheet-cutter",
               "icon": "Scissors",
-              "description": "シートを個別フレームに分割"
+              "description": "シートを個別フレームに分割",
+              "badge": "無料"
+            },
+            {
+              "title": "GIF スプライトシート変換",
+              "url": "/gif-to-sprite-sheet",
+              "icon": "Film",
+              "description": "GIF を端末内でフレームに分け、PNG シートに配置",
+              "badge": "無料"
+            },
+            {
+              "title": "動画スプライトシート変換",
+              "url": "/video-to-sprite-sheet",
+              "icon": "Video",
+              "description": "短い動画から抽出・背景除去して動きを確認",
+              "badge": "無料"
+            },
+            {
+              "title": "画像背景透過",
+              "url": "/transparent-background-maker",
+              "icon": "ImageMinus",
+              "description": "画像を送信せず、最大20枚を端末内で切り抜き",
+              "badge": "無料"
+            },
+            {
+              "title": "GIF 背景透過",
+              "url": "/gif-background-remover",
+              "icon": "Eraser",
+              "description": "全コマを端末内で切り抜き、透過アニメーションを保存",
+              "badge": "無料"
             }
           ]
         },
@@ -68,6 +98,22 @@
             {
               "title": "スプライトシート分割ツール",
               "url": "/sprite-sheet-cutter"
+            },
+            {
+              "title": "GIF スプライトシート変換",
+              "url": "/gif-to-sprite-sheet"
+            },
+            {
+              "title": "動画スプライトシート変換",
+              "url": "/video-to-sprite-sheet"
+            },
+            {
+              "title": "画像背景透過",
+              "url": "/transparent-background-maker"
+            },
+            {
+              "title": "GIF 背景透過",
+              "url": "/gif-background-remover"
             }
           ]
         },

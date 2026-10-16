@@ -56,9 +56,20 @@ export async function videoTaskId(
     'SHA-256',
     new TextEncoder().encode(value)
   );
-  return Array.from(new Uint8Array(digest), (b) =>
+  // The processor stores this id as the R2 object name.
+  return Array.from(new Uint8Array(digest).subarray(0, 8), (b) =>
     b.toString(16).padStart(2, '0')
   ).join('');
+}
+export async function videoSheetKey(
+  storageKey: string,
+  options: z.infer<typeof videoOptionsSchema>
+) {
+  const slash = storageKey.lastIndexOf('/');
+  const file = storageKey.slice(slash + 1);
+  const uploadId = file.slice(0, file.lastIndexOf('.'));
+  const taskId = await videoTaskId(uploadId, options);
+  return `${storageKey.slice(0, slash)}/${taskId}.png`;
 }
 
 const credentialSchema = z

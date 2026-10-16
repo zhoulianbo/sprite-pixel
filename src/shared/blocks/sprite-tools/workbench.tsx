@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
   BoxSelect,
   CircleHelp,
+  Clock,
   Download,
   FileArchive,
   Film,
@@ -373,11 +374,17 @@ export function SpriteWorkbench({
   inputMode = 'images',
   input,
   remoteSource = false,
+  sourceSlot,
+  toolbar,
+  notice,
 }: {
   tool: Tool;
   inputMode?: 'images' | 'gif';
   input?: SheetInput;
   remoteSource?: boolean;
+  sourceSlot?: ReactNode;
+  toolbar?: ReactNode;
+  notice?: string;
 }) {
   const t = useTranslations('tools.sprites.ui');
   const maker = tool === 'maker';
@@ -463,8 +470,21 @@ export function SpriteWorkbench({
       setProgress(t('progress', { done, total })),
     [t]
   );
+  const embedded = useRef(false);
+  embedded.current = !!sourceSlot;
   useEffect(() => {
     mounted.current = true;
+    if (!input && embedded.current) {
+      setSheet(undefined);
+      setExtracted([]);
+      setExtractedToken('');
+      setSelected(new Set());
+      return () => {
+        mounted.current = false;
+        operation.current?.abort();
+        computation.current?.abort();
+      };
+    }
     const handoff = input
       ? { target: tool, frames: [], sheet: input.sheet, slice: input.slice }
       : takeHandoff(tool);
@@ -1013,12 +1033,12 @@ export function SpriteWorkbench({
     { icon: Infinity, label: t('promiseForever') },
     { icon: UserRoundCheck, label: t('promiseNoAccount') },
     {
-      icon: HardDrive,
-      label: t(remoteSource ? 'freeTools.videoPrivacy' : 'promiseLocal'),
+      icon: remoteSource ? Clock : HardDrive,
+      label: t(remoteSource ? 'freeTools.promiseServer' : 'promiseLocal'),
     },
     { icon: FileArchive, label: t('promiseFormats') },
   ];
-  if (!hasAssets)
+  if (!hasAssets && !sourceSlot)
     return (
       <section
         id={remoteSource ? 'video-result' : 'workbench'}
@@ -1111,31 +1131,38 @@ export function SpriteWorkbench({
     >
       {maker && <div className="p-2">{modeTabs}</div>}
       {fileInputElement}
+      {toolbar ? (
+        <div className="border-border border-b px-2 py-2">{toolbar}</div>
+      ) : null}
       <div className="grid min-w-0 lg:h-[min(700px,calc(100svh-120px))] lg:min-h-[560px] lg:grid-cols-[220px_minmax(0,1fr)_240px]">
         <aside
           aria-label={t('frames')}
           className="border-border order-2 flex min-h-0 min-w-0 flex-col border-t lg:order-1 lg:border-t-0 lg:border-r"
         >
           <div className="p-2">
-            <button
-              type="button"
-              {...dropHandlers}
-              disabled={locked || remoteSource}
-              onClick={() => fileInput.current?.click()}
-              className={cn(
-                'focus-visible:outline-ring flex min-h-16 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2',
-                dragging
-                  ? 'border-accent-foreground/30! bg-accent-foreground/15 text-accent-foreground hover:border-accent-foreground/80!'
-                  : 'border-accent-foreground/30! bg-accent/40 text-accent-foreground hover:bg-accent-foreground/15 hover:border-accent-foreground/80!'
-              )}
-            >
-              <ImagePlus size={16} className="shrink-0" />
-              <span>
-                {t(
-                  maker && mode === 'images' ? 'addFramesHint' : 'replaceSource'
+            {sourceSlot ?? (
+              <button
+                type="button"
+                {...dropHandlers}
+                disabled={locked || remoteSource}
+                onClick={() => fileInput.current?.click()}
+                className={cn(
+                  'focus-visible:outline-ring flex min-h-16 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed px-2 py-2 text-left text-sm transition-colors focus-visible:outline-2',
+                  dragging
+                    ? 'border-accent-foreground/30! bg-accent-foreground/15 text-accent-foreground hover:border-accent-foreground/80!'
+                    : 'border-accent-foreground/30! bg-accent/40 text-accent-foreground hover:bg-accent-foreground/15 hover:border-accent-foreground/80!'
                 )}
-              </span>
-            </button>
+              >
+                <ImagePlus size={16} className="shrink-0" />
+                <span>
+                  {t(
+                    maker && mode === 'images'
+                      ? 'addFramesHint'
+                      : 'replaceSource'
+                  )}
+                </span>
+              </button>
+            )}
           </div>
           <div className="flex items-center justify-between px-2 pb-2">
             <h2 className="text-muted-foreground text-xs font-semibold tracking-wider">
@@ -1292,7 +1319,7 @@ export function SpriteWorkbench({
               />
             ) : (
               <div className="bg-background text-muted-foreground flex h-full min-h-80 items-center justify-center p-6 text-sm">
-                {t(computing ? 'updating' : 'adjustSettings')}
+                {notice || t(computing ? 'updating' : 'adjustSettings')}
               </div>
             )}
           </div>

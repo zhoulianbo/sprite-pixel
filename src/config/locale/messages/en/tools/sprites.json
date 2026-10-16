@@ -156,8 +156,13 @@
     "freeTools": {
       "videoPrivacy": "Free, no account needed. Videos upload to temporary R2 storage for server processing. Download results before leaving this page.",
       "localPrivacy": "Private by design: images and GIF frames are processed on your device, never uploaded.",
-      "modelNotice": "First use downloads a 170.4 MiB IS-Net model. Keep this tab open while it initializes. Your browser can cache it for both background tools.",
-      "chooseVideo": "Choose a local video",
+      "modelNotice": "First use downloads the IS-Net model to this device",
+      "promiseFree": "Free to use",
+      "promiseNoLogin": "No login",
+      "promiseServer": "Videos deleted after 2 hours",
+      "promiseDownload": "Download before leaving",
+      "original": "Original",
+      "chooseVideo": "Drop a video or click to choose",
       "videoLimits": "MP4, WebM or MOV · maximum 5 MiB",
       "frameCount": "Output frame count",
       "frameSize": "Size of each frame",
@@ -178,11 +183,35 @@
       "pause": "Pause",
       "play": "Play",
       "frame": "Current frame",
-      "chooseGif": "Drop a GIF or choose a file",
-      "chooseImages": "Drop images or choose files",
+      "chooseGif": "Drop a GIF or click to choose",
+      "chooseImages": "Drop images or click to choose",
       "gifLimits": "GIF · maximum 10 MiB · up to 256 frames / 32 million decoded pixels",
       "imageLimits": "PNG, JPEG, static WebP · 10 MiB per image · up to 20 images",
       "removeBackground": "Remove background",
+      "images": "Images",
+      "viewOriginal": "Original",
+      "viewResult": "Result",
+      "viewCompare": "Compare",
+      "backgroundSettings": "Background",
+      "backgrounds": {
+        "transparent": "Transparent",
+        "white": "White",
+        "blue": "Blue",
+        "green": "Green",
+        "yellow": "Yellow",
+        "red": "Red",
+        "custom": "Palette"
+      },
+      "downloadCurrent": "Download this image",
+      "clearAll": "Clear all",
+      "execute": "Start",
+      "modelMissing": "IS-Net not downloaded",
+      "modelReady": "IS-Net downloaded",
+      "modelDialogTitle": "Download the IS-Net model",
+      "modelDialogBody": "This device does not have the IS-Net model yet. Starting downloads it locally, and later runs load that copy first.",
+      "modelDialogConfirm": "Download and start",
+      "deleteImage": "Delete this image",
+      "addImages": "Drop or click to add images",
       "clear": "Clear files",
       "files": "Files and processing results",
       "downloadPng": "Download PNG",
@@ -190,8 +219,16 @@
       "downloadSheet": "Download sprite sheet",
       "downloadGif": "Download transparent GIF",
       "retry": "Retry",
-      "gifAlpha": "GIF uses one transparent color, so soft edges may look different. PNG sheets and frames retain full alpha transparency.",
+      "gifAlpha": "GIF uses one transparent color, so soft edges may look different. Single PNGs and zipped frames retain full alpha transparency.",
       "replaceConfirm": "Replace this GIF and its current results? Download anything you want to keep first.",
+      "cutSettings": "Cutout",
+      "cutStrength": "Threshold",
+      "edge": "Edge",
+      "edgeHard": "Hard",
+      "edgeSoft": "Soft",
+      "cutSettingsHelp": "A higher threshold removes more background, including thin edges. Hard edges suit pixel art.",
+      "processingFrame": "Processing image {index}",
+      "batchDone": "{done} / {total} ready",
       "batchProgress": "{done} / {total} processed",
       "modelBytes": "{loaded} / {total} MiB · {progress}%",
       "exampleTitle": "A game asset, before and after",
@@ -748,16 +785,16 @@
     "featuresTitle": "Transparent Background Maker features",
     "features": [
       {
-        "title": "Local inference for unreleased game artwork",
-        "text": "This transparent background maker keeps source images and output pixels inside your browser. No image-upload request is needed for segmentation. Model and runtime files are downloaded from our storage, so first use needs an internet connection; local processing does not mean that all page resources are available offline."
+        "title": "Cut a character out of the whole image",
+        "text": "Remove background finds the character across the full picture. The transparent result stays on the left and the original stays on the right. Drag the divider before downloading, and check the cape, weapon, and feet."
       },
       {
-        "title": "Batch cleanup without losing individual control",
-        "text": "The transparent background maker processes up to 20 files sequentially to limit memory pressure. Each item shows its own state and can be inspected after completion. Download one finished prop while other files continue, or collect the successful PNGs in a ZIP when the batch is ready."
+        "title": "Separate a skill effect from its backdrop",
+        "text": "Glows, sparks, and energy rings often sit against the background. Drag sideways to see what remains. Broken sparks and soft edges can still need a manual pass."
       },
       {
-        "title": "Before-and-after checks at original dimensions",
-        "text": "The transparent background maker restores the predicted mask to the source dimensions and retains existing alpha transparency. Compare the original against a checkerboard result to find missing outlines, holes, or unwanted shadows. Automatic segmentation is a starting point; very fine details may still require an image editor."
+        "title": "Lift a building off the scene color",
+        "text": "Towers, houses, and platforms can leave a simple backdrop and export as transparent PNGs for another map. Look closely at spires, banners, and thin rails."
       }
     ],
     "useCasesTitle": "Made for your game workflow",
@@ -871,16 +908,16 @@
     "featuresTitle": "Gif Background Remover features",
     "features": [
       {
-        "title": "Private processing for animated game assets",
-        "text": "This GIF background remover runs image segmentation in a browser worker. It downloads the model and runtime resources but does not send your GIF or frame pixels to an image API. Keep the tab open during processing, especially on devices where initializing the model takes longer."
+        "title": "Separate a character animation frame by frame",
+        "text": "GIF background removal rebuilds each full frame, then clears the backdrop without changing the canvas size. Drag the divider to compare the same pose, and check the weapon and cape."
       },
       {
-        "title": "One canvas size across the whole action",
-        "text": "The GIF background remover preserves the source canvas instead of independently cropping every silhouette. Stable dimensions help avoid artificial jumps when a sword swings outward or a character leans. Original GIF frame delays stay attached to the sequence; background removal does not invent new transition frames."
+        "title": "Keep skill effects on the original canvas",
+        "text": "Effects stay in place instead of jumping when each frame is cropped on its own. Drag sideways to inspect sparks and rings. A GIF has only one transparent color, so use PNG if a glow edge turns hard."
       },
       {
-        "title": "Synchronized before and after",
-        "text": "Use the GIF background remover comparison to inspect the same moment in both versions. Pause, step through the timeline, and drag the divider across the character. Look for disappearing effects and changing outlines: an image model evaluates frames individually, so temporal consistency is not guaranteed."
+        "title": "Try buildings and scene pieces too",
+        "text": "A clear tower, platform, or banner can lose its backdrop. Drag the divider and check the roof point and doorway. A crowded full map is harder to separate than one building."
       }
     ],
     "useCasesTitle": "Made for your game workflow",

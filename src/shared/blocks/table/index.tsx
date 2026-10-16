@@ -52,7 +52,7 @@ export function Table({
       <TableBody>
         {data && data.length > 0 ? (
           data.map((item: any, idx: number) => (
-            <TableRow key={idx} className="h-16">
+            <TableRow key={idx} className="min-h-16">
               {columns &&
                 columns.map((column: TableColumn, iidx: number) => {
                   const value = item[column.name as keyof typeof item];

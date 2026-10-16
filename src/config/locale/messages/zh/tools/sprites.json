@@ -156,8 +156,13 @@
     "freeTools": {
       "videoPrivacy": "免费使用，无需登录。视频会上传到 R2 临时存储，由服务器处理。离开页面前请下载结果。",
       "localPrivacy": "图片和 GIF 帧始终在你的设备上处理，不上传服务器。",
-      "modelNotice": "首次使用需要下载约 170.4 MiB 的 IS-Net 模型。初始化时请保持页面打开，浏览器缓存可供两个抠图工具共用。",
-      "chooseVideo": "选择本地视频",
+      "modelNotice": "首次使用需要下载 IS-Net 模型到本地",
+      "promiseFree": "免费使用",
+      "promiseNoLogin": "无需登录",
+      "promiseServer": "视频2小时后自动删除",
+      "promiseDownload": "离开前下载",
+      "original": "原图",
+      "chooseVideo": "拖入视频或点击选择",
       "videoLimits": "MP4、WebM 或 MOV · 最大 5 MiB",
       "frameCount": "输出帧数",
       "frameSize": "每帧尺寸",
@@ -178,11 +183,35 @@
       "pause": "暂停",
       "play": "播放",
       "frame": "当前帧",
-      "chooseGif": "拖入 GIF 或选择文件",
-      "chooseImages": "拖入图片或选择文件",
+      "chooseGif": "拖入 GIF 或点击选择",
+      "chooseImages": "拖入图片或点击选择",
       "gifLimits": "GIF · 最大 10 MiB · 最多 256 帧／解码像素总量不超过 3200 万",
       "imageLimits": "PNG、JPEG、静态 WebP · 每张最大 10 MiB · 最多 20 张",
       "removeBackground": "开始去背景",
+      "images": "图片",
+      "viewOriginal": "原图",
+      "viewResult": "效果图",
+      "viewCompare": "对比",
+      "backgroundSettings": "背景设置",
+      "backgrounds": {
+        "transparent": "透明底",
+        "white": "白色",
+        "blue": "蓝色",
+        "green": "绿色",
+        "yellow": "黄色",
+        "red": "红色",
+        "custom": "色盘"
+      },
+      "downloadCurrent": "下载当前图片",
+      "clearAll": "清除所有",
+      "execute": "开始执行",
+      "modelMissing": "未下载IS-Net",
+      "modelReady": "已下载IS-Net",
+      "modelDialogTitle": "需要下载 IS-Net 模型",
+      "modelDialogBody": "这台设备还没有 IS-Net 模型。开始执行会把它下载到本地，之后会优先加载已保存的副本。",
+      "modelDialogConfirm": "下载并开始",
+      "deleteImage": "删除这张图片",
+      "addImages": "拖入或点击添加图片",
       "clear": "清空文件",
       "files": "文件及处理结果",
       "downloadPng": "下载 PNG",
@@ -190,8 +219,16 @@
       "downloadSheet": "下载精灵图",
       "downloadGif": "下载透明 GIF",
       "retry": "重试",
-      "gifAlpha": "GIF 仅支持一种透明色，柔和边缘可能出现变化。PNG 精灵图和序列帧可以保留完整透明度。",
+      "gifAlpha": "GIF 仅支持一种透明色，柔和边缘可能出现变化。单张 PNG 和打包的序列帧可以保留完整透明度。",
       "replaceConfirm": "替换当前 GIF 及处理结果吗？请先下载需要保留的文件。",
+      "cutSettings": "抠图参数",
+      "cutStrength": "抠图阈值",
+      "edge": "边缘",
+      "edgeHard": "硬边",
+      "edgeSoft": "柔和",
+      "cutSettingsHelp": "阈值越高，背景去得越干净，细边缘也更容易被去掉。硬边适合像素图。",
+      "processingFrame": "正在处理第 {index} 张",
+      "batchDone": "已完成 {done}／{total}",
       "batchProgress": "已处理 {done}／{total}",
       "modelBytes": "{loaded}／{total} MiB · {progress}%",
       "exampleTitle": "游戏素材的处理前后对比",
@@ -748,16 +785,16 @@
     "featuresTitle": "透明背景制作的实用功能",
     "features": [
       {
-        "title": "未公开游戏素材也能本地处理",
-        "text": "透明背景制作把源图片与处理结果保留在浏览器内，分割过程不需要图像上传请求。模型和运行时资源会从存储服务下载，因此首次使用需要网络；本地处理不代表整个网页都能离线访问。"
+        "title": "从整张画面里分离角色",
+        "text": "点击开始去背景后，本地模型会在整张图里找出角色。左侧是透明结果，右侧保留原图。下载前拖动分隔线，检查披风、武器和脚底有没有被切掉。"
       },
       {
-        "title": "批量处理仍可逐张检查",
-        "text": "透明背景制作最多支持 20 张，采用顺序处理减少内存压力。每张图片都有独立状态，完成后即可查看。你可以先下载已经完成的道具，再等待其他图片，最后统一打包成功结果。"
+        "title": "把技能特效从底色里分开",
+        "text": "光晕、粒子和能量环常常贴着背景。左右拖动查看哪些部分留下来。断开的碎光和半透明边缘仍可能需要再修一下。"
       },
       {
-        "title": "原尺寸前后对比",
-        "text": "透明背景制作将预测蒙版恢复到源图尺寸，并保留原有透明度。通过棋盘格结果检查轮廓缺失、孔洞和多余阴影。自动分割可减少重复工作，但细小部分仍可能需要图片编辑器修整。"
+        "title": "让建筑脱离场景底色",
+        "text": "塔楼、房屋和平台可以从简单背景里分离，导出透明 PNG 后再叠到别的地图上。尖顶、旗帜和细栏杆请放大看一眼。"
       }
     ],
     "useCasesTitle": "适用于游戏素材工作流程",
@@ -871,16 +908,16 @@
     "featuresTitle": "GIF 去背景的实用功能",
     "features": [
       {
-        "title": "动画素材也能私密处理",
-        "text": "GIF 去背景在浏览器工作线程中进行分割。需要下载模型和运行时资源，但不会将 GIF 或帧像素发送给图片接口。处理期间请保持页面打开，性能较弱的设备可能需要较长初始化时间。"
+        "title": "角色动画按整帧分离",
+        "text": "GIF 去背景会先还原完整画面，再逐帧去掉背景，画布尺寸保持不变。拖动分隔线，对照同一姿势的原图和透明结果，检查武器和披风。"
       },
       {
-        "title": "整段动作使用同一画布",
-        "text": "GIF 去背景保留源画布，不独立裁切每帧轮廓，避免挥剑或俯身时因为裁切框变化产生额外跳动。原始帧时长始终跟随序列，工具不会生成源文件中不存在的过渡帧。"
+        "title": "技能特效留在原来的画布里",
+        "text": "光效不会因为每一帧单独裁切而上下跳动。左右拖动查看粒子和能量环。GIF 只有一种透明色，发光边缘变硬时可以改下 PNG。"
       },
       {
-        "title": "同步检查处理前后",
-        "text": "GIF 去背景对比视图始终显示同一时刻的前后画面。暂停、拖动时间轴或分隔线，检查特效是否消失、轮廓是否变化。模型逐张判断图片，不能保证各帧蒙版完全一致。"
+        "title": "建筑和场景部件也可以试",
+        "text": "轮廓清楚的塔楼、平台和旗帜可以去掉底色。拖动分隔线检查尖顶和门口。挤在一起的整张地图，比单独的建筑更难分干净。"
       }
     ],
     "useCasesTitle": "适用于游戏素材工作流程",
