@@ -3,9 +3,9 @@ import { docs } from '@/.source';
 import type { I18nConfig } from 'fumadocs-core/i18n';
 import { createFromSource } from 'fumadocs-core/search/server';
 import { loader } from 'fumadocs-core/source';
-import { icons } from 'lucide-react';
 
 import { source as originalSource } from '@/core/docs/source';
+import { configuredIcons } from '@/shared/blocks/common/icon-registry';
 
 // Create a modified i18n config that maps 'zh' to 'en' for Orama
 const searchI18n: I18nConfig = {
@@ -22,7 +22,9 @@ const searchSource = loader({
     if (!icon) {
       return;
     }
-    if (icon in icons) return createElement(icons[icon as keyof typeof icons]);
+    if (Object.prototype.hasOwnProperty.call(configuredIcons, icon)) {
+      return createElement(configuredIcons[icon]);
+    }
   },
 });
 

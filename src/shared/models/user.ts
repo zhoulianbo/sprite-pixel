@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { headers } from 'next/headers';
 import { count, desc, eq, inArray } from 'drizzle-orm';
 
@@ -89,7 +90,9 @@ export async function getUserCredits(userId: string) {
   return { remainingCredits };
 }
 
-export async function getSignUser() {
+// Layouts, pages and permission checks share one session read per render.
+// React resets this cache for the next request, including another user.
+export const getSignUser = cache(async () => {
   if (!websiteConfig.auth.enabled) {
     return null;
   }
@@ -100,7 +103,7 @@ export async function getSignUser() {
   });
 
   return session?.user;
-}
+});
 
 export async function isEmailVerified(email: string): Promise<boolean> {
   const normalized = String(email || '')

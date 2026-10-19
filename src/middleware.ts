@@ -41,16 +41,6 @@ function setPrivateNoStoreHeaders(response: NextResponse) {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname === '/.well-known' || pathname.startsWith('/.well-known/')) {
-    return new NextResponse('Not Found', {
-      status: 404,
-      headers: {
-        'Cache-Control': 'public, max-age=3600',
-        'Content-Type': 'text/plain; charset=utf-8',
-      },
-    });
-  }
-
   // Handle internationalization first
   const intlResponse = intlMiddleware(request);
 
@@ -128,5 +118,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|trpc|_next|_vercel|.*\\..*).*)', '/.well-known/:path*'],
+  matcher: ['/((?!api|trpc|_next|_vercel|.*\\..*).*)'],
 };

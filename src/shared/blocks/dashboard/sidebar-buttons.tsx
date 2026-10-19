@@ -26,6 +26,7 @@ export function SidebarButtons({ buttons }: { buttons: ButtonType[] }) {
           )}
         >
           <Link
+            prefetch={false}
             href={button.url || ''}
             target={button.target || '_self'}
             aria-label={button.title || undefined}

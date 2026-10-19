@@ -5,7 +5,7 @@ import { Fragment } from 'react/jsx-runtime';
 import { Coins, LayoutDashboard, Loader2, LogOut, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { authClient, signOut, useSession } from '@/core/auth/client';
+import { signOut, useSession } from '@/core/auth/client';
 import { Link, useRouter } from '@/core/i18n/navigation';
 import {
   Avatar,
@@ -64,7 +64,12 @@ export function SignUser({
   } = useAppContext();
 
   // get session
-  const { data: session, isPending } = useSession();
+  const {
+    data: session,
+    isPending,
+    error: sessionError,
+    refetch,
+  } = useSession();
   const sessionUser = extractSessionUser(session);
   const displayUser = (user as UserType | null) ?? sessionUser;
   const isSessionChecking = isPending && !sessionCheckExpired;
@@ -123,38 +128,32 @@ export function SignUser({
     if (sessionUser && sessionUserId !== currentUserId) {
       setUser(sessionUser as UserType);
       fetchUserInfo();
-    } else if (!sessionUser && currentUserId && !isPending) {
+    } else if (!sessionUser && currentUserId && !isPending && !sessionError) {
       // Only clear user when session is definitively resolved (not pending).
       // This prevents a race where fetchUserInfo() sets user but useSession
       // hasn't re-fetched yet, which would incorrectly clear the user.
       setUser(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionUser?.id, (sessionUser as any)?.email, user?.id, isPending]);
+  }, [
+    sessionUser?.id,
+    (sessionUser as any)?.email,
+    user?.id,
+    isPending,
+    sessionError,
+  ]);
 
-  // Fallback: if the session cookie is present but useSession lags, do a single refresh.
+  // A successful anonymous response is final. Only retry a failed check once;
+  // HttpOnly session cookies cannot be inspected from the browser.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (didFallbackSyncRef.current) return;
-    // Only run when useSession is done but still no user.
-    if (isPending) return;
-    if (sessionUser || user) return;
+    if (isPending || !sessionError || sessionUser) return;
 
     didFallbackSyncRef.current = true;
-    void (async () => {
-      try {
-        const res: any = await authClient.getSession();
-        const fresh = extractSessionUser(res?.data ?? res);
-        if (fresh?.id) {
-          setUser(fresh);
-          fetchUserInfo();
-        }
-      } catch {
-        // ignore
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPending, sessionUser, user?.id]);
+    // Let the existing hook publish the result and drive the state sync above.
+    void refetch();
+  }, [isPending, sessionError, sessionUser, refetch]);
 
   return (
     <>

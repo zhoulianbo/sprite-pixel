@@ -167,7 +167,9 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
                 </span>
               </div>
               <Button className="mt-3 h-9 w-full" asChild>
-                <Link href={tu('upgrade.url')}>{tu('upgrade.action')}</Link>
+                <Link prefetch={false} href={tu('upgrade.url')}>
+                  {tu('upgrade.action')}
+                </Link>
               </Button>
             </div>
           </SidebarMenuItem>
@@ -229,6 +231,7 @@ export function SidebarUser({ user }: { user: SidebarUserType }) {
                   <Fragment key={item?.title || item?.url}>
                     <DropdownMenuItem className="cursor-pointer">
                       <Link
+                        prefetch={false}
                         href={item?.url || ''}
                         target={item?.target}
                         className="flex w-full items-center gap-2"

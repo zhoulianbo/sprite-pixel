@@ -95,6 +95,7 @@ function NavItemWithChildren({
                 return (
                   <li key={subItem.title}>
                     <Link
+                      prefetch={false}
                       href={subItem.url as string}
                       target={subItem.target as string}
                       className={cn(
@@ -144,11 +145,12 @@ function NavItemWithChildren({
                   className={navItemActiveClass(
                     Boolean(
                       subItem.is_active ||
-                        (mounted && isNavActive(pathname, subItem.url))
+                      (mounted && isNavActive(pathname, subItem.url))
                     )
                   )}
                 >
                   <Link
+                    prefetch={false}
                     href={subItem.url as string}
                     target={subItem.target as string}
                   >
@@ -202,12 +204,18 @@ export function Nav({ nav, className }: { nav: NavType; className?: string }) {
                   className={navItemActiveClass(
                     Boolean(
                       item.is_active ||
-                        (mounted && isNavActive(pathname, item.url))
+                      (mounted && isNavActive(pathname, item.url))
                     )
                   )}
                 >
-                  <Link href={item.url as string} target={item.target as string}>
-                    {item.icon ? <SmartIcon name={item.icon as string} /> : null}
+                  <Link
+                    prefetch={false}
+                    href={item.url as string}
+                    target={item.target as string}
+                  >
+                    {item.icon ? (
+                      <SmartIcon name={item.icon as string} />
+                    ) : null}
                     <span>{item.title || ''}</span>
                   </Link>
                 </SidebarMenuButton>

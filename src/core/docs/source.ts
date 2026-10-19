@@ -3,9 +3,9 @@ import { createElement } from 'react';
 import { docs, logs, pages, posts } from '@/.source';
 import type { I18nConfig } from 'fumadocs-core/i18n';
 import { loader } from 'fumadocs-core/source';
-import { icons } from 'lucide-react';
 
 import { locales } from '@/config/locale';
+import { configuredIcons } from '@/shared/blocks/common/icon-registry';
 
 export const i18n: I18nConfig = {
   defaultLanguage: 'en',
@@ -17,7 +17,9 @@ const iconHelper = (icon: string | undefined) => {
     // You may set a default icon
     return;
   }
-  if (icon in icons) return createElement(icons[icon as keyof typeof icons]);
+  if (Object.prototype.hasOwnProperty.call(configuredIcons, icon)) {
+    return createElement(configuredIcons[icon]);
+  }
 };
 
 // Docs source

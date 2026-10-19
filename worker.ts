@@ -1,7 +1,23 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
+// @ts-ignore Next generates this manifest before the Worker is bundled.
+import prerenderManifest from './.next/prerender-manifest.json';
+// @ts-ignore Next generates this manifest before the Worker is bundled.
+import routesManifest from './.next/routes-manifest.json';
 // @ts-ignore OpenNext creates this module after the Next.js build finishes.
 import openNextWorker from './.open-next/worker.js';
+import { defaultLocale, locales } from './src/config/locale';
+import {
+  createRouteMatcher,
+  unmatchedRouteResponse,
+} from './src/shared/lib/worker-request-guard';
+
+const matchesRoute = createRouteMatcher(
+  routesManifest,
+  prerenderManifest,
+  locales,
+  defaultLocale
+);
 
 // @ts-ignore OpenNext creates these Durable Object exports after the build.
 export { DOQueueHandler, DOShardedTagCache } from './.open-next/worker.js';
@@ -132,7 +148,14 @@ export class SpriteGenerationWorkflow extends WorkflowEntrypoint<WorkflowEnv> {
 }
 
 export default {
-  fetch(request: Request, env: unknown, ctx: ExecutionContext) {
+  fetch(
+    request: Request,
+    env: { ASSETS: { fetch(request: Request): Promise<Response> } },
+    ctx: ExecutionContext
+  ) {
+    if (!matchesRoute(new URL(request.url).pathname)) {
+      return unmatchedRouteResponse(request, env);
+    }
     return openNextWorker.fetch(request, env, ctx);
   },
 };

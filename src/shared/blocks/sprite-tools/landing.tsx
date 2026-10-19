@@ -300,6 +300,7 @@ export async function SpriteToolLanding({
               <ArrowUpRight size={16} />
             </a>
             <Link
+              prefetch={false}
               href={toolPath(relatedTool)}
               className="text-primary inline-flex min-h-11 items-center gap-2 font-mono text-[11px] font-bold tracking-[0.08em] uppercase hover:underline"
             >

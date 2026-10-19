@@ -79,7 +79,7 @@ export function Gallery({
   };
 
   return (
-    <main className="bg-background text-foreground min-h-screen">
+    <main className="bg-background text-foreground">
       <section className="border-border bg-vault-navy relative border-b pt-28 pb-16 sm:pt-32 sm:pb-24">
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -183,9 +183,7 @@ export function Gallery({
             </button>
           </form>
 
-          <p className="text-muted-foreground mb-4 text-sm">
-            {labels.results.replace('{count}', String(total))}
-          </p>
+          <p className="text-muted-foreground mb-4 text-sm">{labels.results}</p>
           {items.length ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((item) => (

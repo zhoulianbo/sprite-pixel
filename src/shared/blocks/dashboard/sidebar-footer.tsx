@@ -18,7 +18,11 @@ export function SidebarFooter({ footer }: { footer: SidebarFooterType }) {
         <div className="mx-auto flex w-full items-center justify-start gap-x-4 border-t px-4 py-3">
           {footer.nav?.items?.map((item: NavItem, idx: number) => (
             <div className="hover:text-primary cursor-pointer" key={idx}>
-              <Link href={item.url || ''} target={item.target || '_self'}>
+              <Link
+                prefetch={false}
+                href={item.url || ''}
+                target={item.target || '_self'}
+              >
                 {item.icon && (
                   <SmartIcon
                     name={item.icon as string}

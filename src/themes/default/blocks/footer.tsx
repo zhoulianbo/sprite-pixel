@@ -81,6 +81,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
                 <div className="flex min-w-0 flex-wrap gap-4 sm:flex-col">
                   {item.children?.map((subItem, iidx) => (
                     <Link
+                      prefetch={false}
                       key={iidx}
                       href={subItem.url || ''}
                       target={subItem.target || ''}
@@ -144,6 +145,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
             <div className="flex min-w-0 flex-wrap items-center gap-4">
               {footer.agreement?.items.map((item: NavItem, index: number) => (
                 <Link
+                  prefetch={false}
                   key={index}
                   href={item.url || ''}
                   target={item.target || ''}
@@ -159,6 +161,7 @@ export async function Footer({ footer }: { footer: FooterType }) {
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               {footer.social?.items.map((item: NavItem, index) => (
                 <Link
+                  prefetch={false}
                   key={index}
                   href={item.url || ''}
                   target={item.target || ''}

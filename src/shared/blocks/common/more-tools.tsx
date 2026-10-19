@@ -54,6 +54,7 @@ export async function MoreTools({
             const Icon = item.Icon;
             return (
               <Link
+                prefetch={false}
                 key={item.id}
                 href={item.href}
                 className="bg-card hover:border-primary/50 focus-visible:ring-ring flex items-start gap-4 rounded-xl border p-5 transition-colors focus-visible:ring-2 focus-visible:outline-none"

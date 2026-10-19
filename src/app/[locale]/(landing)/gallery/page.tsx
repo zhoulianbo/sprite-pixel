@@ -97,7 +97,7 @@ export default async function GalleryPage({
         sortLikes: t('sort.likes'),
         sortDownloads: t('sort.downloads'),
         apply: t('filters.apply'),
-        results: t('results'),
+        results: t('results', { count: result.total }),
         previous: t('pagination.previous'),
         next: t('pagination.next'),
         animation: t('item.animation'),
