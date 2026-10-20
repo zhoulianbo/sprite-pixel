@@ -1,6 +1,8 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 // @ts-ignore Next generates this manifest before the Worker is bundled.
+import appPathRoutesManifest from './.next/app-path-routes-manifest.json';
+// @ts-ignore Next generates this manifest before the Worker is bundled.
 import prerenderManifest from './.next/prerender-manifest.json';
 // @ts-ignore Next generates this manifest before the Worker is bundled.
 import routesManifest from './.next/routes-manifest.json';
@@ -14,6 +16,7 @@ import {
 
 const matchesRoute = createRouteMatcher(
   routesManifest,
+  appPathRoutesManifest,
   prerenderManifest,
   locales,
   defaultLocale

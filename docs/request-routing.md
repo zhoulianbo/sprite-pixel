@@ -1,9 +1,9 @@
 # 未知路径与 404
 
-Cloudflare Static Assets 优先返回实际存在的静态资源。其余请求进入 `worker.ts`，在调用 OpenNext 前，使用同一次 Next.js 构建生成的 `routes-manifest.json` 与 `prerender-manifest.json` 匹配路径。
+Cloudflare Static Assets 优先返回实际存在的静态资源。其余请求进入 `worker.ts`，在调用 OpenNext 前，使用同一次 Next.js 构建生成的 `routes-manifest.json`、`app-path-routes-manifest.json` 与 `prerender-manifest.json` 匹配路径。
 
 - 不维护扫描文件名黑名单，也不手动列举页面或画廊 ID。
-- 静态路由、动态参数、重写和自定义重定向来自 Next 构建清单。
+- Pages Router 与 App Router 的静态路由、动态参数、API Route Handler、重写和自定义重定向来自 Next 构建清单。
 - 多语言路径支持显式语言前缀与默认语言无前缀形式；查询参数不参与路径匹配。
 - `dynamicParams = false` 的路由只允许已预渲染参数，避免内容页 catch-all 将所有扫描地址放行。
 - 没有匹配路由时，GET/HEAD 先交给 ASSETS 检查实际资源与静态重定向；资源也不存在就返回轻量 404，不进入 OpenNext、多语言布局、会话读取或业务数据库。

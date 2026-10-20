@@ -12,10 +12,19 @@ import {
 const origin = 'https://spritepixel.com';
 const locales = ['en', 'zh', 'zh-Hant', 'ja', 'ko'];
 const routes = JSON.parse(readFileSync('.next/routes-manifest.json', 'utf8'));
+const appPathRoutes = JSON.parse(
+  readFileSync('.next/app-path-routes-manifest.json', 'utf8')
+);
 const prerender = JSON.parse(
   readFileSync('.next/prerender-manifest.json', 'utf8')
 );
-const matches = createRouteMatcher(routes, prerender, locales, 'en');
+const matches = createRouteMatcher(
+  routes,
+  appPathRoutes,
+  prerender,
+  locales,
+  'en'
+);
 
 test('arbitrary unknown paths are rejected, including locales, extensions and APIs', () => {
   for (const path of [
@@ -58,6 +67,7 @@ test('localized pages, persisted content params and dynamic IDs match without qu
   }
   for (const path of [
     '/api/gallery/new-id/preview',
+    '/api/config/get-configs',
     '/api/gallery/a%2Fb/preview',
     '/api/gallery/任意作品/download',
     '/api/gallery/another-id/like',
@@ -89,10 +99,24 @@ test('every actual build route and static parameter remains reachable', () => {
   for (const path of Object.keys(prerender.routes)) {
     if (path !== '/_not-found') assert.equal(matches(path), true, path);
   }
+  for (const page of new Set<string>(Object.values(appPathRoutes))) {
+    if (
+      page === '/_not-found' ||
+      prerender.dynamicRoutes[page]?.fallback === false
+    )
+      continue;
+    const path = page
+      .replace('[locale]', 'zh')
+      .replace(/\[\[\.\.\.[^\]]+\]\]/g, 'nested/example')
+      .replace(/\[\.\.\.[^\]]+\]/g, 'nested/example')
+      .replace(/\[[^\]]+\]/g, 'example');
+    assert.equal(matches(path), true, page);
+  }
 });
 
 test('future routes, gallery details, static params and rewrites are picked up from build manifests', () => {
   const updated = structuredClone(routes);
+  const updatedAppPathRoutes = structuredClone(appPathRoutes);
   updated.staticRoutes.push({ page: '/new-tool', regex: '^/new-tool/?$' });
   updated.dynamicRoutes.push({
     page: '/[locale]/gallery/[slug]',
@@ -100,6 +124,7 @@ test('future routes, gallery details, static params and rewrites are picked up f
   });
   updated.redirects.push({ regex: '^/old-tool/?$' });
   updated.rewrites.beforeFiles.push({ regex: '^/feed\\.xml$' });
+  updatedAppPathRoutes['/api/new-tool/route'] = '/api/new-tool';
   const updatedPrerender = structuredClone(prerender);
   updatedPrerender.routes['/en/new-content'] = {
     srcRoute: '/[locale]/[...slug]',
@@ -107,7 +132,13 @@ test('future routes, gallery details, static params and rewrites are picked up f
   updatedPrerender.routes['/en/%E6%96%B0%E5%86%85%E5%AE%B9'] = {
     srcRoute: '/[locale]/[...slug]',
   };
-  const matchNew = createRouteMatcher(updated, updatedPrerender, locales, 'en');
+  const matchNew = createRouteMatcher(
+    updated,
+    updatedAppPathRoutes,
+    updatedPrerender,
+    locales,
+    'en'
+  );
   for (const path of [
     '/new-tool',
     '/gallery/any-new-id',
@@ -117,6 +148,7 @@ test('future routes, gallery details, static params and rewrites are picked up f
     '/%E6%96%B0%E5%86%85%E5%AE%B9',
     '/old-tool',
     '/feed.xml',
+    '/api/new-tool',
   ])
     assert.equal(matchNew(path), true, path);
   assert.equal(matchNew('/still-unknown'), false);
@@ -188,6 +220,7 @@ test('Worker exits before OpenNext for scans and forwards known requests unchang
       if (id === 'cloudflare:workers') return { WorkflowEntrypoint: class {} };
       if (id === './.open-next/worker.js') return openNext;
       if (id === './.next/routes-manifest.json') return routes;
+      if (id === './.next/app-path-routes-manifest.json') return appPathRoutes;
       if (id === './.next/prerender-manifest.json') return prerender;
       if (id === './src/config/locale') return { locales, defaultLocale: 'en' };
       if (id === './src/shared/lib/worker-request-guard')
@@ -221,4 +254,24 @@ test('Worker exits before OpenNext for scans and forwards known requests unchang
     assert.equal(calls.at(-1)?.[2], ctx);
   }
   assert.equal(calls.length, 3);
+
+  const apiPaths = [
+    ...new Set<string>(
+      Object.values(appPathRoutes).filter((page: string) =>
+        page.startsWith('/api/')
+      )
+    ),
+  ].map((page) =>
+    page
+      .replace(/\[\[\.\.\.[^\]]+\]\]/g, 'nested/example')
+      .replace(/\[\.\.\.[^\]]+\]/g, 'nested/example')
+      .replace(/\[[^\]]+\]/g, 'example')
+  );
+  for (const path of apiPaths) {
+    const request = new Request(origin + path, { method: 'POST' });
+    const response = await exports.default.fetch(request, env, ctx);
+    assert.equal(await response.text(), 'native response', path);
+    assert.equal(calls.at(-1)?.[0], request, path);
+  }
+  assert.equal(calls.length, 3 + apiPaths.length);
 });

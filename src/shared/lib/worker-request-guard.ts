@@ -6,16 +6,37 @@ type RoutingManifest = {
   redirects: { regex: string; internal?: boolean }[];
   rewrites: { regex: string }[] | Record<string, { regex: string }[]>;
 };
+type AppPathRoutesManifest = Record<string, string>;
 type PrerenderManifest = {
   routes: Record<string, { srcRoute?: string | null }>;
   dynamicRoutes: Record<string, { fallback: unknown }>;
 };
+
+function compileAppRoute(route: string): RegExp {
+  const segments = route.split('/').filter(Boolean);
+  let pattern = '^';
+
+  for (const segment of segments) {
+    if (/^\[\[\.\.\.[^\]]+\]\]$/.test(segment)) {
+      pattern += '(?:/(.+?))?';
+    } else if (/^\[\.\.\.[^\]]+\]$/.test(segment)) {
+      pattern += '/(.+?)';
+    } else if (/^\[[^\]]+\]$/.test(segment)) {
+      pattern += '/([^/]+?)';
+    } else {
+      pattern += `/${segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`;
+    }
+  }
+
+  return new RegExp(`${pattern || '^/'}\\/?$`);
+}
 
 /** Compile the actual Next build's routes once per isolate, not per request.
  * This is routing only: authentication and record existence remain in Next.
  */
 export function createRouteMatcher(
   routes: RoutingManifest,
+  appPathRoutes: AppPathRoutesManifest,
   prerender: PrerenderManifest,
   locales: readonly string[],
   defaultLocale: string
@@ -39,6 +60,11 @@ export function createRouteMatcher(
     if (closedRoutes.has(route.page) || route.page === '/_not-found') continue;
     const target = route.page.startsWith('/[locale]') ? localized : direct;
     target.push(new RegExp(route.regex));
+  }
+  for (const page of new Set(Object.values(appPathRoutes))) {
+    if (closedRoutes.has(page) || page === '/_not-found') continue;
+    const target = page.startsWith('/[locale]') ? localized : direct;
+    target.push(compileAppRoute(page));
   }
   const rewrites = Array.isArray(routes.rewrites)
     ? routes.rewrites
