@@ -27,6 +27,8 @@
     "animation": "Animation",
     "like": "Like",
     "download": "Download",
-    "noPreview": "No preview"
+    "noPreview": "No preview",
+    "copyPrompt": "Copy prompt",
+    "copiedPrompt": "Prompt copied"
   }
 }

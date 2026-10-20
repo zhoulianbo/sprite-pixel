@@ -100,11 +100,11 @@ export default async function GalleryPage({
         results: t('results', { count: result.total }),
         previous: t('pagination.previous'),
         next: t('pagination.next'),
-        animation: t('item.animation'),
-        character: t('item.character'),
         like: t('item.like'),
         download: t('item.download'),
         noPreview: t('item.noPreview'),
+        copyPrompt: t('item.copyPrompt'),
+        copiedPrompt: t('item.copiedPrompt'),
       }}
     />
   );

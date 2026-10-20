@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Download, Heart, ImageIcon } from 'lucide-react';
+import { Copy, Download, Heart, ImageIcon } from 'lucide-react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { toast } from 'sonner';
 
 import { AnimationThumbnail } from '@/shared/blocks/assets/animation-thumbnail';
+import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { useAppContext } from '@/shared/contexts/app';
 import { cn } from '@/shared/lib/utils';
@@ -32,11 +35,11 @@ export function GalleryCard({
   item: PublicGalleryItem;
   locale: string;
   labels: {
-    animation: string;
-    character: string;
     like: string;
     download: string;
     noPreview: string;
+    copyPrompt: string;
+    copiedPrompt: string;
   };
 }) {
   const { user, setIsShowSignModal } = useAppContext();
@@ -88,7 +91,28 @@ export function GalleryCard({
 
   return (
     <article className="border-border bg-card overflow-hidden rounded-xl border">
-      <div className="bg-muted/35 aspect-[4/3] overflow-hidden">
+      <div className="bg-muted/35 relative aspect-[4/3] overflow-hidden">
+        {item.categoryLabel ||
+        (item.type === 'animation' && item.width && item.height) ? (
+          <div className="pointer-events-none absolute top-3 left-3 z-20 flex flex-wrap gap-1.5">
+            {item.categoryLabel ? (
+              <Badge
+                className="bg-background/85 text-foreground border-white/15 shadow-sm backdrop-blur-sm"
+                variant="outline"
+              >
+                {item.categoryLabel}
+              </Badge>
+            ) : null}
+            {item.type === 'animation' && item.width && item.height ? (
+              <Badge
+                className="bg-background/85 text-foreground border-white/15 shadow-sm backdrop-blur-sm"
+                variant="outline"
+              >
+                {item.width}×{item.height}
+              </Badge>
+            ) : null}
+          </div>
+        ) : null}
         {item.type === 'animation' ? (
           <AnimationThumbnail
             autoPlay
@@ -112,19 +136,32 @@ export function GalleryCard({
         )}
       </div>
       <div className="space-y-3 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="font-heading truncate text-lg font-semibold">
-              {item.name}
-            </h2>
-            <p className="text-muted-foreground mt-1 text-xs">
-              {item.type === 'animation' ? labels.animation : labels.character}
-              {item.categoryLabel ? ` · ${item.categoryLabel}` : ''}
-              {item.width && item.height
-                ? ` · ${item.width}×${item.height}`
-                : ''}
+        <h2 className="font-heading truncate text-lg font-semibold">
+          {item.name}
+        </h2>
+        {item.prompt ? (
+          <blockquote className="border-border bg-background/45 border-l-primary/70 relative rounded-lg border border-l-2 px-3 py-3 pr-11">
+            <CopyToClipboard
+              text={item.prompt}
+              onCopy={() => toast.success(labels.copiedPrompt)}
+            >
+              <Button
+                aria-label={labels.copyPrompt}
+                className="text-muted-foreground hover:text-foreground absolute top-1.5 right-1.5"
+                size="icon-sm"
+                title={labels.copyPrompt}
+                type="button"
+                variant="ghost"
+              >
+                <Copy className="size-3.5" />
+              </Button>
+            </CopyToClipboard>
+            <p className="text-muted-foreground line-clamp-3 text-sm leading-5">
+              {item.prompt}
             </p>
-          </div>
+          </blockquote>
+        ) : null}
+        <div className="flex items-center justify-between gap-3 border-t pt-3">
           <time
             className="text-muted-foreground shrink-0 text-[11px]"
             dateTime={item.sourceCreatedAt}
@@ -135,38 +172,33 @@ export function GalleryCard({
               day: 'numeric',
             }).format(new Date(item.sourceCreatedAt))}
           </time>
-        </div>
-        {item.prompt ? (
-          <p className="text-muted-foreground line-clamp-2 min-h-10 text-sm leading-5">
-            {item.prompt}
-          </p>
-        ) : null}
-        <div className="flex items-center justify-end gap-2 border-t pt-3">
-          <Button
-            aria-pressed={liked}
-            disabled={busyLike}
-            onClick={toggleLike}
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            <Heart
-              className={cn('size-4', liked && 'fill-current text-rose-400')}
-            />
-            <span className="sr-only">{labels.like}</span>
-            {likeCount}
-          </Button>
-          <Button
-            disabled={!item.previewUrl}
-            onClick={download}
-            size="sm"
-            type="button"
-            variant="ghost"
-          >
-            <Download className="size-4" />
-            <span className="sr-only">{labels.download}</span>
-            {downloadCount}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              aria-pressed={liked}
+              disabled={busyLike}
+              onClick={toggleLike}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              <Heart
+                className={cn('size-4', liked && 'fill-current text-rose-400')}
+              />
+              <span className="sr-only">{labels.like}</span>
+              {likeCount}
+            </Button>
+            <Button
+              disabled={!item.previewUrl}
+              onClick={download}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              <Download className="size-4" />
+              <span className="sr-only">{labels.download}</span>
+              {downloadCount}
+            </Button>
+          </div>
         </div>
       </div>
     </article>

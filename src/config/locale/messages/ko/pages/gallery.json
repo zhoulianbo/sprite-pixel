@@ -27,6 +27,8 @@
     "animation": "애니메이션",
     "like": "좋아요",
     "download": "다운로드",
-    "noPreview": "미리보기 없음"
+    "noPreview": "미리보기 없음",
+    "copyPrompt": "프롬프트 복사",
+    "copiedPrompt": "프롬프트를 복사했습니다"
   }
 }

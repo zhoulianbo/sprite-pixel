@@ -65,11 +65,11 @@ export function Gallery({
     results: string;
     previous: string;
     next: string;
-    animation: string;
-    character: string;
     like: string;
     download: string;
     noPreview: string;
+    copyPrompt: string;
+    copiedPrompt: string;
   };
 }) {
   const totalPages = Math.max(1, Math.ceil(total / limit));

@@ -27,6 +27,8 @@
     "animation": "アニメーション",
     "like": "いいね",
     "download": "ダウンロード",
-    "noPreview": "プレビューなし"
+    "noPreview": "プレビューなし",
+    "copyPrompt": "プロンプトをコピー",
+    "copiedPrompt": "プロンプトをコピーしました"
   }
 }

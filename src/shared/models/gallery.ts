@@ -232,7 +232,7 @@ export async function listGalleryItems({
   size = '',
   sort = 'latest',
   page = 1,
-  limit = 24,
+  limit = 12,
   userId,
 }: {
   type?: GalleryAssetType;

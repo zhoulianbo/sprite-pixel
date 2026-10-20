@@ -27,6 +27,8 @@
     "animation": "动画",
     "like": "点赞",
     "download": "下载",
-    "noPreview": "暂无预览"
+    "noPreview": "暂无预览",
+    "copyPrompt": "复制提示词",
+    "copiedPrompt": "提示词已复制"
   }
 }

@@ -27,6 +27,8 @@
     "animation": "動畫",
     "like": "按讚",
     "download": "下載",
-    "noPreview": "暫無預覽"
+    "noPreview": "暫無預覽",
+    "copyPrompt": "複製提示詞",
+    "copiedPrompt": "提示詞已複製"
   }
 }
