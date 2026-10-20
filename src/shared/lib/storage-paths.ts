@@ -25,7 +25,11 @@ export function uploadStorageKeyForRole(
   extension: string,
   now = new Date()
 ) {
-  if (role === 'reference' || role === 'base_reference') {
+  if (
+    role === 'reference' ||
+    role === 'base_reference' ||
+    role === 'motion_reference'
+  ) {
     return projectAssetStorageKey(projectId, 'character', fileId, extension);
   }
   return userUploadStorageKey(fileId, extension, now);

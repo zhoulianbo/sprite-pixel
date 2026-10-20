@@ -35,14 +35,8 @@ test('character reference uploads go under projects/{id}/character', () => {
     'projects/proj-1/character/file-2.webp'
   );
   assert.equal(
-    uploadStorageKeyForRole(
-      'proj-1',
-      'motion_reference',
-      'file-3',
-      'png',
-      new Date('2026-09-16T09:00:00.000Z')
-    ),
-    'uploads/2026-09/file-3.png'
+    uploadStorageKeyForRole('proj-1', 'motion_reference', 'file-3', 'png'),
+    'projects/proj-1/character/file-3.png'
   );
   assert.equal(
     isCompletableUploadKey('projects/proj-1/character/file-1.png', 'proj-1'),

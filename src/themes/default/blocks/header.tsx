@@ -109,7 +109,7 @@ export function Header({ header }: { header: HeaderType }) {
                     >
                       {item.title}
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="border-border w-[calc(100vw-2rem)] rounded-lg p-2 group-data-[viewport=false]/navigation-menu:translate-x-0 md:w-[620px]">
+                    <NavigationMenuContent className="border-border w-[calc(100vw-2rem)] rounded-lg p-2 group-data-[viewport=false]/navigation-menu:translate-x-0 md:w-[700px]">
                       <ul className="grid max-h-[min(640px,75vh)] grid-cols-2 gap-1 overflow-y-auto">
                         {item.children.map((child) => (
                           <li key={child.title}>
@@ -134,7 +134,7 @@ export function Header({ header }: { header: HeaderType }) {
                                 )}
                                 <span className="min-w-0">
                                   <span className="flex min-w-0 items-center gap-1.5">
-                                    <span className="font-medium whitespace-normal text-current [[lang=ko]_&]:break-keep">
+                                    <span className="shrink-0 font-medium whitespace-nowrap text-current">
                                       {child.title}
                                     </span>
                                     {child.badge ? (
@@ -144,7 +144,7 @@ export function Header({ header }: { header: HeaderType }) {
                                     ) : null}
                                   </span>
                                   {child.description ? (
-                                    <span className="text-muted-foreground mt-1 line-clamp-2 block overflow-hidden text-xs leading-relaxed">
+                                    <span className="text-muted-foreground mt-1 line-clamp-2 text-xs leading-relaxed">
                                       {child.description}
                                     </span>
                                   ) : null}

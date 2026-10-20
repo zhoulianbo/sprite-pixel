@@ -68,7 +68,16 @@ export default async function AdminCharactersPage({
           />
         ),
       },
-      { name: 'name', title: t('fields.name') },
+      {
+        name: 'name',
+        title: t('fields.name'),
+        className: 'w-48 max-w-48 whitespace-normal align-middle',
+        callback: (item: (typeof assets)[number]) => (
+          <div className="w-48 max-w-48 text-sm break-words whitespace-pre-wrap">
+            {item.name}
+          </div>
+        ),
+      },
       { name: 'user', title: t('fields.user'), type: 'user' },
       { name: 'projectName', title: t('fields.project') },
       {
@@ -82,11 +91,11 @@ export default async function AdminCharactersPage({
       {
         name: 'description',
         title: t('fields.description'),
-        className: 'whitespace-normal align-top',
+        className: 'w-80 max-w-80 whitespace-normal align-middle',
         placeholder: '-',
         callback: (item: (typeof assets)[number]) =>
           item.description?.trim() ? (
-            <div className="max-h-24 max-w-xs overflow-y-auto text-sm break-words whitespace-pre-wrap">
+            <div className="w-80 max-w-80 text-sm break-words whitespace-pre-wrap">
               {item.description}
             </div>
           ) : null,

@@ -75,7 +75,16 @@ export default async function AdminAnimationsPage({
           />
         ),
       },
-      { name: 'characterName', title: t('fields.character') },
+      {
+        name: 'characterName',
+        title: t('fields.character'),
+        className: 'w-48 max-w-48 whitespace-normal align-middle',
+        callback: (item: (typeof animations)[number]) => (
+          <div className="w-48 max-w-48 text-sm break-words whitespace-pre-wrap">
+            {item.characterName}
+          </div>
+        ),
+      },
       {
         name: 'action',
         title: t('fields.action'),

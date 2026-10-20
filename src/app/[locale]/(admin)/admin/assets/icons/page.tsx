@@ -67,10 +67,30 @@ export default async function AdminIconsPage({
           />
         ),
       },
-      { name: 'name', title: t('fields.name') },
+      {
+        name: 'name',
+        title: t('fields.name'),
+        className: 'w-48 max-w-48 whitespace-normal align-middle',
+        callback: (item: (typeof assets)[number]) => (
+          <div className="w-48 max-w-48 text-sm break-words whitespace-pre-wrap">
+            {item.name}
+          </div>
+        ),
+      },
       { name: 'user', title: t('fields.user'), type: 'user' },
       { name: 'projectName', title: t('fields.project') },
-      { name: 'description', title: t('fields.description'), placeholder: '-' },
+      {
+        name: 'description',
+        title: t('fields.description'),
+        className: 'w-80 max-w-80 whitespace-normal align-middle',
+        placeholder: '-',
+        callback: (item: (typeof assets)[number]) =>
+          item.description?.trim() ? (
+            <div className="w-80 max-w-80 text-sm break-words whitespace-pre-wrap">
+              {item.description}
+            </div>
+          ) : null,
+      },
       { name: 'createdAt', title: t('fields.createdAt'), type: 'time' },
     ],
     data: assets.map((asset: (typeof assets)[number]) => ({

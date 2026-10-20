@@ -42,7 +42,6 @@ import {
 import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
-import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
 import type { ProjectSummary } from '@/shared/blocks/projects/project-create-dialog';
 import {
@@ -69,6 +68,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { useAppContext } from '@/shared/contexts/app';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import {
   readApiPayload,
   useProductApiFeedback,
@@ -1277,6 +1277,37 @@ export function Home({ section: _section }: { section: Section }) {
       role,
     });
 
+  const archiveUploadedCharacter = async (
+    file: File,
+    project: ProjectSummary,
+    name: string
+  ) => {
+    const characterName =
+      name.trim() ||
+      file.name
+        .replace(/\.[^.]+$/, '')
+        .trim()
+        .slice(0, 80) ||
+      file.name.trim().slice(0, 80);
+    const fileId = await uploadReference(file, project.id, 'reference');
+    const payload = await readApiPayload(
+      await fetch(`/api/projects/${project.id}/characters`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileId, name: characterName }),
+      })
+    );
+    return {
+      origin: 'vault' as const,
+      itemId: payload.data.item.id,
+      fileId: payload.data.file.id,
+      previewUrl: payload.data.file.url,
+      projectId: project.id,
+      projectName: project.name,
+      projectSettingsJson: project.settingsJson,
+    };
+  };
+
   const requireSignedIn = () => {
     if (isCheckSign) return false;
     if (!user) {
@@ -1397,33 +1428,48 @@ export function Home({ section: _section }: { section: Section }) {
     try {
       let referenceFileId: string | undefined;
       let itemId: string | undefined;
-      if (heroMode === 'motion' && motionCharacter?.origin === 'vault') {
-        referenceFileId = motionCharacter.fileId;
-        itemId = motionCharacter.itemId;
+      let resolvedMotionCharacter = motionCharacter;
+      if (heroMode === 'motion' && motionCharacter?.origin === 'upload') {
+        if (!selectedProject) {
+          notifyApiError('PROJECT_NOT_FOUND');
+          return;
+        }
+        const archived = await archiveUploadedCharacter(
+          motionCharacter.file,
+          selectedProject,
+          uploadedCharacterName
+        );
+        resolvedMotionCharacter = archived;
+        setMotionCharacter(archived);
+        setUploadConfirmOpen(false);
+        setPendingCharacterUpload(null);
+      }
+      if (
+        heroMode === 'motion' &&
+        resolvedMotionCharacter?.origin === 'vault'
+      ) {
+        referenceFileId = resolvedMotionCharacter.fileId;
+        itemId = resolvedMotionCharacter.itemId;
       } else {
         if (!selectedProject?.id) {
           notifyApiError('PROJECT_NOT_FOUND');
           return;
         }
         const referenceFile =
-          heroMode === 'character'
-            ? characterReference
-            : motionCharacter?.origin === 'upload'
-              ? motionCharacter.file
-              : null;
+          heroMode === 'character' ? characterReference : null;
         referenceFileId = referenceFile
           ? await uploadReference(
               referenceFile,
               selectedProject.id,
-              heroMode === 'motion' ? 'motion_reference' : 'reference'
+              'reference'
             )
           : undefined;
       }
       const targetProjectId =
         heroMode === 'motion' &&
-        motionCharacter?.origin === 'vault' &&
-        motionCharacter.projectId
-          ? motionCharacter.projectId
+        resolvedMotionCharacter?.origin === 'vault' &&
+        resolvedMotionCharacter.projectId
+          ? resolvedMotionCharacter.projectId
           : selectedProject?.id;
       if (!targetProjectId) {
         notifyApiError('PROJECT_NOT_FOUND');
@@ -1637,30 +1683,12 @@ export function Home({ section: _section }: { section: Section }) {
     }
     setSavingUploadedCharacter(true);
     try {
-      const fileId = await uploadReference(
+      const archived = await archiveUploadedCharacter(
         pendingCharacterUpload,
-        selectedProject.id,
-        'reference'
+        selectedProject,
+        uploadedCharacterName.trim()
       );
-      const payload = await readApiPayload(
-        await fetch(`/api/projects/${selectedProject.id}/characters`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fileId,
-            name: uploadedCharacterName.trim(),
-          }),
-        })
-      );
-      setMotionCharacter({
-        origin: 'vault',
-        itemId: payload.data.item.id,
-        fileId: payload.data.file.id,
-        previewUrl: payload.data.file.url,
-        projectId: selectedProject.id,
-        projectName: selectedProject.name,
-        projectSettingsJson: selectedProject.settingsJson,
-      });
+      setMotionCharacter(archived);
       setUploadConfirmOpen(false);
       setPendingCharacterUpload(null);
     } catch (error) {
