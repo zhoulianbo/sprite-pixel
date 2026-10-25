@@ -29,6 +29,7 @@ export default async function FooterLinkEditPage({
 
   const t = await getTranslations('admin.footer-links');
   const successMessage = t('edit.success');
+  const cacheWarning = t('cache_warning');
   const footerLink = await findFooterLink(id);
   if (!footerLink) {
     return <Empty message={t('edit.not_found')} />;
@@ -64,11 +65,10 @@ export default async function FooterLinkEditPage({
         );
         if (!result) throw new Error('update footer link failed');
 
-        revalidatePath('/', 'layout');
         revalidatePath('/admin/footer-links');
         return {
           status: 'success',
-          message: successMessage,
+          message: result.cacheSynced ? successMessage : cacheWarning,
           redirect_url: '/admin/footer-links',
         };
       },

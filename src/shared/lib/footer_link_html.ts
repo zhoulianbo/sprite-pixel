@@ -58,9 +58,7 @@ export function renderFooterLinkHtml(
   requestLocale: string
 ) {
   const visibleRows = rows.filter(
-    (row) =>
-      row.status === 'published' &&
-      (row.locale === 'all' || row.locale === requestLocale)
+    (row) => row.status === 'published' && requestLocale === 'en'
   );
 
   const friendHtml: string[] = [];

@@ -1,4 +1,3 @@
-import { locales } from '@/config/locale';
 import { normalizeFooterLinkUrl } from '@/shared/lib/footer_link_html';
 import {
   FooterLinkGroup,
@@ -8,7 +7,6 @@ import {
 } from '@/shared/models/footer_link';
 import type { FormField } from '@/shared/types/blocks/form';
 
-const ALLOWED_LOCALES = new Set(['all', ...locales]);
 const ALLOWED_REL_TOKENS = new Set([
   'nofollow',
   'noopener',
@@ -57,35 +55,11 @@ export function getFooterLinkFormFields(t: Translator): FormField[] {
       validation: { max: 300 },
     },
     {
-      name: 'locale',
-      type: 'select',
-      title: t('fields.locale'),
-      options: ['all', ...locales].map((locale) => ({
-        title: t(`locales.${locale}`),
-        value: locale,
-      })),
-      validation: { required: true },
-    },
-    {
       name: 'rel',
       type: 'text',
       title: t('fields.rel'),
       tip: t('tips.rel'),
       validation: { max: 100 },
-    },
-    {
-      name: 'status',
-      type: 'select',
-      title: t('fields.status'),
-      options: [
-        {
-          title: t('statuses.published'),
-          value: FooterLinkStatus.PUBLISHED,
-        },
-        { title: t('statuses.draft'), value: FooterLinkStatus.DRAFT },
-        { title: t('statuses.archived'), value: FooterLinkStatus.ARCHIVED },
-      ],
-      validation: { required: true },
     },
     {
       name: 'sort',
@@ -105,11 +79,9 @@ export function parseFooterLinkFormData(
   const rawUrl = String(data.get('url') || '').trim();
   const rawImageUrl = String(data.get('imageUrl') || '').trim();
   const altText = String(data.get('altText') || '').trim();
-  const locale = String(data.get('locale') || '').trim();
   const rel = String(data.get('rel') || '')
     .toLowerCase()
     .trim();
-  const status = String(data.get('status') || '').trim();
   const sort = Number(data.get('sort'));
 
   if (!Object.values(FooterLinkGroup).includes(group as FooterLinkGroup)) {
@@ -132,12 +104,6 @@ export function parseFooterLinkFormData(
     throw new Error('badge image URL is required for badge links');
   }
 
-  if (!ALLOWED_LOCALES.has(locale)) {
-    throw new Error('invalid footer link locale');
-  }
-  if (!Object.values(FooterLinkStatus).includes(status as FooterLinkStatus)) {
-    throw new Error('invalid footer link status');
-  }
   if (!Number.isInteger(sort) || sort < 0 || sort > 9999) {
     throw new Error('sort order must be an integer between 0 and 9999');
   }
@@ -153,9 +119,9 @@ export function parseFooterLinkFormData(
     url,
     imageUrl: group === FooterLinkGroup.BADGE ? imageUrl : null,
     altText: altText || null,
-    locale,
+    locale: 'en',
     rel: [...new Set(relTokens)].join(' '),
-    status,
+    status: FooterLinkStatus.PUBLISHED,
     sort,
   };
 }

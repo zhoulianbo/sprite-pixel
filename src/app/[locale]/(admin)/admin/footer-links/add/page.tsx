@@ -29,6 +29,7 @@ export default async function FooterLinkAddPage({
 
   const t = await getTranslations('admin.footer-links');
   const successMessage = t('add.success');
+  const cacheWarning = t('cache_warning');
   const crumbs: Crumb[] = [
     { title: t('add.crumbs.admin'), url: '/admin' },
     { title: t('add.crumbs.links'), url: '/admin/footer-links' },
@@ -46,9 +47,7 @@ export default async function FooterLinkAddPage({
     },
     data: {
       group: 'badge',
-      locale: 'all',
       rel: '',
-      status: 'published',
       sort: 10,
     },
     submit: {
@@ -68,11 +67,10 @@ export default async function FooterLinkAddPage({
         });
         if (!result) throw new Error('add footer link failed');
 
-        revalidatePath('/', 'layout');
         revalidatePath('/admin/footer-links');
         return {
           status: 'success',
-          message: successMessage,
+          message: result.cacheSynced ? successMessage : cacheWarning,
           redirect_url: '/admin/footer-links',
         };
       },

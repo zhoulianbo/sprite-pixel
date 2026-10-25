@@ -8,8 +8,13 @@ import {
   getFooterLinksCount,
   type FooterLink,
 } from '@/shared/models/footer_link';
-import type { Button, Crumb } from '@/shared/types/blocks/common';
+import { getFooterLinkFormFields } from '@/shared/services/footer_link_form';
+import type { Crumb } from '@/shared/types/blocks/common';
+import type { Form } from '@/shared/types/blocks/form';
 import type { Table } from '@/shared/types/blocks/table';
+
+import { FooterLinkAddDialog } from './footer-link-add-dialog';
+import { FooterLinkRowActions } from './footer-link-row-actions';
 
 export default async function FooterLinksPage({
   params,
@@ -41,6 +46,7 @@ export default async function FooterLinksPage({
     { title: t('list.crumbs.admin'), url: '/admin' },
     { title: t('list.crumbs.links'), is_active: true },
   ];
+  const fields = getFooterLinkFormFields(t);
 
   const table: Table = {
     columns: [
@@ -65,31 +71,36 @@ export default async function FooterLinksPage({
         metadata: { width: 120, height: 32 },
         className: 'max-h-8 max-w-32 rounded-none object-contain',
       },
-      {
-        name: 'locale',
-        title: t('fields.locale'),
-        callback: (item: FooterLink) => t(`locales.${item.locale}`),
-      },
-      {
-        name: 'status',
-        title: t('fields.status'),
-        type: 'label',
-        callback: (item: FooterLink) => t(`statuses.${item.status}`),
-        metadata: { variant: 'outline' },
-      },
       { name: 'sort', title: t('fields.sort') },
       {
         name: 'action',
         title: '',
-        type: 'dropdown',
-        callback: (item: FooterLink) => [
-          {
-            id: 'edit',
-            title: t('list.buttons.edit'),
-            icon: 'RiEditLine',
-            url: `/admin/footer-links/${item.id}/edit`,
-          },
-        ],
+        callback: (item: FooterLink) => (
+          <FooterLinkRowActions
+            footerLinkId={item.id}
+            editForm={{
+              fields,
+              data: item,
+              submit: { button: { title: t('edit.buttons.submit') } },
+            }}
+            labels={{
+              menu: t('list.buttons.actions'),
+              edit: t('list.buttons.edit'),
+              editTitle: t('edit.title'),
+              editDescription: t('list.description'),
+              editFailed: t('edit.failed'),
+              deleteAction: t('list.buttons.delete'),
+              deleteTitle: t('delete.title'),
+              deleteDescription: t('delete.description', { title: item.title }),
+              cancel: t('delete.cancel'),
+              confirm: t('delete.confirm'),
+              confirming: t('delete.confirming'),
+              success: t('delete.success'),
+              failed: t('delete.failed'),
+              cacheWarning: t('cache_warning'),
+            }}
+          />
+        ),
       },
     ],
     data,
@@ -97,20 +108,32 @@ export default async function FooterLinksPage({
     pagination: { total, page, limit },
   };
 
-  const actions: Button[] = [
-    {
-      id: 'add',
-      title: t('list.buttons.add'),
-      icon: 'RiAddLine',
-      url: '/admin/footer-links/add',
+  const form: Form = {
+    fields,
+    linkHtmlImporter: {
+      title: t('add.importer.title'),
+      placeholder: t('add.importer.placeholder'),
+      tip: t('add.importer.tip'),
+      successMessage: t('add.importer.success'),
+      errorMessage: t('add.importer.error'),
     },
-  ];
+    data: { group: 'badge', rel: '', sort: 10 },
+    submit: { button: { title: t('add.buttons.submit') } },
+  };
 
   return (
     <>
       <Header crumbs={crumbs} />
       <Main>
-        <MainHeader title={t('list.title')} actions={actions} />
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <MainHeader title={t('list.title')} />
+          <FooterLinkAddDialog
+            form={form}
+            title={t('add.title')}
+            description={t('list.description')}
+            failedMessage={t('add.failed')}
+          />
+        </div>
         <TableCard description={t('list.description')} table={table} />
       </Main>
     </>

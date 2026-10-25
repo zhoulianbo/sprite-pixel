@@ -5,28 +5,16 @@
     "url": "Target URL",
     "image_url": "Badge image URL",
     "alt_text": "Badge alt text",
-    "locale": "Locale",
     "rel": "Link rel",
-    "status": "Status",
     "sort": "Sort order"
   },
   "groups": {
     "friend": "Text link",
     "badge": "Badge"
   },
-  "statuses": {
-    "published": "Published",
-    "draft": "Draft",
-    "archived": "Archived"
-  },
-  "locales": {
-    "all": "All locales",
-    "en": "English",
-    "zh": "Simplified Chinese"
-  },
   "list": {
     "title": "Footer links",
-    "description": "Text links and directory badges rendered in the server-side footer HTML.",
+    "description": "Links are published immediately in the English footer. Delete a link to remove it.",
     "empty": "No footer links",
     "copied": "Copied",
     "crumbs": {
@@ -35,7 +23,9 @@
     },
     "buttons": {
       "add": "Add footer link",
-      "edit": "Edit"
+      "edit": "Edit",
+      "actions": "Actions",
+      "delete": "Delete"
     }
   },
   "add": {
@@ -55,7 +45,8 @@
     },
     "buttons": {
       "submit": "Add footer link"
-    }
+    },
+    "failed": "Could not add the link. Check the URL, badge image, and sort order, then try again."
   },
   "edit": {
     "title": "Edit footer link",
@@ -68,11 +59,22 @@
     },
     "buttons": {
       "submit": "Save changes"
-    }
+    },
+    "failed": "Could not save the link. Check the URL, badge image, and sort order, then try again."
   },
   "tips": {
     "image_url": "Required for badge links. Use a public HTTPS image URL.",
     "rel": "Leave empty for a follow link. Allowed values: nofollow, sponsored, ugc, noreferrer.",
     "sort": "Lower values appear first."
-  }
+  },
+  "delete": {
+    "title": "Delete footer link",
+    "description": "Delete “{title}” from the footer?",
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "confirming": "Deleting…",
+    "success": "Footer link deleted",
+    "failed": "Could not delete the footer link. Please try again."
+  },
+  "cache_warning": "The change was saved, but the public page cache could not be fully refreshed. Check the cache service before submitting again."
 }
