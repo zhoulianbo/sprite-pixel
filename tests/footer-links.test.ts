@@ -124,6 +124,7 @@ function createHarness() {
       }),
     },
     '@/shared/lib/config-kv': {
+      CONFIG_KV_TTL_SECONDS: 86400,
       isConfigKvEnabled: () => true,
       getConfigKvNamespace: () => ({
         get: async (key: string) => {

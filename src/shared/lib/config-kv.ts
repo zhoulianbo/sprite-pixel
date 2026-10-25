@@ -5,13 +5,18 @@ import { isProduction } from '@/shared/lib/env';
 
 /** Single KV entry holding the full `config` table as JSON. */
 export const CONFIG_KV_KEY = 'app:configs';
+export const CONFIG_KV_TTL_SECONDS = 24 * 60 * 60;
 
 type KVNamespace = {
   get(
     key: string,
     options?: 'text' | 'json' | { type: 'text' | 'json' }
   ): Promise<string | unknown | null>;
-  put(key: string, value: string): Promise<void>;
+  put(
+    key: string,
+    value: string,
+    options?: { expirationTtl?: number }
+  ): Promise<void>;
   delete(key: string): Promise<void>;
 };
 
@@ -62,7 +67,9 @@ export async function writeDbConfigsToKv(configs: DbConfigs): Promise<void> {
   }
 
   try {
-    await kv.put(CONFIG_KV_KEY, JSON.stringify(configs));
+    await kv.put(CONFIG_KV_KEY, JSON.stringify(configs), {
+      expirationTtl: CONFIG_KV_TTL_SECONDS,
+    });
   } catch (error) {
     console.log('put configs to kv failed:', error);
   }

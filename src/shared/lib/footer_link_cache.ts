@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
 import {
+  CONFIG_KV_TTL_SECONDS,
   getConfigKvNamespace,
   isConfigKvEnabled,
 } from '@/shared/lib/config-kv';
@@ -46,7 +47,9 @@ export async function writePublishedFooterLinksToKv(rows: FooterLinkHtmlRow[]) {
   }
 
   try {
-    await kv.put(FOOTER_LINK_CACHE_KEY, JSON.stringify(rows));
+    await kv.put(FOOTER_LINK_CACHE_KEY, JSON.stringify(rows), {
+      expirationTtl: CONFIG_KV_TTL_SECONDS,
+    });
   } catch (error) {
     // A missing snapshot can be recovered from D1 on the next render.
     await kv.delete(FOOTER_LINK_CACHE_KEY).catch(() => undefined);
