@@ -1,4 +1,4 @@
-import { getLocale } from 'next-intl/server';
+import type { ReactNode } from 'react';
 
 import { Link } from '@/core/i18n/navigation';
 import {
@@ -8,28 +8,18 @@ import {
   ThemeToggler,
 } from '@/shared/blocks/common';
 import { SmartIcon } from '@/shared/blocks/common/smart-icon';
-import { renderFooterLinkHtml } from '@/shared/lib/footer_link_html';
-import { getPublishedFooterLinks } from '@/shared/models/footer_link';
 import { NavItem } from '@/shared/types/blocks/common';
 import { Footer as FooterType } from '@/shared/types/blocks/landing';
 
-import { FooterLinkMarquee } from './footer-link-marquee';
+import { FooterLinksVisibility } from './footer-links-visibility';
 
-async function getFooterLinkHtml() {
-  try {
-    const locale = await getLocale();
-    if (locale !== 'en') return null;
-
-    return renderFooterLinkHtml(await getPublishedFooterLinks(), locale);
-  } catch (error) {
-    console.warn('load footer links failed:', error);
-    return null;
-  }
-}
-
-export async function Footer({ footer }: { footer: FooterType }) {
-  const footerLinks = await getFooterLinkHtml();
-
+export async function Footer({
+  footer,
+  footerLinks,
+}: {
+  footer: FooterType;
+  footerLinks?: ReactNode;
+}) {
   return (
     <footer
       id={footer.id}
@@ -75,29 +65,8 @@ export async function Footer({ footer }: { footer: FooterType }) {
         </div>
 
         <div className="flex min-w-0 items-center gap-4 sm:gap-8">
-          <div id="footer-exchange-links" className="min-w-0 flex-1 space-y-4">
-            <div className="group flex min-w-0 gap-[var(--gap)] overflow-x-auto [--gap:1.25rem] focus-within:!overflow-x-auto data-[overflow=true]:overflow-x-hidden motion-reduce:!overflow-x-auto [&:has(>div:empty)]:hidden">
-              <div
-                id="footer-friend-links"
-                aria-label="Friend links"
-                className="text-muted-foreground [&>a:hover]:text-primary flex w-max shrink-0 items-center gap-[var(--gap)] text-sm whitespace-nowrap [&>a]:shrink-0 [&>a]:duration-150"
-                dangerouslySetInnerHTML={{
-                  __html: footerLinks?.friendHtml ?? '',
-                }}
-              />
-              <FooterLinkMarquee sourceId="footer-friend-links" />
-            </div>
-            <div className="group flex min-w-0 gap-[var(--gap)] overflow-x-auto [--gap:1rem] focus-within:!overflow-x-auto data-[overflow=true]:overflow-x-hidden motion-reduce:!overflow-x-auto [&:has(>div:empty)]:hidden">
-              <div
-                id="footer-badge-links"
-                aria-label="Directory badges"
-                className="flex w-max shrink-0 items-center gap-[var(--gap)] [&_img]:h-8 [&_img]:w-auto [&_img]:max-w-none [&>a]:shrink-0"
-                dangerouslySetInnerHTML={{
-                  __html: footerLinks?.badgeHtml ?? '',
-                }}
-              />
-              <FooterLinkMarquee sourceId="footer-badge-links" />
-            </div>
+          <div className="min-w-0 flex-1">
+            <FooterLinksVisibility>{footerLinks}</FooterLinksVisibility>
           </div>
           {footer.show_theme !== false ? <ThemeToggler type="toggle" /> : null}
         </div>

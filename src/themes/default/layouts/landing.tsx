@@ -10,10 +10,12 @@ export default async function LandingLayout({
   children,
   header,
   footer,
+  footerLinks,
 }: {
   children: ReactNode;
   header: HeaderType;
   footer: FooterType;
+  footerLinks: ReactNode;
 }) {
   const Header = await getThemeBlock('header');
   const Footer = await getThemeBlock('footer');
@@ -22,7 +24,7 @@ export default async function LandingLayout({
     <div className="h-screen w-screen">
       <Header header={header} />
       {children}
-      <Footer footer={footer} />
+      <Footer footer={footer} footerLinks={footerLinks} />
     </div>
   );
 }

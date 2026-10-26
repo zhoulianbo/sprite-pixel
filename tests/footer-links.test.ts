@@ -44,6 +44,21 @@ const row = {
   sort: 10,
 };
 
+test('footer links are limited to the English homepage', () => {
+  for (const pathname of ['/', '/en', '/en/']) {
+    assert.equal(html.isEnglishHomepage('en', pathname), true);
+  }
+
+  for (const pathname of ['/pricing', '/en/pricing', '/gallery', '/zh']) {
+    assert.equal(html.isEnglishHomepage('en', pathname), false);
+  }
+
+  for (const locale of ['zh', 'zh-Hant', 'ja', 'ko']) {
+    assert.equal(html.isEnglishHomepage(locale, '/'), false);
+    assert.equal(html.isEnglishHomepage(locale, `/${locale}`), false);
+  }
+});
+
 test('verification links are real, escaped English HTML; other locales and drafts stay hidden', () => {
   const rows = [
     row,

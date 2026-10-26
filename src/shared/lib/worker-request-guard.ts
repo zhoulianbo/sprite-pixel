@@ -1,8 +1,8 @@
 type Route = { page: string; regex: string };
 type RoutingManifest = {
   basePath: string;
-  staticRoutes: Route[];
-  dynamicRoutes: Route[];
+  staticRoutes?: Route[];
+  dynamicRoutes?: Route[];
   redirects: { regex: string; internal?: boolean }[];
   rewrites: { regex: string }[] | Record<string, { regex: string }[]>;
 };
@@ -55,7 +55,10 @@ export function createRouteMatcher(
       staticParams.add(decodeURIComponent(pathname));
     }
   }
-  for (const route of [...routes.staticRoutes, ...routes.dynamicRoutes]) {
+  for (const route of [
+    ...(routes.staticRoutes ?? []),
+    ...(routes.dynamicRoutes ?? []),
+  ]) {
     // A dynamicParams=false catch-all must not allow arbitrary URLs through.
     if (closedRoutes.has(route.page) || route.page === '/_not-found') continue;
     const target = route.page.startsWith('/[locale]') ? localized : direct;

@@ -83,6 +83,7 @@ test('auth initialization and session reads dedupe per render, never across user
       'drizzle-orm': {},
       '@/core/auth': auth,
       '@/core/db': {},
+      '@/config': { envConfigs: { auth_secret: 'test-secret' } },
       '@/config/db/schema': {},
       '@/config/website': { websiteConfig: { auth: { enabled: true } } },
       './credit': {},
@@ -115,6 +116,35 @@ test('auth initialization and session reads dedupe per render, never across user
   } finally {
     internals.A = previousDispatcher;
   }
+});
+
+test('local preview without an auth secret remains anonymously accessible', async () => {
+  let authCreations = 0;
+  const users = loadModule(
+    'src/shared/models/user.ts',
+    {
+      react: { cache: (fn: unknown) => fn },
+      'next/headers': {
+        headers: async () => new Headers({ host: 'localhost:8787' }),
+      },
+      'drizzle-orm': {},
+      '@/core/auth': {
+        getAuth: async () => {
+          authCreations++;
+          return {};
+        },
+      },
+      '@/core/db': {},
+      '@/config': { envConfigs: { auth_secret: '' } },
+      '@/config/db/schema': {},
+      '@/config/website': { websiteConfig: { auth: { enabled: true } } },
+      './credit': {},
+    },
+    { Headers, URL }
+  );
+
+  assert.equal(await users.getSignUser(), null);
+  assert.equal(authCreations, 0);
 });
 
 test('anonymous checks do not retry; failed checks retry once and retain known user state', () => {
@@ -206,6 +236,7 @@ test('durable auth still strips obsolete cookie caches and preserves the session
       },
       '@/core/auth': { getAuth: async () => ({ handler }) },
       '@/core/db': { isDatabaseConfigured: () => true },
+      '@/config': { envConfigs: { auth_secret: 'test-secret' } },
       '@/config/website': { websiteConfig: { auth: { enabled: true } } },
       '@/shared/lib/env': { isCloudflareWorker: true },
       '@/shared/lib/rate-limit': {},
@@ -233,4 +264,43 @@ test('durable auth still strips obsolete cookie caches and preserves the session
     response.headers.get('set-cookie') || '',
     /better-auth.account_data.0=; Max-Age=0/
   );
+});
+
+test('local auth route returns an empty session when the secret is missing', async () => {
+  let authCreations = 0;
+  const route = loadModule(
+    'src/app/api/auth/[...all]/route.ts',
+    {
+      'better-auth/next-js': {},
+      '@/core/auth': {
+        getAuth: async () => {
+          authCreations++;
+          return {};
+        },
+      },
+      '@/core/db': { isDatabaseConfigured: () => true },
+      '@/config': { envConfigs: { auth_secret: '' } },
+      '@/config/website': { websiteConfig: { auth: { enabled: true } } },
+      '@/shared/lib/env': { isCloudflareWorker: true },
+      '@/shared/lib/rate-limit': {},
+    },
+    { Request, Response, Headers, URL }
+  );
+
+  const sessionResponse = await route.GET(
+    new Request('http://localhost:8787/api/auth/get-session')
+  );
+  assert.equal(sessionResponse.status, 200);
+  assert.equal(await sessionResponse.json(), null);
+
+  const signInResponse = await route.POST(
+    new Request('http://localhost:8787/api/auth/sign-in/email', {
+      method: 'POST',
+    })
+  );
+  assert.equal(signInResponse.status, 503);
+  assert.deepEqual(await signInResponse.json(), {
+    error: 'AUTH_SECRET_NOT_CONFIGURED',
+  });
+  assert.equal(authCreations, 0);
 });

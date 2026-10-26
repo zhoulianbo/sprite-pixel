@@ -1,10 +1,12 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { getThemePage } from '@/core/theme';
 import { envConfigs } from '@/config';
 import { defaultLocale } from '@/config/locale';
-import { getThemePage } from '@/core/theme';
 import { hreflangCode } from '@/shared/lib/seo';
 import { DynamicPage } from '@/shared/types/blocks/landing';
+
+export const dynamic = 'force-dynamic';
 
 export const revalidate = 3600;
 

@@ -15,9 +15,11 @@ export function generateStaticParams() {
 
 export default async function LandingLayout({
   children,
+  footerLinks,
   params,
 }: {
   children: ReactNode;
+  footerLinks: ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
@@ -36,7 +38,7 @@ export default async function LandingLayout({
   );
 
   return (
-    <Layout header={header} footer={footer}>
+    <Layout header={header} footer={footer} footerLinks={footerLinks}>
       <LocaleDetector />
       {header.topbanner && header.topbanner.text && (
         <TopBanner

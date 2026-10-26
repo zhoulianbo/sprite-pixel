@@ -73,7 +73,7 @@ export function VideoWorkbench() {
     setResult(undefined);
     setError('');
   }
-  async function process() {
+  async function processVideo() {
     if (!file || operation.current) return;
     if (!videoOptionsSchema.safeParse(options).success) {
       setError(t('errors.INVALID_PARAMETERS'));
@@ -306,7 +306,7 @@ export function VideoWorkbench() {
               {t('cancel')}
             </Button>
           )}
-          <Button disabled={!file || busy} onClick={process}>
+          <Button disabled={!file || busy} onClick={processVideo}>
             {busy ? t('processing') : result ? t('extractAgain') : t('extract')}
           </Button>
         </div>

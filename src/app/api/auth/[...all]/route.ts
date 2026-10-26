@@ -2,6 +2,7 @@ import { toNextJsHandler } from 'better-auth/next-js';
 
 import { getAuth } from '@/core/auth';
 import { isDatabaseConfigured } from '@/core/db';
+import { envConfigs } from '@/config';
 import { websiteConfig } from '@/config/website';
 import { isCloudflareWorker } from '@/shared/lib/env';
 import { enforceSlidingWindowRateLimit } from '@/shared/lib/rate-limit';
@@ -23,10 +24,8 @@ function maybeRateLimitGetSession(request: Request): Response | null {
 
   // get-session is a read endpoint called by multiple React hooks on mount.
   // Use a burst-friendly sliding window instead of a hard min-interval.
-  const windowMs =
-    Number(process.env.AUTH_GET_SESSION_WINDOW_MS) || 10_000;
-  const maxRequests =
-    Number(process.env.AUTH_GET_SESSION_MAX_REQUESTS) || 30;
+  const windowMs = Number(process.env.AUTH_GET_SESSION_WINDOW_MS) || 10_000;
+  const maxRequests = Number(process.env.AUTH_GET_SESSION_MAX_REQUESTS) || 30;
 
   return enforceSlidingWindowRateLimit(request, {
     windowMs,
@@ -121,6 +120,21 @@ async function handleAuth(
     return Response.json(
       { error: 'Authentication is disabled' },
       { status: 404 }
+    );
+  }
+
+  const url = new URL(request.url);
+  const isLocalRequest = ['localhost', '127.0.0.1', '::1'].includes(
+    url.hostname
+  );
+  if (!envConfigs.auth_secret && isLocalRequest) {
+    if (method === 'GET' && url.pathname.endsWith('/api/auth/get-session')) {
+      return Response.json(null);
+    }
+
+    return Response.json(
+      { error: 'AUTH_SECRET_NOT_CONFIGURED' },
+      { status: 503 }
     );
   }
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { TOCItems, TOCProvider } from 'fumadocs-ui/components/layout/toc';
+import { TOCProvider } from 'fumadocs-ui/components/toc';
+import { TOCItems } from 'fumadocs-ui/components/toc/default';
 import { CalendarIcon, ListIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 

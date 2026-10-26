@@ -536,7 +536,7 @@ export function BackgroundWorkbench({ gif = false }: { gif?: boolean }) {
     followPreview.current = false;
     setSelected(index);
   }
-  async function process(only?: number) {
+  async function processBackground(only?: number) {
     const key = cutKey(threshold, hardEdge);
     const targets = items.flatMap((item, index) =>
       (
@@ -621,7 +621,7 @@ export function BackgroundWorkbench({ gif = false }: { gif?: boolean }) {
   }
   function requestExecute(only?: number) {
     pendingOnly.current = only;
-    if (modelReady) void process(only);
+    if (modelReady) void processBackground(only);
     else setModelPrompt(true);
   }
   function save(format: 'zip' | 'gif') {
@@ -741,7 +741,7 @@ export function BackgroundWorkbench({ gif = false }: { gif?: boolean }) {
           <Button
             onClick={() => {
               setModelPrompt(false);
-              void process(pendingOnly.current);
+              void processBackground(pendingOnly.current);
             }}
           >
             {t('modelDialogConfirm')}

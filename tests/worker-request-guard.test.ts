@@ -12,7 +12,7 @@ import {
 const origin = 'https://spritepixel.com';
 const locales = ['en', 'zh', 'zh-Hant', 'ja', 'ko'];
 const routes = JSON.parse(readFileSync('.next/routes-manifest.json', 'utf8'));
-const appPathRoutes = JSON.parse(
+const appPathRoutes: Record<string, string> = JSON.parse(
   readFileSync('.next/app-path-routes-manifest.json', 'utf8')
 );
 const prerender = JSON.parse(

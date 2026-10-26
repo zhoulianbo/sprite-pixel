@@ -1,6 +1,6 @@
 // .source folder will be generated when you run `next dev`
 import { createElement } from 'react';
-import { docs, logs, pages, posts } from '@/.source';
+import { docs, logs, pages, posts } from '@/.source/server';
 import type { I18nConfig } from 'fumadocs-core/i18n';
 import { loader } from 'fumadocs-core/source';
 

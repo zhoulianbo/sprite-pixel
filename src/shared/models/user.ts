@@ -4,6 +4,7 @@ import { count, desc, eq, inArray } from 'drizzle-orm';
 
 import { getAuth } from '@/core/auth';
 import { db } from '@/core/db';
+import { envConfigs } from '@/config';
 import { user } from '@/config/db/schema';
 import { websiteConfig } from '@/config/website';
 
@@ -90,6 +91,20 @@ export async function getUserCredits(userId: string) {
   return { remainingCredits };
 }
 
+function isLocalRequestHost(requestHeaders: Headers) {
+  const forwardedHost = requestHeaders.get('x-forwarded-host')?.split(',')[0];
+  const host = (forwardedHost || requestHeaders.get('host') || '').trim();
+
+  try {
+    const hostname = new URL(`http://${host}`).hostname;
+    return (
+      hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1'
+    );
+  } catch {
+    return false;
+  }
+}
+
 // Layouts, pages and permission checks share one session read per render.
 // React resets this cache for the next request, including another user.
 export const getSignUser = cache(async () => {
@@ -97,9 +112,16 @@ export const getSignUser = cache(async () => {
     return null;
   }
 
+  const requestHeaders = await headers();
+  // Keep public pages usable in local Worker previews before auth is configured.
+  // Non-local deployments still fail closed instead of using a default secret.
+  if (!envConfigs.auth_secret && isLocalRequestHost(requestHeaders)) {
+    return null;
+  }
+
   const auth = await getAuth();
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: requestHeaders,
   });
 
   return session?.user;

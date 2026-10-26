@@ -40,6 +40,7 @@ cp -n .dev.vars.example .dev.vars
 ```dotenv
 NEXTJS_ENV="development"
 NEXT_PUBLIC_APP_URL="http://localhost:8787"
+AUTH_SECRET="一段仅供本地使用的随机字符串（可用 openssl rand -base64 32 生成）"
 WORKFLOW_INTERNAL_TOKEN="一段仅供本地使用的随机字符串"
 SPRITE_MEDIA_PROCESSOR_URL="http://127.0.0.1:8000"
 SPRITE_MEDIA_PROCESSOR_SECRET="与 Python 服务 API_SECRET 相同的值"

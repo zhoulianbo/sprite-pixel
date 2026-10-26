@@ -2,6 +2,9 @@
 NEXTJS_ENV="development"
 NEXT_PUBLIC_APP_URL="http://localhost:8787"
 
+# Required for local Better Auth sessions. Generate with: openssl rand -base64 32
+AUTH_SECRET="replace-with-a-local-random-secret"
+
 # Cloudflare Workflow -> internal Next.js routes
 WORKFLOW_INTERNAL_TOKEN="replace-with-a-local-random-token"
 

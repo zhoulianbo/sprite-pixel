@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import { docs } from '@/.source';
+import { docs } from '@/.source/server';
 import type { I18nConfig } from 'fumadocs-core/i18n';
 import { createFromSource } from 'fumadocs-core/search/server';
 import { loader } from 'fumadocs-core/source';

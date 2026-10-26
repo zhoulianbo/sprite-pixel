@@ -1,4 +1,4 @@
-import type { TOCItemType as FumadocsTOCItemType } from 'fumadocs-core/server';
+import type { TOCItemType as FumadocsTOCItemType } from 'fumadocs-core/toc';
 import { slug } from 'github-slugger';
 
 export type TOCItemType = FumadocsTOCItemType;

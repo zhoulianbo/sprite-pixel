@@ -19,6 +19,13 @@ const ALLOWED_REL_TOKENS = new Set([
   'ugc',
 ]);
 
+export function isEnglishHomepage(locale: string, pathname: string) {
+  const normalizedPathname =
+    pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+
+  return locale === 'en' && ['/', '/en'].includes(normalizedPathname);
+}
+
 export function escapeFooterLinkHtml(value: string) {
   return value
     .replaceAll('&', '&amp;')
