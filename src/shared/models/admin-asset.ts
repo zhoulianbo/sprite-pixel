@@ -9,6 +9,7 @@ import {
   assetItem,
   galleryItem,
   generation,
+  generationInput,
   project,
   user,
 } from '@/config/db/schema';
@@ -31,6 +32,7 @@ type AdminAnimationRow = {
   owner: typeof user.$inferSelect;
   fps: number;
   frameCount: number;
+  generationId: string | null;
   storageKey: string | null;
   allowGallery: boolean | null;
   galleryStatus: string | null;
@@ -170,6 +172,7 @@ export async function getAdminAnimations({
       owner: user,
       fps: animationVersion.fps,
       frameCount: animationVersion.frameCount,
+      generationId: animationVersion.generationId,
       storageKey: assetFile.storageKey,
       allowGallery: generation.allowGallery,
       galleryStatus: galleryItem.status,
@@ -200,12 +203,67 @@ export async function getAdminAnimations({
     .limit(limit)
     .offset((page - 1) * limit)) as AdminAnimationRow[];
 
+  const generationIds = [
+    ...new Set(
+      rows
+        .map((row) => row.generationId)
+        .filter((id): id is string => Boolean(id))
+    ),
+  ];
+  const references: {
+    generationId: string;
+    role: string;
+    storageKey: string;
+  }[] = [];
+  // Reserve one of D1's 100 parameters for the ready status filter.
+  const generationBatchSize = 99;
+  for (
+    let offset = 0;
+    offset < generationIds.length;
+    offset += generationBatchSize
+  ) {
+    const batch = await db()
+      .select({
+        generationId: generationInput.generationId,
+        role: generationInput.role,
+        storageKey: assetFile.storageKey,
+      })
+      .from(generationInput)
+      .innerJoin(assetFile, eq(assetFile.id, generationInput.fileId))
+      .where(
+        and(
+          inArray(
+            generationInput.generationId,
+            generationIds.slice(offset, offset + generationBatchSize)
+          ),
+          eq(assetFile.status, 'ready'),
+          isNull(assetFile.deletedAt)
+        )
+      );
+    references.push(...batch);
+  }
+  const referenceKeys = new Map<string, Map<string, string>>();
+  for (const reference of references) {
+    const byRole = referenceKeys.get(reference.generationId) ?? new Map();
+    byRole.set(reference.role, reference.storageKey);
+    referenceKeys.set(reference.generationId, byRole);
+  }
+
   const urlFor = await getAssetPublicUrlResolver();
   return rows.map(({ storageKey, ...row }) => ({
     ...row,
     galleryEligible: Boolean(row.allowGallery),
     galleryPublished: row.galleryStatus === 'published',
     previewUrl: storageKey ? urlFor(storageKey) : null,
+    referencePreviewUrl: (() => {
+      if (!row.generationId) return null;
+      const byRole = referenceKeys.get(row.generationId);
+      const referenceKey =
+        byRole?.get(`direction_reference:${row.direction}`) ??
+        byRole?.get('reference') ??
+        byRole?.values().next().value;
+      return referenceKey ? urlFor(referenceKey) : null;
+    })(),
   }));
 }
 

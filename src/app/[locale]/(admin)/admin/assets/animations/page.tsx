@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { PERMISSIONS, requirePermission } from '@/core/rbac';
 import { AdminAnimationPreview } from '@/shared/blocks/admin/animation-preview';
 import { GalleryPublishButton } from '@/shared/blocks/admin/gallery-publish-button';
+import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Header, Main, MainHeader } from '@/shared/blocks/dashboard';
 import { TableCard } from '@/shared/blocks/table';
 import {
@@ -57,6 +58,27 @@ export default async function AdminAnimationsPage({
   };
   const table: Table = {
     columns: [
+      {
+        name: 'referencePreviewUrl',
+        title: t('fields.originalCharacter'),
+        callback: (item: (typeof animations)[number]) =>
+          item.referencePreviewUrl ? (
+            <ZoomableImage
+              alt={t('animations.originalPreviewLabel', {
+                name: item.characterName,
+              })}
+              className="size-16"
+              src={item.referencePreviewUrl}
+              zoomLabel={t('animations.originalZoomLabel', {
+                name: item.characterName,
+              })}
+            />
+          ) : (
+            <span className="text-muted-foreground text-sm">
+              {t('animations.noOriginalPreview')}
+            </span>
+          ),
+      },
       {
         name: 'preview',
         title: t('fields.preview'),
