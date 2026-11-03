@@ -34,6 +34,9 @@ export default async function AssetCharactersPage() {
         }),
         href: `/dashboard/projects/${item.projectId}/characters/${item.id}`,
         imageUrl: item.preview?.url,
+        characterFileId: item.preview?.id,
+        characterZoomLabel: t('generation.zoom'),
+        characterDownloadLabel: t('generation.download'),
       }))}
     />
   );

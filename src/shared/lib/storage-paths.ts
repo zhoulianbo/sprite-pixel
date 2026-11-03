@@ -18,6 +18,10 @@ export function projectAssetStorageKey(
   return `projects/${projectId}/${type}/${fileId}.${extension}`;
 }
 
+export function animationVideoStorageKey(taskId: string, createdAt: Date) {
+  return `videos/${createdAt.toISOString().slice(0, 7)}/${taskId}.mp4`;
+}
+
 export function uploadStorageKeyForRole(
   projectId: string,
   role: string,
@@ -49,6 +53,7 @@ export function isRootStorageKey(key: string) {
   return (
     key.startsWith('projects/') ||
     key.startsWith('uploads/') ||
+    key.startsWith('videos/') ||
     key.startsWith('models/')
   );
 }

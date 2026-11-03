@@ -1,4 +1,4 @@
-import { generationDefaults } from './options';
+import { generationDefaults, getSelectedArtStyle } from './options';
 import { resolveProviderAnimationSheetSize } from './sprite';
 
 export type SpritePromptInput = {
@@ -26,6 +26,7 @@ export type SpritePromptInput = {
   quality?: string;
   palette?: string;
   negativePrompt?: string;
+  backgroundColor?: string;
 };
 
 export type IconStyleSource =
@@ -41,16 +42,58 @@ function optionalPreset(value: string | null | undefined) {
   return raw && raw !== 'none' ? raw : '';
 }
 
+export function resolveCharacterStyle(
+  style?: string | null,
+  projectStyle?: string | null
+) {
+  // Explicit custom must not silently inherit a project preset.
+  if (style === 'none' || style === 'custom') return 'none';
+  return (
+    getSelectedArtStyle(style) ||
+    getSelectedArtStyle(projectStyle) ||
+    generationDefaults.style
+  );
+}
+
+const characterStyleGuidance: Record<string, string[]> = {
+  'pixel-art': [
+    'Draw authentic low-resolution pixel art on one uniform square-pixel grid, as if authored at 128x128 logical resolution and enlarged by an integer using nearest-neighbor sampling.',
+    'Use consistent pixel-block size and grid alignment throughout the character, equipment, outlines and shading. No visible grid overlay.',
+    'Build readable silhouettes, eyes and small equipment details with deliberate pixel clusters and clean stepped contours.',
+    'Design the actual shapes for the logical pixel budget: simplify hair into a few masses, faces into a few deliberate pixels, and equipment into bold readable clusters. Do not draw a detailed illustration with pixel-like texture.',
+    'Use at most 32 solid colors across the entire character, or exactly the supplied palette when one is specified. Use two or three discrete shades per material; no micro-texture or dithering. Preserve distinctive costume and weapon colors.',
+    'No anti-aliasing, blurred edges, smooth gradients, photographic textures, subpixel strokes, scattered noise or mixed-resolution pixel blocks.',
+    'Keep the background genuinely transparent, not a painted checkerboard. Keep intentional translucent materials distinct from the background.',
+  ],
+  cartoon: [
+    'Use stylized cartoon proportions, clean expressive shapes, consistent outlines and simple readable shading. Avoid photographic textures and pixelated edges.',
+  ],
+  illustration: [
+    'Use polished 2D digital illustration with coherent lighting, controlled detail and clear silhouettes. Preserve readable shapes at game size; avoid photographic rendering and pixel grids.',
+  ],
+  'hand-painted': [
+    'Use hand-painted 2D game art with deliberate brushwork, coherent color masses and restrained texture. Keep silhouette edges readable; avoid photographic noise and pixel grids.',
+  ],
+  'anime-2d': [
+    'Use 2D anime character design, clean line art, expressive features and clearly separated cel shadows. Avoid photorealism, painterly noise and pixel grids.',
+  ],
+  'cel-shaded': [
+    'Use graphic cel-shaded game art with crisp contour lines and two or three distinct lighting bands per material. Avoid soft airbrushed gradients, photographic texture and pixel grids.',
+  ],
+  'low-poly': [
+    'Render a stylized low-poly game character as a 2D reference image, with deliberate planar facets, simple geometry and flat material colors. Avoid wireframes, dense realistic texture and pixel grids.',
+  ],
+};
+
 export function buildCharacterBasePrompt(
   input: Pick<
     SpritePromptInput,
-    'prompt' | 'style' | 'perspective' | 'characterType'
+    'prompt' | 'style' | 'perspective' | 'characterType' | 'palette'
   >,
-  project?: { artStyle?: string | null } | null
+  project?: { artStyle?: string | null; paletteJson?: string | null } | null
 ) {
   const concept = token(input.prompt, '');
-  const style =
-    optionalPreset(input.style) || optionalPreset(project?.artStyle);
+  const style = resolveCharacterStyle(input.style, project?.artStyle);
   const perspective = optionalPreset(input.perspective);
   const characterType = token(
     input.characterType,
@@ -62,7 +105,13 @@ export function buildCharacterBasePrompt(
     'Character concept:',
     concept,
     '',
-    style ? `Style: ${style}` : '',
+    style !== 'none'
+      ? `Style: ${style}`
+      : 'Follow the user description and supplied reference for the art style; do not impose a preset.',
+    ...(characterStyleGuidance[style] || []).map((rule) => `- ${rule}`),
+    style === 'pixel-art' && (input.palette || project?.paletteJson)
+      ? `Required palette: ${input.palette || project?.paletteJson}`
+      : '',
     perspective ? `Perspective: ${perspective}` : '',
     `Character type: ${characterType}`,
     'Pose: neutral standing idle pose',
@@ -722,7 +771,13 @@ function animationVideoActionSafetyLines(
 export function buildAnimationVideoPrompt(
   input: Pick<
     SpritePromptInput,
-    'prompt' | 'action' | 'actionConfig' | 'direction' | 'frames' | 'frameSize'
+    | 'prompt'
+    | 'action'
+    | 'actionConfig'
+    | 'direction'
+    | 'frames'
+    | 'frameSize'
+    | 'backgroundColor'
   >,
   direction?: string
 ) {
@@ -777,7 +832,9 @@ export function buildAnimationVideoPrompt(
     '- keep the invisible alignment baseline, scale, and horizontal position stable',
     '- animate natural opposing arm and leg motion where the action requires it',
     '- include continuous secondary motion in hair, clothing, capes, tails, and reference-visible accessories',
-    '- use one perfectly uniform plain neutral-grey background with no scenery, floor, ground plane, or unrelated objects',
+    input.backgroundColor && /^#[0-9a-fA-F]{6}$/.test(input.backgroundColor)
+      ? `- use exactly ${input.backgroundColor} as one perfectly uniform solid background, matching the reference canvas; no scenery, floor, ground plane, gradients, texture, or unrelated objects; do not tint the character or its accessories with this background color`
+      : '- use one perfectly uniform plain neutral-grey background with no scenery, floor, ground plane, or unrelated objects',
     '- do not generate any cast shadow, ground shadow, contact shadow, ambient occlusion, reflection, or glow beneath or around the character',
     '- keep the area beneath the feet exactly the same flat background color as the rest of the frame, with a clean silhouette suitable for background removal',
     '- no cuts, camera movement, zoom, text, labels, borders, or watermark',

@@ -19,12 +19,14 @@
   },
   "options": {
     "style": {
-      "none": "없음",
+      "none": "사용자 지정",
       "pixel-art": "픽셀 아트",
       "cartoon": "카툰",
       "illustration": "일러스트",
       "hand-painted": "핸드 페인팅",
       "anime-2d": "2D 애니메이션",
+      "cel-shaded": "셀 셰이딩",
+      "low-poly": "로우 폴리",
       "dark-fantasy": "다크 판타지",
       "cyberpunk": "사이버펑크"
     },

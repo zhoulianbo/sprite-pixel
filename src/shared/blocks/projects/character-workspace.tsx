@@ -17,9 +17,8 @@ import { useTranslations } from 'next-intl';
 
 import { Link, usePathname, useRouter } from '@/core/i18n/navigation';
 import {
+  animationDirectionDefault,
   generationDefaults,
-  generationOptionValues,
-  getActionTypeImage,
   mapGenerationOptions,
 } from '@/config/generation';
 import { generationPollIntervalMs } from '@/config/generation/model-routes';
@@ -30,7 +29,12 @@ import {
   uniqueDirectionSources,
 } from '@/config/generation/sprite';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
-import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
+import type { AnimationReviewGeneration } from '@/shared/blocks/projects/animation-review-panel';
+import { AnimationSettings } from '@/shared/blocks/projects/animation-settings';
+import {
+  CharacterComposer,
+  type CharacterComposerHandle,
+} from '@/shared/blocks/projects/character-composer';
 import { CharacterCreateDialog } from '@/shared/blocks/projects/character-create-dialog';
 import {
   CharacterImageDeleteDialog,
@@ -44,7 +48,14 @@ import {
   DirectionSelectPad,
   ReferenceImagePicker,
 } from '@/shared/blocks/projects/character-workspace-media';
+import { HeroAnimationReview } from '@/shared/blocks/projects/hero-animation-review';
 import { Button } from '@/shared/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/shared/components/ui/dialog';
 import {
   Select,
   SelectContent,
@@ -53,6 +64,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
+import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
 import {
   actionDirectionLabel,
   characterAssetGridClass,
@@ -72,6 +84,7 @@ import {
   readApiPayload,
   useProductApiFeedback,
 } from '@/shared/lib/product-api-error';
+import { uploadProjectReferenceFile } from '@/shared/lib/upload-project-file';
 import { cn } from '@/shared/lib/utils';
 
 type Workspace = {
@@ -103,6 +116,18 @@ export function CharacterWorkspace({
   const td = useTranslations('workspace.directions');
   const to = useTranslations('generation');
   const tm = useTranslations('pages.index.messages');
+  const composerRef = useRef<CharacterComposerHandle>(null);
+  const submitting = useRef(false);
+  const [review, setReview] = useState<AnimationReviewGeneration | null>(null);
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [animationOpen, setAnimationOpen] = useState(false);
+  const [motionStartedAt, setMotionStartedAt] = useState(Date.now());
+  const [backgroundColor, setBackgroundColor] = useState('');
+  const [motionDirection, setMotionDirection] = useState<string>(
+    animationDirectionDefault
+  );
+  const reviewStorageKey = `sv_character_animation:${projectId}:${workspace.item.id}`;
+
   const notifyApiError = useProductApiFeedback();
   const pathname = usePathname();
   const router = useRouter();
@@ -276,10 +301,12 @@ export function CharacterWorkspace({
 
   const poll = async (id: string) => {
     const payload = await readApiPayload(await fetch(`/api/generations/${id}`));
+    if (payload.data.taskType === 'animation') setReview(payload.data);
     setStatus(payload.data.status);
     setProgress(payload.data.items || []);
     captureResult(payload.data.items);
     if (['pending', 'processing'].includes(payload.data.status)) {
+      setBusy(true);
       window.setTimeout(
         () => poll(id).catch(fail),
         generationPollIntervalMs(
@@ -309,6 +336,23 @@ export function CharacterWorkspace({
     }
   };
 
+  useEffect(() => {
+    if (stage !== 'animations') return;
+    setReview(null);
+    setStatus('');
+    setGenerationId('');
+    setError('');
+    const id = sessionStorage.getItem(reviewStorageKey);
+    if (id) {
+      setGenerationId(id);
+      setBusy(true);
+      setMotionStartedAt(Date.now());
+      void poll(id).catch(fail);
+    }
+    // Read once per workspace entry; polling owns further updates.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, reviewStorageKey]);
+
   const setActive = async (file: CharacterWorkspaceFile) => {
     if (!file.variantId) return;
     setBusy(true);
@@ -336,6 +380,7 @@ export function CharacterWorkspace({
   };
 
   const generate = async () => {
+    if (submitting.current || busy || reviewBusy) return;
     if (!selectedFile) {
       setError(
         stage === 'base'
@@ -348,7 +393,9 @@ export function CharacterWorkspace({
       setError(tg('promptRequired'));
       return;
     }
+    submitting.current = true;
     setBusy(true);
+    if (stage === 'animations') setMotionStartedAt(Date.now());
     setError('');
     setStatus('queued');
     setProgress([]);
@@ -374,26 +421,40 @@ export function CharacterWorkspace({
       };
     } else {
       const selectedDirection =
-        selectedFile.role === 'direction_reference'
-          ? normalizeDirection(
-              String(
-                parseAssetMetadata(selectedFile.metadataJson).direction || ''
+        motionDirection !== animationDirectionDefault
+          ? motionDirection
+          : selectedFile.role === 'direction_reference'
+            ? normalizeDirection(
+                String(
+                  parseAssetMetadata(selectedFile.metadataJson).direction || ''
+                )
               )
-            )
-          : normalizeDirection(direction);
+            : undefined;
       body = {
         ...base,
         type: 'animation',
         action,
         actionConfig: motionActionConfig,
         directionMode: 'single',
-        direction: selectedDirection,
+        ...(selectedDirection ? { direction: selectedDirection } : {}),
         frames: frames === 'auto' ? 'auto' : Number(frames),
         frameSize: Number(frameSize),
         fps: 12,
       };
     }
     try {
+      if (stage === 'animations') {
+        const composition = await composerRef.current!.exportComposition();
+        body.backgroundColor = composition.backgroundColor;
+        body.backgroundKeySafe = composition.backgroundKeySafe;
+        body.compositionFileId = await uploadProjectReferenceFile({
+          projectId,
+          file: composition.file,
+          role: 'motion_reference',
+          itemId: workspace.item.id,
+          variantId: selectedVariant,
+        });
+      }
       const payload = await readApiPayload(
         await fetch(`/api/projects/${projectId}/generations`, {
           method: 'POST',
@@ -401,6 +462,10 @@ export function CharacterWorkspace({
           body: JSON.stringify(body),
         })
       );
+      if (stage === 'animations') {
+        setReview(payload.data);
+        sessionStorage.setItem(reviewStorageKey, payload.data.id);
+      }
       setProgress(payload.data.items || []);
       setStatus(payload.data.status);
       captureResult(payload.data.items);
@@ -417,6 +482,8 @@ export function CharacterWorkspace({
       }
     } catch (reason) {
       fail(reason);
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -458,6 +525,7 @@ export function CharacterWorkspace({
     setSelectedFileId(file.id);
     if (file.variantId) setSelectedVariant(file.variantId);
     extras?.();
+    if (next === 'animations') setAnimationOpen(true);
     router.push(stagePath(next));
   };
 
@@ -482,41 +550,10 @@ export function CharacterWorkspace({
     taskCount: Math.max(retryCount, 1),
     retry: true,
   });
-  const motionDetailTypes: readonly string[] =
-    generationOptionValues.actionType;
-  const motionSettingsType = motionDetailTypes.includes(action);
-  const motionPhase =
-    progress.find((item) => item.phase)?.phase ||
-    (status === 'validating'
-      ? 'validating'
-      : ['pending', 'queued'].includes(status)
-        ? 'queued'
-        : status === 'processing'
-          ? 'video_generation'
-          : status === 'success'
-            ? 'completed'
-            : ['failed', 'postprocessing_failed', 'canceled'].includes(status)
-              ? 'failed'
-              : 'idle');
-  const motionProgressStep =
-    motionPhase === 'validating' || motionPhase === 'queued'
-      ? 1
-      : motionPhase === 'video_generation'
-        ? 2
-        : motionPhase === 'media_processing'
-          ? 3
-          : motionPhase === 'completed'
-            ? 4
-            : 0;
-  const setActionConfig = (
-    key: keyof typeof motionActionConfig,
-    value: string
-  ) => setMotionActionConfig((current) => ({ ...current, [key]: value }));
-  const translatedMotionOptions = (group: string, values: string[]) =>
-    values.map((value) => ({
-      value,
-      label: tm(`motionOptions.${group}.${value}` as never),
-    }));
+  const animationReviewActive =
+    busy ||
+    ['failed', 'postprocessing_failed', 'canceled'].includes(status) ||
+    Boolean(review?.items.some((item) => item.video));
   const variantLabel = (file: CharacterWorkspaceFile) =>
     workspace.variants.find((variant) => variant.id === file.variantId)?.name ||
     t('variation');
@@ -549,7 +586,14 @@ export function CharacterWorkspace({
   ];
 
   return (
-    <div className="bg-background -mx-4 -mt-8 -mb-8 grid h-[calc(100dvh-56px)] min-h-140 overflow-hidden border-y md:-mx-6 lg:grid-cols-[180px_minmax(0,1fr)_330px]">
+    <div
+      className={cn(
+        'bg-background -mx-4 -mt-8 -mb-8 grid h-[calc(100dvh-56px)] min-h-140 overflow-hidden border-y md:-mx-6',
+        stage === 'animations'
+          ? 'lg:grid-cols-[180px_minmax(0,1fr)]'
+          : 'lg:grid-cols-[180px_minmax(0,1fr)_330px]'
+      )}
+    >
       <aside className="bg-card/55 overflow-y-auto border-b p-3 lg:border-r lg:border-b-0">
         <div className="mb-3 flex items-center justify-between">
           <span className="font-heading text-sm font-semibold">
@@ -621,7 +665,7 @@ export function CharacterWorkspace({
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
-          <div className="mb-4">
+          <div className="mb-4 flex items-start justify-between gap-3">
             <div>
               <h1 className="font-heading text-lg font-semibold">
                 {workspace.item.name}
@@ -630,6 +674,12 @@ export function CharacterWorkspace({
                 {t(`stageDescriptions.${stage}`)}
               </p>
             </div>
+            {stage === 'animations' && (
+              <Button type="button" onClick={() => setAnimationOpen(true)}>
+                <Film className="size-4" />
+                {t('createAnimation')}
+              </Button>
+            )}
           </div>
 
           {stage === 'base' ? (
@@ -793,11 +843,18 @@ export function CharacterWorkspace({
                 </div>
               </section>
             ) : (
-              <EmptyState
-                label={t('emptyAnimations')}
-                hint={t('emptyAnimationsHint')}
-                pointToAside
-              />
+              <div className="text-muted-foreground flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed p-6 text-center text-sm">
+                <ImageIcon className="size-7" />
+                <span>{t('emptyAnimations')}</span>
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={() => setAnimationOpen(true)}
+                >
+                  <Film className="size-4" />
+                  {t('createAnimation')}
+                </Button>
+              </div>
             )
           ) : null}
 
@@ -827,434 +884,308 @@ export function CharacterWorkspace({
         </div>
       </main>
 
-      <aside
-        id="character-workspace-panel"
-        className="bg-card/55 overflow-y-auto border-t p-4 lg:border-t-0 lg:border-l"
-      >
-        {stage === 'sheets' ? (
-          <h2 className="font-heading text-sm font-semibold">
-            {t(`panels.${stage}`)}
-          </h2>
-        ) : null}
-        <div className={cn('space-y-4', stage === 'sheets' && 'mt-4')}>
-          {stage === 'base' ? (
-            <>
-              <ResultPreview
-                src={resultPreview}
-                placeholder={t('resultPlaceholder')}
-                processing={busy}
-                processingLabel={t('processing')}
-              />
-
-              <RowOptionSelect
-                label={to('fields.editType')}
-                value={editType}
-                onValueChange={setEditType}
-                options={options('editType')}
-              />
-
-              <PromptComposer
-                value={prompt}
-                onChange={setPrompt}
-                placeholder={t(
-                  editType === 'costume'
-                    ? 'editCostumePlaceholder'
-                    : 'editPosePlaceholder'
-                )}
-                selectedFile={selectedFile}
-                referenceAlt={t('referenceInput')}
-                onPick={() => setPickerOpen(true)}
-                onClear={() => setSelectedFileId('')}
-                removeLabel={to('upload.remove')}
-                actionLabel={busy ? t('processing') : t('edit')}
-                credits={creditCost}
-                busy={busy}
-                onSubmit={generate}
-              />
-            </>
+      {stage !== 'animations' && (
+        <aside
+          id="character-workspace-panel"
+          className="bg-card/55 overflow-y-auto border-t p-4 lg:border-t-0 lg:border-l"
+        >
+          {stage === 'sheets' ? (
+            <h2 className="font-heading text-sm font-semibold">
+              {t(`panels.${stage}`)}
+            </h2>
           ) : null}
-
-          {stage === 'animations' ? (
-            <>
-              <AnimationSourcePreview
-                alt={t('referenceInput')}
-                changeLabel={t('changeCharacter')}
-                disabled={busy}
-                emptyLabel={t('chooseReference')}
-                onChange={() => setPickerOpen(true)}
-                processing={busy}
-                processingLabel={t('processing')}
-                src={selectedFile?.url}
-              />
-              <RowOptionSelect
-                label={t('framesLabel')}
-                value={frames}
-                onValueChange={setFrames}
-                options={options('frames')}
-              />
-              <RowOptionSelect
-                label={to('fields.frameSize')}
-                value={frameSize}
-                onValueChange={setFrameSize}
-                options={options('frameSize')}
-              />
-              <ActionTypeSelect
-                label={to('fields.actionType')}
-                onValueChange={(value) => {
-                  setAction(value);
-                  setPrompt('');
-                  setError('');
-                }}
-                options={options('actionType')}
-                value={action}
-              />
-              {motionSettingsType ? (
-                <div className="border-border bg-background/40 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 rounded-lg border p-3">
-                  {action === 'jump' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.jumpType')}
-                      onValueChange={(value) =>
-                        setActionConfig('jumpType', value)
-                      }
-                      options={translatedMotionOptions('jumpType', [
-                        'in-place',
-                        'forward',
-                      ])}
-                      value={motionActionConfig.jumpType}
-                    />
-                  ) : null}
-                  {action === 'dash' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.dashType')}
-                      onValueChange={(value) =>
-                        setActionConfig('dashType', value)
-                      }
-                      options={translatedMotionOptions('dashType', [
-                        'forward',
-                        'backward',
-                        'side',
-                      ])}
-                      value={motionActionConfig.dashType}
-                    />
-                  ) : null}
-                  {action === 'attack' ? (
-                    <>
-                      <MotionOptionButtons
-                        label={tm('motionFields.weapon')}
-                        onValueChange={(value) =>
-                          setActionConfig('weapon', value)
-                        }
-                        options={translatedMotionOptions('weapon', [
-                          'keep-current',
-                          'unarmed',
-                          'sword',
-                          'axe',
-                          'staff',
-                          'bow',
-                          'dagger',
-                          'spear',
-                        ])}
-                        value={motionActionConfig.weapon}
-                      />
-                      <MotionOptionButtons
-                        label={tm('motionFields.attackStyle')}
-                        onValueChange={(value) =>
-                          setActionConfig('attackStyle', value)
-                        }
-                        options={translatedMotionOptions('attackStyle', [
-                          'auto',
-                          'slash',
-                          'thrust',
-                          'heavy',
-                          'spin',
-                        ])}
-                        value={motionActionConfig.attackStyle}
-                      />
-                    </>
-                  ) : null}
-                  {action === 'shoot' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.shootType')}
-                      onValueChange={(value) =>
-                        setActionConfig('shootType', value)
-                      }
-                      options={translatedMotionOptions('shootType', [
-                        'bow',
-                        'gun',
-                        'magic-bolt',
-                      ])}
-                      value={motionActionConfig.shootType}
-                    />
-                  ) : null}
-                  {action === 'cast' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.castType')}
-                      onValueChange={(value) =>
-                        setActionConfig('castType', value)
-                      }
-                      options={translatedMotionOptions('castType', [
-                        'quick',
-                        'charge',
-                        'staff',
-                        'hand',
-                      ])}
-                      value={motionActionConfig.castType}
-                    />
-                  ) : null}
-                  {action === 'hurt' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.severity')}
-                      onValueChange={(value) =>
-                        setActionConfig('severity', value)
-                      }
-                      options={translatedMotionOptions('severity', [
-                        'light',
-                        'heavy',
-                      ])}
-                      value={motionActionConfig.severity}
-                    />
-                  ) : null}
-                  {action === 'death' ? (
-                    <MotionOptionButtons
-                      label={tm('motionFields.deathType')}
-                      onValueChange={(value) =>
-                        setActionConfig('deathType', value)
-                      }
-                      options={translatedMotionOptions('deathType', [
-                        'collapse',
-                        'fall-back',
-                        'fall-forward',
-                      ])}
-                      value={motionActionConfig.deathType}
-                    />
-                  ) : null}
-                  {motionDetailTypes.includes(action) ? (
-                    <div className="col-span-2 flex min-w-0 flex-col gap-2">
-                      <span className="text-muted-foreground text-sm font-medium">
-                        {action === 'custom'
-                          ? tm('customAction')
-                          : tm('motionDetail')}
-                      </span>
-                      <Textarea
-                        aria-label={
-                          action === 'custom'
-                            ? tm('customAction')
-                            : tm('motionDetail')
-                        }
-                        className="border-border bg-secondary/35 focus:border-primary/60 min-h-[72px] min-w-0 resize-y rounded-md border px-3 py-2 text-sm outline-none"
-                        onChange={(event) => {
-                          setPrompt(event.target.value);
-                          if (error) setError('');
-                        }}
-                        placeholder={
-                          action === 'custom'
-                            ? tm('customActionPlaceholder')
-                            : tm('motionPromptPlaceholder')
-                        }
-                        value={prompt}
-                      />
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-              {busy || motionProgressStep > 0 ? (
-                <div role="status">
-                  <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
-                    <span className="text-muted-foreground truncate">
-                      {motionPhase === 'completed'
-                        ? tg('success')
-                        : motionPhase === 'failed'
-                          ? tg('failed')
-                          : tm(`motionProgress.${motionPhase}` as never)}
-                    </span>
-                    <span className="font-mono text-[10px]">
-                      {motionProgressStep}/4
-                    </span>
-                  </div>
-                  <div className="grid h-1.5 grid-cols-4 gap-1">
-                    {[1, 2, 3, 4].map((step) => (
-                      <span
-                        className={cn(
-                          'rounded-full transition-colors',
-                          step <= motionProgressStep
-                            ? 'bg-primary'
-                            : 'bg-white/12'
-                        )}
-                        key={step}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {error ? (
-                <p className="text-destructive text-sm" role="alert">
-                  {error}
-                </p>
-              ) : null}
-              <Button
-                className="w-full"
-                disabled={busy}
-                onClick={() => {
-                  if (!busy && motionPhase === 'completed') {
-                    router.push(stagePath('sheets'));
-                    return;
-                  }
-                  generate();
-                }}
-              >
-                {busy ? (
-                  <LoaderCircle className="size-4 animate-spin" />
-                ) : motionPhase === 'completed' ? (
-                  <ImageIcon className="size-4" />
-                ) : (
-                  <Film className="size-4" />
-                )}
-                {busy
-                  ? t('processing')
-                  : motionPhase === 'completed'
-                    ? t('viewSpriteSheet')
-                    : t('generateSpriteSheet')}
-                {busy || motionPhase === 'completed' ? null : (
-                  <CreditCostMark credits={creditCost} />
-                )}
-              </Button>
-            </>
-          ) : null}
-
-          {stage === 'directions' ? (
-            <>
-              <div className="space-y-2">
-                <DirectionPreviewGrid
-                  entries={directionPreviewEntries}
-                  centerSrc={selectedFile?.url}
-                  centerAlt={t('referenceInput')}
+          <div className={cn('space-y-4', stage === 'sheets' && 'mt-4')}>
+            {stage === 'base' ? (
+              <>
+                <ResultPreview
+                  src={resultPreview}
+                  placeholder={t('resultPlaceholder')}
                   processing={busy}
                   processingLabel={t('processing')}
                 />
-                <p className="text-muted-foreground text-center text-xs">
-                  {t('resultPlaceholder')}
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <p className="text-sm">{t('action')}</p>
-                <div className="grid grid-cols-3 overflow-hidden rounded-md border">
-                  {options('actionType')
-                    .filter((option) =>
-                      ['idle', 'walk', 'run'].includes(option.value)
-                    )
-                    .map((option) => (
-                      <button
-                        type="button"
-                        key={option.value}
-                        onClick={() => setAction(option.value)}
-                        className={cn(
-                          'hover:bg-primary/10 hover:text-primary h-9 border-r text-xs last:border-r-0',
-                          action === option.value &&
-                            'bg-primary text-primary-foreground'
-                        )}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-start gap-2">
-                  <span className="shrink-0 pt-0.5 text-sm">
-                    {t('directionSection')}
-                  </span>
-                  <p className="text-muted-foreground text-xs leading-5">
-                    {t('directionFlipHint')}
+
+                <RowOptionSelect
+                  label={to('fields.editType')}
+                  value={editType}
+                  onValueChange={setEditType}
+                  options={options('editType')}
+                />
+
+                <PromptComposer
+                  value={prompt}
+                  onChange={setPrompt}
+                  placeholder={t(
+                    editType === 'costume'
+                      ? 'editCostumePlaceholder'
+                      : 'editPosePlaceholder'
+                  )}
+                  selectedFile={selectedFile}
+                  referenceAlt={t('referenceInput')}
+                  onPick={() => setPickerOpen(true)}
+                  onClear={() => setSelectedFileId('')}
+                  removeLabel={to('upload.remove')}
+                  actionLabel={busy ? t('processing') : t('edit')}
+                  credits={creditCost}
+                  busy={busy}
+                  onSubmit={generate}
+                />
+              </>
+            ) : null}
+
+            {stage === 'directions' ? (
+              <>
+                <div className="space-y-2">
+                  <DirectionPreviewGrid
+                    entries={directionPreviewEntries}
+                    centerSrc={selectedFile?.url}
+                    centerAlt={t('referenceInput')}
+                    processing={busy}
+                    processingLabel={t('processing')}
+                  />
+                  <p className="text-muted-foreground text-center text-xs">
+                    {t('resultPlaceholder')}
                   </p>
                 </div>
-                <DirectionSelectPad
-                  selected={selectedDirections}
-                  centerSrc={selectedFile?.url}
-                  centerAlt={t('referenceInput')}
-                  chooseLabel={
-                    selectedFile ? t('changeCharacter') : t('chooseReference')
-                  }
-                  directionLabel={directionLabel}
-                  onToggle={(value) =>
-                    setSelectedDirections((current) =>
-                      toggleLinkedDirections(current, value)
-                    )
-                  }
-                  onCenterClick={() => setPickerOpen(true)}
-                />
-                <p className="text-muted-foreground text-center text-xs">
-                  {t('directionCreditSummary', {
-                    count: selectedDirections.length,
-                    credits: creditCost,
-                  })}
-                </p>
-                <div className="flex gap-2">
+                <div className="space-y-1.5">
+                  <p className="text-sm">{t('action')}</p>
+                  <div className="grid grid-cols-3 overflow-hidden rounded-md border">
+                    {options('actionType')
+                      .filter((option) =>
+                        ['idle', 'walk', 'run'].includes(option.value)
+                      )
+                      .map((option) => (
+                        <button
+                          type="button"
+                          key={option.value}
+                          onClick={() => setAction(option.value)}
+                          className={cn(
+                            'hover:bg-primary/10 hover:text-primary h-9 border-r text-xs last:border-r-0',
+                            action === option.value &&
+                              'bg-primary text-primary-foreground'
+                          )}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <span className="shrink-0 pt-0.5 text-sm">
+                      {t('directionSection')}
+                    </span>
+                    <p className="text-muted-foreground text-xs leading-5">
+                      {t('directionFlipHint')}
+                    </p>
+                  </div>
+                  <DirectionSelectPad
+                    selected={selectedDirections}
+                    centerSrc={selectedFile?.url}
+                    centerAlt={t('referenceInput')}
+                    chooseLabel={
+                      selectedFile ? t('changeCharacter') : t('chooseReference')
+                    }
+                    directionLabel={directionLabel}
+                    onToggle={(value) =>
+                      setSelectedDirections((current) =>
+                        toggleLinkedDirections(current, value)
+                      )
+                    }
+                    onCenterClick={() => setPickerOpen(true)}
+                  />
+                  <p className="text-muted-foreground text-center text-xs">
+                    {t('directionCreditSummary', {
+                      count: selectedDirections.length,
+                      credits: creditCost,
+                    })}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="shrink-0"
+                      onClick={() => setPickerOpen(true)}
+                    >
+                      {t('changeCharacter')}
+                    </Button>
+                    <Button
+                      className="min-w-0 flex-1"
+                      onClick={() => generate()}
+                      disabled={
+                        busy || !selectedFile || !directionSources.length
+                      }
+                    >
+                      {busy ? (
+                        <LoaderCircle className="size-4 animate-spin" />
+                      ) : null}
+                      {busy ? t('processing') : t('generateCollection')}
+                      {busy ? null : <CreditCostMark credits={creditCost} />}
+                    </Button>
+                  </div>
+                </div>
+              </>
+            ) : null}
+
+            {stage === 'sheets' ? (
+              <p className="text-muted-foreground text-sm leading-6">
+                {t('sheetHelp')}
+              </p>
+            ) : null}
+
+            {status && stage !== 'base' ? (
+              <p className="text-muted-foreground text-xs" aria-live="polite">
+                {tg(
+                  (['pending', 'queued'].includes(status)
+                    ? 'queued'
+                    : status === 'processing'
+                      ? 'processing'
+                      : status === 'success'
+                        ? 'success'
+                        : status === 'partial'
+                          ? 'partial'
+                          : 'failed') as never
+                )}
+              </p>
+            ) : null}
+            {error ? (
+              <p className="text-destructive text-sm" role="alert">
+                {error}
+              </p>
+            ) : null}
+            {generationId && ['partial', 'failed'].includes(status) ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                disabled={busy}
+                onClick={retryGeneration}
+              >
+                {tg('retry')}
+                <CreditCostMark credits={retryCredits} />
+              </Button>
+            ) : null}
+          </div>
+        </aside>
+      )}
+
+      {stage === 'animations' && (
+        <Dialog
+          open={animationOpen}
+          onOpenChange={(open) => {
+            if (!busy && !reviewBusy) setAnimationOpen(open);
+          }}
+        >
+          <DialogContent
+            className="max-h-[90dvh] overflow-y-auto sm:max-w-6xl"
+            onInteractOutside={(event) => {
+              if (busy || reviewBusy) event.preventDefault();
+            }}
+            onEscapeKeyDown={(event) => {
+              if (busy || reviewBusy) event.preventDefault();
+            }}
+          >
+            <DialogTitle>{t('createAnimation')}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t('stageDescriptions.animations')}
+            </DialogDescription>
+            <div className="grid min-w-0 grid-cols-[minmax(220px,1fr)_minmax(0,2.25fr)] gap-5 max-[860px]:grid-cols-1">
+              <div className="min-w-0">
+                <div className="mb-3 flex h-8 items-center justify-between gap-2">
+                  <span className="text-sm font-semibold">
+                    {to('upload.character')}
+                  </span>
                   <Button
                     type="button"
+                    size="sm"
                     variant="outline"
-                    className="shrink-0"
+                    disabled={busy || reviewBusy}
                     onClick={() => setPickerOpen(true)}
                   >
-                    {t('changeCharacter')}
-                  </Button>
-                  <Button
-                    className="min-w-0 flex-1"
-                    onClick={generate}
-                    disabled={
-                      busy || !selectedFile || !directionSources.length
-                    }
-                  >
-                    {busy ? (
-                      <LoaderCircle className="size-4 animate-spin" />
-                    ) : null}
-                    {busy ? t('processing') : t('generateCollection')}
-                    {busy ? null : <CreditCostMark credits={creditCost} />}
+                    <ImageIcon className="size-4" />
+                    {selectedFile ? t('changeCharacter') : t('chooseReference')}
                   </Button>
                 </div>
+                {selectedFile ? (
+                  <CharacterComposer
+                    ref={composerRef}
+                    src={selectedFile.url}
+                    inputSrc={`/api/files/${selectedFile.id}`}
+                    backgroundColor={backgroundColor}
+                    disabled={busy || reviewBusy}
+                  />
+                ) : (
+                  <div className="text-muted-foreground flex aspect-square items-center justify-center rounded-xl border border-dashed p-4 text-center text-sm">
+                    {tg('motionReferenceRequired')}
+                  </div>
+                )}
               </div>
-            </>
-          ) : null}
-
-          {stage === 'sheets' ? (
-            <p className="text-muted-foreground text-sm leading-6">
-              {t('sheetHelp')}
-            </p>
-          ) : null}
-
-          {status && stage !== 'base' && stage !== 'animations' ? (
-            <p className="text-muted-foreground text-xs" aria-live="polite">
-              {tg(
-                (['pending', 'queued'].includes(status)
-                  ? 'queued'
-                  : status === 'processing'
-                    ? 'processing'
-                    : status === 'success'
-                      ? 'success'
-                      : status === 'partial'
-                        ? 'partial'
-                        : 'failed') as never
+              {animationReviewActive ? (
+                <HeroAnimationReview
+                  generation={review}
+                  generating={busy}
+                  failed={[
+                    'failed',
+                    'postprocessing_failed',
+                    'canceled',
+                  ].includes(status)}
+                  startedAt={motionStartedAt}
+                  onBusyChange={setReviewBusy}
+                  onReset={() => {
+                    setReview(null);
+                    setStatus('');
+                    setError('');
+                    setGenerationId('');
+                    sessionStorage.removeItem(reviewStorageKey);
+                  }}
+                  onChange={(value) => {
+                    setReview(value);
+                    setGenerationId(value.id);
+                    setStatus(value.status);
+                    sessionStorage.setItem(reviewStorageKey, value.id);
+                    router.refresh();
+                  }}
+                />
+              ) : (
+                <AnimationSettings
+                  motionType={action}
+                  setMotionType={(value) => {
+                    setAction(value);
+                    setError('');
+                  }}
+                  motionPrompt={prompt}
+                  setMotionPrompt={setPrompt}
+                  motionActionConfig={motionActionConfig}
+                  setMotionActionConfig={setMotionActionConfig}
+                  motionDirection={motionDirection}
+                  setMotionDirection={setMotionDirection}
+                  motionBackgroundColor={backgroundColor}
+                  setMotionBackgroundColor={setBackgroundColor}
+                  disabled={busy || reviewBusy}
+                  promptId="workspace-motion-prompt"
+                  footer={
+                    <div className="ml-auto flex min-w-[300px] flex-1 items-center justify-end gap-3 max-[640px]:w-full max-[640px]:min-w-0">
+                      <button
+                        type="button"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-12 shrink-0 items-center justify-center gap-2.5 rounded-lg px-5 font-mono text-sm font-extrabold disabled:cursor-not-allowed disabled:opacity-55 [&_svg]:size-4"
+                        disabled={busy || reviewBusy || !selectedFile}
+                        onClick={() => void generate()}
+                      >
+                        <Film aria-hidden="true" />
+                        {tm('startCreating')}
+                        <CreditCostMark credits={creditCost} />
+                      </button>
+                    </div>
+                  }
+                />
               )}
-            </p>
-          ) : null}
-          {error && stage !== 'animations' ? (
-            <p className="text-destructive text-sm" role="alert">
-              {error}
-            </p>
-          ) : null}
-          {generationId && ['partial', 'failed'].includes(status) ? (
-            <Button
-              variant="outline"
-              className="w-full"
-              disabled={busy}
-              onClick={retryGeneration}
-            >
-              {tg('retry')}
-              <CreditCostMark credits={retryCredits} />
-            </Button>
-          ) : null}
-        </div>
-      </aside>
-
+            </div>
+            {error && (
+              <p className="text-destructive text-sm" role="alert">
+                {error}
+              </p>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
       <ReferenceImagePicker
         open={pickerOpen}
         onOpenChange={setPickerOpen}
@@ -1330,9 +1261,7 @@ function EmptyState({
   pointToAside?: boolean;
 }) {
   return (
-    <div
-      className="text-muted-foreground col-span-full flex min-h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-10 text-sm"
-    >
+    <div className="text-muted-foreground col-span-full flex min-h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-10 text-sm">
       <ImageIcon className="size-7 shrink-0" aria-hidden="true" />
       <p className="max-w-md text-center leading-6">{label}</p>
       {hint ? (
@@ -1351,94 +1280,6 @@ function EmptyState({
           ) : null}
         </p>
       ) : null}
-    </div>
-  );
-}
-
-function MotionOptionButtons({
-  label,
-  value,
-  onValueChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
-  return (
-    <div className="contents">
-      <span className="text-muted-foreground whitespace-nowrap pt-1.5 text-sm font-medium">
-        {label}
-      </span>
-      <div
-        className="flex min-w-0 flex-wrap gap-2"
-        role="group"
-        aria-label={label}
-      >
-        {options.map((option) => {
-          const selected = value === option.value;
-          return (
-            <button
-              aria-pressed={selected}
-              className={cn(
-                'inline-flex min-h-8 items-center rounded-md border px-3 text-sm font-medium transition-colors',
-                selected
-                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
-                  : 'text-foreground/80 hover:border-primary/55 border-white/12 bg-secondary/55'
-              )}
-              key={option.value}
-              onClick={() => onValueChange(option.value)}
-              type="button"
-            >
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function ActionTypeSelect({
-  label,
-  value,
-  onValueChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="shrink-0 text-sm">{label}</span>
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="h-11 min-w-0 flex-1">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent align="end" className="min-w-56">
-          {options.map((option) => {
-            const image = getActionTypeImage(option.value);
-            return (
-              <SelectItem key={option.value} value={option.value}>
-                {image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    alt=""
-                    className="size-8 object-contain [image-rendering:pixelated]"
-                    src={image}
-                  />
-                ) : (
-                  <Sparkles className="size-6" />
-                )}
-                {option.label}
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
     </div>
   );
 }

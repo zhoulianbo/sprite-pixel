@@ -74,6 +74,7 @@
       }
     },
     "motionProgress": {
+      "video_ready": "视频已就绪，请预览并保存",
       "validating": "正在校验生成参数",
       "queued": "任务已排队",
       "video_generation": "正在生成动作视频",

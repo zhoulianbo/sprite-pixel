@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { PERMISSIONS, requirePermission } from '@/core/rbac';
 import { GalleryPublishButton } from '@/shared/blocks/admin/gallery-publish-button';
+import { PromptPreview } from '@/shared/blocks/admin/prompt-preview';
 import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Header, Main, MainHeader } from '@/shared/blocks/dashboard';
 import { TableCard } from '@/shared/blocks/table';
@@ -32,6 +33,7 @@ export default async function AdminCharactersPage({
   });
 
   const t = await getTranslations('admin.assets');
+  const tg = await getTranslations('generation');
   const {
     page: pageValue,
     pageSize: pageSizeValue,
@@ -89,15 +91,27 @@ export default async function AdminCharactersPage({
             : t('source.generated'),
       },
       {
+        name: 'selectedStyle',
+        title: t('fields.style'),
+        placeholder: '-',
+        callback: (item: (typeof assets)[number]) => {
+          if (!item.selectedStyle) return null;
+          const key = `options.style.${item.selectedStyle.replaceAll('_', '-')}`;
+          return tg.has(key) ? tg(key as never) : item.selectedStyle;
+        },
+      },
+      {
         name: 'description',
         title: t('fields.description'),
         className: 'w-80 max-w-80 whitespace-normal align-middle',
         placeholder: '-',
         callback: (item: (typeof assets)[number]) =>
           item.description?.trim() ? (
-            <div className="w-80 max-w-80 text-sm break-words whitespace-pre-wrap">
-              {item.description}
-            </div>
+            <PromptPreview
+              text={item.description}
+              moreLabel={t('characters.viewMore')}
+              title={t('characters.fullPrompt')}
+            />
           ) : null,
       },
       {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
   ArrowDown,
   ArrowDownLeft,
@@ -76,6 +77,8 @@ export function CharacterAssetCard({
   onDelete?: () => void;
   className?: string;
 }) {
+  const [currentUrl, setCurrentUrl] = useState(file.url);
+  useEffect(() => setCurrentUrl(file.url), [file.url]);
   return (
     <article
       className={cn(
@@ -95,7 +98,7 @@ export function CharacterAssetCard({
         <div className="bg-secondary/45 relative aspect-square overflow-hidden p-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={file.url}
+            src={currentUrl}
             alt={alt}
             className="size-full object-contain [image-rendering:pixelated]"
           />
@@ -156,7 +159,9 @@ export function CharacterAssetCard({
         ) : null}
       </div>
       <AssetPreviewActions
-        url={file.url}
+        url={currentUrl}
+        characterImage={file.generationId ? { fileId: file.id } : undefined}
+        onImageSaved={(result) => setCurrentUrl(result.url)}
         fileId={file.id}
         alt={alt}
         zoomLabel={labels.zoom}
@@ -584,34 +589,34 @@ export function ReferenceImagePicker({
           {files.map((file) => {
             const label = labelFor?.(file);
             return (
-            <button
-              type="button"
-              key={file.id}
-              onClick={() => {
-                onSelect(file);
-                onOpenChange(false);
-              }}
-              className={cn(
-                'bg-secondary/45 relative aspect-square overflow-hidden rounded-lg border p-2',
-                selectedId === file.id &&
-                  'border-primary ring-primary/20 ring-2'
-              )}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={file.url}
-                alt={label || selectLabel}
-                className="size-full object-contain [image-rendering:pixelated]"
-              />
-              {label ? (
-                <span className="absolute inset-x-0 bottom-0 truncate bg-black/70 px-2 py-1 text-left text-xs text-white">
-                  {label}
-                </span>
-              ) : null}
-              {selectedId === file.id ? (
-                <Check className="text-primary absolute top-2 left-2 size-4" />
-              ) : null}
-            </button>
+              <button
+                type="button"
+                key={file.id}
+                onClick={() => {
+                  onSelect(file);
+                  onOpenChange(false);
+                }}
+                className={cn(
+                  'bg-secondary/45 relative aspect-square overflow-hidden rounded-lg border p-2',
+                  selectedId === file.id &&
+                    'border-primary ring-primary/20 ring-2'
+                )}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={file.url}
+                  alt={label || selectLabel}
+                  className="size-full object-contain [image-rendering:pixelated]"
+                />
+                {label ? (
+                  <span className="absolute inset-x-0 bottom-0 truncate bg-black/70 px-2 py-1 text-left text-xs text-white">
+                    {label}
+                  </span>
+                ) : null}
+                {selectedId === file.id ? (
+                  <Check className="text-primary absolute top-2 left-2 size-4" />
+                ) : null}
+              </button>
             );
           })}
           {!files.length ? (

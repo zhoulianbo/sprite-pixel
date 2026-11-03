@@ -78,6 +78,7 @@
       }
     },
     "motionProgress": {
+      "video_ready": "Video ready — preview and save",
       "validating": "Validating request",
       "queued": "Queued for generation",
       "video_generation": "Generating action video",

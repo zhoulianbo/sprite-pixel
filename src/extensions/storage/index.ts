@@ -78,6 +78,8 @@ export interface StorageProvider {
   // check if object exists (optional)
   exists?: (options: { key: string; bucket?: string }) => Promise<boolean>;
 
+  deleteFile?: (options: { key: string; bucket?: string }) => Promise<void>;
+
   // get public url for key (optional)
   getPublicUrl?: (options: { key: string; bucket?: string }) => string;
 
@@ -177,6 +179,12 @@ export class StorageManager {
     const provider = this.ensureDefaultProvider();
     if (!provider.getPublicUrl) return undefined;
     return provider.getPublicUrl(options);
+  }
+
+  async deleteFile(options: { key: string; bucket?: string }) {
+    const provider = this.ensureDefaultProvider();
+    if (!provider.deleteFile) throw new Error('DELETE_UNAVAILABLE');
+    await provider.deleteFile(options);
   }
 
   async downloadFile(options: { key: string; bucket?: string }) {

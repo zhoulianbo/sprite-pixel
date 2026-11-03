@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
   Download,
   Maximize2,
@@ -10,14 +10,8 @@ import {
   Trash2,
 } from 'lucide-react';
 
+import { useRouter } from '@/core/i18n/navigation';
 import { Button } from '@/shared/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from '@/shared/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +19,13 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
 import { cn } from '@/shared/lib/utils';
+import type { CharacterImageTarget } from '@/shared/services/character-image-repair';
+
+import {
+  CharacterImageDialog,
+  characterImageEndpoint,
+  type CharacterImageSaved,
+} from './character-image-dialog';
 
 export function AssetPreviewActions({
   url,
@@ -41,6 +42,8 @@ export function AssetPreviewActions({
   onDelete,
   setActiveLabel,
   onSetActive,
+  characterImage,
+  onImageSaved,
 }: {
   url: string;
   alt: string;
@@ -56,7 +59,12 @@ export function AssetPreviewActions({
   onDelete?: () => void;
   setActiveLabel?: string;
   onSetActive?: () => void;
+  characterImage?: CharacterImageTarget;
+  onImageSaved?: (result: CharacterImageSaved) => void;
 }) {
+  const router = useRouter();
+  const [currentUrl, setCurrentUrl] = useState(url);
+  useEffect(() => setCurrentUrl(url), [url]);
   const hasMenu = Boolean(children || onRename || onDelete || onSetActive);
 
   return (
@@ -67,31 +75,27 @@ export function AssetPreviewActions({
       )}
       onClick={(event) => event.stopPropagation()}
     >
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="secondary"
-            aria-label={zoomLabel}
-            className="bg-background/85 backdrop-blur-sm"
-          >
-            <Maximize2 className="size-3.5" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-4xl rounded-xl p-4">
-          <DialogTitle className="sr-only">{zoomLabel}</DialogTitle>
-          <DialogDescription className="sr-only">{alt}</DialogDescription>
-          <div className="bg-secondary/45 flex max-h-[80vh] min-h-64 items-center justify-center overflow-auto rounded-lg border p-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={url}
-              alt={alt}
-              className="max-h-[74vh] max-w-full object-contain [image-rendering:pixelated]"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CharacterImageDialog
+        url={currentUrl}
+        alt={alt}
+        title={zoomLabel}
+        target={characterImage}
+        onSaved={(result) => {
+          setCurrentUrl(result.url);
+          onImageSaved?.(result);
+          router.refresh();
+        }}
+      >
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="secondary"
+          aria-label={zoomLabel}
+          className="bg-background/85 backdrop-blur-sm"
+        >
+          <Maximize2 className="size-3.5" />
+        </Button>
+      </CharacterImageDialog>
       <Button
         asChild
         size="icon-sm"
@@ -99,7 +103,16 @@ export function AssetPreviewActions({
         className="bg-background/85 backdrop-blur-sm"
       >
         <a
-          href={fileId ? `/api/files/${fileId}?download=1` : url}
+          href={
+            fileId
+              ? `/api/files/${fileId}?download=1`
+              : characterImage
+                ? `${characterImageEndpoint(characterImage)}&download=1`
+                : currentUrl
+          }
+          download={characterImage ? 'character.png' : ''}
+          onClickCapture={(event) => event.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
           aria-label={downloadLabel}
         >
           <Download className="size-3.5" />
@@ -148,6 +161,47 @@ export function AssetPreviewActions({
           </DropdownMenuContent>
         </DropdownMenu>
       ) : null}
+    </div>
+  );
+}
+
+/** Character thumbnail and actions share the same replacement state. */
+export function CharacterImagePreview({
+  url,
+  fileId,
+  alt,
+  zoomLabel,
+  downloadLabel,
+  children,
+}: {
+  url: string;
+  fileId: string;
+  alt: string;
+  zoomLabel: string;
+  downloadLabel: string;
+  children?: ReactNode;
+}) {
+  const [currentUrl, setCurrentUrl] = useState(url);
+  useEffect(() => setCurrentUrl(url), [url]);
+  return (
+    <div className="group relative size-full">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={currentUrl}
+        alt={alt}
+        className="size-full object-contain [image-rendering:pixelated]"
+      />
+      {children}
+      <AssetPreviewActions
+        url={currentUrl}
+        alt={alt}
+        fileId={fileId}
+        characterImage={{ fileId }}
+        zoomLabel={zoomLabel}
+        downloadLabel={downloadLabel}
+        menuLabel={zoomLabel}
+        onImageSaved={(result) => setCurrentUrl(result.url)}
+      />
     </div>
   );
 }

@@ -86,6 +86,13 @@ export default async function AdminAnimationsPage({
           <AdminAnimationPreview
             imageTabLabel={t('animations.imageTab')}
             animationTabLabel={t('animations.animationTab')}
+            compareTabLabel={t('animations.compareTab')}
+            sourceVideoLabel={t('animations.sourceVideo')}
+            sourceVideoEmptyLabel={t('animations.noSourceVideo')}
+            sourceVideoErrorLabel={t('animations.videoLoadError')}
+            sourceVideoLoadingLabel={t('animations.videoLoading')}
+            openVideoLabel={t('animations.openVideo')}
+            zoomVideoLabel={t('animations.zoomVideo')}
             loadingLabel={t('animations.loading')}
             errorLabel={t('animations.loadError')}
             retryLabel={t('animations.retry')}

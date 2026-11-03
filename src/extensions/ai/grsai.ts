@@ -185,9 +185,13 @@ export class GrsaiProvider implements AIProvider {
     if (images.length) payload.images = images;
     const aspectRatio = options.aspectRatio || options.size;
     if (params.mediaType === AIMediaType.VIDEO) {
-      payload.aspectRatio = videoAspectRatio(
+      const videoRatio = videoAspectRatio(
         typeof aspectRatio === 'string' ? aspectRatio : undefined
       );
+      payload.aspectRatio =
+        params.model === 'minimax-h3' && videoRatio === 'square'
+          ? 'landscape'
+          : videoRatio;
     } else if (aspectRatio) {
       payload.aspectRatio = aspectRatio;
     }

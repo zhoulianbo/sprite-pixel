@@ -2,6 +2,7 @@ import { and, count, desc, eq, inArray, isNull } from 'drizzle-orm';
 
 import { db } from '@/core/db';
 import {
+  aiTask,
   animationClip,
   animationSet,
   animationVersion,
@@ -10,6 +11,7 @@ import {
   galleryItem,
   generation,
   generationInput,
+  generationTask,
   project,
   user,
 } from '@/config/db/schema';
@@ -17,7 +19,10 @@ import {
   animationFrameFileId,
   parseAnimationFrames,
 } from '@/shared/lib/animation-frames';
-import { getAssetPublicUrlResolver } from '@/shared/services/storage';
+import {
+  getAssetPublicUrlResolver,
+  getStorageService,
+} from '@/shared/services/storage';
 
 type AdminAssetKind = 'character' | 'icon';
 
@@ -37,6 +42,16 @@ type AdminAnimationRow = {
   allowGallery: boolean | null;
   galleryStatus: string | null;
 };
+
+function generationStyle(paramsJson: string | null) {
+  if (!paramsJson) return null;
+  try {
+    const style = JSON.parse(paramsJson)?.style;
+    return typeof style === 'string' && style.trim() ? style.trim() : null;
+  } catch {
+    return null;
+  }
+}
 
 function assetRole(kind: AdminAssetKind) {
   return kind === 'character' ? 'base_reference' : 'icon';
@@ -96,6 +111,7 @@ export async function getAdminAssets({
       width: assetFile.width,
       height: assetFile.height,
       sourceType: assetItem.sourceType,
+      generationParamsJson: generation.paramsJson,
       allowGallery: generation.allowGallery,
       galleryStatus: galleryItem.status,
     })
@@ -117,13 +133,16 @@ export async function getAdminAssets({
     .offset((page - 1) * limit);
 
   const urlFor = await getAssetPublicUrlResolver();
-  return rows.map(({ storageKey, ...row }: (typeof rows)[number]) => ({
-    ...row,
-    galleryEligible:
-      row.sourceType === 'generated' && Boolean(row.allowGallery),
-    galleryPublished: row.galleryStatus === 'published',
-    previewUrl: urlFor(storageKey),
-  }));
+  return rows.map(
+    ({ storageKey, generationParamsJson, ...row }: (typeof rows)[number]) => ({
+      ...row,
+      galleryEligible:
+        row.sourceType === 'generated' && Boolean(row.allowGallery),
+      galleryPublished: row.galleryStatus === 'published',
+      selectedStyle: generationStyle(generationParamsJson),
+      previewUrl: urlFor(storageKey),
+    })
+  );
 }
 
 function animationConditions(email?: string) {
@@ -275,11 +294,23 @@ export async function getAdminAnimationPreview(clipId: string) {
       frameHeight: animationVersion.frameHeight,
       framesJson: animationVersion.framesJson,
       spritesheetFileId: animationVersion.spritesheetFileId,
+      videoTaskInfo: aiTask.taskInfo,
     })
     .from(animationClip)
     .innerJoin(animationSet, eq(animationSet.id, animationClip.animationSetId))
     .innerJoin(animationVersion, eq(animationVersion.clipId, animationClip.id))
     .innerJoin(assetItem, eq(assetItem.id, animationSet.itemId))
+    .leftJoin(
+      assetFile,
+      and(
+        eq(assetFile.id, animationVersion.spritesheetFileId),
+        isNull(assetFile.deletedAt)
+      )
+    )
+    // Follow the sheet's exact task, so directions, retries and edited versions
+    // keep the video that actually produced this sheet.
+    .leftJoin(generationTask, eq(generationTask.id, assetFile.generationTaskId))
+    .leftJoin(aiTask, eq(aiTask.id, generationTask.aiTaskId))
     .where(and(animationConditions(), eq(animationClip.id, clipId)))
     .limit(1)) as {
     fps: number;
@@ -287,8 +318,32 @@ export async function getAdminAnimationPreview(clipId: string) {
     frameHeight: number;
     framesJson: string;
     spritesheetFileId: string | null;
+    videoTaskInfo: string | null;
   }[];
   if (!version) return null;
+
+  let sourceVideoUrl: string | null = null;
+  let sourceVideoKey: string | null = null;
+  try {
+    const info = JSON.parse(version.videoTaskInfo || '{}');
+    sourceVideoKey =
+      typeof info?.sourceVideoKey === 'string' ? info.sourceVideoKey : null;
+    const url = Array.isArray(info?.videos)
+      ? info.videos.find(
+          (video: { videoUrl?: unknown } | null) =>
+            typeof video?.videoUrl === 'string' && video.videoUrl.trim()
+        )?.videoUrl
+      : null;
+    if (url && ['https:', 'http:'].includes(new URL(url).protocol)) {
+      sourceVideoUrl = url;
+    }
+  } catch {
+    // Older or incomplete tasks can still preview their sprite frames.
+  }
+  if (sourceVideoKey) {
+    const storage = (await getStorageService()).getProvider('r2');
+    sourceVideoUrl = storage?.getPublicUrl?.({ key: sourceVideoKey }) || null;
+  }
 
   const frames = parseAnimationFrames(version.framesJson);
   const fileIds = [
@@ -322,6 +377,7 @@ export async function getAdminAnimationPreview(clipId: string) {
   );
 
   return {
+    sourceVideoUrl,
     fps: version.fps,
     frameWidth: version.frameWidth,
     frameHeight: version.frameHeight,

@@ -9,8 +9,6 @@ import {
   IconBox,
   IconBrandGithub,
   IconCheck,
-  IconChevronDown,
-  IconChevronUp,
   IconDeviceGamepad2,
   IconDownload,
   IconFlask,
@@ -33,16 +31,24 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from '@/core/i18n/navigation';
 import {
   animationDirectionDefault,
-  animationDirectionValues,
   generationDefaults,
-  generationOptionValues,
-  getActionTypeImage,
   mapGenerationOptions,
 } from '@/config/generation';
 import { generationPollIntervalMs } from '@/config/generation/model-routes';
 import { defaultLocale } from '@/config/locale';
+import { AssetPreviewActions } from '@/shared/blocks/common/asset-preview-actions';
+import type { CharacterImageSaved } from '@/shared/blocks/common/character-image-dialog';
 import { CreditCostMark } from '@/shared/blocks/common/credit-cost';
 import { ProjectAssetPicker } from '@/shared/blocks/common/project-asset-picker';
+import {
+  AnimationSettings,
+  HeroOptionSelect,
+} from '@/shared/blocks/projects/animation-settings';
+import {
+  CharacterComposer,
+  type CharacterComposerHandle,
+} from '@/shared/blocks/projects/character-composer';
+import { HeroAnimationReview } from '@/shared/blocks/projects/hero-animation-review';
 import type { ProjectSummary } from '@/shared/blocks/projects/project-create-dialog';
 import {
   prefetchProjectList,
@@ -52,7 +58,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import {
   DropdownMenu,
@@ -60,15 +65,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/shared/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/components/ui/select';
 import { useAppContext } from '@/shared/contexts/app';
 import { useGenerationCredits } from '@/shared/hooks/use-generation-credits';
+import { characterNameFromPrompt } from '@/shared/lib/character-name';
 import {
   readApiPayload,
   useProductApiFeedback,
@@ -107,13 +106,6 @@ function pickInspirationIndex(current: number, length: number) {
   return next;
 }
 
-type HeroSelectOption = {
-  value: string;
-  label: string;
-};
-
-const collapsedMotionActionCount = 10;
-
 function resolveProjectLabel(
   project: { name?: string | null; settingsJson?: string } | null | undefined,
   defaultLabel: string
@@ -149,94 +141,6 @@ type ToolItem = {
   cta: string;
   href: string;
 };
-
-function HeroOptionSelect({
-  label,
-  value,
-  onValueChange,
-  options,
-  className,
-}: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: HeroSelectOption[];
-  className?: string;
-}) {
-  return (
-    <Select key={label} onValueChange={onValueChange} value={value}>
-      <SelectTrigger
-        aria-label={label}
-        className={cn(
-          'hover:bg-secondary/70 bg-secondary/55 data-[state=open]:bg-secondary/70 h-8 w-auto min-w-0 shrink-0 gap-1 rounded-lg border-0 px-3 text-[12px] shadow-none hover:border-transparent focus-visible:ring-0 data-[state=open]:border-transparent [&_svg]:size-3.5',
-          className
-        )}
-        size="sm"
-      >
-        <span className="text-muted-foreground shrink-0 pr-1 font-normal">
-          {label}
-        </span>
-        <SelectValue>
-          <span className="text-foreground font-medium">
-            {options.find((option) => option.value === value)?.label}
-          </span>
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent className="min-w-[9.5rem]">
-        {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}
-
-function HeroOptionButtons({
-  label,
-  value,
-  onValueChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  options: HeroSelectOption[];
-}) {
-  return (
-    <div className="contents">
-      <span className="text-muted-foreground pt-1.5 text-sm font-medium whitespace-nowrap">
-        {label}
-      </span>
-      <div
-        className="flex min-w-0 flex-wrap gap-2"
-        role="group"
-        aria-label={label}
-      >
-        {options.map((option) => {
-          const selected = value === option.value;
-          return (
-            <button
-              aria-pressed={selected}
-              className={cn(
-                'inline-flex min-h-8 items-center rounded-md border px-3 text-sm font-medium transition-colors',
-                selected
-                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
-                  : 'text-foreground/80 hover:border-primary/55 bg-secondary/55 border-white/12'
-              )}
-              key={option.value}
-              onClick={() => onValueChange(option.value)}
-              type="button"
-            >
-              {option.label}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 type MotionCharacterRef =
   | {
@@ -653,6 +557,7 @@ function HeroPreview({
   continueHref,
   onContinue,
   footer,
+  previewActions,
 }: {
   label: string;
   emptyLabel: string;
@@ -674,6 +579,7 @@ function HeroPreview({
   continueHref?: string;
   onContinue?: () => void;
   footer?: ReactNode;
+  previewActions?: ReactNode;
 }) {
   const PreviewIcon = motion ? IconMovie : IconPhotoAi;
 
@@ -683,7 +589,7 @@ function HeroPreview({
       <div className="border-border bg-secondary/35 text-muted-foreground flex min-h-[188px] flex-1 flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border p-3 text-center">
         {result?.fileUrl ? (
           <>
-            <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-lg bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.04)_75%)] bg-[size:16px_16px]">
+            <div className="group relative min-h-0 w-full flex-1 overflow-hidden rounded-lg bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.04)_75%)] bg-[size:16px_16px]">
               {motion &&
               result.columns &&
               result.rows &&
@@ -707,39 +613,9 @@ function HeroPreview({
                   className="size-full object-contain [image-rendering:pixelated]"
                 />
               )}
+              {previewActions}
             </div>
             <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
-              {!motion && (
-                <>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button
-                        type="button"
-                        className="hover:bg-primary/10 hover:text-primary inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-xs"
-                      >
-                        <IconArrowsMaximize className="size-4" />
-                        {zoomLabel}
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-3xl rounded-xl p-3">
-                      <DialogTitle className="sr-only">{zoomLabel}</DialogTitle>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={result.fileUrl}
-                        alt={result.alt || label}
-                        className="max-h-[78vh] w-full object-contain [image-rendering:pixelated]"
-                      />
-                    </DialogContent>
-                  </Dialog>
-                  <a
-                    href={`${result.fileUrl}?download=1`}
-                    className="hover:bg-primary/10 hover:text-primary inline-flex h-8 items-center gap-1.5 rounded-md px-2 text-xs"
-                  >
-                    <IconDownload className="size-4" />
-                    {downloadLabel}
-                  </a>
-                </>
-              )}
               {onContinue ? (
                 <button
                   type="button"
@@ -833,6 +709,7 @@ function HeroComposer({
   existingActionLabel,
   onBeforeUpload,
   previewFooter,
+  previewActions,
 }: {
   promptId: string;
   promptLabel: string;
@@ -879,6 +756,7 @@ function HeroComposer({
   existingActionLabel?: string;
   onBeforeUpload?: () => boolean;
   previewFooter?: ReactNode;
+  previewActions?: ReactNode;
 }) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_minmax(196px,220px)] items-stretch gap-4 max-[760px]:grid-cols-1">
@@ -963,6 +841,7 @@ function HeroComposer({
         continueHref={continueHref}
         onContinue={onContinue}
         footer={previewFooter}
+        previewActions={previewActions}
       />
     </div>
   );
@@ -1091,6 +970,11 @@ export function Home({ section: _section }: { section: Section }) {
   const tPricing = useTranslations('pages.pricing');
   const tGeneration = useTranslations('generation');
   const tProduct = useTranslations('workspace');
+  const tf = useTranslations('workspace.animationFlow');
+  const composerRef = useRef<CharacterComposerHandle>(null);
+  const submittingMotion = useRef(false);
+  const [motionStartedAt, setMotionStartedAt] = useState(Date.now());
+  const [reviewBusy, setReviewBusy] = useState(false);
   const notifyApiError = useProductApiFeedback();
   const { user, isCheckSign } = useAppContext();
   const characterCredits = useGenerationCredits('character');
@@ -1154,7 +1038,6 @@ export function Home({ section: _section }: { section: Section }) {
   const [motionType, setMotionType] = useState<string>(
     generationDefaults.actionType
   );
-  const [showMoreActions, setShowMoreActions] = useState(false);
   const [motionActionConfig, setMotionActionConfig] = useState({
     jumpType: 'in-place',
     dashType: 'forward',
@@ -1171,6 +1054,7 @@ export function Home({ section: _section }: { section: Section }) {
   const [motionDirection, setMotionDirection] = useState<string>(
     animationDirectionDefault
   );
+  const [motionBackgroundColor, setMotionBackgroundColor] = useState('');
   const [motionFrameSize, setMotionFrameSize] = useState<string>(
     generationDefaults.frameSize
   );
@@ -1330,17 +1214,18 @@ export function Home({ section: _section }: { section: Section }) {
     }
   };
 
-  const activeGenerationKey = (mode: 'character' | 'motion') =>
-    mode === 'motion'
-      ? 'sv_active_motion_generation'
-      : 'sv_active_character_generation';
-
   const pollGeneration = async (
     generationId: string,
     mode: 'character' | 'motion'
   ) => {
     const response = await fetch(`/api/generations/${generationId}`);
     const payload = await readApiPayload(response);
+    // Legacy recovery keys can contain animation tasks. Homepage videos are transient.
+    if (mode === 'character' && payload.data?.taskType === 'animation') {
+      window.sessionStorage.removeItem('sv_active_generation');
+      window.sessionStorage.removeItem('sv_active_character_generation');
+      return;
+    }
     const resolvedMode =
       payload.data?.taskType === 'animation' ? 'motion' : mode;
     applyGenerationPayload(payload.data, resolvedMode);
@@ -1356,7 +1241,8 @@ export function Home({ section: _section }: { section: Section }) {
       );
       return;
     }
-    window.sessionStorage.removeItem(activeGenerationKey(resolvedMode));
+    if (resolvedMode !== 'motion')
+      window.sessionStorage.removeItem('sv_active_character_generation');
     window.sessionStorage.removeItem('sv_active_generation');
     if (
       ['failed', 'postprocessing_failed', 'canceled'].includes(
@@ -1384,6 +1270,7 @@ export function Home({ section: _section }: { section: Section }) {
   ) => {
     if (mode === 'motion') {
       setMotionGenerationStatus('failed');
+      notifyApiError(error);
       return;
     }
     const message = notifyApiError(error);
@@ -1394,6 +1281,11 @@ export function Home({ section: _section }: { section: Section }) {
   const startProject = async (event?: FormEvent) => {
     event?.preventDefault();
     if (!requireSignedIn()) return;
+    if (
+      heroMode === 'motion' &&
+      (submittingMotion.current || reviewBusy || motionStageActive)
+    )
+      return;
     const submittedPrompt =
       heroMode === 'character' ? prompt.trim() : motionPrompt.trim();
     setValidationAttempted(true);
@@ -1416,8 +1308,10 @@ export function Home({ section: _section }: { section: Section }) {
     }
     setValidationAttempted(false);
     if (heroMode === 'motion') {
-      setMotionGenerationStatus('validating');
+      submittingMotion.current = true;
       setMotionGenerationResult(null);
+      setMotionStartedAt(Date.now());
+      setMotionGenerationStatus('validating');
     } else {
       setGeneratedCharacterSaved(false);
       setGeneratedCharacterName('');
@@ -1426,24 +1320,13 @@ export function Home({ section: _section }: { section: Section }) {
       setCharacterGenerationResult(null);
     }
     try {
+      const composition =
+        heroMode === 'motion'
+          ? await composerRef.current!.exportComposition()
+          : undefined;
       let referenceFileId: string | undefined;
       let itemId: string | undefined;
-      let resolvedMotionCharacter = motionCharacter;
-      if (heroMode === 'motion' && motionCharacter?.origin === 'upload') {
-        if (!selectedProject) {
-          notifyApiError('PROJECT_NOT_FOUND');
-          return;
-        }
-        const archived = await archiveUploadedCharacter(
-          motionCharacter.file,
-          selectedProject,
-          uploadedCharacterName
-        );
-        resolvedMotionCharacter = archived;
-        setMotionCharacter(archived);
-        setUploadConfirmOpen(false);
-        setPendingCharacterUpload(null);
-      }
+      const resolvedMotionCharacter = motionCharacter;
       if (
         heroMode === 'motion' &&
         resolvedMotionCharacter?.origin === 'vault'
@@ -1475,6 +1358,15 @@ export function Home({ section: _section }: { section: Section }) {
         notifyApiError('PROJECT_NOT_FOUND');
         return;
       }
+      const compositionFileId =
+        heroMode === 'motion'
+          ? await uploadProjectReferenceFile({
+              projectId: targetProjectId,
+              file: composition!.file,
+              role: 'motion_reference',
+              itemId,
+            })
+          : undefined;
       const generationId = crypto.randomUUID();
       const request =
         heroMode === 'character'
@@ -1490,6 +1382,9 @@ export function Home({ section: _section }: { section: Section }) {
           : {
               id: generationId,
               type: 'animation',
+              compositionFileId,
+              backgroundColor: composition?.backgroundColor,
+              backgroundKeySafe: composition?.backgroundKeySafe,
               prompt: submittedPrompt,
               itemId,
               referenceFileId,
@@ -1519,10 +1414,12 @@ export function Home({ section: _section }: { section: Section }) {
         payload.data,
         heroMode === 'motion' ? 'motion' : 'character'
       );
-      window.sessionStorage.setItem(
-        activeGenerationKey(heroMode === 'motion' ? 'motion' : 'character'),
-        generationId
-      );
+      if (heroMode !== 'motion') {
+        window.sessionStorage.setItem(
+          'sv_active_character_generation',
+          generationId
+        );
+      }
       if (['pending', 'processing'].includes(payload.data.status)) {
         window.setTimeout(
           () =>
@@ -1545,6 +1442,8 @@ export function Home({ section: _section }: { section: Section }) {
         heroMode === 'motion' ? 'motion' : 'character',
         error
       );
+    } finally {
+      submittingMotion.current = false;
     }
   };
 
@@ -1552,17 +1451,10 @@ export function Home({ section: _section }: { section: Section }) {
     const characterId =
       window.sessionStorage.getItem('sv_active_character_generation') ||
       window.sessionStorage.getItem('sv_active_generation');
-    const motionId = window.sessionStorage.getItem(
-      'sv_active_motion_generation'
-    );
+    window.sessionStorage.removeItem('sv_active_motion_generation');
     if (characterId) {
       pollGeneration(characterId, 'character').catch((error) =>
         handleGenerationError('character', error)
-      );
-    }
-    if (motionId) {
-      pollGeneration(motionId, 'motion').catch((error) =>
-        handleGenerationError('motion', error)
       );
     }
   }, []);
@@ -1573,14 +1465,34 @@ export function Home({ section: _section }: { section: Section }) {
   );
   const characterPreviewUrl =
     characterPreviewItem?.file?.url || characterPreviewItem?.previewUrl || '';
+  const applyCharacterImageSaved = (result: CharacterImageSaved) => {
+    const generationId = characterGenerationResult?.id;
+    const itemId = characterPreviewItem?.id;
+    setCharacterGenerationResult((current: any) =>
+      current?.id === generationId
+        ? {
+            ...current,
+            items: current.items.map((item: any) =>
+              item.id === itemId
+                ? {
+                    ...item,
+                    file: { ...item.file, id: result.fileId, url: result.url },
+                    previewUrl: result.url,
+                  }
+                : item
+            ),
+          }
+        : current
+    );
+  };
   useEffect(() => {
     if (!characterPreviewItem || generatedCharacterSaved) return;
     setGeneratedCharacterName((current) =>
       current.trim()
         ? current
-        : String(characterGenerationResult?.prompt || '')
-            .trim()
-            .slice(0, 60)
+        : characterNameFromPrompt(
+            String(characterGenerationResult?.prompt || '')
+          )
     );
   }, [
     characterGenerationResult,
@@ -1619,10 +1531,19 @@ export function Home({ section: _section }: { section: Section }) {
     (item: any) => item.editorVersionId
   )?.editorVersionId;
   useEffect(() => {
-    if (motionGenerationStatus === 'success' && editorVersionId) {
+    if (
+      motionGenerationStatus === 'success' &&
+      editorVersionId &&
+      !motionGenerationResult?.params?.animationReview
+    ) {
       router.push(`/editor/animations/${editorVersionId}`);
     }
-  }, [editorVersionId, motionGenerationStatus, router]);
+  }, [
+    editorVersionId,
+    motionGenerationStatus,
+    motionGenerationResult?.params?.animationReview,
+    router,
+  ]);
 
   const motionPhase =
     motionGenerationResult?.items?.find((item: any) => item.phase)?.phase ||
@@ -1663,8 +1584,8 @@ export function Home({ section: _section }: { section: Section }) {
   };
 
   const setUploadedMotionCharacter = (file: File | null) => {
-    setMotionCharacter(file ? { origin: 'upload', file } : null);
     if (!file) {
+      setMotionCharacter(null);
       setPendingCharacterUpload(null);
       setUploadConfirmOpen(false);
       return;
@@ -1732,14 +1653,8 @@ export function Home({ section: _section }: { section: Section }) {
           ? tProduct('generation.motionReferenceRequired')
           : undefined
     : undefined;
-  const motionActions = mapGenerationOptions('actionType', translateGeneration);
-  const visibleMotionActions = showMoreActions
-    ? motionActions
-    : motionActions.slice(0, collapsedMotionActionCount);
   const motionCharacterPreview =
-    motionCharacter?.origin === 'vault'
-      ? motionCharacter.previewUrl
-      : pendingCharacterPreview;
+    motionCharacter?.origin === 'vault' ? motionCharacter.previewUrl : '';
   const motionProjectLabel = resolveProjectLabel(
     motionCharacter?.origin === 'vault'
       ? {
@@ -1751,25 +1666,30 @@ export function Home({ section: _section }: { section: Section }) {
       : selectedProject,
     t('defaultProject')
   );
-  const motionDetailTypes: readonly string[] =
-    generationOptionValues.actionType;
-  const motionSettingsType = motionDetailTypes.includes(motionType);
   const motionBusy = ['validating', 'pending', 'processing'].includes(
     motionGenerationStatus
   );
-  const setActionConfig = (
-    key: keyof typeof motionActionConfig,
-    value: string
-  ) => setMotionActionConfig((current) => ({ ...current, [key]: value }));
-  const translatedOptions = (group: string, values: string[]) =>
-    values.map((value) => ({
-      value,
-      label: t(`motionOptions.${group}.${value}` as never),
-    }));
-  const motionDirectionOptions = animationDirectionValues.map((value) => ({
-    value,
-    label: tGeneration(`options.animationDirection.${value}` as never),
-  }));
+  const motionStageActive =
+    motionBusy ||
+    motionGenerationStatus === 'failed' ||
+    Boolean(motionGenerationResult?.items?.some((item: any) => item.video));
+  const warnBeforeLeaving =
+    motionBusy ||
+    reviewBusy ||
+    Boolean(motionGenerationResult?.items?.some((item: any) => item.video));
+  useEffect(() => {
+    if (!warnBeforeLeaving) return;
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', beforeUnload);
+    return () => window.removeEventListener('beforeunload', beforeUnload);
+  }, [warnBeforeLeaving]);
+  const resetMotionVideo = () => {
+    setMotionGenerationResult(null);
+    setMotionGenerationStatus('idle');
+  };
 
   return (
     <main className="bg-background text-foreground overflow-hidden">
@@ -1856,6 +1776,9 @@ export function Home({ section: _section }: { section: Section }) {
                           ? 'border-primary/70! text-primary border-b-[#0b111b] bg-[#0b111b]/95 shadow-[0_-8px_28px_rgba(245,181,48,0.08)]'
                           : 'border-white/12 bg-[#0b111b]/70 text-white/65 hover:border-white/25 hover:text-white'
                       )}
+                      disabled={
+                        motionBusy || reviewBusy || savingUploadedCharacter
+                      }
                       id={`hero-${id}-tab`}
                       key={id}
                       onClick={() => {
@@ -1918,9 +1841,24 @@ export function Home({ section: _section }: { section: Section }) {
                       ? openMotionFromCharacter
                       : undefined
                   }
-                  previewFooter={
+                  previewActions={
                     characterPreviewItem ? (
-                      <div className="flex w-full gap-2">
+                      <AssetPreviewActions
+                        url={characterPreviewUrl}
+                        alt={characterGenerationResult?.prompt || t('preview')}
+                        zoomLabel={tProduct('generation.zoom')}
+                        downloadLabel={tProduct('generation.download')}
+                        menuLabel={tProduct('characters.more')}
+                        characterImage={{
+                          generationId: characterGenerationResult.id,
+                        }}
+                        onImageSaved={applyCharacterImageSaved}
+                      />
+                    ) : null
+                  }
+                  previewFooter={
+                    characterPreviewItem && !generatedCharacterSaved ? (
+                      <div className="flex w-full flex-wrap gap-2">
                         <input
                           aria-label={t('characterName')}
                           className="border-border bg-background text-foreground focus:border-primary/60 min-w-0 flex-1 rounded-md border px-2.5 py-2 text-xs outline-none"
@@ -2007,7 +1945,7 @@ export function Home({ section: _section }: { section: Section }) {
                 id="hero-motion-panel"
                 role="tabpanel"
               >
-                <div className="grid min-h-[330px] grid-cols-[240px_minmax(0,1fr)] gap-5 max-[860px]:grid-cols-1">
+                <div className="grid min-h-[330px] grid-cols-[minmax(220px,1fr)_minmax(0,2.25fr)] gap-5 max-[860px]:grid-cols-1">
                   <aside className="flex min-w-0 flex-col">
                     <div className="mb-3 flex items-center gap-2">
                       <span className="text-sm font-semibold">
@@ -2015,6 +1953,7 @@ export function Home({ section: _section }: { section: Section }) {
                       </span>
                       <button
                         className="text-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-primary ml-auto inline-flex h-8 items-center gap-1.5 rounded-md border border-white/12 bg-transparent px-3 text-xs font-medium"
+                        disabled={motionBusy || reviewBusy}
                         onClick={() => {
                           if (requireSignedIn()) setCharacterPickerOpen(true);
                         }}
@@ -2024,6 +1963,7 @@ export function Home({ section: _section }: { section: Section }) {
                         {tGeneration('upload.existing')}
                       </button>
                       <input
+                        disabled={motionBusy || reviewBusy}
                         ref={motionFileInputRef}
                         accept="image/*"
                         className="sr-only"
@@ -2037,43 +1977,46 @@ export function Home({ section: _section }: { section: Section }) {
                         type="file"
                       />
                     </div>
-                    <div
-                      className={cn(
-                        'border-border relative flex min-h-[214px] flex-1 items-center justify-center overflow-hidden rounded-lg border bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.04)_75%)] bg-[size:16px_16px]',
-                        validationAttempted &&
-                          !motionCharacter &&
-                          'border-destructive'
-                      )}
-                    >
+                    <div className="relative">
                       {motionCharacterPreview ? (
                         <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            alt={tGeneration('upload.character')}
-                            className="size-full object-contain [image-rendering:pixelated]"
+                          <CharacterComposer
+                            ref={composerRef}
+                            backgroundColor={motionBackgroundColor}
                             src={motionCharacterPreview}
+                            inputSrc={
+                              motionCharacter?.origin === 'vault'
+                                ? `/api/files/${motionCharacter.fileId}`
+                                : undefined
+                            }
+                            disabled={motionBusy || reviewBusy}
+                            hint={tProduct('heroAnimation.dragHint')}
                           />
-                          <div className="absolute inset-x-0 bottom-0 bg-black/70 px-3 py-2 text-sm text-white">
-                            {t('projectOverlay', { name: motionProjectLabel })}
-                          </div>
                           <button
-                            aria-label={tGeneration('upload.remove')}
-                            className="bg-background/90 hover:bg-destructive hover:text-destructive-foreground absolute top-2 right-2 z-10 grid size-7 place-items-center rounded-full border border-white/15"
-                            onClick={() => setUploadedMotionCharacter(null)}
                             type="button"
+                            aria-label={tGeneration('upload.remove')}
+                            disabled={motionBusy || reviewBusy}
+                            className="bg-secondary hover:bg-destructive absolute top-2 right-2 grid size-7 place-items-center rounded-full border"
+                            onClick={() => setUploadedMotionCharacter(null)}
                           >
-                            <IconX aria-hidden="true" className="size-4" />
+                            <IconX className="size-4" />
                           </button>
                         </>
                       ) : (
                         <>
                           <button
-                            className="text-muted-foreground hover:text-primary flex flex-col items-center gap-2 text-center text-sm"
+                            type="button"
+                            disabled={motionBusy || reviewBusy}
+                            className={cn(
+                              'border-border text-muted-foreground hover:text-primary flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl border bg-[linear-gradient(45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.04)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.04)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.04)_75%)] bg-[size:16px_16px] text-sm',
+                              validationAttempted &&
+                                !motionCharacter &&
+                                'border-destructive'
+                            )}
                             onClick={() => {
                               if (requireSignedIn())
                                 motionFileInputRef.current?.click();
                             }}
-                            type="button"
                           >
                             <IconUpload
                               aria-hidden="true"
@@ -2081,15 +2024,16 @@ export function Home({ section: _section }: { section: Section }) {
                             />
                             {t('motionUploadEmpty')}
                           </button>
-                          <p className="text-muted-foreground absolute inset-x-3 bottom-3 text-center text-sm">
+                          <p className="text-muted-foreground mt-3 text-center text-sm">
                             {t('motionCharacterMissing')}{' '}
                             <button
+                              type="button"
+                              disabled={motionBusy || reviewBusy}
                               className="text-primary hover:bg-primary/10 rounded-md px-1 py-0.5 font-medium"
                               onClick={() => {
                                 setHeroMode('character');
                                 setValidationAttempted(false);
                               }}
-                              type="button"
                             >
                               {t('motionCreateCharacter')}
                             </button>
@@ -2099,340 +2043,113 @@ export function Home({ section: _section }: { section: Section }) {
                     </div>
                   </aside>
 
-                  <div className="flex min-w-0 flex-col gap-4">
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-sm font-semibold">
-                          {tGeneration('fields.actionType')}
-                        </span>
-                        <button
-                          aria-expanded={showMoreActions}
-                          className="text-muted-foreground hover:border-primary/60 hover:bg-primary/10 hover:text-primary inline-flex h-8 items-center gap-1 rounded-md border border-white/12 px-3 text-xs font-medium"
-                          onClick={() =>
-                            setShowMoreActions((current) => !current)
-                          }
-                          type="button"
-                        >
-                          {showMoreActions ? (
-                            <IconChevronUp
-                              aria-hidden="true"
-                              className="size-3.5"
-                            />
-                          ) : (
-                            <IconChevronDown
-                              aria-hidden="true"
-                              className="size-3.5"
-                            />
-                          )}
-                          {showMoreActions
-                            ? t('collapseActions')
-                            : t('moreActions')}
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-5 gap-2 max-[860px]:grid-cols-3 max-[560px]:grid-cols-2">
-                        {visibleMotionActions.map((action) => {
-                          const selected = motionType === action.value;
-                          const image = getActionTypeImage(action.value);
-                          return (
-                            <button
-                              aria-pressed={selected}
-                              className={cn(
-                                'bg-secondary/55 hover:border-primary/55 relative flex h-16 w-full items-center justify-center gap-2 overflow-hidden rounded-lg border px-2 text-sm font-semibold transition-colors',
-                                selected
-                                  ? 'border-primary bg-primary/10 text-primary shadow-[0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent)]'
-                                  : 'text-foreground/80 border-white/12'
-                              )}
-                              key={action.value}
-                              onClick={() => {
-                                setMotionType(action.value);
-                                setMotionPrompt('');
-                              }}
-                              type="button"
+                  {motionStageActive ? (
+                    <HeroAnimationReview
+                      generation={motionGenerationResult}
+                      generating={motionBusy}
+                      failed={motionGenerationStatus === 'failed'}
+                      startedAt={motionStartedAt}
+                      onReset={resetMotionVideo}
+                      onBusyChange={setReviewBusy}
+                      onChange={(value) => {
+                        applyGenerationPayload(value, 'motion');
+                      }}
+                    />
+                  ) : (
+                    <AnimationSettings
+                      motionType={motionType}
+                      setMotionType={setMotionType}
+                      motionPrompt={motionPrompt}
+                      setMotionPrompt={setMotionPrompt}
+                      motionActionConfig={motionActionConfig}
+                      setMotionActionConfig={setMotionActionConfig}
+                      motionDirection={motionDirection}
+                      setMotionDirection={setMotionDirection}
+                      motionBackgroundColor={motionBackgroundColor}
+                      setMotionBackgroundColor={setMotionBackgroundColor}
+                      disabled={motionBusy || reviewBusy}
+                      promptId="homepage-motion-prompt"
+                      footer={
+                        <div className="ml-auto flex min-w-[300px] flex-1 items-center justify-end gap-3 max-[640px]:w-full max-[640px]:min-w-0">
+                          {motionBusy ||
+                          motionPhase === 'completed' ||
+                          motionPhase === 'failed' ? (
+                            <div
+                              className="max-w-[360px] min-w-0 flex-1"
+                              role={
+                                motionPhase === 'failed' ? 'alert' : 'status'
+                              }
                             >
-                              {image ? (
-                                <NextImage
-                                  alt=""
-                                  aria-hidden="true"
-                                  className="size-9 shrink-0 object-contain [image-rendering:pixelated]"
-                                  height={36}
-                                  sizes="36px"
-                                  src={image}
-                                  unoptimized
-                                  width={36}
-                                />
-                              ) : (
-                                <IconSword
-                                  aria-hidden="true"
-                                  className="size-6 shrink-0"
-                                />
-                              )}
-                              <span className="truncate">{action.label}</span>
-                              {selected ? (
-                                <span className="bg-primary text-primary-foreground absolute top-1 right-1 grid size-4 place-items-center rounded-full">
-                                  <IconCheck
-                                    aria-hidden="true"
-                                    className="size-3"
-                                  />
-                                </span>
-                              ) : null}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {motionSettingsType ? (
-                      <div className="border-border bg-background/40 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 rounded-lg border p-3">
-                        {motionType === 'jump' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.jumpType')}
-                            onValueChange={(value) =>
-                              setActionConfig('jumpType', value)
-                            }
-                            options={translatedOptions('jumpType', [
-                              'in-place',
-                              'forward',
-                            ])}
-                            value={motionActionConfig.jumpType}
-                          />
-                        ) : null}
-                        {motionType === 'dash' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.dashType')}
-                            onValueChange={(value) =>
-                              setActionConfig('dashType', value)
-                            }
-                            options={translatedOptions('dashType', [
-                              'forward',
-                              'backward',
-                              'side',
-                            ])}
-                            value={motionActionConfig.dashType}
-                          />
-                        ) : null}
-                        {motionType === 'attack' ? (
-                          <>
-                            <HeroOptionButtons
-                              label={t('motionFields.weapon')}
-                              onValueChange={(value) =>
-                                setActionConfig('weapon', value)
-                              }
-                              options={translatedOptions('weapon', [
-                                'keep-current',
-                                'unarmed',
-                                'sword',
-                                'axe',
-                                'staff',
-                                'bow',
-                                'dagger',
-                                'spear',
-                              ])}
-                              value={motionActionConfig.weapon}
-                            />
-                            <HeroOptionButtons
-                              label={t('motionFields.attackStyle')}
-                              onValueChange={(value) =>
-                                setActionConfig('attackStyle', value)
-                              }
-                              options={translatedOptions('attackStyle', [
-                                'auto',
-                                'slash',
-                                'thrust',
-                                'heavy',
-                                'spin',
-                              ])}
-                              value={motionActionConfig.attackStyle}
-                            />
-                          </>
-                        ) : null}
-                        {motionType === 'shoot' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.shootType')}
-                            onValueChange={(value) =>
-                              setActionConfig('shootType', value)
-                            }
-                            options={translatedOptions('shootType', [
-                              'bow',
-                              'gun',
-                              'magic-bolt',
-                            ])}
-                            value={motionActionConfig.shootType}
-                          />
-                        ) : null}
-                        {motionType === 'cast' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.castType')}
-                            onValueChange={(value) =>
-                              setActionConfig('castType', value)
-                            }
-                            options={translatedOptions('castType', [
-                              'quick',
-                              'charge',
-                              'staff',
-                              'hand',
-                            ])}
-                            value={motionActionConfig.castType}
-                          />
-                        ) : null}
-                        {motionType === 'hurt' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.severity')}
-                            onValueChange={(value) =>
-                              setActionConfig('severity', value)
-                            }
-                            options={translatedOptions('severity', [
-                              'light',
-                              'heavy',
-                            ])}
-                            value={motionActionConfig.severity}
-                          />
-                        ) : null}
-                        {motionType === 'death' ? (
-                          <HeroOptionButtons
-                            label={t('motionFields.deathType')}
-                            onValueChange={(value) =>
-                              setActionConfig('deathType', value)
-                            }
-                            options={translatedOptions('deathType', [
-                              'collapse',
-                              'fall-back',
-                              'fall-forward',
-                            ])}
-                            value={motionActionConfig.deathType}
-                          />
-                        ) : null}
-                        {motionDetailTypes.includes(motionType) ? (
-                          <div className="contents">
-                            <span className="text-muted-foreground pt-2 text-sm font-medium whitespace-nowrap">
-                              {motionType === 'custom'
-                                ? t('customAction')
-                                : t('motionDetail')}
-                            </span>
-                            <textarea
-                              aria-label={
-                                motionType === 'custom'
-                                  ? t('customAction')
-                                  : t('motionDetail')
-                              }
-                              className="border-border bg-secondary/35 focus:border-primary/60 min-h-[72px] min-w-0 resize-y rounded-md border px-3 py-2 text-sm outline-none"
-                              id="homepage-motion-prompt"
-                              onChange={(event) =>
-                                setMotionPrompt(event.target.value)
-                              }
-                              placeholder={
-                                motionType === 'custom'
-                                  ? t('customActionPlaceholder')
-                                  : t('motionPromptPlaceholder')
-                              }
-                              value={motionPrompt}
-                            />
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : null}
-
-                    <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-4">
-                      <div className="flex flex-wrap gap-2">
-                        {motionType === 'custom' ? null : (
-                          <HeroOptionSelect
-                            label={tGeneration('fields.direction')}
-                            onValueChange={setMotionDirection}
-                            options={motionDirectionOptions}
-                            value={motionDirection}
-                          />
-                        )}
-                        <HeroOptionSelect
-                          label={tGeneration('fields.frames')}
-                          onValueChange={setMotionFrames}
-                          options={mapGenerationOptions(
-                            'frames',
-                            translateGeneration
-                          )}
-                          value={motionFrames}
-                        />
-                        <HeroOptionSelect
-                          label={tGeneration('fields.frameSize')}
-                          onValueChange={setMotionFrameSize}
-                          options={mapGenerationOptions(
-                            'frameSize',
-                            translateGeneration
-                          )}
-                          value={motionFrameSize}
-                        />
-                      </div>
-                      <div className="ml-auto flex min-w-[300px] flex-1 items-center justify-end gap-3 max-[640px]:w-full max-[640px]:min-w-0">
-                        {motionBusy ||
-                        motionPhase === 'completed' ||
-                        motionPhase === 'failed' ? (
-                          <div
-                            className="max-w-[360px] min-w-0 flex-1"
-                            role={motionPhase === 'failed' ? 'alert' : 'status'}
-                          >
-                            <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
-                              <span
-                                className={cn(
-                                  'truncate',
-                                  motionPhase === 'failed'
-                                    ? 'text-destructive'
-                                    : 'text-muted-foreground'
-                                )}
-                              >
-                                {t(`motionProgress.${motionPhase}` as never)}
-                              </span>
-                              {motionPhase === 'failed' ? null : (
-                                <span className="font-mono text-[10px]">
-                                  {motionProgressStep}/4
-                                </span>
-                              )}
-                            </div>
-                            <div className="grid h-1.5 grid-cols-4 gap-1">
-                              {[1, 2, 3, 4].map((step) => (
+                              <div className="mb-1.5 flex items-center justify-between gap-2 text-xs">
                                 <span
                                   className={cn(
-                                    'rounded-full transition-colors',
-                                    step <= motionProgressStep
-                                      ? 'bg-primary'
-                                      : 'bg-white/12'
+                                    'truncate',
+                                    motionPhase === 'failed'
+                                      ? 'text-destructive'
+                                      : 'text-muted-foreground'
                                   )}
-                                  key={step}
-                                />
-                              ))}
+                                >
+                                  {t(`motionProgress.${motionPhase}` as never)}
+                                </span>
+                                {motionPhase === 'failed' ? null : (
+                                  <span className="font-mono text-[10px]">
+                                    {motionProgressStep}/4
+                                  </span>
+                                )}
+                              </div>
+                              <div className="grid h-1.5 grid-cols-4 gap-1">
+                                {[1, 2, 3, 4].map((step) => (
+                                  <span
+                                    className={cn(
+                                      'rounded-full transition-colors',
+                                      step <= motionProgressStep
+                                        ? 'bg-primary'
+                                        : 'bg-white/12'
+                                    )}
+                                    key={step}
+                                  />
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ) : validationMessage ? (
-                          <p
-                            className="text-destructive min-w-0 flex-1 text-right text-sm font-medium"
-                            role="alert"
+                          ) : validationMessage ? (
+                            <p
+                              className="text-destructive min-w-0 flex-1 text-right text-sm font-medium"
+                              role="alert"
+                            >
+                              {validationMessage}
+                            </p>
+                          ) : null}
+                          <button
+                            className={cn(
+                              ctaClass,
+                              'min-h-12 shrink-0 rounded-lg px-5 normal-case disabled:cursor-not-allowed disabled:opacity-55'
+                            )}
+                            disabled={motionBusy || reviewBusy}
+                            type="submit"
                           >
-                            {validationMessage}
-                          </p>
-                        ) : null}
-                        <button
-                          className={cn(
-                            ctaClass,
-                            'min-h-12 shrink-0 rounded-lg px-5 normal-case disabled:cursor-not-allowed disabled:opacity-55'
-                          )}
-                          disabled={motionBusy}
-                          type="submit"
-                        >
-                          {motionBusy ? (
-                            <IconLoader2
-                              aria-hidden="true"
-                              className="animate-spin"
-                            />
-                          ) : (
-                            <IconMovie aria-hidden="true" />
-                          )}
-                          {motionBusy
-                            ? t('startCreatingBusy')
-                            : t('startCreating')}
-                          {motionBusy ? null : (
-                            <CreditCostMark credits={animationCredits} />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                            {motionBusy ? (
+                              <IconLoader2
+                                aria-hidden="true"
+                                className="animate-spin"
+                              />
+                            ) : (
+                              <IconMovie aria-hidden="true" />
+                            )}
+                            {motionBusy
+                              ? t('startCreatingBusy')
+                              : motionGenerationResult?.items?.some(
+                                    (item: any) => item.video
+                                  )
+                                ? tf('regenerate')
+                                : tProduct('heroAnimation.start')}
+                            {motionBusy ? null : (
+                              <CreditCostMark credits={animationCredits} />
+                            )}
+                          </button>
+                        </div>
+                      }
+                    />
+                  )}
                 </div>
                 <ProjectAssetPicker
                   open={characterPickerOpen}
@@ -2477,7 +2194,9 @@ export function Home({ section: _section }: { section: Section }) {
                 <Dialog
                   open={uploadConfirmOpen}
                   onOpenChange={(open) => {
+                    if (savingUploadedCharacter) return;
                     setUploadConfirmOpen(open);
+                    if (!open) setPendingCharacterUpload(null);
                   }}
                 >
                   <DialogContent className="max-w-md rounded-xl">
@@ -2519,8 +2238,10 @@ export function Home({ section: _section }: { section: Section }) {
                     <div className="flex justify-end gap-2">
                       <button
                         className="border-border hover:bg-secondary rounded-md border px-3 py-2 text-sm"
+                        disabled={savingUploadedCharacter}
                         onClick={() => {
                           setUploadConfirmOpen(false);
+                          setPendingCharacterUpload(null);
                         }}
                         type="button"
                       >

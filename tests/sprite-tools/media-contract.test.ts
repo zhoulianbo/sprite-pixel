@@ -49,6 +49,8 @@ test('video processor forwards all controls, uses signed requests and omits proj
       loop: true,
       action: 'idle',
       direction: 'none',
+      background_key_safe: false,
+      preserve_canvas: false,
     });
   } finally {
     globalThis.fetch = originalFetch;

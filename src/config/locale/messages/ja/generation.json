@@ -19,12 +19,14 @@
   },
   "options": {
     "style": {
-      "none": "なし",
+      "none": "カスタム",
       "pixel-art": "ピクセルアート",
       "cartoon": "カートゥーン",
       "illustration": "イラスト",
       "hand-painted": "手描き",
       "anime-2d": "2Dアニメ",
+      "cel-shaded": "セルシェーディング",
+      "low-poly": "ローポリ",
       "dark-fantasy": "ダークファンタジー",
       "cyberpunk": "サイバーパンク"
     },

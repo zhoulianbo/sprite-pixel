@@ -60,6 +60,12 @@ const requestSchema = z.discriminatedUnion('type', [
   z.object({
     ...common,
     type: z.literal('animation'),
+    compositionFileId: z.string().uuid().optional(),
+    backgroundColor: z
+      .string()
+      .regex(/^#[0-9a-fA-F]{6}$/)
+      .optional(),
+    backgroundKeySafe: z.boolean().optional(),
     itemId: z.string().uuid().optional(),
     variantId: z.string().uuid().optional(),
     action: z.string().trim().min(1).max(40),
@@ -173,7 +179,12 @@ export async function POST(
     }
   }
   try {
-    const result = await startSpriteGeneration(user.id, projectId, input);
+    const result = await startSpriteGeneration(
+      user.id,
+      projectId,
+      input,
+      new URL(request.url).origin
+    );
     return Response.json(
       { code: 0, data: toPublicSpriteGeneration(result) },
       { status: 202 }

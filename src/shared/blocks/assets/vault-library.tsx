@@ -2,6 +2,7 @@ import { ImageIcon, type LucideIcon } from 'lucide-react';
 
 import { Link } from '@/core/i18n/navigation';
 import { AnimationThumbnail } from '@/shared/blocks/assets/animation-thumbnail';
+import { CharacterImagePreview } from '@/shared/blocks/common/asset-preview-actions';
 import { ZoomableImage } from '@/shared/blocks/common/zoomable-image';
 import { Header, Main } from '@/shared/blocks/dashboard';
 import { cn } from '@/shared/lib/utils';
@@ -14,6 +15,9 @@ export type VaultLibraryItem = {
   href?: string;
   imageUrl?: string | null;
   animationVersionId?: string | null;
+  characterFileId?: string;
+  characterZoomLabel?: string;
+  characterDownloadLabel?: string;
 };
 
 export function VaultLibrary({
@@ -122,6 +126,37 @@ function VaultCard({
         </div>
         {item.href ? (
           <Link href={item.href} prefetch={false} className="block">
+            {details}
+          </Link>
+        ) : (
+          details
+        )}
+      </article>
+    );
+  }
+
+  if (item.characterFileId && item.imageUrl) {
+    return (
+      <article className="group bg-card hover:border-primary/50 overflow-hidden rounded-xl border transition-colors">
+        <div className="bg-muted/35 aspect-square border-b p-4">
+          <CharacterImagePreview
+            url={item.imageUrl}
+            fileId={item.characterFileId}
+            alt={item.name}
+            zoomLabel={item.characterZoomLabel || item.name}
+            downloadLabel={item.characterDownloadLabel || item.name}
+          >
+            {item.href ? (
+              <Link
+                href={item.href}
+                aria-label={item.name}
+                className="absolute inset-0"
+              />
+            ) : null}
+          </CharacterImagePreview>
+        </div>
+        {item.href ? (
+          <Link href={item.href} className="block">
             {details}
           </Link>
         ) : (

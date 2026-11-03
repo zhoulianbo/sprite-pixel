@@ -34,8 +34,9 @@ function styleLabel(
   t: Awaited<ReturnType<typeof getTranslations>>
 ) {
   if (!style) return '';
-  const key = `options.style.${style.replaceAll('_', '-')}`;
-  return t.has(key) ? t(key) : style.replaceAll('_', ' ');
+  if (style === 'none') return t('options.perspective.none');
+  const key = `options.style.${style}`;
+  return t.has(key) ? t(key) : style;
 }
 
 export default async function DashboardPage({

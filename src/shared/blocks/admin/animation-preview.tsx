@@ -36,6 +36,77 @@ function loadImage(url: string) {
   });
 }
 
+function SourceVideo({
+  url,
+  label,
+  loadingLabel,
+  errorLabel,
+  retryLabel,
+  openLabel,
+}: {
+  url: string;
+  label: string;
+  loadingLabel: string;
+  errorLabel: string;
+  retryLabel: string;
+  openLabel: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+
+  return (
+    <div className="w-full space-y-3 text-center">
+      {failed ? (
+        <div className="space-y-3">
+          <p role="alert" className="text-muted-foreground text-sm">
+            {errorLabel}
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFailed(false);
+              setLoading(true);
+              setAttempt((value) => value + 1);
+            }}
+          >
+            {retryLabel}
+          </Button>
+        </div>
+      ) : (
+        <>
+          {loading && (
+            <p role="status" className="text-muted-foreground text-sm">
+              {loadingLabel}
+            </p>
+          )}
+          <video
+            key={attempt}
+            aria-label={label}
+            className="max-h-[55dvh] w-full rounded-md"
+            controls
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            src={url}
+            onLoadedMetadata={() => setLoading(false)}
+            onError={() => {
+              setLoading(false);
+              setFailed(true);
+            }}
+          />
+        </>
+      )}
+      <Button asChild variant="outline" size="sm">
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          {openLabel}
+        </a>
+      </Button>
+    </div>
+  );
+}
+
 function AnimationCanvas({
   frames,
   width,
@@ -147,6 +218,13 @@ export function AdminAnimationPreview({
   zoomLabel,
   imageTabLabel,
   animationTabLabel,
+  compareTabLabel,
+  sourceVideoLabel,
+  sourceVideoEmptyLabel,
+  sourceVideoErrorLabel,
+  sourceVideoLoadingLabel,
+  openVideoLabel,
+  zoomVideoLabel,
   loadingLabel,
   errorLabel,
   retryLabel,
@@ -158,6 +236,13 @@ export function AdminAnimationPreview({
   zoomLabel: string;
   imageTabLabel: string;
   animationTabLabel: string;
+  compareTabLabel: string;
+  sourceVideoLabel: string;
+  sourceVideoEmptyLabel: string;
+  sourceVideoErrorLabel: string;
+  sourceVideoLoadingLabel: string;
+  openVideoLabel: string;
+  zoomVideoLabel: string;
   loadingLabel: string;
   errorLabel: string;
   retryLabel: string;
@@ -173,7 +258,8 @@ export function AdminAnimationPreview({
   const onFrameError = useCallback(() => setFailed(true), []);
 
   useEffect(() => {
-    if (!open || tab !== 'animation' || preview) return;
+    if (!open || !['animation', 'compare', 'video'].includes(tab) || preview)
+      return;
     const controller = new AbortController();
     setFailed(false);
     async function loadPreview() {
@@ -205,35 +291,122 @@ export function AdminAnimationPreview({
     }
   }
 
+  const animationContent = failed ? (
+    <div className="space-y-3 text-center">
+      <p role="alert" className="text-muted-foreground text-sm">
+        {errorLabel}
+      </p>
+      <Button
+        variant="outline"
+        onClick={() => {
+          setFailed(false);
+          setPreview(null);
+          setAttempt((value) => value + 1);
+        }}
+      >
+        {retryLabel}
+      </Button>
+    </div>
+  ) : !preview ? (
+    <p role="status" className="text-muted-foreground text-sm">
+      {loadingLabel}
+    </p>
+  ) : !preview.frames.length ? (
+    <p className="text-muted-foreground text-sm">{emptyLabel}</p>
+  ) : open && ['animation', 'compare'].includes(tab) ? (
+    <AnimationCanvas
+      className="h-auto max-h-[65dvh] w-full object-contain"
+      fps={preview.fps}
+      frames={preview.frames}
+      height={preview.frameHeight}
+      label={label}
+      onError={onFrameError}
+      width={preview.frameWidth}
+    />
+  ) : null;
+
+  const videoContent =
+    preview?.sourceVideoUrl && open && ['compare', 'video'].includes(tab) ? (
+      <SourceVideo
+        key={preview.sourceVideoUrl}
+        url={preview.sourceVideoUrl}
+        label={sourceVideoLabel}
+        loadingLabel={sourceVideoLoadingLabel}
+        errorLabel={sourceVideoErrorLabel}
+        retryLabel={retryLabel}
+        openLabel={openVideoLabel}
+      />
+    ) : (
+      <div className="space-y-3 text-center">
+        <p className="text-muted-foreground text-sm">
+          {failed && !preview
+            ? errorLabel
+            : !preview
+              ? loadingLabel
+              : sourceVideoEmptyLabel}
+        </p>
+        {failed && !preview && (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFailed(false);
+              setAttempt((value) => value + 1);
+            }}
+          >
+            {retryLabel}
+          </Button>
+        )}
+      </div>
+    );
+
   return (
     <Dialog open={open} onOpenChange={changeOpen}>
-      <DialogTrigger asChild>
-        <button
-          aria-label={zoomLabel}
-          className="border-border bg-background focus-visible:ring-ring grid size-20 cursor-zoom-in place-items-center overflow-hidden rounded-lg border bg-[linear-gradient(45deg,rgba(255,255,255,.05)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.05)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.05)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.05)_75%)] bg-[size:12px_12px] focus-visible:ring-2 focus-visible:outline-hidden"
-          type="button"
+      <div className="flex flex-col items-start gap-2">
+        <DialogTrigger asChild>
+          <button
+            aria-label={zoomLabel}
+            className="border-border bg-background focus-visible:ring-ring grid size-20 cursor-zoom-in place-items-center overflow-hidden rounded-lg border bg-[linear-gradient(45deg,rgba(255,255,255,.05)_25%,transparent_25%),linear-gradient(-45deg,rgba(255,255,255,.05)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,rgba(255,255,255,.05)_75%),linear-gradient(-45deg,transparent_75%,rgba(255,255,255,.05)_75%)] bg-[size:12px_12px] focus-visible:ring-2 focus-visible:outline-hidden"
+            type="button"
+          >
+            {previewUrl && !imageFailed ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                alt={label}
+                className="size-full object-contain [image-rendering:pixelated]"
+                loading="lazy"
+                onError={() => setImageFailed(true)}
+                src={previewUrl}
+              />
+            ) : (
+              <span className="text-muted-foreground text-sm">
+                {emptyLabel}
+              </span>
+            )}
+          </button>
+        </DialogTrigger>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setTab('video');
+            setOpen(true);
+          }}
         >
-          {previewUrl && !imageFailed ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              alt={label}
-              className="size-full object-contain [image-rendering:pixelated]"
-              loading="lazy"
-              onError={() => setImageFailed(true)}
-              src={previewUrl}
-            />
-          ) : (
-            <span className="text-muted-foreground text-sm">{emptyLabel}</span>
-          )}
-        </button>
-      </DialogTrigger>
+          {sourceVideoLabel}
+        </Button>
+      </div>
       <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-xl p-4 sm:max-w-4xl">
         <DialogTitle className="sr-only">{zoomLabel}</DialogTitle>
         <DialogDescription className="sr-only">{label}</DialogDescription>
         <Tabs value={tab} onValueChange={setTab} activationMode="manual">
-          <TabsList aria-label={zoomLabel} className="mr-8">
+          <TabsList
+            aria-label={zoomLabel}
+            className="mr-8 h-auto flex-wrap justify-start"
+          >
             <TabsTrigger value="image">{imageTabLabel}</TabsTrigger>
             <TabsTrigger value="animation">{animationTabLabel}</TabsTrigger>
+            <TabsTrigger value="compare">{compareTabLabel}</TabsTrigger>
+            <TabsTrigger value="video">{sourceVideoLabel}</TabsTrigger>
           </TabsList>
           <TabsContent value="image">
             <div className="bg-secondary/45 flex min-h-64 items-center justify-center overflow-auto rounded-lg border p-4">
@@ -252,39 +425,37 @@ export function AdminAnimationPreview({
           </TabsContent>
           <TabsContent value="animation">
             <div className="bg-secondary/45 flex min-h-64 items-center justify-center overflow-hidden rounded-lg border p-4">
-              {failed ? (
-                <div className="space-y-3 text-center">
-                  <p role="alert" className="text-muted-foreground text-sm">
-                    {errorLabel}
-                  </p>
+              {animationContent}
+            </div>
+          </TabsContent>
+          <TabsContent value="video">
+            <div className="bg-secondary/45 flex min-h-64 items-center justify-center rounded-lg border p-4">
+              {videoContent}
+            </div>
+          </TabsContent>
+          <TabsContent value="compare">
+            <div className="grid gap-4 md:grid-cols-2">
+              <section className="min-w-0 space-y-2">
+                <h3 className="text-sm font-medium">{sourceVideoLabel}</h3>
+                <div className="bg-secondary/45 flex min-h-64 items-center justify-center rounded-lg border p-4">
+                  {videoContent}
+                </div>
+                {preview?.sourceVideoUrl && (
                   <Button
                     variant="outline"
-                    onClick={() => {
-                      setFailed(false);
-                      setPreview(null);
-                      setAttempt((value) => value + 1);
-                    }}
+                    size="sm"
+                    onClick={() => setTab('video')}
                   >
-                    {retryLabel}
+                    {zoomVideoLabel}
                   </Button>
+                )}
+              </section>
+              <section className="min-w-0 space-y-2">
+                <h3 className="text-sm font-medium">{animationTabLabel}</h3>
+                <div className="bg-secondary/45 flex min-h-64 items-center justify-center overflow-hidden rounded-lg border p-4">
+                  {animationContent}
                 </div>
-              ) : !preview ? (
-                <p role="status" className="text-muted-foreground text-sm">
-                  {loadingLabel}
-                </p>
-              ) : !preview.frames.length ? (
-                <p className="text-muted-foreground text-sm">{emptyLabel}</p>
-              ) : open && tab === 'animation' ? (
-                <AnimationCanvas
-                  className="h-auto max-h-[65dvh] w-full object-contain"
-                  fps={preview.fps}
-                  frames={preview.frames}
-                  height={preview.frameHeight}
-                  label={label}
-                  onError={onFrameError}
-                  width={preview.frameWidth}
-                />
-              ) : null}
+              </section>
             </div>
           </TabsContent>
         </Tabs>

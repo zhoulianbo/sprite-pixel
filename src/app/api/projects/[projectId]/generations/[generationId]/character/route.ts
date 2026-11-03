@@ -6,6 +6,7 @@ import {
   saveGeneratedCharacter,
   SpriteGenerationError,
 } from '@/shared/services/asset-generation';
+import { CharacterImageError } from '@/shared/services/character-image-repair';
 
 const requestSchema = z.object({
   name: z.string().trim().min(1).max(80),
@@ -47,7 +48,9 @@ export async function POST(
       data: toPublicSpriteGeneration(result),
     });
   } catch (error) {
-    const known = error instanceof SpriteGenerationError;
+    const known =
+      error instanceof SpriteGenerationError ||
+      error instanceof CharacterImageError;
     return Response.json(
       { code: -1, message: known ? error.code : 'ASSET_SAVE_FAILED' },
       { status: known ? error.status : 500 }

@@ -1,11 +1,13 @@
 export const generationOptionValues = {
   style: [
-    'none',
     'pixel-art',
     'cartoon',
     'illustration',
     'hand-painted',
     'anime-2d',
+    'cel-shaded',
+    'low-poly',
+    'none',
   ],
   perspective: ['none', 'side', 'top-down', 'front', 'isometric'],
   quality: ['1k', '2k', '4k'],
@@ -32,6 +34,24 @@ export const generationOptionValues = {
 } as const;
 
 export type GenerationField = keyof typeof generationOptionValues;
+
+export function getSelectedArtStyle(value?: string | null) {
+  const style = value?.trim();
+  return style &&
+    style !== 'none' &&
+    (generationOptionValues.style as readonly string[]).includes(style)
+    ? style
+    : undefined;
+}
+
+export function resolveAnimationArtStyle(
+  characterStyle?: string | null,
+  projectStyle?: string | null
+) {
+  return (
+    getSelectedArtStyle(characterStyle) || getSelectedArtStyle(projectStyle)
+  );
+}
 
 export type GenerationOptionValue<Field extends GenerationField> =
   (typeof generationOptionValues)[Field][number];
@@ -95,7 +115,7 @@ export function getActionTypeImage(value: string) {
 }
 
 export const generationDefaults = {
-  style: 'none',
+  style: 'pixel-art',
   perspective: 'none',
   quality: '1k',
   characterType: 'humanoid',

@@ -19,12 +19,14 @@
   },
   "options": {
     "style": {
-      "none": "None",
+      "none": "Custom",
       "pixel-art": "Pixel Art",
       "cartoon": "Cartoon",
       "illustration": "Illustration",
       "hand-painted": "Hand-painted",
       "anime-2d": "Anime 2D",
+      "cel-shaded": "Cel shaded",
+      "low-poly": "Low poly",
       "dark-fantasy": "Dark Fantasy",
       "cyberpunk": "Cyberpunk"
     },

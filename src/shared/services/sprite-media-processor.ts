@@ -15,6 +15,10 @@ export type SpriteMediaResult = {
   rows: number;
   frame_size: number;
   fps: number;
+  source_frame_count?: number;
+  source_duration?: number;
+  processing_version?: number;
+  quality_warnings?: Array<{ frame: number; code: string }>;
 };
 
 type MediaProcessorEnv = {
@@ -74,6 +78,11 @@ export async function processSpriteVideo(input: {
   loop: boolean;
   action: string;
   direction: string;
+  strictFrames?: boolean;
+  backgroundColor?: string;
+  backgroundKeySafe?: boolean;
+  pixelArt?: boolean;
+  preserveCanvas?: boolean;
 }) {
   const { baseUrl, secret } = processorConfig();
   const path = '/api/sprite/process';
@@ -98,6 +107,11 @@ export async function processSpriteVideo(input: {
       loop: input.loop,
       action: input.action,
       direction: input.direction,
+      background_color: input.backgroundColor,
+      background_key_safe: input.backgroundKeySafe ?? false,
+      ...(input.pixelArt === undefined ? {} : { pixel_art: input.pixelArt }),
+      preserve_canvas: input.preserveCanvas ?? false,
+      ...(input.strictFrames ? { strict_frames: true } : {}),
     }),
   });
   const payload = (await response.json().catch(() => ({}))) as {
@@ -122,5 +136,10 @@ export async function processSpriteVideo(input: {
     );
     throw new Error(reason);
   }
+  if (
+    (input.backgroundColor || input.pixelArt || input.preserveCanvas) &&
+    (payload.data.processing_version || 0) < 3
+  )
+    throw new Error('ANIMATION_PROCESSOR_UPDATE_REQUIRED');
   return payload.data;
 }

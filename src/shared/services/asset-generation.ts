@@ -29,11 +29,20 @@ import {
   type IconStyleSource,
 } from '@/config/generation';
 import {
+  animationVideoTest,
+  usesAnimationTestVideo,
+} from '@/config/generation/animation-video';
+import {
   getGenerationCredits,
   resolveGenerationModelRoute,
   resolveIconPromptExpandModel,
   type GenerationModelKind,
 } from '@/config/generation/model-routes';
+import {
+  getSelectedArtStyle,
+  resolveAnimationArtStyle,
+} from '@/config/generation/options';
+import { resolveCharacterStyle } from '@/config/generation/prompts';
 import {
   aggregateGenerationStatus,
   directionMirrorOf,
@@ -45,7 +54,13 @@ import {
 } from '@/config/generation/sprite';
 import { AIMediaType, AITaskStatus } from '@/extensions/ai';
 import { ContentSafetyError } from '@/extensions/content-safety';
+import type { StorageProvider } from '@/extensions/storage';
 import { parseAnimationFrames } from '@/shared/lib/animation-frames';
+import {
+  animationFrameLimit,
+  selectedAnimationFrames,
+  type AnimationReviewRequest,
+} from '@/shared/lib/animation-review';
 import { getUuid } from '@/shared/lib/hash';
 import { imageInfo } from '@/shared/lib/sprite-tools/image-info';
 import {
@@ -70,6 +85,8 @@ import { getRemainingCredits } from '@/shared/models/credit';
 import { getOwnedProject } from '@/shared/models/project';
 import { getCurrentSubscription } from '@/shared/models/subscription';
 import { getAIService } from '@/shared/services/ai';
+import { storeAnimationSourceVideo } from '@/shared/services/animation-source-video';
+import { withCharacterImageLock } from '@/shared/services/character-image-repair';
 import { assertPromptAllowedForGeneration } from '@/shared/services/content-safety';
 import { startGenerationWorkflow } from '@/shared/services/generation-workflow';
 import { processSpriteVideo } from '@/shared/services/sprite-media-processor';
@@ -93,6 +110,9 @@ export type SpriteGenerationRequest = {
   itemId?: string;
   variantId?: string;
   referenceFileId?: string;
+  compositionFileId?: string;
+  backgroundColor?: string;
+  backgroundKeySafe?: boolean;
   iconStyleSource?: IconStyleSource;
   directionMode?: 'single' | '4' | '8';
   direction?: string;
@@ -149,6 +169,23 @@ type TaskBlueprint = {
   prompt: string;
   metadata: Record<string, unknown>;
 };
+
+function animationProcessingOptions(params: any) {
+  const style = resolveAnimationArtStyle(
+    params.style,
+    params.project?.artStyle
+  );
+  return {
+    backgroundColor:
+      typeof params.backgroundColor === 'string' &&
+      /^#[0-9a-fA-F]{6}$/.test(params.backgroundColor)
+        ? params.backgroundColor
+        : undefined,
+    backgroundKeySafe: params.backgroundKeySafe === true,
+    pixelArt: style ? style === 'pixel-art' : undefined,
+    preserveCanvas: Boolean(params.compositionFileId),
+  };
+}
 
 export class SpriteGenerationError extends Error {
   constructor(
@@ -294,7 +331,7 @@ async function expandIconItemDescriptions(
 
 function resolveTaskAspectRatio(input: SpriteGenerationRequest) {
   if (input.type === 'animation') {
-    return 'landscape';
+    return input.compositionFileId ? 'square' : 'landscape';
   }
   if (input.type === 'icon_batch') {
     return resolveGenerationAspectRatio(input.quality);
@@ -592,10 +629,19 @@ function taskBlueprints(
     return taskMetadata.map((metadata) => ({
       role: `animation:${metadata.direction}`,
       metadata: { ...metadata, frames: sheet.frameCount, ...sheet },
-      prompt: buildAnimationVideoPrompt(
-        input,
-        typeof metadata.direction === 'string' ? metadata.direction : undefined
-      ),
+      prompt: [
+        buildAnimationVideoPrompt(
+          input,
+          typeof metadata.direction === 'string'
+            ? metadata.direction
+            : undefined
+        ),
+        ...(input.compositionFileId
+          ? [
+              'The input image is the user-composed full video canvas. Preserve its initial character size and position; do not crop, zoom into, or automatically recenter the reference. Keep the full character and accessories within the frame throughout the motion.',
+            ]
+          : []),
+      ].join('\n'),
     }));
   }
   return [
@@ -619,6 +665,7 @@ async function createPlannedTask({
   referenceFileId,
   aspectRatio,
   videoDuration,
+  testVideoUrl,
   costCredits,
 }: {
   generationId: string;
@@ -629,6 +676,7 @@ async function createPlannedTask({
   referenceFileId?: string;
   aspectRatio?: string;
   videoDuration?: number;
+  testVideoUrl?: string;
   costCredits: number;
 }) {
   const taskId = getUuid();
@@ -641,7 +689,11 @@ async function createPlannedTask({
     ...(referenceFileId ? { referenceFileId } : {}),
     ...(aspectRatio ? { aspectRatio } : {}),
     ...(mediaType === AIMediaType.VIDEO
-      ? { resolution: '768p', duration: videoDuration || 2 }
+      ? {
+          resolution: '768p',
+          duration: videoDuration || 2,
+          ...(testVideoUrl ? { testVideoUrl } : {}),
+        }
       : { background: 'transparent' }),
   };
   const task = await createAITask(
@@ -794,6 +846,19 @@ function localWorkflowHandlers(generationId: string) {
 async function dispatchPlannedTask(task: typeof aiTask.$inferSelect) {
   if (task.taskId) return task;
   const options = parseJson<Record<string, unknown>>(task.options, {});
+  if (task.mediaType === AIMediaType.VIDEO && usesAnimationTestVideo()) {
+    if (!options.testVideoUrl) throw new Error('TEST_VIDEO_NOT_CONFIGURED');
+    return (
+      (await updateAITaskById(task.id, {
+        status: AITaskStatus.SUCCESS,
+        taskId: `test-video-${task.id}`,
+        taskInfo: JSON.stringify({
+          videos: [{ videoUrl: options.testVideoUrl }],
+          testVideo: true,
+        }),
+      })) || task
+    );
+  }
   const referenceFileId = String(options.referenceFileId || '');
   const providerOptions: Record<string, unknown> = {
     customStorage: options.customStorage !== false,
@@ -868,13 +933,16 @@ async function dispatchPlannedTask(task: typeof aiTask.$inferSelect) {
 export async function startSpriteGeneration(
   userId: string,
   projectId: string,
-  input: SpriteGenerationRequest
+  input: SpriteGenerationRequest,
+  requestOrigin?: string
 ) {
   const existing = await findOwnedGeneration(userId, input.id);
   if (existing) return getSpriteGeneration(userId, existing.id, false);
 
   const project = await getOwnedProject(userId, projectId);
   if (!project) throw new SpriteGenerationError('PROJECT_NOT_FOUND', 404);
+  if (input.type === 'character')
+    input.style = resolveCharacterStyle(input.style, project.artStyle);
   const allowGallery = !(await getCurrentSubscription(userId));
   const resolvedReferenceFileId = await resolveReferenceFileId(
     projectId,
@@ -904,6 +972,28 @@ export async function startSpriteGeneration(
     throw new SpriteGenerationError('REFERENCE_REQUIRED');
   }
   input.referenceFileId = resolvedReferenceFileId;
+  if (input.type === 'animation') input.style = undefined;
+  if (
+    ['animation', 'character_variant', 'character_directions'].includes(
+      input.type
+    ) &&
+    !input.style &&
+    reference?.generationId
+  ) {
+    const sourceGeneration = await findOwnedGeneration(
+      userId,
+      reference.generationId
+    );
+    const sourceParams = parseJson<any>(sourceGeneration?.paramsJson, {});
+    const sourceStyle =
+      input.type === 'animation'
+        ? getSelectedArtStyle(sourceParams.style)
+        : sourceParams.style || sourceParams.project?.artStyle;
+    if (typeof sourceStyle === 'string') input.style = sourceStyle;
+  }
+  if (input.type === 'animation' && input.compositionFileId) {
+    await validateReference(userId, projectId, input.compositionFileId);
+  }
 
   // Only scan user-authored text. Expanded / templated prompts are not scanned again.
   try {
@@ -1008,7 +1098,10 @@ export async function startSpriteGeneration(
   const paramsSnapshot = {
     ...input,
     ...(input.type === 'animation'
-      ? { videoDuration: resolveAnimationVideoDuration(input.action) }
+      ? {
+          videoDuration: resolveAnimationVideoDuration(input.action),
+          animationReview: true,
+        }
       : {}),
     referenceFileId: resolvedReferenceFileId,
     plannedItemId: domain.plannedItemId,
@@ -1084,7 +1177,16 @@ export async function startSpriteGeneration(
           route,
           blueprint,
           sortOrder,
-          referenceFileId: taskReferences.get(blueprint.role) || reference?.id,
+          referenceFileId:
+            input.type === 'animation' && input.compositionFileId
+              ? input.compositionFileId
+              : taskReferences.get(blueprint.role) || reference?.id,
+          testVideoUrl:
+            input.type === 'animation' &&
+            usesAnimationTestVideo() &&
+            requestOrigin
+              ? new URL(animationVideoTest.path, requestOrigin).href
+              : undefined,
           aspectRatio,
           videoDuration:
             input.type === 'animation'
@@ -1767,6 +1869,30 @@ async function saveProcessedAnimationOutput(
   }
   const sourceVideoUrl = videoUrlFromTask(task);
   if (!sourceVideoUrl) throw new Error('VIDEO_OUTPUT_MISSING');
+  const storage = (await getStorageService()).getProvider('r2');
+  if (!storage) throw new Error('VIDEO_R2_NOT_CONFIGURED');
+  const taskInfo = parseJson<Record<string, unknown>>(task.taskInfo, {});
+  const archivedVideo = await storeAnimationSourceVideo(
+    {
+      taskId: task.id,
+      createdAt: new Date(task.createdAt),
+      sourceUrl: sourceVideoUrl,
+      storedKey:
+        typeof taskInfo.sourceVideoKey === 'string'
+          ? taskInfo.sourceVideoKey
+          : undefined,
+    },
+    storage
+  );
+  if (taskInfo.sourceVideoKey !== archivedVideo.key) {
+    const updatedTaskInfo = JSON.stringify({
+      ...taskInfo,
+      sourceVideoKey: archivedVideo.key,
+    });
+    await updateAITaskById(task.id, { taskInfo: updatedTaskInfo });
+    // Failure handling and media-only retries must retain the archived key.
+    task.taskInfo = updatedTaskInfo;
+  }
   const params = parseJson<any>(logical.paramsJson, {});
   const linkMetadata = parseJson<Record<string, any>>(link.metadataJson, {});
   const sheet = resolveAnimationSheetSize(
@@ -1775,9 +1901,10 @@ async function saveProcessedAnimationOutput(
     params.action
   );
   const processed = await processSpriteVideo({
+    ...animationProcessingOptions(params),
     generationId: logical.id,
     generationTaskId: link.id,
-    sourceVideoUrl,
+    sourceVideoUrl: archivedVideo.downloadUrl,
     outputPrefix: `projects/${logical.projectId}/animation`,
     frameCount: sheet.frameCount,
     frameSize: sheet.frameSize,
@@ -1790,6 +1917,7 @@ async function saveProcessedAnimationOutput(
   });
   const metadata = {
     ...linkMetadata,
+    sourceVideoKey: archivedVideo.key,
     frameCount: processed.frame_count,
     frames: processed.frame_count,
     columns: processed.columns,
@@ -1850,6 +1978,7 @@ async function findReadyAnimationVersion(
         eq(animationVersion.generationId, logical.id)
       )
     )
+    .orderBy(desc(animationVersion.versionNo))
     .limit(1);
   if (!version?.spritesheetFileId || version.frameCount < 1) return null;
   return parseAnimationFrames(version.framesJson).length === version.frameCount
@@ -1894,7 +2023,11 @@ export async function getSpriteGeneration(
     file: (typeof assetFile.$inferSelect & { url: string }) | null;
     previewUrl: string | null;
     editorVersionId: string | null;
+    video?: { url: string; saved: boolean; test: boolean };
+    extraction?: any;
+    heroSheet?: any;
     phase:
+      | 'video_ready'
       | 'queued'
       | 'video_generation'
       | 'media_processing'
@@ -1902,6 +2035,9 @@ export async function getSpriteGeneration(
       | 'failed';
   }> = [];
   const urlFor = await getAssetPublicUrlResolver();
+  const review =
+    logical.taskType === 'animation' &&
+    parseJson<any>(logical.paramsJson, {}).animationReview === true;
   for (const link of latestByRole.values()) {
     let task = tasksById.get(link.aiTaskId) as
       typeof aiTask.$inferSelect | undefined;
@@ -1910,6 +2046,9 @@ export async function getSpriteGeneration(
     let status = task.status;
     let file = await findGenerationTaskFile(link.id);
     let readyAnimationVersion = await findReadyAnimationVersion(logical, link);
+    if (review && readyAnimationVersion?.spritesheetFileId) {
+      file = await findAssetFileById(readyAnimationVersion.spritesheetFileId);
+    }
     const previewUrl =
       logical.taskType === 'character' && task.status === AITaskStatus.SUCCESS
         ? imageUrlFromTask(task) || null
@@ -1919,7 +2058,7 @@ export async function getSpriteGeneration(
         logical.taskType === 'animation'
           ? Boolean(file && readyAnimationVersion)
           : Boolean(file || (logical.taskType === 'character' && previewUrl));
-      if (outputReady) {
+      if (review || outputReady) {
         status = 'success';
       } else if (refresh) {
         try {
@@ -1944,7 +2083,52 @@ export async function getSpriteGeneration(
     }
     const metadata = parseJson<Record<string, unknown>>(link.metadataJson, {});
     const editorVersionId = readyAnimationVersion?.id || null;
+    const info = parseJson<any>(task.taskInfo, {});
+    const video =
+      review && task.status === AITaskStatus.SUCCESS
+        ? {
+            url: info.sourceVideoKey
+              ? await (
+                  await getStorageService()
+                ).createSignedDownloadUrl({
+                  key: info.sourceVideoKey,
+                  expiresIn: 3600,
+                })
+              : videoUrlFromTask(task) || '',
+            saved: Boolean(info.sourceVideoKey),
+            test: info.testVideo === true,
+          }
+        : undefined;
+    const draft = metadata.extraction as any;
     items.push({
+      ...(video ? { video } : {}),
+      ...(metadata.heroSheet
+        ? {
+            heroSheet: {
+              ...(metadata.heroSheet as any),
+              url: urlFor((metadata.heroSheet as any).spritesheet.key),
+              cleanupPending: Boolean(
+                (metadata.heroSheet as any).cleanupKeys?.length
+              ),
+            },
+          }
+        : {}),
+      ...(draft?.result
+        ? {
+            extraction: {
+              id: draft.id,
+              ...draft.result,
+              fps: draft.playbackFps || draft.result.fps,
+              spritesheet: {
+                ...draft.result.spritesheet,
+                url: urlFor(draft.result.spritesheet.key),
+              },
+              savedVersionId: draft.savedVersionId || null,
+              selected: draft.selected,
+              loop: draft.loop,
+            },
+          }
+        : {}),
       id: link.id,
       role: link.role,
       status,
@@ -1952,15 +2136,18 @@ export async function getSpriteGeneration(
       file: file ? { ...file, url: urlFor(file.storageKey) } : null,
       previewUrl,
       editorVersionId,
-      phase: ['failed', 'canceled', 'postprocessing_failed'].includes(status)
-        ? 'failed'
-        : status === 'success'
-          ? 'completed'
-          : task.status === AITaskStatus.SUCCESS
-            ? 'media_processing'
-            : task.taskId
-              ? 'video_generation'
-              : 'queued',
+      phase:
+        review && status === 'success'
+          ? 'video_ready'
+          : ['failed', 'canceled', 'postprocessing_failed'].includes(status)
+            ? 'failed'
+            : status === 'success'
+              ? 'completed'
+              : task.status === AITaskStatus.SUCCESS
+                ? 'media_processing'
+                : task.taskId
+                  ? 'video_generation'
+                  : 'queued',
     });
   }
 
@@ -2052,6 +2239,16 @@ export async function advanceSpriteGenerationWorkflow(generationId: string) {
         continue;
       }
       if (task.status !== AITaskStatus.SUCCESS) continue;
+
+      if (
+        logical.taskType === 'animation' &&
+        parseJson<any>(logical.paramsJson, {}).animationReview === true
+      ) {
+        if (!videoUrlFromTask(task)) throw new Error('VIDEO_OUTPUT_MISSING');
+        outputReady = true;
+        await settleAITaskCredit(task.id);
+        continue;
+      }
 
       if (logical.taskType === 'character') {
         if (!imageUrlFromTask(task)) throw new Error('OUTPUT_MISSING');
@@ -2204,13 +2401,15 @@ export async function saveGeneratedCharacter(
     throw new SpriteGenerationError('OUTPUT_MISSING', 502);
   }
 
-  await saveProviderOutput(logical, link, task);
-  if (!logical.itemId) {
-    throw new SpriteGenerationError('ASSET_SAVE_FAILED', 500);
-  }
-  await updateCharacterItem(projectId, logical.itemId, { name: name.trim() });
-  await settleAITaskCredit(task.id);
-  return getSpriteGeneration(userId, generationId, false);
+  return withCharacterImageLock(link.id, async () => {
+    await saveProviderOutput(logical, link, task);
+    if (!logical.itemId) {
+      throw new SpriteGenerationError('ASSET_SAVE_FAILED', 500);
+    }
+    await updateCharacterItem(projectId, logical.itemId, { name: name.trim() });
+    await settleAITaskCredit(task.id);
+    return getSpriteGeneration(userId, generationId, false);
+  });
 }
 
 export async function failSpriteGenerationWorkflow(
@@ -2231,9 +2430,11 @@ export async function failSpriteGenerationWorkflow(
     const task = await findAITaskById(link.aiTaskId);
     if (!task || (await findGenerationTaskFile(link.id))) continue;
     if (
-      logical?.taskType === 'character' &&
       task.status === AITaskStatus.SUCCESS &&
-      imageUrlFromTask(task)
+      ((logical?.taskType === 'character' && imageUrlFromTask(task)) ||
+        (logical?.taskType === 'animation' &&
+          parseJson<any>(logical.paramsJson, {}).animationReview === true &&
+          videoUrlFromTask(task)))
     ) {
       continue;
     }
@@ -2253,6 +2454,12 @@ export async function failSpriteGenerationWorkflow(
       });
     }
   }
+  const reviewedStatus =
+    logical?.taskType === 'animation' &&
+    parseJson<any>(logical.paramsJson, {}).animationReview === true
+      ? (await getSpriteGeneration(logical.userId, generationId)).status
+      : null;
+  if (reviewedStatus === 'success') return;
   const now = new Date().toISOString();
   const reason = compactFailure(failureReason);
   logSpriteFailure('sprite_generation_failed', {
@@ -2263,7 +2470,7 @@ export async function failSpriteGenerationWorkflow(
   await db()
     .update(generation)
     .set({
-      status: 'failed',
+      status: reviewedStatus || 'failed',
       failureCode,
       failureReason: reason,
       completedAt: now,
@@ -2340,6 +2547,10 @@ export async function retrySpriteGeneration(
       aspectRatio: resolveTaskAspectRatio({
         id: generationId,
         type: current.taskType as SpriteGenerationKind,
+        compositionFileId:
+          typeof params.compositionFileId === 'string'
+            ? params.compositionFileId
+            : undefined,
         quality:
           typeof params.quality === 'string' ? params.quality : undefined,
         frames: params.frames as number | 'auto' | undefined,
@@ -2352,6 +2563,7 @@ export async function retrySpriteGeneration(
           : resolveAnimationVideoDuration(
               typeof params.action === 'string' ? params.action : undefined
             ),
+      testVideoUrl: parseJson<any>(oldTask.options, {}).testVideoUrl,
       costCredits: retryCost,
     });
   }
@@ -2371,4 +2583,512 @@ export async function retrySpriteGeneration(
     localWorkflowHandlers(generationId)
   );
   return getSpriteGeneration(userId, generationId, false);
+}
+
+/** Homepage extraction saves immediately and replaces only its own generated version. */
+async function generateHeroAnimationSheet(
+  logical: typeof generation.$inferSelect,
+  link: typeof generationTask.$inferSelect,
+  task: typeof aiTask.$inferSelect,
+  metadata: Record<string, any>,
+  input: Extract<AnimationReviewRequest, { action: 'generate-sheet' }>,
+  storage: StorageProvider,
+  lock: string
+) {
+  if (!storage.deleteFile)
+    throw new SpriteGenerationError('VIDEO_R2_NOT_CONFIGURED', 503);
+  const previous = metadata.heroSheet;
+  if (previous?.requestId !== input.requestId) {
+    if ((previous?.versionId || undefined) !== input.replaceVersionId)
+      throw new SpriteGenerationError('EXTRACTION_CHANGED', 409);
+    if (previous?.cleanupKeys?.length)
+      throw new SpriteGenerationError('ANIMATION_CLEANUP_PENDING', 409);
+    if (input.frameCount > animationFrameLimit(input.sourceDuration))
+      throw new SpriteGenerationError('ANIMATION_FRAME_LIMIT', 400);
+    if (previous) {
+      // Edited versions may still use the old sheet. Never delete their source.
+      const dependents = await db()
+        .select()
+        .from(animationVersion)
+        .where(eq(animationVersion.spritesheetFileId, previous.fileId));
+      if (dependents.some((version: any) => version.id !== previous.versionId))
+        throw new SpriteGenerationError('ANIMATION_REPLACEMENT_IN_USE', 409);
+    }
+    const info = parseJson<Record<string, any>>(task.taskInfo, {});
+    const archived = await storeAnimationSourceVideo(
+      {
+        taskId: task.id,
+        createdAt: new Date(task.createdAt),
+        sourceUrl: videoUrlFromTask(task) || '',
+        storedKey: info.sourceVideoKey,
+      },
+      storage
+    );
+    await updateAITaskById(task.id, {
+      taskInfo: JSON.stringify({ ...info, sourceVideoKey: archived.key }),
+    });
+    const result = await processSpriteVideo({
+      ...animationProcessingOptions(parseJson<any>(logical.paramsJson, {})),
+      generationId: logical.id,
+      generationTaskId: input.requestId,
+      sourceVideoUrl: archived.downloadUrl,
+      outputPrefix: `projects/${logical.projectId}/animation`,
+      frameCount: input.frameCount,
+      frameSize: input.frameSize,
+      fps: input.fps,
+      loop: input.loop,
+      strictFrames: true,
+      action: String(parseJson<any>(logical.paramsJson, {}).action || 'idle'),
+      direction: String(metadata.direction || 'none'),
+    }).catch((error) => {
+      if (
+        error instanceof Error &&
+        [
+          'ANIMATION_FRAME_LIMIT',
+          'BACKGROUND_REMOVAL_EMPTY',
+          'BACKGROUND_REMOVAL_UNRELIABLE',
+          'ANIMATION_PROCESSOR_UPDATE_REQUIRED',
+        ].includes(error.message)
+      )
+        throw new SpriteGenerationError(
+          error.message,
+          error.message === 'ANIMATION_FRAME_LIMIT' ? 400 : 502
+        );
+      throw error;
+    });
+    const prefix = `projects/${logical.projectId}/animation/${input.requestId}`;
+    if (
+      result.source_frame_count === undefined ||
+      result.source_duration === undefined
+    )
+      throw new SpriteGenerationError(
+        'ANIMATION_PROCESSOR_UPDATE_REQUIRED',
+        503
+      );
+    if (
+      result.frame_count !== input.frameCount ||
+      result.frame_count > result.source_frame_count ||
+      result.frame_count > animationFrameLimit(result.source_duration) ||
+      result.frame_size !== input.frameSize ||
+      !Number.isInteger(result.columns) ||
+      result.columns < 1 ||
+      !Number.isInteger(result.rows) ||
+      result.rows < 1 ||
+      result.rows * result.columns < result.frame_count ||
+      result.spritesheet.width !== result.columns * input.frameSize ||
+      result.spritesheet.height !== result.rows * input.frameSize ||
+      result.spritesheet.key !== `${prefix}.png` ||
+      result.manifest.key !== `${prefix}.json`
+    )
+      throw new Error('INVALID_PROCESSOR_RESULT');
+    const now = new Date().toISOString();
+    const versionId = previous?.versionId || input.requestId;
+    const fileValues = {
+      id: input.requestId,
+      projectId: logical.projectId,
+      itemId: logical.itemId,
+      variantId: logical.variantId,
+      generationId: logical.id,
+      generationTaskId: link.id,
+      mediaType: 'image',
+      role: 'spritesheet',
+      storageKey: result.spritesheet.key,
+      mimeType: 'image/png',
+      originalFilename: `spritesheet-${input.requestId}.png`,
+      width: result.spritesheet.width,
+      height: result.spritesheet.height,
+      sizeBytes: result.spritesheet.file_size_bytes,
+      isActiveReference: false,
+      status: 'ready',
+      metadataJson: JSON.stringify({
+        frameCount: result.frame_count,
+        columns: result.columns,
+        rows: result.rows,
+        frameSize: result.frame_size,
+        fps: input.fps,
+        sourceVideoKey: archived.key,
+      }),
+      createdAt: now,
+      updatedAt: now,
+    };
+    // Create the existing Vault domain before the atomic file/version replacement.
+    await ensureVaultTarget(
+      logical,
+      link,
+      fileValues as typeof assetFile.$inferSelect
+    );
+    fileValues.itemId = logical.itemId;
+    fileValues.variantId = logical.variantId;
+    const frames = selectedAnimationFrames(
+      Array.from({ length: result.frame_count }, (_, i) => i),
+      result.frame_count,
+      result.columns,
+      result.frame_size,
+      getUuid
+    );
+    const next = {
+      requestId: input.requestId,
+      versionId,
+      fileId: input.requestId,
+      ...result,
+      fps: input.fps,
+      loop: input.loop,
+      cleanupKeys: previous
+        ? [previous.spritesheet.key, previous.manifest.key]
+        : [],
+    };
+    const nextMetadata = { ...metadata, heroSheet: next };
+    // Persist the new result and cleanup intent together, retaining the request lock.
+    const nextLock = JSON.stringify({
+      ...nextMetadata,
+      reviewLockUntil: JSON.parse(lock).reviewLockUntil,
+    });
+    await db().transaction(async (tx: any) => {
+      const claimed = await tx
+        .update(generationTask)
+        .set({ metadataJson: nextLock })
+        .where(
+          and(
+            eq(generationTask.id, link.id),
+            eq(generationTask.metadataJson, lock)
+          )
+        )
+        .returning({ id: generationTask.id });
+      if (!claimed.length)
+        throw new SpriteGenerationError('ANIMATION_REVIEW_BUSY', 409);
+      if (previous) {
+        const dependents = await tx
+          .select()
+          .from(animationVersion)
+          .where(eq(animationVersion.spritesheetFileId, previous.fileId));
+        if (
+          dependents.some((version: any) => version.id !== previous.versionId)
+        )
+          throw new SpriteGenerationError('ANIMATION_REPLACEMENT_IN_USE', 409);
+      }
+      await tx.insert(assetFile).values(fileValues);
+      const versionValues = {
+        fps: input.fps,
+        frameWidth: result.frame_size,
+        frameHeight: result.frame_size,
+        frameCount: result.frame_count,
+        spritesheetFileId: input.requestId,
+        framesJson: JSON.stringify(frames),
+        editorJson: JSON.stringify({
+          columns: result.columns,
+          rows: result.rows,
+        }),
+      };
+      if (previous) {
+        await tx
+          .update(animationVersion)
+          .set(versionValues)
+          .where(
+            and(
+              eq(animationVersion.id, previous.versionId),
+              eq(animationVersion.generationId, logical.id)
+            )
+          );
+        await tx
+          .update(assetFile)
+          .set({ deletedAt: now, updatedAt: now })
+          .where(eq(assetFile.id, previous.fileId));
+      } else {
+        const [maximum] = await tx
+          .select({ value: max(animationVersion.versionNo) })
+          .from(animationVersion)
+          .where(eq(animationVersion.clipId, metadata.clipId));
+        await tx
+          .update(animationVersion)
+          .set({ isCurrent: false })
+          .where(eq(animationVersion.clipId, metadata.clipId));
+        await tx.insert(animationVersion).values({
+          id: versionId,
+          clipId: metadata.clipId,
+          versionNo: Number(maximum?.value || 0) + 1,
+          generationId: logical.id,
+          isCurrent: true,
+          ...versionValues,
+          createdAt: now,
+        });
+      }
+      await tx
+        .update(animationClip)
+        .set({ status: 'ready', updatedAt: now })
+        .where(eq(animationClip.id, metadata.clipId));
+      await tx
+        .update(animationSet)
+        .set({ status: 'ready', loop: input.loop, updatedAt: now })
+        .where(eq(animationSet.id, metadata.setId));
+      await tx
+        .update(generationTask)
+        .set({ metadataJson: nextLock })
+        .where(eq(generationTask.id, link.id));
+    });
+    metadata.heroSheet = next;
+    lock = nextLock;
+  }
+  // Delete only server-recorded old keys, after committing the new usable result.
+  const remaining: string[] = [];
+  for (const key of metadata.heroSheet.cleanupKeys || []) {
+    try {
+      await storage.deleteFile({ key });
+    } catch {
+      remaining.push(key);
+    }
+  }
+  metadata.heroSheet.cleanupKeys = remaining;
+  return lock;
+}
+
+/** User-confirmed animation steps. These never dispatch a model or alter credits. */
+export async function reviewSpriteAnimation(
+  userId: string,
+  generationId: string,
+  input: AnimationReviewRequest
+) {
+  const logical = await findOwnedGeneration(userId, generationId);
+  if (!logical || !(await getOwnedProject(userId, logical.projectId)))
+    throw new SpriteGenerationError('GENERATION_NOT_FOUND', 404);
+  if (
+    logical.taskType !== 'animation' ||
+    !parseJson<any>(logical.paramsJson, {}).animationReview
+  )
+    throw new SpriteGenerationError('INVALID_GENERATION');
+  const [link] = await db()
+    .select()
+    .from(generationTask)
+    .where(
+      and(
+        eq(generationTask.id, input.taskId),
+        eq(generationTask.generationId, logical.id)
+      )
+    )
+    .limit(1);
+  const task = link && (await findAITaskById(link.aiTaskId));
+  if (!link || !task || task.status !== AITaskStatus.SUCCESS)
+    throw new SpriteGenerationError('VIDEO_NOT_READY', 409);
+  const metadata = parseJson<Record<string, any>>(link.metadataJson, {});
+  if (Number(metadata.reviewLockUntil) > Date.now())
+    throw new SpriteGenerationError('ANIMATION_REVIEW_BUSY', 409);
+  let lock = JSON.stringify({
+    ...metadata,
+    reviewLockUntil: Date.now() + 10 * 60_000,
+  });
+  // Compare-and-set works across tabs and Worker instances, not just one JS process.
+  const claimed = await db()
+    .update(generationTask)
+    .set({ metadataJson: lock })
+    .where(
+      and(
+        eq(generationTask.id, link.id),
+        link.metadataJson === null
+          ? isNull(generationTask.metadataJson)
+          : eq(generationTask.metadataJson, link.metadataJson)
+      )
+    )
+    .returning({ id: generationTask.id });
+  if (!claimed.length)
+    throw new SpriteGenerationError('ANIMATION_REVIEW_BUSY', 409);
+  try {
+    const info = parseJson<Record<string, any>>(task.taskInfo, {});
+    const storage = (await getStorageService()).getProvider('r2');
+    if (!storage)
+      throw new SpriteGenerationError('VIDEO_R2_NOT_CONFIGURED', 503);
+    if (input.action === 'generate-sheet') {
+      lock = await generateHeroAnimationSheet(
+        logical,
+        link,
+        task,
+        metadata,
+        input,
+        storage,
+        lock
+      );
+    } else if (input.action === 'save-video') {
+      const archived = await storeAnimationSourceVideo(
+        {
+          taskId: task.id,
+          createdAt: new Date(task.createdAt),
+          sourceUrl: videoUrlFromTask(task) || '',
+          storedKey: info.sourceVideoKey,
+        },
+        storage
+      );
+      await updateAITaskById(task.id, {
+        taskInfo: JSON.stringify({ ...info, sourceVideoKey: archived.key }),
+      });
+    } else {
+      if (!info.sourceVideoKey)
+        throw new SpriteGenerationError('VIDEO_SAVE_REQUIRED', 409);
+      if (input.action === 'extract') {
+        if (metadata.extraction?.id !== input.requestId) {
+          const sourceVideoUrl = await storage.createSignedDownloadUrl!({
+            key: info.sourceVideoKey,
+            expiresIn: 3600,
+          });
+          const result = await processSpriteVideo({
+            ...animationProcessingOptions(
+              parseJson<any>(logical.paramsJson, {})
+            ),
+            generationId: logical.id,
+            generationTaskId: input.requestId,
+            sourceVideoUrl,
+            outputPrefix: `projects/${logical.projectId}/animation`,
+            frameCount: input.frameCount,
+            frameSize: input.frameSize,
+            fps: input.fps,
+            loop: input.loop,
+            action: String(
+              parseJson<any>(logical.paramsJson, {}).action || 'idle'
+            ),
+            direction: String(metadata.direction || 'none'),
+          });
+          // Only server-produced keys enter the draft. A new extraction has its own files.
+          if (
+            result.frame_count < 1 ||
+            result.frame_count > 32 ||
+            result.columns < 1 ||
+            result.frame_size !== input.frameSize ||
+            result.spritesheet.key !==
+              `projects/${logical.projectId}/animation/${input.requestId}.png`
+          )
+            throw new Error('INVALID_PROCESSOR_RESULT');
+          metadata.extraction = {
+            id: input.requestId,
+            result,
+            loop: input.loop,
+          };
+        }
+      } else {
+        const draft = metadata.extraction;
+        if (!draft?.result || draft.id !== input.extractionId)
+          throw new SpriteGenerationError('EXTRACTION_CHANGED', 409);
+        const result = draft.result;
+        const frames = selectedAnimationFrames(
+          input.selected,
+          result.frame_count,
+          result.columns,
+          result.frame_size,
+          getUuid
+        );
+        const [existing] = await db()
+          .select()
+          .from(animationVersion)
+          .where(eq(animationVersion.id, draft.id))
+          .limit(1);
+        if (!existing) {
+          const now = new Date().toISOString();
+          const [saved] = await db()
+            .insert(assetFile)
+            .values({
+              id: draft.id,
+              projectId: logical.projectId,
+              itemId: logical.itemId,
+              variantId: logical.variantId,
+              generationId: logical.id,
+              generationTaskId: link.id,
+              mediaType: 'image',
+              role: 'spritesheet',
+              storageKey: result.spritesheet.key,
+              mimeType: 'image/png',
+              originalFilename: `spritesheet-${draft.id}.png`,
+              width: result.spritesheet.width,
+              height: result.spritesheet.height,
+              sizeBytes: result.spritesheet.file_size_bytes,
+              isActiveReference: false,
+              status: 'ready',
+              metadataJson: JSON.stringify({
+                ...metadata,
+                extraction: undefined,
+                sourceVideoKey: info.sourceVideoKey,
+                frameCount: input.selected.length,
+                columns: result.columns,
+                rows: result.rows,
+                frameSize: result.frame_size,
+                fps: input.fps,
+                selectedFrames: input.selected,
+              }),
+              createdAt: now,
+              updatedAt: now,
+            })
+            .onConflictDoNothing({ target: assetFile.id })
+            .returning();
+          const file = saved || (await findAssetFileById(draft.id));
+          if (!file || file.generationTaskId !== link.id)
+            throw new Error('OUTPUT_STORAGE_FAILED');
+          await ensureVaultTarget(logical, link, file);
+          const [maximum] = await db()
+            .select({ value: max(animationVersion.versionNo) })
+            .from(animationVersion)
+            .where(eq(animationVersion.clipId, metadata.clipId));
+          await db().transaction(async (tx: any) => {
+            await tx
+              .update(animationVersion)
+              .set({ isCurrent: false })
+              .where(eq(animationVersion.clipId, metadata.clipId));
+            await tx.insert(animationVersion).values({
+              id: draft.id,
+              clipId: metadata.clipId,
+              versionNo: Number(maximum?.value || 0) + 1,
+              generationId: logical.id,
+              isCurrent: true,
+              fps: input.fps,
+              frameWidth: result.frame_size,
+              frameHeight: result.frame_size,
+              frameCount: frames.length,
+              spritesheetFileId: draft.id,
+              framesJson: JSON.stringify(frames),
+              editorJson: JSON.stringify({
+                columns: result.columns,
+                rows: result.rows,
+              }),
+              createdAt: now,
+            });
+            await tx
+              .update(animationClip)
+              .set({ status: 'ready', updatedAt: now })
+              .where(eq(animationClip.id, metadata.clipId));
+            await tx
+              .update(animationSet)
+              .set({ status: 'ready', loop: draft.loop, updatedAt: now })
+              .where(eq(animationSet.id, metadata.setId));
+          });
+        }
+        draft.savedVersionId = draft.id;
+        draft.playbackFps = existing?.fps || input.fps;
+        draft.selected = existing
+          ? parseAnimationFrames(existing.framesJson).map(
+              (frame) =>
+                Math.round((frame.crop?.y || 0) / result.frame_size) *
+                  result.columns +
+                Math.round((frame.crop?.x || 0) / result.frame_size)
+            )
+          : input.selected;
+      }
+    }
+    delete metadata.reviewLockUntil;
+    await db()
+      .update(generationTask)
+      .set({ metadataJson: JSON.stringify(metadata) })
+      .where(
+        and(
+          eq(generationTask.id, link.id),
+          eq(generationTask.metadataJson, lock)
+        )
+      );
+  } catch (error) {
+    // Restore the last usable draft; extraction/storage failures do not lose the video.
+    await db()
+      .update(generationTask)
+      .set({ metadataJson: link.metadataJson })
+      .where(
+        and(
+          eq(generationTask.id, link.id),
+          eq(generationTask.metadataJson, lock)
+        )
+      );
+    throw error;
+  }
+  return getSpriteGeneration(userId, generationId);
 }

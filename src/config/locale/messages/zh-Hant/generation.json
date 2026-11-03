@@ -19,12 +19,14 @@
   },
   "options": {
     "style": {
-      "none": "無",
+      "none": "自訂",
       "pixel-art": "像素畫",
       "cartoon": "卡通",
       "illustration": "插畫",
       "hand-painted": "手繪",
       "anime-2d": "2D 動漫",
+      "cel-shaded": "賽璐璐",
+      "low-poly": "低多邊形",
       "dark-fantasy": "黑暗奇幻",
       "cyberpunk": "賽博龐克"
     },

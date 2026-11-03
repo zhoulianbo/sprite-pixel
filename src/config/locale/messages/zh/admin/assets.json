@@ -14,6 +14,7 @@
     "direction": "方向",
     "frames": "帧数",
     "source": "来源",
+    "style": "风格",
     "gallery": "画廊",
     "createdAt": "生成时间"
   },
@@ -32,6 +33,8 @@
     "emailPlaceholder": "输入完整邮箱"
   },
   "characters": {
+    "viewMore": "查看更多",
+    "fullPrompt": "完整提示词",
     "title": "角色资产",
     "description": "查看用户已生成或保存完成的角色资产。",
     "empty": "暂无已完成的角色资产。",
@@ -40,7 +43,7 @@
   },
   "animations": {
     "title": "动画资产",
-    "description": "查看用户已生成完成的精灵图，点击预览可切换查看动画。",
+    "description": "点击精灵图预览可播放动画，或切换到视频对比，并排查看原视频与最终动画。",
     "empty": "暂无已完成的动画。",
     "noPreview": "暂无预览",
     "noOriginalPreview": "暂无原图",
@@ -52,6 +55,13 @@
     "frameSummary": "{count} 帧 · {fps} 帧/秒",
     "imageTab": "图片",
     "animationTab": "动画",
+    "compareTab": "视频对比",
+    "sourceVideo": "原视频",
+    "noSourceVideo": "该动画未记录原视频地址。",
+    "videoLoading": "正在加载原视频…",
+    "videoLoadError": "视频播放失败，请重试或打开原地址查看。历史视频的供应商链接可能已过期。",
+    "openVideo": "打开原视频",
+    "zoomVideo": "放大查看视频",
     "loading": "正在加载动画…",
     "loadError": "动画加载失败，请重试。",
     "retry": "重试"

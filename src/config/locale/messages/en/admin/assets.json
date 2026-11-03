@@ -14,6 +14,7 @@
     "direction": "Direction",
     "frames": "Frames",
     "source": "Source",
+    "style": "Style",
     "gallery": "Gallery",
     "createdAt": "Created At"
   },
@@ -32,6 +33,8 @@
     "emailPlaceholder": "Enter an exact email"
   },
   "characters": {
+    "viewMore": "View more",
+    "fullPrompt": "Full prompt",
     "title": "Characters",
     "description": "Review completed character assets generated or saved by users.",
     "empty": "No completed character assets found.",
@@ -40,7 +43,7 @@
   },
   "animations": {
     "title": "Animations",
-    "description": "Review completed user animations. Open a sprite sheet to preview playback.",
+    "description": "Open a sprite sheet to preview playback or compare the source video with the final animation.",
     "empty": "No completed animations found.",
     "noPreview": "No preview",
     "noOriginalPreview": "Unavailable",
@@ -52,6 +55,13 @@
     "frameSummary": "{count} frames · {fps} fps",
     "imageTab": "Image",
     "animationTab": "Animation",
+    "compareTab": "Video comparison",
+    "sourceVideo": "Source video",
+    "noSourceVideo": "No source video was recorded for this animation.",
+    "videoLoading": "Loading source video…",
+    "videoLoadError": "Unable to play the video. Please retry or open the original URL. Older provider links may have expired.",
+    "openVideo": "Open original video",
+    "zoomVideo": "Enlarge video",
     "loading": "Loading animation…",
     "loadError": "Unable to load the animation. Please try again.",
     "retry": "Retry"

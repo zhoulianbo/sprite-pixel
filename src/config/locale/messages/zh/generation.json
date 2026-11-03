@@ -19,12 +19,14 @@
   },
   "options": {
     "style": {
-      "none": "无",
+      "none": "自定义",
       "pixel-art": "像素画",
       "cartoon": "卡通风",
       "illustration": "插画风",
       "hand-painted": "手绘风",
       "anime-2d": "二次元",
+      "cel-shaded": "赛璐璐",
+      "low-poly": "低多边形",
       "dark-fantasy": "黑暗奇幻",
       "cyberpunk": "赛博朋克"
     },

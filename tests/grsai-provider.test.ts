@@ -186,7 +186,14 @@ test('Grsai maps pixel and 1:1 video aspect ratios to Minimax named values', asy
   };
 
   const provider = new GrsaiProvider({ apiKey: 'test-key' });
-  for (const aspectRatio of ['1:1', '128x128', '1024x1536']) {
+  for (const aspectRatio of [
+    '1:1',
+    '128x128',
+    'square',
+    '1024x1536',
+    '1536x1024',
+    undefined,
+  ]) {
     await provider.generate({
       params: {
         mediaType: AIMediaType.VIDEO,
@@ -197,9 +204,17 @@ test('Grsai maps pixel and 1:1 video aspect ratios to Minimax named values', asy
     });
   }
 
-  assert.equal(bodies[0].aspectRatio, 'square');
-  assert.equal(bodies[1].aspectRatio, 'square');
-  assert.equal(bodies[2].aspectRatio, 'portrait');
+  assert.deepEqual(
+    bodies.map((body) => body.aspectRatio),
+    [
+      'landscape',
+      'landscape',
+      'landscape',
+      'portrait',
+      'landscape',
+      'landscape',
+    ]
+  );
 });
 
 test('Grsai submits Minimax H3 image-to-video jobs with the documented fields', async () => {

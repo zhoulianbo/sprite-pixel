@@ -32,7 +32,7 @@ export function ProjectSettingsForm({
     name: project.name,
     description: project.description || '',
     gameGenre: project.gameGenre,
-    artStyle: project.artStyle || 'pixel_art',
+    artStyle: project.artStyle || 'none',
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);

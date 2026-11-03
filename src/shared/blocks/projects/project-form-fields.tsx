@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
+import { generationOptionValues } from '@/config/generation/options';
 import { gameGenreValues } from '@/config/project';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -71,28 +72,31 @@ export function ProjectFormFields({
       <div className="grid gap-2">
         <Label>{t('style')}</Label>
         <Select
-          value={values.artStyle}
+          value={values.artStyle || 'none'}
           onValueChange={(artStyle) => onChange({ artStyle })}
         >
           <SelectTrigger className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="pixel_art">
-              {tg('options.style.pixel-art')}
+            <SelectItem value="none">
+              {tg('options.perspective.none')}
             </SelectItem>
-            <SelectItem value="cartoon">
-              {tg('options.style.cartoon')}
-            </SelectItem>
-            <SelectItem value="illustration">
-              {tg('options.style.illustration')}
-            </SelectItem>
-            <SelectItem value="hand_painted">
-              {tg('options.style.hand-painted')}
-            </SelectItem>
-            <SelectItem value="anime_2d">
-              {tg('options.style.anime-2d')}
-            </SelectItem>
+            {values.artStyle &&
+              !(generationOptionValues.style as readonly string[]).includes(
+                values.artStyle
+              ) && (
+                <SelectItem value={values.artStyle}>
+                  {values.artStyle}
+                </SelectItem>
+              )}
+            {generationOptionValues.style
+              .filter((style) => style !== 'none')
+              .map((style) => (
+                <SelectItem value={style} key={style}>
+                  {tg(`options.style.${style}`)}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>

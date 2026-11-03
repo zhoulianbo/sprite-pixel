@@ -233,37 +233,19 @@ test('logical generation status preserves partial successes', () => {
 });
 
 test('character and animation prompts follow the production templates', () => {
-  assert.equal(
-    buildCharacterBasePrompt({
-      prompt: '一个披着红色斗篷的小小火焰骑士',
-      style: 'pixel-art',
-      perspective: 'isometric',
-      characterType: 'humanoid',
-    }),
-    [
-      'Create one full-body base character reference.',
-      '',
-      'Character concept:',
-      '一个披着红色斗篷的小小火焰骑士',
-      '',
-      'Style: pixel-art',
-      'Perspective: isometric',
-      'Character type: humanoid',
-      'Pose: neutral standing idle pose',
-      '',
-      'Requirements:',
-      '- single character only',
-      '- centered composition',
-      '- clear silhouette',
-      '- readable at small size',
-      '- simple readable shapes for sprite animation',
-      '- clean game-ready rendering',
-      '- transparent background',
-      '- no text',
-      '- no watermark',
-      '- no extra objects',
-    ].join('\n')
-  );
+  const characterPrompt = buildCharacterBasePrompt({
+    prompt: '一个披着红色斗篷的小小火焰骑士',
+    style: 'pixel-art',
+    perspective: 'isometric',
+    characterType: 'humanoid',
+  });
+  assert.match(characterPrompt, /Style: pixel-art/);
+  assert.match(characterPrompt, /uniform square-pixel grid/);
+  assert.match(characterPrompt, /nearest-neighbor/);
+  assert.match(characterPrompt, /No anti-aliasing/);
+  assert.match(characterPrompt, /Perspective: isometric/);
+  assert.match(characterPrompt, /一个披着红色斗篷的小小火焰骑士/);
+  assert.match(characterPrompt, /transparent background/);
   const animationPrompt = buildAnimationPrompt(
     {
       prompt: '向前冲刺后挥剑攻击，动作连贯，结束时回到待机姿势',
@@ -638,4 +620,46 @@ test('SpritePixel credit costs bill batches as a flat fee', () => {
   assert.equal(generationPollIntervalMs('animation'), 5000);
   assert.deepEqual(distributeCredits(3, 9), [1, 1, 1, 0, 0, 0, 0, 0, 0]);
   assert.deepEqual(distributeCredits(3, 1), [3]);
+});
+
+test('custom style does not inherit the project style and other presets avoid pixel constraints', () => {
+  const custom = buildCharacterBasePrompt(
+    { prompt: 'ink warrior', style: 'none' },
+    { artStyle: 'pixel-art' }
+  );
+  assert.doesNotMatch(custom, /uniform square-pixel grid|Style: pixel-art/);
+  for (const style of [
+    'cartoon',
+    'illustration',
+    'hand-painted',
+    'anime-2d',
+    'cel-shaded',
+    'low-poly',
+  ]) {
+    const prompt = buildCharacterBasePrompt({ prompt: 'warrior', style });
+    assert.match(prompt, new RegExp(`Style: ${style}`));
+    assert.doesNotMatch(prompt, /128x128|nearest-neighbor/);
+  }
+});
+
+test('pixel prompts constrain shape complexity and inherit explicit palette requirements', () => {
+  const prompt = buildCharacterBasePrompt({
+    prompt: 'warrior',
+    style: 'pixel-art',
+    palette: '#11121C #D3A264',
+  });
+  assert.match(prompt, /at most 32 solid colors/);
+  assert.match(prompt, /simplify hair/);
+  assert.match(prompt, /Required palette: #11121C #D3A264/);
+  assert.match(
+    buildCharacterBasePrompt(
+      { style: 'pixel-art' },
+      { paletteJson: '["#000000", "#FFFFFF"]' }
+    ),
+    /Required palette:/
+  );
+  assert.doesNotMatch(
+    buildCharacterBasePrompt({ style: 'cartoon', palette: '#000000 #FFFFFF' }),
+    /Required palette:|32 solid colors/
+  );
 });

@@ -40,7 +40,7 @@ function emptyValues(): ProjectFormValues {
     name: '',
     description: '',
     gameGenre: '',
-    artStyle: 'pixel_art',
+    artStyle: 'none',
   };
 }
 
@@ -49,7 +49,7 @@ function valuesFromProject(project: ProjectSummary): ProjectFormValues {
     name: project.name,
     description: project.description || '',
     gameGenre: project.gameGenre,
-    artStyle: project.artStyle || 'pixel_art',
+    artStyle: project.artStyle || 'none',
   };
 }
 
